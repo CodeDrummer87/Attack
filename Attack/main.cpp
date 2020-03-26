@@ -1,16 +1,29 @@
 #include <SFML\Graphics.hpp>
 #include <iostream>
+#include <Windows.h>
 
-using namespace sf;
 using namespace std;
+using namespace sf;
 
 int main()
 {
-	cout << "Test App run" << endl;
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
 
-	RenderWindow app(VideoMode(200, 200), "Test", Style::Close);
-	CircleShape shape(100.f);
-	shape.setFillColor(Color::Green);
+	int sizeX = GetSystemMetrics(SM_CXFULLSCREEN);
+	int sizeY = GetSystemMetrics(SM_CYFULLSCREEN);
+
+	RenderWindow app(VideoMode(sizeX, sizeY), "Test", Style::Fullscreen);
+
+	Texture t;
+	t.loadFromFile("images/models/tanks/players/burgundyTank.png");
+
+	Sprite s;
+	s.setTexture(t);
+	s.setTextureRect(IntRect(0, 0, 64, 64));
+	s.setPosition(500, 250);
+
+	float currentFrame = 0;
 
 	while (app.isOpen())
 	{
@@ -21,8 +34,45 @@ int main()
 				app.close();
 		}
 
+		if (Keyboard::isKeyPressed(Keyboard::Left))
+		{
+			s.move(-0.1, 0);
+
+			currentFrame += 0.05;
+			if (currentFrame > 2) currentFrame -= 2;
+			s.setTextureRect(IntRect(64 + 64, 64 * int(currentFrame), -64, 64));
+		}
+
+		if(Keyboard::isKeyPressed(Keyboard::Right))
+		{
+			s.move(+0.1, 0);
+
+			currentFrame += 0.05;
+			if (currentFrame > 2) currentFrame -= 2;
+			s.setTextureRect(IntRect(64, 64 * int(currentFrame), 64, 64));
+		}
+
+		if (Keyboard::isKeyPressed(Keyboard::Up))
+		{
+			s.move(0, -0.1);
+
+			currentFrame += 0.05;
+			if (currentFrame > 2) currentFrame -= 2;
+			s.setTextureRect(IntRect(0, 64 * int(currentFrame), 64, 64));
+		}
+
+		if (Keyboard::isKeyPressed(Keyboard::Down))
+		{
+			s.move(0, +0.1);
+
+			currentFrame += 0.05;
+			if (currentFrame > 2) currentFrame -= 2;
+			s.setTextureRect(IntRect(0, 64 * int(currentFrame) + 64, 64, -64));
+		}
+
+
 		app.clear();
-		app.draw(shape);
+		app.draw(s);
 		app.display();
 	}
 
