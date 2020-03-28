@@ -117,7 +117,7 @@ int main()
 		for (auto e : entities)
 		{
 			e->update(time);
-			e->anim.update(time, e->playAnimation);
+			e->anim.update(time, e->playAnimation, e->dir);
 		}
 
 		app.clear();

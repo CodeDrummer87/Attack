@@ -19,6 +19,11 @@ Animation::Animation(Texture &t, int x, int y, int width, int height, float anim
 		for (int i = 0; i < count; i++)
 		{	
 			frames.push_back(IntRect(x, y + height * i, width, height));
+			//---------------------------------
+			toUp.push_back(IntRect(x, y + height * i, width, height));
+			toRight.push_back(IntRect(x + width, y + height * i, width, height));
+			toDown.push_back(IntRect(x, y + height * i + height, width, -height));
+			toLeft.push_back(IntRect(x + width * 2, y + height * i, -width, height));
 		}
 	}
 	sprite.setTexture(t);
@@ -28,17 +33,42 @@ Animation::Animation(Texture &t, int x, int y, int width, int height, float anim
 
 Animation::~Animation() {}
 
-void Animation::update(double time, bool on)
+void Animation::update(double time, bool on, int dir)
 {
 	int frameCount;
-	frameCount = frames.size();
+	vector<IntRect> tempFrames;
+
+	switch (dir)
+	{
+	case 0:
+		tempFrames = frames;
+		break;
+
+	case 1:
+		tempFrames = toUp;
+		break;
+
+	case 2:
+		tempFrames = toRight;
+		break;
+
+	case 3:
+		tempFrames = toDown;
+		break;
+
+	case 4:
+		tempFrames = toLeft;
+		break;
+	}
+
+	frameCount = tempFrames.size();
+
 	if (on)
 	{
-		frame += speed * time;		
+		frame += speed * time;
 		if (frame >= frameCount)
 			frame -= frameCount;
 	}
 	if (frameCount > 0)
-		sprite.setTextureRect(frames[(int)frame]);
-
+		sprite.setTextureRect(tempFrames[(int)frame]);
 }

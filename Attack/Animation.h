@@ -11,7 +11,15 @@ class Animation
 public:
 	float frame, speed;
 	Sprite sprite;
+
+	//.:: For essential animation (not movement)
 	vector<IntRect> frames;
+
+	//.:: Tank movement
+	vector<IntRect> toUp;
+	vector<IntRect> toRight;
+	vector<IntRect> toDown;
+	vector<IntRect> toLeft;
 	//.:: Constructors ::::::::::::::::::::::
 	Animation();
 	Animation(Texture &t, int, int, int, int, float, int);	// texture, coordinates: x, y; width, height, animation_speed, frames_count
@@ -20,6 +28,6 @@ public:
 	virtual ~Animation();
 
 	//.:: Methods_of_class ::::::::::::::::::
-	void update(double, bool);
+	void update(double, bool, int);
 };
 

@@ -13,6 +13,7 @@ Entity::~Entity() {}
 
 void Entity::setEntity(Animation &a, int X, int Y)
 {
+	dir = 1;
 	anim = a;
 	x = X;
 	y = Y;
