@@ -2,6 +2,11 @@
 #include <iostream>
 #include <Windows.h>
 
+#include "Animation.h"
+#include "Entity.h"
+
+#include "Tank.h"
+
 using namespace std;
 using namespace sf;
 
@@ -20,22 +25,31 @@ int main()
 	}
 
 	RenderWindow app(VideoMode(sizeX, sizeY), "Test", Style::Fullscreen);
+	app.setFramerateLimit(60);
+	app.setMouseCursorVisible(false);
 
-	Texture t;
-	t.loadFromFile("images/models/tanks/players/burgundyTank.png");
+	Texture bTank, yTank;
+	bTank.loadFromFile("images/models/tanks/players/burgundyTank.png");
+	yTank.loadFromFile("images/models/tanks/players/yellowTank.png");
 
-	Sprite s;
-	s.setTexture(t);
-	s.setTextureRect(IntRect(0, 0, 64, 64));
-	s.setPosition(500, 250);
+	Animation burgundy_tank(bTank, 0, 0, 64, 64, 0.016, 2);
+	Animation yellow_tank(yTank, 0, 0, 64, 64, 0.016, 2);
 
-	float currentFrame = 0;
+	Tank *tank = new Tank();
+	tank->setEntity(burgundy_tank, 960, 800);
+
+	Tank *player_2= new Tank();
+	player_2->setEntity(yellow_tank, 960, 900);
+
+	vector<Entity*> entities;
+	entities.push_back(tank);
+	entities.push_back(player_2);
 
 	Clock clock;
 
 	while (app.isOpen())
 	{
-		float time = clock.getElapsedTime().asMicroseconds();
+		double time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
 
 		time /= 1700;
@@ -47,45 +61,29 @@ int main()
 				app.close();
 		}
 
-		if (Keyboard::isKeyPressed(Keyboard::Left))
-		{
-			s.move(-0.1 * time, 0);
-
-			currentFrame += 0.05 * time;
-			if (currentFrame > 2) currentFrame -= 2;
-			s.setTextureRect(IntRect(64 + 64, 64 * int(currentFrame), -64, 64));
-		}
-
-		if(Keyboard::isKeyPressed(Keyboard::Right))
-		{
-			s.move(+0.1 * time, 0);
-
-			currentFrame += 0.05 * time;
-			if (currentFrame > 2) currentFrame -= 2;
-			s.setTextureRect(IntRect(64, 64 * int(currentFrame), 64, 64));
-		}
-
 		if (Keyboard::isKeyPressed(Keyboard::Up))
-		{
-			s.move(0, -0.1 * time);
+			tank->accelerate(1, -0.08 * time);
 
-			currentFrame += 0.05 * time;
-			if (currentFrame > 2) currentFrame -= 2;
-			s.setTextureRect(IntRect(0, 64 * int(currentFrame), 64, 64));
-		}
+		if (Keyboard::isKeyPressed(Keyboard::Right))
+			tank->accelerate(2, 0.08 * time);
 
 		if (Keyboard::isKeyPressed(Keyboard::Down))
-		{
-			s.move(0, +0.1 * time);
+			tank->accelerate(3, 0.08 * time);
 
-			currentFrame += 0.05 * time;
-			if (currentFrame > 2) currentFrame -= 2;
-			s.setTextureRect(IntRect(0, 64 * int(currentFrame) + 64, 64, -64));
+		if (Keyboard::isKeyPressed(Keyboard::Left))
+			tank->accelerate(4, -0.08 * time);
+
+		//.:: update entities :::
+		for (auto e : entities)
+		{
+			e->update(time);
+			e->anim.update(time);
 		}
 
-
 		app.clear();
-		app.draw(s);
+		//.:: display entities :::
+		for (auto e : entities)
+			e->draw(app);
 		app.display();
 	}
 
