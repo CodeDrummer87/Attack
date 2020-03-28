@@ -1,4 +1,6 @@
 #include <SFML\Graphics.hpp>
+#include <SFML\Audio.hpp>
+
 #include <iostream>
 #include <Windows.h>
 
@@ -32,11 +34,11 @@ int main()
 
 #pragma endregion
 
-#pragma region Textures & Animations
+#pragma region Textures | Animations | Sounds
 
 	Texture bTank, yTank;
-	bTank.loadFromFile("images/models/tanks/players/burgundyTank.png");
-	yTank.loadFromFile("images/models/tanks/players/yellowTank.png");
+	bTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
+	yTank.loadFromFile("source/images/models/tanks/players/yellowTank.png");
 
 	Animation burgundy_tank(bTank, 0, 0, 64, 64, 0.016, 2);
 	Animation yellow_tank(yTank, 0, 0, 64, 64, 0.016, 2);

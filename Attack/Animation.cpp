@@ -7,7 +7,7 @@ using namespace sf;
 
 Animation::Animation() {}
 
-Animation::Animation(Texture &t, int x, int y, int width, int height, float animSpeed, int count)
+Animation::Animation(Texture &t, int x, int y, int width, int height, double animSpeed, int count)
 {
 	frame = 0;
 	speed = animSpeed;

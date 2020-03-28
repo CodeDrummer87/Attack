@@ -22,7 +22,7 @@ public:
 	vector<IntRect> toLeft;
 	//.:: Constructors ::::::::::::::::::::::
 	Animation();
-	Animation(Texture &t, int, int, int, int, float, int);	// texture, coordinates: x, y; width, height, animation_speed, frames_count
+	Animation(Texture &t, int, int, int, int, double, int);	// texture, coordinates: x, y; width, height, animation_speed, frames_count
 	
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Animation();
