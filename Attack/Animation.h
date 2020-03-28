@@ -20,6 +20,6 @@ public:
 	virtual ~Animation();
 
 	//.:: Methods_of_class ::::::::::::::::::
-	void update(double);
+	void update(double, bool);
 };
 

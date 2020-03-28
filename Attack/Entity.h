@@ -13,6 +13,7 @@ protected:
 	double x, y, dx, dy;		// coordinates: x, y; acceleration x and y;
 public:
 	Animation anim;
+	bool playAnimation;
 	//.:: Constructor ::::::::::::::::::::::
 	Entity();	
 
@@ -22,6 +23,6 @@ public:
 	//.:: Methods_of_class ::::::::::::::::::
 	virtual void setEntity(Animation&, int, int);	// animation and coordinates: x, y
 	virtual void update(double);
-	void draw(RenderWindow&);
+	virtual void draw(RenderWindow&);
 };
 

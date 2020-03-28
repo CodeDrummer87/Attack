@@ -28,13 +28,17 @@ Animation::Animation(Texture &t, int x, int y, int width, int height, float anim
 
 Animation::~Animation() {}
 
-void Animation::update(double time)
+void Animation::update(double time, bool on)
 {
-	frame += speed * time;
 	int frameCount;
 	frameCount = frames.size();
-	if (frame >= frameCount)
-		frame -= frameCount;
+	if (on)
+	{
+		frame += speed * time;		
+		if (frame >= frameCount)
+			frame -= frameCount;
+	}
 	if (frameCount > 0)
 		sprite.setTextureRect(frames[(int)frame]);
+
 }

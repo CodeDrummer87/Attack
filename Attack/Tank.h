@@ -6,8 +6,6 @@ using namespace sf;
 
 class Tank : public Entity
 {
-private:
-
 public:
 	//.:: Constructor :::::::::::::::::::::
 	Tank();

@@ -12,6 +12,8 @@ using namespace sf;
 
 int main()
 {
+#pragma region Window Settings
+
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
@@ -28,6 +30,10 @@ int main()
 	app.setFramerateLimit(60);
 	app.setMouseCursorVisible(false);
 
+#pragma endregion
+
+#pragma region Textures & Animations
+
 	Texture bTank, yTank;
 	bTank.loadFromFile("images/models/tanks/players/burgundyTank.png");
 	yTank.loadFromFile("images/models/tanks/players/yellowTank.png");
@@ -35,14 +41,16 @@ int main()
 	Animation burgundy_tank(bTank, 0, 0, 64, 64, 0.016, 2);
 	Animation yellow_tank(yTank, 0, 0, 64, 64, 0.016, 2);
 
-	Tank *tank = new Tank();
-	tank->setEntity(burgundy_tank, 960, 800);
+#pragma endregion
+
+	Tank *player_1 = new Tank();
+	player_1->setEntity(burgundy_tank, 960, 800);
 
 	Tank *player_2= new Tank();
 	player_2->setEntity(yellow_tank, 960, 900);
 
 	vector<Entity*> entities;
-	entities.push_back(tank);
+	entities.push_back(player_1);
 	entities.push_back(player_2);
 
 	Clock clock;
@@ -61,23 +69,55 @@ int main()
 				app.close();
 		}
 
-		if (Keyboard::isKeyPressed(Keyboard::Up))
-			tank->accelerate(1, -0.08 * time);
+#pragma region First Player control
 
-		if (Keyboard::isKeyPressed(Keyboard::Right))
-			tank->accelerate(2, 0.08 * time);
+		if (Keyboard::isKeyPressed(Keyboard::W))
+		{
+			player_1->accelerate(1, -0.08 * time);
+		}
+		else if (Keyboard::isKeyPressed(Keyboard::D))
+		{
+			player_1->accelerate(2, 0.08 * time);
+		}
+		else if (Keyboard::isKeyPressed(Keyboard::S))
+		{
+			player_1->accelerate(3, 0.08 * time);
+		}
+		else if (Keyboard::isKeyPressed(Keyboard::A))
+		{
+			player_1->accelerate(4, -0.08 * time);
+		}
+		else player_1->playAnimation = false;
 
-		if (Keyboard::isKeyPressed(Keyboard::Down))
-			tank->accelerate(3, 0.08 * time);
+#pragma endregion
 
-		if (Keyboard::isKeyPressed(Keyboard::Left))
-			tank->accelerate(4, -0.08 * time);
+#pragma region Second Player control
+
+		if (Keyboard::isKeyPressed(Keyboard::I))
+		{
+			player_2->accelerate(1, -0.08 * time);
+		}
+		else if (Keyboard::isKeyPressed(Keyboard::L))
+		{
+			player_2->accelerate(2, 0.08 * time);
+		}
+		else if (Keyboard::isKeyPressed(Keyboard::K))
+		{
+			player_2->accelerate(3, 0.08 * time);
+		}
+		else if (Keyboard::isKeyPressed(Keyboard::J))
+		{
+			player_2->accelerate(4, -0.08 * time);
+		}
+		else player_2->playAnimation = false;
+
+#pragma endregion
 
 		//.:: update entities :::
 		for (auto e : entities)
 		{
 			e->update(time);
-			e->anim.update(time);
+			e->anim.update(time, e->playAnimation);
 		}
 
 		app.clear();

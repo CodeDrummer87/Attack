@@ -17,6 +17,7 @@ void Entity::setEntity(Animation &a, int X, int Y)
 	x = X;
 	y = Y;
 	anim.sprite.setPosition(x, y);
+	playAnimation = false;
 }
 
 void Entity::update(double time) {}

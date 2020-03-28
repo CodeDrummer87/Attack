@@ -18,6 +18,8 @@ void Tank::update(double time)
 
 void Tank::accelerate(int dir, double acc)
 {
+	playAnimation = true;
+
 	if (dir % 2 == 0)
 	{
 		dy = 0;
