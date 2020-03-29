@@ -78,6 +78,11 @@ int main()
 
 #pragma region First Player control
 
+		if (Keyboard::isKeyPressed(Keyboard::LControl))
+		{
+			
+		}
+
 		if (Keyboard::isKeyPressed(Keyboard::W))
 		{
 			player_1->accelerate(1, -0.08 * time);

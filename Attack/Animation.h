@@ -16,18 +16,12 @@ public:
 	float frame, speed;
 	Sprite sprite;
 
-	//.:: For essential animation (not movement)
 	vector<IntRect> frames;
-
-	//.:: Tank movement
-	vector<IntRect> toUp;
-	vector<IntRect> toRight;
-	vector<IntRect> toDown;
-	vector<IntRect> toLeft;
 	//.:: Constructors ::::::::::::::::::::::
 	Animation();
 	Animation(Texture &t, SoundBuffer&, int, int, int, int, double, int);	// texture, coordinates: x, y; width, height, animation_speed, frames_count
-	
+	Animation(Texture&, int, int, int, int, double, int);
+
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Animation();
 
