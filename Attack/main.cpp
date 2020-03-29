@@ -31,6 +31,7 @@ int main()
 	RenderWindow app(VideoMode(sizeX, sizeY), "Test", Style::Fullscreen);
 	app.setFramerateLimit(60);
 	app.setMouseCursorVisible(false);
+	app.setKeyRepeatEnabled(false);
 
 #pragma endregion
 
@@ -40,8 +41,12 @@ int main()
 	bTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 	yTank.loadFromFile("source/images/models/tanks/players/yellowTank.png");
 
-	Animation burgundy_tank(bTank, 0, 0, 64, 64, 0.016, 2);
-	Animation yellow_tank(yTank, 0, 0, 64, 64, 0.016, 2);
+	SoundBuffer bTankBuf, yTankBuf;
+	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
+	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
+
+	Animation burgundy_tank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
+	Animation yellow_tank(yTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
 
 #pragma endregion
 

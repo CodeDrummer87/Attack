@@ -1,13 +1,15 @@
 #pragma once
 
 #include "Animation.h"
+
 #include <SFML\Graphics.hpp>
+#include <SFML\Audio.hpp>
 
 using namespace sf;
 
 Animation::Animation() {}
 
-Animation::Animation(Texture &t, int x, int y, int width, int height, double animSpeed, int count)
+Animation::Animation(Texture &t, SoundBuffer &b , int x, int y, int width, int height, double animSpeed, int count)
 {
 	frame = 0;
 	speed = animSpeed;
@@ -29,6 +31,11 @@ Animation::Animation(Texture &t, int x, int y, int width, int height, double ani
 	sprite.setTexture(t);
 	sprite.setOrigin(width / 2, height / 2);
 	sprite.setTextureRect(IntRect(frames[0]));
+
+	sound.setBuffer(b);
+	sound.setLoop(true);
+	sound.setPitch(0.9f);
+	sound.setVolume(30.f);
 }
 
 Animation::~Animation() {}
@@ -63,8 +70,11 @@ void Animation::update(double time, bool on, int dir)
 
 	frameCount = tempFrames.size();
 
+	sound.pause();
+
 	if (on)
 	{
+		sound.play();
 		frame += speed * time;
 		if (frame >= frameCount)
 			frame -= frameCount;
