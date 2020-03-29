@@ -8,6 +8,7 @@
 #include "Entity.h"
 
 #include "Tank.h"
+#include "Shell.h"
 
 using namespace std;
 using namespace sf;
@@ -37,9 +38,10 @@ int main()
 
 #pragma region Textures | Animations | Sounds
 
-	Texture bTank, yTank;
+	Texture bTank, yTank, tShell;
 	bTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 	yTank.loadFromFile("source/images/models/tanks/players/yellowTank.png");
+	tShell.loadFromFile("source/images/models/tanks/shell.png");
 
 	SoundBuffer bTankBuf, yTankBuf;
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
@@ -47,6 +49,7 @@ int main()
 
 	Animation burgundy_tank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
 	Animation yellow_tank(yTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
+	Animation aShell(tShell, 28, 27, 8, 8, 0.01, 2);
 
 #pragma endregion
 
@@ -74,14 +77,27 @@ int main()
 		{
 			if (event.type == Event::Closed)
 				app.close();
+
+			//.:: Tank rounds :::::::::::::::
+			if (event.type == Event::KeyPressed)
+			{
+				//.:: Tank round (player 1)
+				if (event.key.code == Keyboard::LControl)
+				{
+					Shell *shell = new Shell(aShell, player_1->getCoordX(true), player_1->getCoordY(true), player_1->dir);
+					entities.push_back(shell);
+				}
+
+				//.:: Tank round (player 2)
+				if (event.key.code == Keyboard::Space)
+				{
+					Shell *shell = new Shell(aShell, player_2->getCoordX(true), player_2->getCoordY(true), player_2->dir);
+					entities.push_back(shell);
+				}
+			}
 		}
 
 #pragma region First Player control
-
-		if (Keyboard::isKeyPressed(Keyboard::LControl))
-		{
-			
-		}
 
 		if (Keyboard::isKeyPressed(Keyboard::W))
 		{
@@ -126,10 +142,14 @@ int main()
 #pragma endregion
 
 		//.:: update entities :::
-		for (auto e : entities)
+		for (auto i  = entities.begin(); i != entities.end();)
 		{
+			Entity* e = *i;
 			e->update(time);
 			e->anim.update(time, e->playAnimation, e->dir);
+
+			if (e->isExist == false) { i = entities.erase(i); delete e; }
+			else i++;
 		}
 
 		app.clear();

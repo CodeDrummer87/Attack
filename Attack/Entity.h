@@ -15,6 +15,7 @@ public:
 	int dir;
 	Animation anim;
 	bool playAnimation;
+	bool isExist;
 	//.:: Constructor ::::::::::::::::::::::
 	Entity();	
 
@@ -24,6 +25,8 @@ public:
 	//.:: Methods_of_class ::::::::::::::::::
 	virtual void setEntity(Animation&, int, int);	// animation and coordinates: x, y
 	virtual void update(double);
+	double getCoordX(bool);
+	double getCoordY(bool);
 	void draw(RenderWindow&);
 };
 

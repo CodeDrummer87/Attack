@@ -10,7 +10,11 @@ private:
 public:
 	//.:: Constructor ::::::::::::::::::::::
 	Shell();
+	Shell(Animation&, int, int, int);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Shell();
+
+	//.:: Methods_of_class :::::::::::::::::
+	void update(double);
 };
