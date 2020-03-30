@@ -29,7 +29,7 @@ int main()
 		sizeY = 1080;
 	}
 
-	RenderWindow app(VideoMode(sizeX, sizeY), "Test", Style::Fullscreen);
+	RenderWindow app(VideoMode(sizeX, sizeY), "Attack", Style::Fullscreen);
 	app.setFramerateLimit(60);
 	app.setMouseCursorVisible(false);
 	app.setKeyRepeatEnabled(false);
@@ -69,10 +69,10 @@ int main()
 #pragma endregion
 
 	Tank *player_1 = new Tank();
-	player_1->setEntity(burgundy_tank, 750, 800);
+	player_1->setEntity(burgundy_tank, 750, 800, "player 1");
 
 	Tank *player_2= new Tank();
-	player_2->setEntity(yellow_tank, 950, 800);
+	player_2->setEntity(yellow_tank, 950, 800, "player 2");
 
 	vector<Entity*> entities;
 	entities.push_back(player_1);
@@ -159,6 +159,18 @@ int main()
 		else player_2->playAnimation = false;
 
 #pragma endregion
+
+		//.:: add :::
+		for (auto e : entities)
+		{
+			if (e->name == "explosion" && e->status == DEAD) e->isExist = false;
+			if (e->name == "shell" && e->status == DEAD)
+			{
+				Entity *exp = new Entity(aShellExp, e->getCoordX(false), e->getCoordY(false), rand() % 360);
+				entities.push_back(exp);
+				e->isExist = false;
+			}
+		}
 
 		//.:: update entities :::
 		for (auto i  = entities.begin(); i != entities.end();)

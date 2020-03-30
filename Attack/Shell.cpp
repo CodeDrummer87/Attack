@@ -9,7 +9,7 @@ Shell::Shell(Animation &a, int X, int Y, int dir_)
 {
 	range = 400;
 	dist = 0.0;
-
+	name = "shell";
 	anim = a;
 	dir = dir_;
 	x = X;
@@ -17,6 +17,7 @@ Shell::Shell(Animation &a, int X, int Y, int dir_)
 	anim.sprite.setPosition(x, y);
 	playAnimation = true;
 	isExist = true;
+	status = ALIVE;
 }
 
 Shell::~Shell() {}
@@ -49,7 +50,7 @@ void Shell::update(double time)
 	}
 
 	if (abs(dist) >= range)
-		isExist = false;
+		status = DEAD;
 
 	x += dx;
 	y += dy;

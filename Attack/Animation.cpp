@@ -50,10 +50,6 @@ void Animation::update(double time, bool on, int dir)
 
 	switch (dir)
 	{
-	case 0:
-		sprite.setRotation(0); 
-		break;
-
 	case 1:
 		sprite.setRotation(0);
 		break;
@@ -69,6 +65,9 @@ void Animation::update(double time, bool on, int dir)
 	case 4:
 		sprite.setRotation(270);
 		break;
+
+	default:
+		sprite.setRotation(dir);
 	}
 
 	frameCount = frames.size();

@@ -29,4 +29,3 @@ public:
 	void update(double, bool, int);
 	bool isEnd(double);
 };
-
