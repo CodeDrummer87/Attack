@@ -1,10 +1,8 @@
 #pragma once
 
 #include <SFML\Graphics.hpp>
-#include <iostream>
 #include "Animation.h"
 
-using namespace std;
 using namespace sf;
 
 class Entity
@@ -12,13 +10,13 @@ class Entity
 protected:
 	double x, y, dx, dy;		// coordinates: x, y; acceleration x and y;
 public:
-	string name;
 	int dir;
 	Animation anim;
 	bool playAnimation;
 	bool isExist;
-	//.:: Constructor ::::::::::::::::::::::
-	Entity();	
+	//.:: Constructors ::::::::::::::::::::::
+	Entity();
+	Entity(Animation&, int, int, int);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Entity();

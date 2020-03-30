@@ -4,10 +4,18 @@
 #include "Animation.h"
 #include <SFML\Graphics.hpp>
 
-using namespace std;
 using namespace sf;
 
-Entity::Entity() { name = "undefined"; }
+Entity::Entity() {}
+Entity::Entity(Animation &a, int X, int Y, int dir_)
+{
+	anim = a;
+	dir = dir_;
+	x = X;
+	y = Y;
+	anim.sprite.setPosition(x, y);
+	isExist = playAnimation = true;
+}
 
 Entity::~Entity() {}
 
@@ -22,7 +30,14 @@ void Entity::setEntity(Animation &a, int X, int Y)
 	isExist = true;
 }
 
-void Entity::update(double time) {}
+void Entity::update(double time)
+{
+	if (isExist)
+	{
+		if (anim.isEnd(time))
+			isExist = false;
+	}
+}
 
 double Entity::getCoordX(bool isShell)
 {
@@ -33,9 +48,9 @@ double Entity::getCoordX(bool isShell)
 		switch (dir)
 		{
 		case 1: xCoordinate; break;
-		case 2: xCoordinate += 32; break;
+		case 2: xCoordinate += 42; break;
 		case 3: xCoordinate; break;
-		case 4: xCoordinate -= 32; break;
+		case 4: xCoordinate -= 42; break;
 		}
 	}
 
@@ -50,9 +65,9 @@ double Entity::getCoordY(bool isShell)
 	{
 		switch (dir)
 		{
-		case 1: yCoordinate -= 32; break;
+		case 1: yCoordinate -= 42; break;
 		case 2: yCoordinate; break;
-		case 3: yCoordinate += 32; break;
+		case 3: yCoordinate += 42; break;
 		case 4: yCoordinate; break;
 		}
 	}

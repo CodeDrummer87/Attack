@@ -45,29 +45,34 @@ int main()
 	iYellowTank.loadFromFile("source/images/models/tanks/players/yellowTank.png");
 	iYellowTank.createMaskFromColor(Color::White);
 
-	Texture bTank, yTank, tShell, tShellExp;
+	Texture bTank, yTank, tTankRound, tShell, tShellExp;
 	bTank.loadFromImage(iBurgundyTank);
 	yTank.loadFromImage(iYellowTank);
+	tTankRound.loadFromFile("source/images/models/tanks/round.png");
 	tShell.loadFromFile("source/images/models/tanks/shell.png");
 	tShellExp.loadFromFile("source/images/models/explosion/shell_explosion.png");
 
-	SoundBuffer bTankBuf, yTankBuf, shellExpBuf;
+	SoundBuffer bTankBuf, yTankBuf, burgTankRoundBuf, yelTankRoundBuf, shellExpBuf;
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
+	burgTankRoundBuf.loadFromFile("source/sounds/tank/round/burgundy_tank_round.ogg");
+	yelTankRoundBuf.loadFromFile("source/sounds/tank/round/yellow_tank_round.ogg");
 	shellExpBuf.loadFromFile("source/sounds/explosion/shell_explosion.ogg");
 
 	Animation burgundy_tank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
 	Animation yellow_tank(yTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
+	Animation aBurgTankRound(tTankRound, burgTankRoundBuf,0, 0, 40, 36, 0.016, 8);
+	Animation aYelTankRound(tTankRound, yelTankRoundBuf,0, 0, 40, 36, 0.016, 8);
 	Animation aShell(tShell, 28, 27, 8, 8, 0.01, 2);
 	Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.01, 7);
 
 #pragma endregion
 
 	Tank *player_1 = new Tank();
-	player_1->setEntity(burgundy_tank, 960, 800);
+	player_1->setEntity(burgundy_tank, 750, 800);
 
 	Tank *player_2= new Tank();
-	player_2->setEntity(yellow_tank, 960, 900);
+	player_2->setEntity(yellow_tank, 950, 800);
 
 	vector<Entity*> entities;
 	entities.push_back(player_1);
@@ -94,14 +99,18 @@ int main()
 				//.:: Tank round (player 1)
 				if (event.key.code == Keyboard::LControl)
 				{
+					Entity *round = new Entity(aBurgTankRound, player_1->getCoordX(true), player_1->getCoordY(true), player_1->dir);
 					Shell *shell = new Shell(aShell, player_1->getCoordX(true), player_1->getCoordY(true), player_1->dir);
+					entities.push_back(round);
 					entities.push_back(shell);
 				}
 
 				//.:: Tank round (player 2)
 				if (event.key.code == Keyboard::Space)
 				{
+					Entity *round = new Entity(aYelTankRound, player_2->getCoordX(true), player_2->getCoordY(true), player_2->dir);
 					Shell *shell = new Shell(aShell, player_2->getCoordX(true), player_2->getCoordY(true), player_2->dir);
+					entities.push_back(round);
 					entities.push_back(shell);
 				}
 			}
