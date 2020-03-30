@@ -7,10 +7,11 @@ class Shell : public Entity
 private:
 	float range;	// Max flight range
 	float dist;		// The way done
+	Animation animSpare;
 public:
 	//.:: Constructor ::::::::::::::::::::::
 	Shell();
-	Shell(Animation&, int, int, int);
+	Shell(Animation&, Animation&, int, int, int);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Shell();

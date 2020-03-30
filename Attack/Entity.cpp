@@ -39,7 +39,7 @@ void Entity::update(double time)
 	if (isExist)
 	{
 		if (anim.isEnd(time))
-			status = DEAD;
+			isExist = false;
 	}
 }
 

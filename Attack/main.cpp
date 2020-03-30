@@ -61,8 +61,8 @@ int main()
 
 	Animation burgundy_tank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
 	Animation yellow_tank(yTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation aBurgTankRound(tTankRound, burgTankRoundBuf,0, 0, 40, 36, 0.016, 8);
-	Animation aYelTankRound(tTankRound, yelTankRoundBuf,0, 0, 40, 36, 0.016, 8);
+	Animation aBurgTankRound(tTankRound, burgTankRoundBuf,0, 0, 40, 36, 0.015, 8);
+	Animation aYelTankRound(tTankRound, yelTankRoundBuf,0, 0, 40, 36, 0.015, 8);
 	Animation aShell(tShell, 28, 27, 8, 8, 0.01, 2);
 	Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.01, 7);
 
@@ -100,7 +100,7 @@ int main()
 				if (event.key.code == Keyboard::LControl)
 				{
 					Entity *round = new Entity(aBurgTankRound, player_1->getCoordX(true), player_1->getCoordY(true), player_1->dir);
-					Shell *shell = new Shell(aShell, player_1->getCoordX(true), player_1->getCoordY(true), player_1->dir);
+					Shell *shell = new Shell(aShell, aShellExp, player_1->getCoordX(true), player_1->getCoordY(true), player_1->dir);
 					entities.push_back(round);
 					entities.push_back(shell);
 				}
@@ -109,7 +109,7 @@ int main()
 				if (event.key.code == Keyboard::Space)
 				{
 					Entity *round = new Entity(aYelTankRound, player_2->getCoordX(true), player_2->getCoordY(true), player_2->dir);
-					Shell *shell = new Shell(aShell, player_2->getCoordX(true), player_2->getCoordY(true), player_2->dir);
+					Shell *shell = new Shell(aShell, aShellExp, player_2->getCoordX(true), player_2->getCoordY(true), player_2->dir);
 					entities.push_back(round);
 					entities.push_back(shell);
 				}
@@ -159,18 +159,6 @@ int main()
 		else player_2->playAnimation = false;
 
 #pragma endregion
-
-		//.:: add :::
-		for (auto e : entities)
-		{
-			if (e->name == "explosion" && e->status == DEAD) e->isExist = false;
-			if (e->name == "shell" && e->status == DEAD)
-			{
-				Entity *exp = new Entity(aShellExp, e->getCoordX(false), e->getCoordY(false), rand() % 360);
-				entities.push_back(exp);
-				e->isExist = false;
-			}
-		}
 
 		//.:: update entities :::
 		for (auto i  = entities.begin(); i != entities.end();)
