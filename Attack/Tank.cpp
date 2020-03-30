@@ -5,7 +5,7 @@
 
 using namespace sf;
 
-Tank::Tank() {}
+Tank::Tank() { name = "tank"; }
 
 Tank::~Tank() {}
 

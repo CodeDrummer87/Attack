@@ -36,20 +36,30 @@ int main()
 
 #pragma endregion
 
-#pragma region Textures | Animations | Sounds
+#pragma region Images | Textures | Animations | Sounds
 
-	Texture bTank, yTank, tShell;
-	bTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
-	yTank.loadFromFile("source/images/models/tanks/players/yellowTank.png");
+	Image iBurgundyTank, iYellowTank;
+	iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
+	iBurgundyTank.createMaskFromColor(Color::White);
+
+	iYellowTank.loadFromFile("source/images/models/tanks/players/yellowTank.png");
+	iYellowTank.createMaskFromColor(Color::White);
+
+	Texture bTank, yTank, tShell, tShellExp;
+	bTank.loadFromImage(iBurgundyTank);
+	yTank.loadFromImage(iYellowTank);
 	tShell.loadFromFile("source/images/models/tanks/shell.png");
+	tShellExp.loadFromFile("source/images/models/explosion/shell_explosion.png");
 
-	SoundBuffer bTankBuf, yTankBuf;
+	SoundBuffer bTankBuf, yTankBuf, shellExpBuf;
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
+	shellExpBuf.loadFromFile("source/sounds/explosion/shell_explosion.ogg");
 
 	Animation burgundy_tank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
 	Animation yellow_tank(yTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
 	Animation aShell(tShell, 28, 27, 8, 8, 0.01, 2);
+	Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.01, 7);
 
 #pragma endregion
 

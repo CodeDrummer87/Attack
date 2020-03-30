@@ -12,6 +12,7 @@ class Entity
 protected:
 	double x, y, dx, dy;		// coordinates: x, y; acceleration x and y;
 public:
+	string name;
 	int dir;
 	Animation anim;
 	bool playAnimation;

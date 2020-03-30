@@ -7,7 +7,7 @@
 using namespace std;
 using namespace sf;
 
-Entity::Entity() {}
+Entity::Entity() { name = "undefined"; }
 
 Entity::~Entity() {}
 

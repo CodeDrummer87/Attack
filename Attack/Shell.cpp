@@ -9,7 +9,7 @@ Shell::Shell(Animation &a, int X, int Y, int dir_)
 {
 	range = 400;
 	dist = 0.0;
-
+	name = "shell";
 	anim = a;
 	dir = dir_;
 	x = X;

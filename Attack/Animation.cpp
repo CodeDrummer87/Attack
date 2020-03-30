@@ -17,7 +17,7 @@ Animation::Animation(Texture &t, SoundBuffer &b , int x, int y, int width, int h
 
 	for (int i = 0; i < count; i++)
 	{	
-		frames.push_back(IntRect(x, y + height * i, width, height));
+		frames.push_back(IntRect(x + i * width, y, width, height));
 	}
 	sprite.setTexture(t);
 	sprite.setOrigin(width / 2, height / 2);
