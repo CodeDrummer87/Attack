@@ -28,4 +28,5 @@ public:
 	//.:: Methods_of_class ::::::::::::::::::
 	void update(double, bool, int);
 	bool isEnd(double);
+	void switchSound(bool);
 };

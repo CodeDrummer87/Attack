@@ -56,6 +56,7 @@ void Shell::update(double time)
 		{
 			status = WOUNDED;
 			anim = animSpare;
+			dir = rand() % 360;
 		}
 
 		x += dx;

@@ -89,3 +89,11 @@ bool Animation::isEnd(double time)
 {
 	return frame + speed * time >= frames.size();
 }
+
+void Animation::switchSound(bool on)
+{
+	if (on)
+		sound.stop();
+	else
+		sound.play();
+}

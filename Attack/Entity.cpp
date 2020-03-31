@@ -21,19 +21,6 @@ Entity::Entity(Animation &a, int X, int Y, int dir_)
 
 Entity::~Entity() {}
 
-void Entity::setEntity(Animation &a, int X, int Y, string n)
-{
-	dir = 1;
-	anim = a;
-	x = X;
-	y = Y;
-	anim.sprite.setPosition(x, y);
-	name = n;
-	playAnimation = false;
-	isExist = true;
-	status = ALIVE;
-}
-
 void Entity::update(double time)
 {
 	if (isExist)

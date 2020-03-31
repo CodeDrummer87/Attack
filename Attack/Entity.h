@@ -26,7 +26,6 @@ public:
 	virtual ~Entity();
 
 	//.:: Methods_of_class ::::::::::::::::::
-	virtual void setEntity(Animation&, int, int, string);	// animation and coordinates: x, y
 	virtual void update(double);
 	double getCoordX(bool);
 	double getCoordY(bool);
