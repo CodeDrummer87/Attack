@@ -7,13 +7,12 @@ using namespace sf;
 
 Tank::Tank() {}
 
-Tank::Tank(Animation &a, Animation &b, Animation &c, int X, int Y, int dir_, string name_)
+Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, string name_)
 {
 	name = name_;
 	dir = dir_;
 	anim = a;
 	animSpare = b;
-	inFlame = c;
 	x = X;
 	y = Y;
 	anim.sprite.setPosition(x, y);
@@ -28,7 +27,8 @@ void Tank::update(double time)
 {
 	if (destroyed)
 	{
-		anim.switchSound(false);
+		if(playAnimation)
+			playAnimation = false;
 	}
 	else
 	{
@@ -45,7 +45,8 @@ void Tank::update(double time)
 			{
 				if (anim.isEnd(time))
 				{
-					anim = inFlame;
+					anim.frames[0] = IntRect(0, 128, 64, 64);	//.:: Tank skeleton texture coordinates
+					anim.switchSound(false);
 					destroyed = true;
 				}
 			}

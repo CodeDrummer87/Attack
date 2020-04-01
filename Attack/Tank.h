@@ -8,13 +8,12 @@ class Tank : public Entity
 {
 private:
 	Animation animSpare;
-	Animation inFlame;
 	bool destroyed;
 	bool transition;
 public:
 	//.:: Constructors :::::::::::::::::::::
 	Tank();
-	Tank(Animation&, Animation&, Animation&, int, int, int, string);
+	Tank(Animation&, Animation&, int, int, int, string);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Tank();

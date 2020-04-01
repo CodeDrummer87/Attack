@@ -36,49 +36,95 @@ int main()
 
 #pragma endregion
 
-#pragma region Images | Textures | Animations | Sounds
+#pragma region Images | Textures | Sounds | Animations
 
-	Image iBurgundyTank, iYellowTank;
+#pragma region Images
+
+	Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank;
 	iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 	iBurgundyTank.createMaskFromColor(Color::White);
 
 	iYellowTank.loadFromFile("source/images/models/tanks/players/yellowTank.png");
 	iYellowTank.createMaskFromColor(Color::White);
 
-	Texture bTank, yTank, tTankRound, tShell, tShellExp;
+	iPurpleTank.loadFromFile("source/images/models/tanks/players/purpleTank.png");
+	iPurpleTank.createMaskFromColor(Color::White);
+
+	iLightBlueTank.loadFromFile("source/images/models/tanks/players/lightBlueTank.png");
+	iLightBlueTank.createMaskFromColor(Color::White);
+
+	iHemoTank.loadFromFile("source/images/models/tanks/players/hemoTank.png");
+	iHemoTank.createMaskFromColor(Color::White);
+
+#pragma endregion
+
+#pragma region Textures
+
+	Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp;
 	bTank.loadFromImage(iBurgundyTank);
 	yTank.loadFromImage(iYellowTank);
+	pTank.loadFromImage(iPurpleTank);
+	lbTank.loadFromImage(iLightBlueTank);
+	hTank.loadFromImage(iHemoTank);
 	tTankRound.loadFromFile("source/images/models/tanks/round.png");
 	tShell.loadFromFile("source/images/models/tanks/shell.png");
 	tShellExp.loadFromFile("source/images/models/explosion/shell_explosion.png");
 
-	SoundBuffer bTankBuf, yTankBuf,tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, shellExpBuf;
+#pragma endregion
+
+#pragma region Sounds
+
+	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf;
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
+	pTankBuf.loadFromFile("source/sounds/tank/movement/move_3.ogg");
 	tankExpBuf.loadFromFile("source/sounds/tank/explosion/tank_explosion.ogg");
 	burgTankRoundBuf.loadFromFile("source/sounds/tank/round/burgundy_tank_round.ogg");
+	purpTankRoundBuf.loadFromFile("source/sounds/tank/round/purple_tank_round.ogg");
 	yelTankRoundBuf.loadFromFile("source/sounds/tank/round/yellow_tank_round.ogg");
 	shellExpBuf.loadFromFile("source/sounds/explosion/shell_explosion.ogg");
 
+#pragma endregion
+
+#pragma region Animations
+
 	Animation burgundy_tank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
 	Animation explosion_burg_tank(bTank, tankExpBuf, 0, 64, 64, 64, 0.008, 11);
-	Animation burg_tank_inFlame(bTank, 0, 128, 64, 64, 0.009, 4);
+
 	Animation yellow_tank(yTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
 	Animation explosion_yel_tank(yTank, tankExpBuf, 0, 64, 64, 64, 0.008, 11);
-	Animation yel_tank_inFlame(yTank, 0, 128, 64, 64, 0.009, 4);
-	Animation aBurgTankRound(tTankRound, burgTankRoundBuf,0, 0, 40, 36, 0.015, 8);
-	Animation aYelTankRound(tTankRound, yelTankRoundBuf,0, 0, 40, 36, 0.015, 8);
+
+	Animation purple_tank(pTank, pTankBuf, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_purp_tank(pTank, tankExpBuf, 0, 64, 64, 64, 0.008, 12);
+
+	Animation lightblue_tank(lbTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_lb_tank(lbTank, tankExpBuf, 0, 64, 64, 64, 0.008, 12);
+
+	Animation hemo_tank(hTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_hemo_tank(hTank, tankExpBuf, 0, 64, 64, 64, 0.008, 12);
+
+	Animation aBurgTankRound(tTankRound, burgTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
+	Animation aYelTankRound(tTankRound, yelTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
+	Animation aPurpTankRound(tTankRound, purpTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
 	Animation aShell(tShell, 28, 27, 8, 8, 0.01, 2);
 	Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.01, 7);
 
 #pragma endregion
 
-	Tank *player_1 = new Tank(burgundy_tank, explosion_burg_tank, burg_tank_inFlame, 750, 800, 1, "player 1");
-	Tank *player_2= new Tank(yellow_tank, explosion_yel_tank, yel_tank_inFlame, 950, 800, 1, "player 2");
+#pragma endregion
+
+	Tank *player_1 = new Tank(burgundy_tank, explosion_burg_tank, 550, 800, 1, "player 1");
+	Tank *player_2 = new Tank(yellow_tank, explosion_yel_tank, 750, 800, 1, "player 2");
+	Tank *player_3 = new Tank(purple_tank, explosion_purp_tank, 950, 800, 1, "player 3");
+	Tank *player_4 = new Tank(lightblue_tank, explosion_lb_tank, 1150, 800, 1, "player_4");
+	Tank *player_5 = new Tank(hemo_tank, explosion_hemo_tank, 1350, 800, 1, "player_5");
 
 	vector<Entity*> entities;
 	entities.push_back(player_1);
 	entities.push_back(player_2);
+	entities.push_back(player_3);
+	entities.push_back(player_4);
+	entities.push_back(player_5);
 
 	Clock clock;
 
@@ -122,15 +168,40 @@ int main()
 					}
 				}
 
-				//.:: temporary tank destruction testing
-				//.:: Test Tank Explosion		!!!
-				if (event.key.code == Keyboard::Enter)
+				//.:: Tank round (player 3)
+				if (player_3->status != DEAD)
 				{
-					player_1->status = DEAD;
+					if (event.key.code == Keyboard::Enter)
+					{
+						Entity *round = new Entity(aPurpTankRound, player_3->getCoordX(true), player_3->getCoordY(true), player_3->dir);
+						Shell *shell = new Shell(aShell, aShellExp, player_3->getCoordX(true), player_3->getCoordY(true), player_3->dir);
+						entities.push_back(round);
+						entities.push_back(shell);
+					}
 				}
-				if (event.key.code == Keyboard::RControl)
+
+				//.:: Tank round (player 4)
+				if (player_4->status != DEAD)
 				{
-					player_2->status = DEAD;
+					if (event.key.code == Keyboard::RControl)
+					{
+						Entity *round = new Entity(aYelTankRound, player_4->getCoordX(true), player_4->getCoordY(true), player_4->dir);
+						Shell *shell = new Shell(aShell, aShellExp, player_4->getCoordX(true), player_4->getCoordY(true), player_4->dir);
+						entities.push_back(round);
+						entities.push_back(shell);
+					}
+				}
+
+				//.:: Tank round (player 5)
+				if (player_5->status != DEAD)
+				{
+					if (event.key.code == Keyboard::Backspace)
+					{
+						Entity *round = new Entity(aBurgTankRound, player_5->getCoordX(true), player_5->getCoordY(true), player_5->dir);
+						Shell *shell = new Shell(aShell, aShellExp, player_5->getCoordX(true), player_5->getCoordY(true), player_5->dir);
+						entities.push_back(round);
+						entities.push_back(shell);
+					}
 				}
 			}
 		}
@@ -164,23 +235,98 @@ int main()
 
 		if (player_2->status != DEAD)
 		{
-			if (Keyboard::isKeyPressed(Keyboard::I))
+			if (Keyboard::isKeyPressed(Keyboard::T))
 			{
 				player_2->accelerate(1, -0.08 * time);
 			}
-			else if (Keyboard::isKeyPressed(Keyboard::L))
+			else if (Keyboard::isKeyPressed(Keyboard::H))
 			{
 				player_2->accelerate(2, 0.08 * time);
 			}
-			else if (Keyboard::isKeyPressed(Keyboard::K))
+			else if (Keyboard::isKeyPressed(Keyboard::G))
 			{
 				player_2->accelerate(3, 0.08 * time);
 			}
-			else if (Keyboard::isKeyPressed(Keyboard::J))
+			else if (Keyboard::isKeyPressed(Keyboard::F))
 			{
 				player_2->accelerate(4, -0.08 * time);
 			}
 			else player_2->playAnimation = false;
+		}
+
+#pragma endregion
+
+#pragma region Third Player control
+
+		if (player_3->status != DEAD)
+		{
+			if (Keyboard::isKeyPressed(Keyboard::I))
+			{
+				player_3->accelerate(1, -0.08 * time);
+			}
+			else if (Keyboard::isKeyPressed(Keyboard::L))
+			{
+				player_3->accelerate(2, 0.08 * time);
+			}
+			else if (Keyboard::isKeyPressed(Keyboard::K))
+			{
+				player_3->accelerate(3, 0.08 * time);
+			}
+			else if (Keyboard::isKeyPressed(Keyboard::J))
+			{
+				player_3->accelerate(4, -0.08 * time);
+			}
+			else player_3->playAnimation = false;
+		}
+
+#pragma endregion
+
+#pragma region Forth Player control
+
+		if (player_4->status != DEAD)
+		{
+			if (Keyboard::isKeyPressed(Keyboard::Up))
+			{
+				player_4->accelerate(1, -0.08 * time);
+			}
+			else if (Keyboard::isKeyPressed(Keyboard::Right))
+			{
+				player_4->accelerate(2, 0.08 * time);
+			}
+			else if (Keyboard::isKeyPressed(Keyboard::Down))
+			{
+				player_4->accelerate(3, 0.08 * time);
+			}
+			else if (Keyboard::isKeyPressed(Keyboard::Left))
+			{
+				player_4->accelerate(4, -0.08 * time);
+			}
+			else player_4->playAnimation = false;
+		}
+
+#pragma endregion
+
+#pragma region Fifth Player control
+
+		if (player_5->status != DEAD)
+		{
+			if (Keyboard::isKeyPressed(Keyboard::Numpad8))
+			{
+				player_5->accelerate(1, -0.08 * time);
+			}
+			else if (Keyboard::isKeyPressed(Keyboard::Numpad6))
+			{
+				player_5->accelerate(2, 0.08 * time);
+			}
+			else if (Keyboard::isKeyPressed(Keyboard::Numpad5))
+			{
+				player_5->accelerate(3, 0.08 * time);
+			}
+			else if (Keyboard::isKeyPressed(Keyboard::Numpad4))
+			{
+				player_5->accelerate(4, -0.08 * time);
+			}
+			else player_5->playAnimation = false;
 		}
 
 #pragma endregion
