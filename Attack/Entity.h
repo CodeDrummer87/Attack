@@ -20,7 +20,8 @@ public:
 	Status status;
 	//.:: Constructors ::::::::::::::::::::::
 	Entity();
-	Entity(Animation&, int, int, int);
+	Entity(Animation&, int, int);		//.:: For Smoke
+	Entity(Animation&, int, int, int);	//.:: For Explosion
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Entity();

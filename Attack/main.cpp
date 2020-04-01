@@ -60,7 +60,7 @@ int main()
 
 #pragma region Textures
 
-	Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp;
+	Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke;
 	bTank.loadFromImage(iBurgundyTank);
 	yTank.loadFromImage(iYellowTank);
 	pTank.loadFromImage(iPurpleTank);
@@ -69,6 +69,7 @@ int main()
 	tTankRound.loadFromFile("source/images/models/tanks/round.png");
 	tShell.loadFromFile("source/images/models/tanks/shell.png");
 	tShellExp.loadFromFile("source/images/models/explosion/shell_explosion.png");
+	tSmoke.loadFromFile("source/images/models/smoke/smoke.png");
 
 #pragma endregion
 
@@ -89,10 +90,10 @@ int main()
 #pragma region Animations
 
 	Animation burgundy_tank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_burg_tank(bTank, tankExpBuf, 0, 64, 64, 64, 0.008, 11);
+	Animation explosion_burg_tank(bTank, tankExpBuf, 0, 64, 64, 64, 0.008, 12);
 
 	Animation yellow_tank(yTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_yel_tank(yTank, tankExpBuf, 0, 64, 64, 64, 0.008, 11);
+	Animation explosion_yel_tank(yTank, tankExpBuf, 0, 64, 64, 64, 0.008, 12);
 
 	Animation purple_tank(pTank, pTankBuf, 0, 0, 64, 64, 0.016, 2);
 	Animation explosion_purp_tank(pTank, tankExpBuf, 0, 64, 64, 64, 0.008, 12);
@@ -108,6 +109,7 @@ int main()
 	Animation aPurpTankRound(tTankRound, purpTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
 	Animation aShell(tShell, 28, 27, 8, 8, 0.01, 2);
 	Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.01, 7);
+	Animation aSmoke(tSmoke, 0, 0, 64, 64, 0.006, 5);
 
 #pragma endregion
 
@@ -195,12 +197,25 @@ int main()
 				//.:: Tank round (player 5)
 				if (player_5->status != DEAD)
 				{
-					if (event.key.code == Keyboard::Backspace)
+					if (event.key.code == Keyboard::Numpad7)
 					{
 						Entity *round = new Entity(aBurgTankRound, player_5->getCoordX(true), player_5->getCoordY(true), player_5->dir);
 						Shell *shell = new Shell(aShell, aShellExp, player_5->getCoordX(true), player_5->getCoordY(true), player_5->dir);
 						entities.push_back(round);
 						entities.push_back(shell);
+					}
+				}
+
+				//.:: Temporary code for testing tank explosion
+				if (player_1->status != DEAD)
+				{
+					if (event.key.code == Keyboard::LAlt)
+					{
+						player_1->status = WOUNDED;
+						player_2->status = WOUNDED;
+						player_3->status = WOUNDED;
+						player_4->status = WOUNDED;
+						player_5->status = WOUNDED;
 					}
 				}
 			}
@@ -210,6 +225,19 @@ int main()
 
 		if (player_1->status != DEAD)
 		{
+			if (player_1->status == WOUNDED)
+			{
+				if (!player_1->isSmoking)
+				{
+					player_1->isSmoking = true;
+					Entity *smoke = new Entity(aSmoke, player_1->getCoordX(false), player_1->getCoordY(false));
+					entities.push_back(smoke);
+				}
+
+				// temporary code for testing tank explosion
+				player_1->status = DEAD;
+			}
+
 			if (Keyboard::isKeyPressed(Keyboard::W))
 			{
 				player_1->accelerate(1, -0.08 * time);
@@ -235,6 +263,19 @@ int main()
 
 		if (player_2->status != DEAD)
 		{
+			if (player_2->status == WOUNDED)
+			{
+				if (!player_2->isSmoking)
+				{
+					player_2->isSmoking = true;
+					Entity *smoke = new Entity(aSmoke, player_2->getCoordX(false), player_2->getCoordY(false));
+					entities.push_back(smoke);
+				}
+
+				// temporary code for testing tank explosion
+				player_2->status = DEAD;
+			}
+
 			if (Keyboard::isKeyPressed(Keyboard::T))
 			{
 				player_2->accelerate(1, -0.08 * time);
@@ -260,6 +301,19 @@ int main()
 
 		if (player_3->status != DEAD)
 		{
+			if (player_3->status == WOUNDED)
+			{
+				if (!player_3->isSmoking)
+				{
+					player_3->isSmoking = true;
+					Entity *smoke = new Entity(aSmoke, player_3->getCoordX(false), player_3->getCoordY(false));
+					entities.push_back(smoke);
+				}
+
+				// temporary code for testing tank explosion
+				player_3->status = DEAD;
+			}
+
 			if (Keyboard::isKeyPressed(Keyboard::I))
 			{
 				player_3->accelerate(1, -0.08 * time);
@@ -285,6 +339,19 @@ int main()
 
 		if (player_4->status != DEAD)
 		{
+			if (player_4->status == WOUNDED)
+			{
+				if (!player_4->isSmoking)
+				{
+					player_4->isSmoking = true;
+					Entity *smoke = new Entity(aSmoke, player_4->getCoordX(false), player_4->getCoordY(false));
+					entities.push_back(smoke);
+				}
+
+				// temporary code for testing tank explosion
+				player_4->status = DEAD;
+			}
+
 			if (Keyboard::isKeyPressed(Keyboard::Up))
 			{
 				player_4->accelerate(1, -0.08 * time);
@@ -310,6 +377,19 @@ int main()
 
 		if (player_5->status != DEAD)
 		{
+			if (player_5->status == WOUNDED)
+			{
+				if (!player_5->isSmoking)
+				{
+					player_5->isSmoking = true;
+					Entity *smoke = new Entity(aSmoke, player_5->getCoordX(false), player_5->getCoordY(false));
+					entities.push_back(smoke);
+				}
+
+				// temporary code for testing tank explosion
+				player_5->status = DEAD;
+			}
+
 			if (Keyboard::isKeyPressed(Keyboard::Numpad8))
 			{
 				player_5->accelerate(1, -0.08 * time);

@@ -12,12 +12,12 @@ Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, string name_)
 	name = name_;
 	dir = dir_;
 	anim = a;
-	animSpare = b;
+	aTankExplosion = b;
 	x = X;
 	y = Y;
 	anim.sprite.setPosition(x, y);
 	status = ALIVE;
-	destroyed = transition = playAnimation = false;
+	isSmoking = destroyed = transition = playAnimation = false;
 	isExist = true;
 }
 
@@ -52,7 +52,7 @@ void Tank::update(double time)
 			}
 			else
 			{			
-				anim = animSpare;
+				anim = aTankExplosion;
 				transition = true;
 			}
 		}

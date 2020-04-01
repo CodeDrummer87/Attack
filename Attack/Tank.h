@@ -7,10 +7,12 @@ using namespace sf;
 class Tank : public Entity
 {
 private:
-	Animation animSpare;
+	Animation aTankExplosion;
 	bool destroyed;
 	bool transition;
 public:
+	bool isSmoking;
+
 	//.:: Constructors :::::::::::::::::::::
 	Tank();
 	Tank(Animation&, Animation&, int, int, int, string);

@@ -7,6 +7,19 @@
 using namespace sf;
 
 Entity::Entity() {}
+
+Entity::Entity(Animation &a, int X, int Y)
+{
+	name = "smoke";
+	anim = a;
+	dir = 1;
+	x = X;
+	y = Y;
+	anim.sprite.setPosition(x, y);
+	isExist = playAnimation = true;
+	status = ALIVE;
+}
+
 Entity::Entity(Animation &a, int X, int Y, int dir_)
 {
 	name = "explosion";
@@ -25,8 +38,9 @@ void Entity::update(double time)
 {
 	if (isExist)
 	{
-		if (anim.isEnd(time))
-			isExist = false;
+		if(name == "explosion")
+			if (anim.isEnd(time))
+				isExist = false;
 	}
 }
 
