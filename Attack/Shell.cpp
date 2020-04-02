@@ -7,6 +7,7 @@ Shell::Shell() {}
 
 Shell::Shell(Animation &a, Animation &b, int X, int Y, int dir_)
 {
+	tokenId = ++counter;
 	range = 400;
 	dist = 0.0;
 	name = "shell";

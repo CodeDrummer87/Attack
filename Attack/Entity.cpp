@@ -6,6 +6,8 @@
 
 using namespace sf;
 
+int Entity::counter = 0;
+
 Entity::Entity() {}
 
 Entity::Entity(Animation &a, int X, int Y)
@@ -41,6 +43,15 @@ void Entity::update(double time)
 		if(name == "explosion")
 			if (anim.isEnd(time))
 				isExist = false;
+	}
+}
+
+void Entity::collideEntities(Entity *e)
+{
+	if (anim.getRect(dir).intersects(e->anim.getRect(e->dir)))
+	{
+		//.:: Tank & Tank
+		//...
 	}
 }
 

@@ -107,7 +107,7 @@ int main()
 	Animation aBurgTankRound(tTankRound, burgTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
 	Animation aYelTankRound(tTankRound, yelTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
 	Animation aPurpTankRound(tTankRound, purpTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
-	Animation aShell(tShell, 28, 27, 8, 8, 0.01, 2);
+	Animation aShell(tShell, 0, 0, 64, 64, 0.01, 2);
 	Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.01, 7);
 	Animation aSmoke(tSmoke, 0, 0, 64, 64, 0.006, 5);
 
@@ -115,11 +115,11 @@ int main()
 
 #pragma endregion
 
-	Tank *player_1 = new Tank(burgundy_tank, explosion_burg_tank, 550, 800, 1, "player 1");
-	Tank *player_2 = new Tank(yellow_tank, explosion_yel_tank, 750, 800, 1, "player 2");
-	Tank *player_3 = new Tank(purple_tank, explosion_purp_tank, 950, 800, 1, "player 3");
-	Tank *player_4 = new Tank(lightblue_tank, explosion_lb_tank, 1150, 800, 1, "player_4");
-	Tank *player_5 = new Tank(hemo_tank, explosion_hemo_tank, 1350, 800, 1, "player_5");
+	Tank *player_1 = new Tank(burgundy_tank, explosion_burg_tank, 550, 800, 1, "player");
+	Tank *player_2 = new Tank(yellow_tank, explosion_yel_tank, 750, 800, 1, "player");
+	Tank *player_3 = new Tank(purple_tank, explosion_purp_tank, 950, 800, 1, "player");
+	Tank *player_4 = new Tank(lightblue_tank, explosion_lb_tank, 1150, 800, 1, "player");
+	Tank *player_5 = new Tank(hemo_tank, explosion_hemo_tank, 1350, 800, 1, "player");
 
 	vector<Entity*> entities;
 	entities.push_back(player_1);
@@ -205,19 +205,6 @@ int main()
 						entities.push_back(shell);
 					}
 				}
-
-				//.:: Temporary code for testing tank explosion
-				if (player_1->status != DEAD)
-				{
-					if (event.key.code == Keyboard::LAlt)
-					{
-						player_1->status = WOUNDED;
-						player_2->status = WOUNDED;
-						player_3->status = WOUNDED;
-						player_4->status = WOUNDED;
-						player_5->status = WOUNDED;
-					}
-				}
 			}
 		}
 
@@ -233,9 +220,6 @@ int main()
 					Entity *smoke = new Entity(aSmoke, player_1->getCoordX(false), player_1->getCoordY(false));
 					entities.push_back(smoke);
 				}
-
-				// temporary code for testing tank explosion
-				player_1->status = DEAD;
 			}
 
 			if (Keyboard::isKeyPressed(Keyboard::W))
@@ -271,9 +255,6 @@ int main()
 					Entity *smoke = new Entity(aSmoke, player_2->getCoordX(false), player_2->getCoordY(false));
 					entities.push_back(smoke);
 				}
-
-				// temporary code for testing tank explosion
-				player_2->status = DEAD;
 			}
 
 			if (Keyboard::isKeyPressed(Keyboard::T))
@@ -309,9 +290,6 @@ int main()
 					Entity *smoke = new Entity(aSmoke, player_3->getCoordX(false), player_3->getCoordY(false));
 					entities.push_back(smoke);
 				}
-
-				// temporary code for testing tank explosion
-				player_3->status = DEAD;
 			}
 
 			if (Keyboard::isKeyPressed(Keyboard::I))
@@ -347,9 +325,6 @@ int main()
 					Entity *smoke = new Entity(aSmoke, player_4->getCoordX(false), player_4->getCoordY(false));
 					entities.push_back(smoke);
 				}
-
-				// temporary code for testing tank explosion
-				player_4->status = DEAD;
 			}
 
 			if (Keyboard::isKeyPressed(Keyboard::Up))
@@ -385,9 +360,6 @@ int main()
 					Entity *smoke = new Entity(aSmoke, player_5->getCoordX(false), player_5->getCoordY(false));
 					entities.push_back(smoke);
 				}
-
-				// temporary code for testing tank explosion
-				player_5->status = DEAD;
 			}
 
 			if (Keyboard::isKeyPressed(Keyboard::Numpad8))
@@ -410,6 +382,13 @@ int main()
 		}
 
 #pragma endregion
+
+		//.:: collision :::
+		for (auto a : entities)
+			for (auto b : entities)
+				if(a->tokenId != b->tokenId)
+					if(a->name == "player" && b->name == "player")
+						a->collideEntities(b);
 
 		//.:: update entities :::
 		for (auto i  = entities.begin(); i != entities.end();)
