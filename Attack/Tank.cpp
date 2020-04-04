@@ -20,6 +20,11 @@ Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, string name_)
 	status = ALIVE;
 	isSmoking = destroyed = transition = playAnimation = false;
 	isExist = true;
+	
+	traffic.up.dir = true;	traffic.up.barId = 0;
+	traffic.right.dir = true;	traffic.right.barId = 0;
+	traffic.down.dir = true;	traffic.down.barId = 0;
+	traffic.left.dir = true;	traffic.left.barId = 0;
 }
 
 Tank::~Tank() {}
@@ -66,14 +71,42 @@ void Tank::accelerate(int dir_, double acc)
 	playAnimation = true;
 	dir = dir_;
 
-	if (dir % 2 == 0)
+	switch (dir)
 	{
-		dy = 0;
-		dx = acc;
+	case 1:
+		toLeft = toRight = 0;
+		if (traffic.up.dir)
+			toUp = acc;
+		else
+			toUp = 0;
+		break;
+
+	case 2:
+		toUp = toDown = 0;
+		if (traffic.right.dir)
+			toRight = acc;
+		else
+			toRight = 0;
+		break;
+
+	case 3:
+		toLeft = toRight = 0;
+		if (traffic.down.dir)
+			toDown = acc;
+		else
+			toDown = 0;
+		break;
+
+	case 4:
+		toUp = toDown = 0;
+		if (traffic.left.dir)
+			toLeft = acc;
+		else
+			toLeft = 0;
+		break;
 	}
-	else
-	{
-		dx = 0;
-		dy = acc;
-	}
+
+	dx += toLeft + toRight;
+	dy += toUp + toDown;
+	toUp = toRight = toDown = toLeft = 0;
 }
