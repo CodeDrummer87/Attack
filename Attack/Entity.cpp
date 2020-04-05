@@ -53,12 +53,26 @@ void Entity::collideEntities(Entity *e)
 		switch (dir)
 		{
 		case 1:
+			if (dy != 0)
+			{
+				if (traffic.up.barId == 0 && checkBarrierId(1, e->tokenId))
+				{
+					traffic.up.dir = false;
+					traffic.up.barId = e->tokenId;
+
+					if (e->dy == 0)
+					{
+						e->traffic.down.dir = false;
+						e->traffic.down.barId = tokenId;
+					}
+				}
+			}
 			break;
 
 		case 2:
 			if (dx != 0)
 			{
-				if (traffic.right.barId == 0 && checkBarrierId(2, e->tokenId) == true)
+				if (traffic.right.barId == 0 && checkBarrierId(2, e->tokenId))
 				{
 					traffic.right.dir = false;
 					traffic.right.barId = e->tokenId;
@@ -73,12 +87,26 @@ void Entity::collideEntities(Entity *e)
 			break;
 
 		case 3:
+			if (dy != 0)
+			{
+				if (traffic.down.barId == 0 && checkBarrierId(3, e->tokenId))
+				{
+					traffic.down.dir = false;
+					traffic.down.barId = e->tokenId;
+
+					if (e->dy == 0)
+					{
+						e->traffic.up.dir = false;
+						e->traffic.up.barId = tokenId;
+					}
+				}
+			}
 			break;
 
 		case 4:
 			if (dx != 0)
 			{
-				if (traffic.left.barId == 0 && checkBarrierId(4, e->tokenId) == true)
+				if (traffic.left.barId == 0 && checkBarrierId(4, e->tokenId))
 				{
 					traffic.left.dir = false;
 					traffic.left.barId = e->tokenId;
@@ -111,19 +139,27 @@ void Entity::collideEntities(Entity *e)
 			}
 		}
 
-		if (traffic.up.barId == e->tokenId)
+		if (!traffic.up.dir)
 		{
-			traffic.up.barId = 0;	traffic.up.dir = true;
+			if (traffic.up.barId == e->tokenId)
+			{
+				traffic.up.barId = 0;	traffic.up.dir = true;
+			}
 		}
 
-		if (traffic.down.barId == e->tokenId)
+		if (!traffic.down.dir)
 		{
-			traffic.down.barId = 0;	traffic.down.dir = true;
+			if (traffic.down.barId == e->tokenId)
+			{
+				traffic.down.barId = 0;	traffic.down.dir = true;
+			}
 		}
 	}
 }
-/// Метод проверяет наличие повторного ID другого танка в системе Traffic по трём направлениям.
-/// Одно направление исключается из проверки (первый параметр метода).
+
+/// The method exists to protect against repeated intersection
+/// with an already intersecting object.
+/// Checking goes in all directions except one (first parameter)
 bool Entity::checkBarrierId(int dir, int id)
 {
 	bool check = true;
