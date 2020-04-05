@@ -56,10 +56,19 @@ void Entity::collideEntities(Entity *e)
 			break;
 
 		case 2:
-			if (checkBarrierId(e->tokenId))
+			if (dx != 0)
 			{
-				traffic.right.dir = false;			e->traffic.left.dir = false;
-				traffic.right.barId = e->tokenId;	e->traffic.left.barId = tokenId;
+				if (traffic.right.barId == 0 && checkBarrierId(2, e->tokenId) == true)
+				{
+					traffic.right.dir = false;
+					traffic.right.barId = e->tokenId;
+
+					if (e->dx == 0)
+					{
+						e->traffic.left.dir = false;
+						e->traffic.left.barId = tokenId;
+					}
+				}
 			}
 			break;
 
@@ -67,24 +76,39 @@ void Entity::collideEntities(Entity *e)
 			break;
 
 		case 4:
-			if (checkBarrierId(e->tokenId))
+			if (dx != 0)
 			{
-				traffic.left.dir = false;			e->traffic.right.dir = false;
-				traffic.left.barId = e->tokenId;	e->traffic.right.barId = tokenId;
+				if (traffic.left.barId == 0 && checkBarrierId(4, e->tokenId) == true)
+				{
+					traffic.left.dir = false;
+					traffic.left.barId = e->tokenId;
+
+					if (e->dx == 0)
+					{
+						e->traffic.right.dir = false;
+						e->traffic.right.barId = tokenId;
+					}
+				}
 			}
 			break;
 		}
 	}
 	else
 	{
-		if (traffic.right.barId == e->tokenId)
-		{
-			traffic.right.barId = 0;	traffic.right.dir = true;
+		if (!traffic.right.dir)
+		{		
+			if (traffic.right.barId == e->tokenId)
+			{
+				traffic.right.barId = 0;	traffic.right.dir = true;
+			}
 		}
 
-		if (traffic.left.barId == e->tokenId)
+		if (!traffic.left.dir)
 		{
-			traffic.left.barId = 0;	traffic.left.dir = true;
+			if (traffic.left.barId == e->tokenId)
+			{
+				traffic.left.barId = 0;		traffic.left.dir = true;
+			}
 		}
 
 		if (traffic.up.barId == e->tokenId)
@@ -98,19 +122,21 @@ void Entity::collideEntities(Entity *e)
 		}
 	}
 }
-
-bool Entity::checkBarrierId(int id)
+/// Метод проверяет наличие повторного ID другого танка в системе Traffic по трём направлениям.
+/// Одно направление исключается из проверки (первый параметр метода).
+bool Entity::checkBarrierId(int dir, int id)
 {
-	if (traffic.up.barId == id)
-		return false;
-	if (traffic.right.barId == id)
-		return false;
-	if (traffic.down.barId == id)
-		return false;
-	if (traffic.left.barId == id)
-		return false;
+	bool check = true;
+	if (traffic.up.dir != dir && traffic.up.barId == id)
+		check = false;
+	else if (traffic.right.dir != dir && traffic.right.barId == id)
+		check = false;
+	else if (traffic.down.dir != dir && traffic.down.barId == id)
+		check = false;
+	else if (traffic.left.dir != dir && traffic.left.barId == id)
+		check = false;
 
-	return true;
+	return check;
 }
 
 double Entity::getCoordX(bool isShell)

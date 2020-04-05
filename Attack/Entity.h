@@ -47,7 +47,7 @@ public:
 	//.:: Methods_of_class ::::::::::::::::::
 	virtual void update(double);
 	virtual void collideEntities(Entity*);
-	bool checkBarrierId(int);
+	bool checkBarrierId(int, int);
 	double getCoordX(bool);
 	double getCoordY(bool);
 	void draw(RenderWindow&);
