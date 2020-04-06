@@ -30,6 +30,7 @@ protected:
 public:
 	int tokenId;
 	string name;
+	string army;
 	int dir;
 	Animation anim;
 	bool playAnimation;

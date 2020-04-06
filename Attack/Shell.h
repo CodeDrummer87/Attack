@@ -11,7 +11,7 @@ private:
 public:
 	//.:: Constructor ::::::::::::::::::::::
 	Shell();
-	Shell(Animation&, Animation&, int, int, int);
+	Shell(Animation&, Animation&, int, int, int, string);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Shell();

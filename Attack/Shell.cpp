@@ -5,12 +5,13 @@
 
 Shell::Shell() {}
 
-Shell::Shell(Animation &a, Animation &b, int X, int Y, int dir_)
+Shell::Shell(Animation &a, Animation &b, int X, int Y, int dir_, string army_)
 {
 	tokenId = ++counter;
 	range = 400;
 	dist = 0.0;
 	name = "shell";
+	army = army_;
 	anim = a;
 	animSpare = b;
 	dir = dir_;

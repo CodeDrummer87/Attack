@@ -40,7 +40,7 @@ int main()
 
 #pragma region Images
 
-	Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank;
+	Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank, iEnemy_1;
 	iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 	iBurgundyTank.createMaskFromColor(Color::White);
 
@@ -56,11 +56,14 @@ int main()
 	iHemoTank.loadFromFile("source/images/models/tanks/players/hemoTank.png");
 	iHemoTank.createMaskFromColor(Color::White);
 
+	iEnemy_1.loadFromFile("source/images/models/tanks/enemies/enemy_1.png");
+	iEnemy_1.createMaskFromColor(Color::White);
+
 #pragma endregion
 
 #pragma region Textures
 
-	Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke;
+	Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke, tEnemy_1;
 	bTank.loadFromImage(iBurgundyTank);
 	yTank.loadFromImage(iYellowTank);
 	pTank.loadFromImage(iPurpleTank);
@@ -70,12 +73,13 @@ int main()
 	tShell.loadFromFile("source/images/models/tanks/shell.png");
 	tShellExp.loadFromFile("source/images/models/explosion/shell_explosion.png");
 	tSmoke.loadFromFile("source/images/models/smoke/smoke.png");
+	tEnemy_1.loadFromImage(iEnemy_1);
 
 #pragma endregion
 
 #pragma region Sounds
 
-	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf;
+	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf, enemy_1Buf, en_1RoundBuf;
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
 	pTankBuf.loadFromFile("source/sounds/tank/movement/move_3.ogg");
@@ -84,6 +88,8 @@ int main()
 	purpTankRoundBuf.loadFromFile("source/sounds/tank/round/purple_tank_round.ogg");
 	yelTankRoundBuf.loadFromFile("source/sounds/tank/round/yellow_tank_round.ogg");
 	shellExpBuf.loadFromFile("source/sounds/explosion/shell_explosion.ogg");
+	enemy_1Buf.loadFromFile("source/sounds/tank/movement/move_5.ogg");
+	en_1RoundBuf.loadFromFile("source/sounds/tank/round/enemy1_round.ogg");
 
 #pragma endregion
 
@@ -111,6 +117,10 @@ int main()
 	Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.01, 7);
 	Animation aSmoke(tSmoke, 0, 0, 64, 64, 0.006, 5);
 
+	Animation enemy_1(tEnemy_1, enemy_1Buf, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_enemy_1(tEnemy_1, tankExpBuf, 0, 64, 64, 64, 0.008, 12);
+	Animation aEnemy1Round(tTankRound, en_1RoundBuf, 0, 0, 40, 36, 0.015, 8);
+
 #pragma endregion
 
 #pragma endregion
@@ -127,6 +137,17 @@ int main()
 	entities.push_back(player_3);
 	entities.push_back(player_4);
 	entities.push_back(player_5);
+
+	//.:: Enemies ::: (temporary code for testing)
+	Tank* squad[5];
+	int enemyPositionX = 550;
+	for (int i = 0; i < 5; i++)
+	{
+		squad[i] = new Tank(enemy_1, explosion_enemy_1, enemyPositionX, 300, 3, "enemy");
+		entities.push_back(squad[i]);
+		enemyPositionX += 200;
+	}
+	//--------------------------------------------
 
 	Clock clock;
 
@@ -152,7 +173,7 @@ int main()
 					if (event.key.code == Keyboard::LControl)
 					{
 						Entity *round = new Entity(aBurgTankRound, player_1->getCoordX(true), player_1->getCoordY(true), player_1->dir);
-						Shell *shell = new Shell(aShell, aShellExp, player_1->getCoordX(true), player_1->getCoordY(true), player_1->dir);
+						Shell *shell = new Shell(aShell, aShellExp, player_1->getCoordX(true), player_1->getCoordY(true), player_1->dir, player_1->army);
 						entities.push_back(round);
 						entities.push_back(shell);
 					}
@@ -164,7 +185,7 @@ int main()
 					if (event.key.code == Keyboard::Space)
 					{
 						Entity *round = new Entity(aYelTankRound, player_2->getCoordX(true), player_2->getCoordY(true), player_2->dir);
-						Shell *shell = new Shell(aShell, aShellExp, player_2->getCoordX(true), player_2->getCoordY(true), player_2->dir);
+						Shell *shell = new Shell(aShell, aShellExp, player_2->getCoordX(true), player_2->getCoordY(true), player_2->dir, player_2->army);
 						entities.push_back(round);
 						entities.push_back(shell);
 					}
@@ -176,7 +197,7 @@ int main()
 					if (event.key.code == Keyboard::Enter)
 					{
 						Entity *round = new Entity(aPurpTankRound, player_3->getCoordX(true), player_3->getCoordY(true), player_3->dir);
-						Shell *shell = new Shell(aShell, aShellExp, player_3->getCoordX(true), player_3->getCoordY(true), player_3->dir);
+						Shell *shell = new Shell(aShell, aShellExp, player_3->getCoordX(true), player_3->getCoordY(true), player_3->dir, player_3->army);
 						entities.push_back(round);
 						entities.push_back(shell);
 					}
@@ -188,7 +209,7 @@ int main()
 					if (event.key.code == Keyboard::RControl)
 					{
 						Entity *round = new Entity(aYelTankRound, player_4->getCoordX(true), player_4->getCoordY(true), player_4->dir);
-						Shell *shell = new Shell(aShell, aShellExp, player_4->getCoordX(true), player_4->getCoordY(true), player_4->dir);
+						Shell *shell = new Shell(aShell, aShellExp, player_4->getCoordX(true), player_4->getCoordY(true), player_4->dir, player_4->army);
 						entities.push_back(round);
 						entities.push_back(shell);
 					}
@@ -200,11 +221,21 @@ int main()
 					if (event.key.code == Keyboard::Numpad7)
 					{
 						Entity *round = new Entity(aBurgTankRound, player_5->getCoordX(true), player_5->getCoordY(true), player_5->dir);
-						Shell *shell = new Shell(aShell, aShellExp, player_5->getCoordX(true), player_5->getCoordY(true), player_5->dir);
+						Shell *shell = new Shell(aShell, aShellExp, player_5->getCoordX(true), player_5->getCoordY(true), player_5->dir, player_5->army);
 						entities.push_back(round);
 						entities.push_back(shell);
 					}
 				}
+
+				//.:: Temporary code for testing :::
+				if (event.key.code == Keyboard::BackSpace)
+				{
+					Entity *round1 = new Entity(aEnemy1Round, squad[2]->getCoordX(true), squad[2]->getCoordY(true), squad[2]->dir);
+					Shell *shell1 = new Shell(aShell, aShellExp, squad[2]->getCoordX(true), squad[2]->getCoordY(true), squad[2]->dir, squad[2]->army);
+					entities.push_back(round1);
+					entities.push_back(shell1);
+				}
+				//-----------------------------------
 			}
 		}
 
@@ -387,7 +418,7 @@ int main()
 		for (auto a : entities)
 			for (auto b : entities)
 				if(a->tokenId != b->tokenId)
-					if(a->name == "player" && b->name == "player")
+					if(a->name == "tank" && b->name == "tank")
 						a->collideEntities(b);
 
 		//.:: update entities :::
