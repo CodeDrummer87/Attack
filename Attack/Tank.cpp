@@ -20,9 +20,9 @@ Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, string army_)
 	anim.sprite.setPosition(x, y);
 	status = ALIVE;
 	isSmoking = destroyed = transition = playAnimation = false;
-	isExist = true;
+	isExist  = isShot = true;
 	
-	traffic.up.dir = true;	traffic.up.barId = 0;
+	traffic.up.dir = true;		traffic.up.barId = 0;
 	traffic.right.dir = true;	traffic.right.barId = 0;
 	traffic.down.dir = true;	traffic.down.barId = 0;
 	traffic.left.dir = true;	traffic.left.barId = 0;
@@ -43,6 +43,12 @@ void Tank::update(double time)
 		{
 			x += dx;
 			y += dy;
+			dx = dy = 0;
+		}
+		else if (status == WOUNDED)
+		{
+			x += dx / 1.5;
+			y += dy / 1.5;
 			dx = dy = 0;
 		}
 		else if (status == DEAD)

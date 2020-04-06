@@ -110,3 +110,9 @@ FloatRect Animation::getRect(int dir)
 	default: return rect;
 	}
 }
+
+FloatRect Animation::getShellRect()
+{
+	FloatRect rect = sprite.getGlobalBounds();
+	return FloatRect(rect.left, rect.top, 8, 8);
+}

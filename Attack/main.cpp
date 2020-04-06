@@ -147,6 +147,7 @@ int main()
 		entities.push_back(squad[i]);
 		enemyPositionX += 200;
 	}
+	int er = 0;		//enemy round
 	//--------------------------------------------
 
 	Clock clock;
@@ -172,10 +173,15 @@ int main()
 				{
 					if (event.key.code == Keyboard::LControl)
 					{
-						Entity *round = new Entity(aBurgTankRound, player_1->getCoordX(true), player_1->getCoordY(true), player_1->dir);
-						Shell *shell = new Shell(aShell, aShellExp, player_1->getCoordX(true), player_1->getCoordY(true), player_1->dir, player_1->army);
-						entities.push_back(round);
-						entities.push_back(shell);
+						if (player_1->isShot)
+						{
+							player_1->isShot = false;
+
+							Entity *round = new Entity(aBurgTankRound, player_1->getCoordX(true), player_1->getCoordY(true), player_1->dir);
+							Shell *shell = new Shell(aShell, aShellExp, player_1);
+							entities.push_back(round);
+							entities.push_back(shell);
+						}
 					}
 				}
 
@@ -184,10 +190,15 @@ int main()
 				{
 					if (event.key.code == Keyboard::Space)
 					{
-						Entity *round = new Entity(aYelTankRound, player_2->getCoordX(true), player_2->getCoordY(true), player_2->dir);
-						Shell *shell = new Shell(aShell, aShellExp, player_2->getCoordX(true), player_2->getCoordY(true), player_2->dir, player_2->army);
-						entities.push_back(round);
-						entities.push_back(shell);
+						if (player_2->isShot)
+						{
+							player_2->isShot = false;
+
+							Entity *round = new Entity(aYelTankRound, player_2->getCoordX(true), player_2->getCoordY(true), player_2->dir);
+							Shell *shell = new Shell(aShell, aShellExp, player_2);
+							entities.push_back(round);
+							entities.push_back(shell);
+						}
 					}
 				}
 
@@ -196,10 +207,15 @@ int main()
 				{
 					if (event.key.code == Keyboard::Enter)
 					{
-						Entity *round = new Entity(aPurpTankRound, player_3->getCoordX(true), player_3->getCoordY(true), player_3->dir);
-						Shell *shell = new Shell(aShell, aShellExp, player_3->getCoordX(true), player_3->getCoordY(true), player_3->dir, player_3->army);
-						entities.push_back(round);
-						entities.push_back(shell);
+						if (player_3->isShot)
+						{
+							player_3->isShot = false;
+
+							Entity *round = new Entity(aPurpTankRound, player_3->getCoordX(true), player_3->getCoordY(true), player_3->dir);
+							Shell *shell = new Shell(aShell, aShellExp, player_3);
+							entities.push_back(round);
+							entities.push_back(shell);
+						}
 					}
 				}
 
@@ -208,10 +224,15 @@ int main()
 				{
 					if (event.key.code == Keyboard::RControl)
 					{
-						Entity *round = new Entity(aYelTankRound, player_4->getCoordX(true), player_4->getCoordY(true), player_4->dir);
-						Shell *shell = new Shell(aShell, aShellExp, player_4->getCoordX(true), player_4->getCoordY(true), player_4->dir, player_4->army);
-						entities.push_back(round);
-						entities.push_back(shell);
+						if (player_4->isShot)
+						{
+							player_4->isShot = false;
+
+							Entity *round = new Entity(aYelTankRound, player_4->getCoordX(true), player_4->getCoordY(true), player_4->dir);
+							Shell *shell = new Shell(aShell, aShellExp, player_4);
+							entities.push_back(round);
+							entities.push_back(shell);
+						}
 					}
 				}
 
@@ -220,20 +241,34 @@ int main()
 				{
 					if (event.key.code == Keyboard::Numpad7)
 					{
-						Entity *round = new Entity(aBurgTankRound, player_5->getCoordX(true), player_5->getCoordY(true), player_5->dir);
-						Shell *shell = new Shell(aShell, aShellExp, player_5->getCoordX(true), player_5->getCoordY(true), player_5->dir, player_5->army);
-						entities.push_back(round);
-						entities.push_back(shell);
+						if (player_5->isShot)
+						{
+							player_5->isShot = false;
+
+							Entity *round = new Entity(aBurgTankRound, player_5->getCoordX(true), player_5->getCoordY(true), player_5->dir);
+							Shell *shell = new Shell(aShell, aShellExp, player_5);
+							entities.push_back(round);
+							entities.push_back(shell);
+						}
 					}
 				}
 
 				//.:: Temporary code for testing :::
 				if (event.key.code == Keyboard::BackSpace)
 				{
-					Entity *round1 = new Entity(aEnemy1Round, squad[2]->getCoordX(true), squad[2]->getCoordY(true), squad[2]->dir);
-					Shell *shell1 = new Shell(aShell, aShellExp, squad[2]->getCoordX(true), squad[2]->getCoordY(true), squad[2]->dir, squad[2]->army);
-					entities.push_back(round1);
-					entities.push_back(shell1);
+					if (squad[er]->status != DEAD)
+					{
+						if (squad[er]->isShot)
+						{
+							squad[er]->isShot = false;
+							Entity *round1 = new Entity(aEnemy1Round, squad[er]->getCoordX(true), squad[er]->getCoordY(true), squad[er]->dir);
+							Shell *shell1 = new Shell(aShell, aShellExp, squad[er]);
+							entities.push_back(round1);
+							entities.push_back(shell1);
+						}
+					}
+					++er;
+					if (er >= 5) er = 0;
 				}
 				//-----------------------------------
 			}
@@ -417,9 +452,13 @@ int main()
 		//.:: collision :::
 		for (auto a : entities)
 			for (auto b : entities)
-				if(a->tokenId != b->tokenId)
-					if(a->name == "tank" && b->name == "tank")
+				if (a->tokenId != b->tokenId)
+				{
+					if (a->name == "tank" && b->name == "tank" || b->name == "destroyed")
 						a->collideEntities(b);
+					if (a->name == "shell" && b->name == "tank" || b->name == "destroyed")
+						a->toDamageEntity(b);
+				}
 
 		//.:: update entities :::
 		for (auto i  = entities.begin(); i != entities.end();)

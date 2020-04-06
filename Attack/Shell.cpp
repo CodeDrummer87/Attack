@@ -5,21 +5,21 @@
 
 Shell::Shell() {}
 
-Shell::Shell(Animation &a, Animation &b, int X, int Y, int dir_, string army_)
+Shell::Shell(Animation &a, Animation &b, Tank* tank)
 {
-	tokenId = ++counter;
+	tokenId = tank->tokenId;
 	range = 400;
 	dist = 0.0;
 	name = "shell";
-	army = army_;
+	army = tank->army;
 	anim = a;
 	animSpare = b;
-	dir = dir_;
-	x = X;
-	y = Y;
+	dir = tank->dir;
+	own = tank;
+	x = tank->getCoordX(true);
+	y = tank->getCoordY(true);
 	anim.sprite.setPosition(x, y);
-	playAnimation = true;
-	isExist = true;
+	playAnimation = isExist = true;
 	status = ALIVE;
 }
 
@@ -70,5 +70,8 @@ void Shell::update(double time)
 			status = DEAD;
 	}
 	else
+	{
 		isExist = false;
+		own->isShot = true;
+	}
 }

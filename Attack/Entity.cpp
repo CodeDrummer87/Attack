@@ -157,6 +157,14 @@ void Entity::collideEntities(Entity *e)
 	}
 }
 
+void Entity::toDamageEntity(Entity *e)
+{
+	if (anim.getShellRect().intersects(e->anim.getRect(e->dir)))
+	{
+		// to Damage tank
+	}
+}
+
 /// The method exists to protect against repeated intersection
 /// with an already intersecting object.
 /// Checking goes in all directions except one (first parameter)

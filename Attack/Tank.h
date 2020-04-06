@@ -11,6 +11,7 @@ private:
 	bool destroyed;
 	bool transition;
 public:
+	bool isShot;
 	bool isSmoking;
 
 	//.:: Constructors :::::::::::::::::::::
