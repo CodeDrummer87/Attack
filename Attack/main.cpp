@@ -177,7 +177,7 @@ int main()
 						{
 							player_1->isShot = false;
 
-							Entity *round = new Entity(aBurgTankRound, player_1->getCoordX(true), player_1->getCoordY(true), player_1->dir);
+							Entity *round = new Entity(aBurgTankRound, player_1, "explosion");
 							Shell *shell = new Shell(aShell, aShellExp, player_1);
 							entities.push_back(round);
 							entities.push_back(shell);
@@ -194,7 +194,7 @@ int main()
 						{
 							player_2->isShot = false;
 
-							Entity *round = new Entity(aYelTankRound, player_2->getCoordX(true), player_2->getCoordY(true), player_2->dir);
+							Entity *round = new Entity(aYelTankRound, player_2, "explosion");
 							Shell *shell = new Shell(aShell, aShellExp, player_2);
 							entities.push_back(round);
 							entities.push_back(shell);
@@ -211,7 +211,7 @@ int main()
 						{
 							player_3->isShot = false;
 
-							Entity *round = new Entity(aPurpTankRound, player_3->getCoordX(true), player_3->getCoordY(true), player_3->dir);
+							Entity *round = new Entity(aPurpTankRound, player_3, "explosion");
 							Shell *shell = new Shell(aShell, aShellExp, player_3);
 							entities.push_back(round);
 							entities.push_back(shell);
@@ -228,7 +228,7 @@ int main()
 						{
 							player_4->isShot = false;
 
-							Entity *round = new Entity(aYelTankRound, player_4->getCoordX(true), player_4->getCoordY(true), player_4->dir);
+							Entity *round = new Entity(aYelTankRound, player_4, "explosion");
 							Shell *shell = new Shell(aShell, aShellExp, player_4);
 							entities.push_back(round);
 							entities.push_back(shell);
@@ -245,7 +245,7 @@ int main()
 						{
 							player_5->isShot = false;
 
-							Entity *round = new Entity(aBurgTankRound, player_5->getCoordX(true), player_5->getCoordY(true), player_5->dir);
+							Entity *round = new Entity(aBurgTankRound, player_5, "explosion");
 							Shell *shell = new Shell(aShell, aShellExp, player_5);
 							entities.push_back(round);
 							entities.push_back(shell);
@@ -261,7 +261,7 @@ int main()
 						if (squad[er]->isShot)
 						{
 							squad[er]->isShot = false;
-							Entity *round1 = new Entity(aEnemy1Round, squad[er]->getCoordX(true), squad[er]->getCoordY(true), squad[er]->dir);
+							Entity *round1 = new Entity(aEnemy1Round, squad[er], "explosion");
 							Shell *shell1 = new Shell(aShell, aShellExp, squad[er]);
 							entities.push_back(round1);
 							entities.push_back(shell1);
@@ -283,7 +283,7 @@ int main()
 				if (!player_1->isSmoking)
 				{
 					player_1->isSmoking = true;
-					Entity *smoke = new Entity(aSmoke, player_1->getCoordX(false), player_1->getCoordY(false));
+					Entity *smoke = new Entity(aSmoke, player_1, "smoke");
 					entities.push_back(smoke);
 				}
 			}
@@ -318,7 +318,7 @@ int main()
 				if (!player_2->isSmoking)
 				{
 					player_2->isSmoking = true;
-					Entity *smoke = new Entity(aSmoke, player_2->getCoordX(false), player_2->getCoordY(false));
+					Entity *smoke = new Entity(aSmoke, player_2, "smoke");
 					entities.push_back(smoke);
 				}
 			}
@@ -353,7 +353,7 @@ int main()
 				if (!player_3->isSmoking)
 				{
 					player_3->isSmoking = true;
-					Entity *smoke = new Entity(aSmoke, player_3->getCoordX(false), player_3->getCoordY(false));
+					Entity *smoke = new Entity(aSmoke, player_3, "smoke");
 					entities.push_back(smoke);
 				}
 			}
@@ -388,7 +388,7 @@ int main()
 				if (!player_4->isSmoking)
 				{
 					player_4->isSmoking = true;
-					Entity *smoke = new Entity(aSmoke, player_4->getCoordX(false), player_4->getCoordY(false));
+					Entity *smoke = new Entity(aSmoke, player_4, "smoke");
 					entities.push_back(smoke);
 				}
 			}
@@ -423,7 +423,7 @@ int main()
 				if (!player_5->isSmoking)
 				{
 					player_5->isSmoking = true;
-					Entity *smoke = new Entity(aSmoke, player_5->getCoordX(false), player_5->getCoordY(false));
+					Entity *smoke = new Entity(aSmoke, player_5, "smoke");
 					entities.push_back(smoke);
 				}
 			}
@@ -456,8 +456,6 @@ int main()
 				{
 					if (a->name == "tank" && b->name == "tank" || b->name == "destroyed")
 						a->collideEntities(b);
-					if (a->name == "shell" && b->name == "tank" || b->name == "destroyed")
-						a->toDamageEntity(b);
 				}
 
 		//.:: update entities :::

@@ -23,6 +23,8 @@ struct Traffic
 
 class Entity
 {
+private:
+	Entity *own;
 protected:
 	static int counter;
 	double x, y, dx, dy;		// coordinates: x, y; acceleration x and y;
@@ -39,8 +41,7 @@ public:
 	Traffic traffic;
 	//.:: Constructors ::::::::::::::::::::::
 	Entity();
-	Entity(Animation&, int, int);		//.:: For Smoke
-	Entity(Animation&, int, int, int);	//.:: For Explosion
+	Entity(Animation&, Entity*, string);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Entity();
@@ -48,7 +49,6 @@ public:
 	//.:: Methods_of_class ::::::::::::::::::
 	virtual void update(double);
 	void collideEntities(Entity*);
-	void toDamageEntity(Entity *);
 	bool checkBarrierId(int, int);
 	double getCoordX(bool);
 	double getCoordY(bool);

@@ -51,7 +51,7 @@ void Tank::update(double time)
 			y += dy / 1.5;
 			dx = dy = 0;
 		}
-		else if (status == DEAD)
+		else
 		{
 			name = "destroyed";
 			playAnimation = true;

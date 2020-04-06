@@ -3,32 +3,33 @@
 #include "Entity.h"
 #include "Animation.h"
 #include <SFML\Graphics.hpp>
+#include <iostream>
 
+using namespace std;
 using namespace sf;
 
 int Entity::counter = 0;
 
 Entity::Entity() {}
 
-Entity::Entity(Animation &a, int X, int Y)
+Entity::Entity(Animation &a, Entity *tank, string name_)
 {
-	name = "smoke";
+	if (name_ == "smoke")
+	{
+		dir = 1;
+		x = tank->x;
+		y = tank->y;
+	}
+	if (name_ == "explosion")
+	{
+		dir = tank->dir;
+		x = tank->getCoordX(true);
+		y = tank->getCoordY(true);
+	}
+	
+	name = name_;
 	anim = a;
-	dir = 1;
-	x = X;
-	y = Y;
-	anim.sprite.setPosition(x, y);
-	isExist = playAnimation = true;
-	status = ALIVE;
-}
-
-Entity::Entity(Animation &a, int X, int Y, int dir_)
-{
-	name = "explosion";
-	anim = a;
-	dir = dir_;
-	x = X;
-	y = Y;
+	own = tank;
 	anim.sprite.setPosition(x, y);
 	isExist = playAnimation = true;
 	status = ALIVE;
@@ -43,6 +44,11 @@ void Entity::update(double time)
 		if(name == "explosion")
 			if (anim.isEnd(time))
 				isExist = false;
+		if (name == "smoke")
+		{
+			x = own->x;
+			y = own->y;
+		}
 	}
 }
 
@@ -154,14 +160,6 @@ void Entity::collideEntities(Entity *e)
 				traffic.down.barId = 0;	traffic.down.dir = true;
 			}
 		}
-	}
-}
-
-void Entity::toDamageEntity(Entity *e)
-{
-	if (anim.getShellRect().intersects(e->anim.getRect(e->dir)))
-	{
-		// to Damage tank
 	}
 }
 
