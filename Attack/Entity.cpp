@@ -2,10 +2,9 @@
 
 #include "Entity.h"
 #include "Animation.h"
-#include <SFML\Graphics.hpp>
-#include <iostream>
 
-using namespace std;
+#include <SFML\Graphics.hpp>
+
 using namespace sf;
 
 int Entity::counter = 0;
@@ -215,6 +214,14 @@ double Entity::getCoordY(bool isShell)
 	}
 
 	return yCoordinate;
+}
+
+void Entity::damageEntity(Entity *e, Sound &armorSound)
+{
+	if (anim.getShellRect(true).intersects(e->anim.getShellRect(false)))
+	{
+		status = DEAD; armorSound.play();
+	}
 }
 
 void Entity::draw(RenderWindow &app)

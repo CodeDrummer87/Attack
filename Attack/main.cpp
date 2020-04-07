@@ -79,7 +79,10 @@ int main()
 
 #pragma region Sounds
 
-	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf, enemy_1Buf, en_1RoundBuf;
+	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf,
+		burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf,
+		shellExpBuf, enemy_1Buf, en_1RoundBuf, armorBuf;
+
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
 	pTankBuf.loadFromFile("source/sounds/tank/movement/move_3.ogg");
@@ -90,6 +93,10 @@ int main()
 	shellExpBuf.loadFromFile("source/sounds/explosion/shell_explosion.ogg");
 	enemy_1Buf.loadFromFile("source/sounds/tank/movement/move_5.ogg");
 	en_1RoundBuf.loadFromFile("source/sounds/tank/round/enemy1_round.ogg");
+	armorBuf.loadFromFile("source/sounds/tank/armor.ogg");
+
+	Sound sArmor;
+	sArmor.setBuffer(armorBuf);		sArmor.setLoop(false);
 
 #pragma endregion
 
@@ -449,6 +456,17 @@ int main()
 
 #pragma endregion
 
+		//.:: Temporary code for testing :::
+		for (int i = 0; i < 5; i++)
+			if (squad[i]->status == WOUNDED)
+				if (!squad[i]->isSmoking)
+				{
+					squad[i]->isSmoking = true;
+					Entity *smoke = new Entity(aSmoke, squad[i], "smoke");
+					entities.push_back(smoke);
+				}
+		//----------------------------------
+
 		//.:: collision :::
 		for (auto a : entities)
 			for (auto b : entities)
@@ -456,6 +474,8 @@ int main()
 				{
 					if (a->name == "tank" && b->name == "tank" || b->name == "destroyed")
 						a->collideEntities(b);
+					if (a->name == "shell" && b->name == "tank" || b->name == "destroyed")
+						a->damageEntity(b, sArmor);
 				}
 
 		//.:: update entities :::

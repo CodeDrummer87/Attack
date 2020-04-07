@@ -52,6 +52,7 @@ public:
 	bool checkBarrierId(int, int);
 	double getCoordX(bool);
 	double getCoordY(bool);
+	void damageEntity(Entity*, Sound&);
 	void draw(RenderWindow&);
 };
 

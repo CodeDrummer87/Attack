@@ -105,14 +105,18 @@ FloatRect Animation::getRect(int dir)
 	{
 	case 1: return FloatRect(rect.left, rect.top, 39, 52);
 	case 2: return FloatRect(rect.left, rect.top, 52, 39);
-	case 3: return FloatRect(rect.left, rect.top, 39, 52);
-	case 4: return FloatRect(rect.left, rect.top, 52, 39);
+	case 3: return FloatRect(rect.left, rect.top, 52, 52);
+	case 4: return FloatRect(rect.left, rect.top, 39, 52);
 	default: return rect;
 	}
 }
 
-FloatRect Animation::getShellRect()
+FloatRect Animation::getShellRect(bool isShell)
 {
 	FloatRect rect = sprite.getGlobalBounds();
-	return FloatRect(rect.left, rect.top, 8, 8);
+	
+	if (isShell)
+		return FloatRect(rect.left, rect.top, 12, 12);
+	else
+		return FloatRect(rect.left, rect.top, 25, 25);
 }

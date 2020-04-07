@@ -30,5 +30,5 @@ public:
 	bool isEnd(double);
 	void switchSound(bool);
 	FloatRect getRect(int);
-	FloatRect getShellRect();
+	FloatRect getShellRect(bool);
 };
