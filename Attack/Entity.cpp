@@ -4,6 +4,7 @@
 #include "Animation.h"
 
 #include <SFML\Graphics.hpp>
+#include "Shell.h"
 
 using namespace sf;
 
@@ -48,6 +49,13 @@ void Entity::update(double time)
 		{
 			x = own->x;
 			y = own->y;
+		}
+		if (name == "shell")
+		{
+			if (status == DEAD)
+			{
+				isExist = false;
+			}
 		}
 	}
 }
@@ -222,11 +230,11 @@ void Entity::damageEntity(Entity *e, Sound &armorSound)
 	if (army != e->army)
 		if (anim.getShellRect(true).intersects(e->anim.getShellRect(false)))
 		{
-			if (e->hitPoints > 1)
-				armorSound.play();
-			status = DEAD;	 
+			armorSound.play();
 			--(e->hitPoints);
-
+			status = DEAD;
+			if (name == "shell")
+				static_cast<Shell*>(this)->allowShot();
 		}
 }
 

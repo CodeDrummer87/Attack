@@ -20,4 +20,5 @@ public:
 
 	//.:: Methods_of_class :::::::::::::::::
 	void update(double);
+	void allowShot();
 };

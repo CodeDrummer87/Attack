@@ -474,8 +474,9 @@ int main()
 				{
 					if (a->name == "tank" && b->name == "tank" || b->name == "destroyed")
 						a->collideEntities(b);
-					if (a->name == "shell" && b->name == "tank" || b->name == "destroyed")
-						a->damageEntity(b, sArmor);
+					if (a->name != "smoke" && b->name != "smoke")
+						if (a->name == "shell" && b->name == "tank" || b->name == "destroyed")
+							a->damageEntity(b, sArmor);
 				}
 
 		//.:: update entities :::

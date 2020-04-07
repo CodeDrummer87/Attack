@@ -76,3 +76,8 @@ void Shell::update(double time)
 		own->isShot = true;
 	}
 }
+
+void Shell::allowShot()
+{
+	own->isShot = true;
+}
