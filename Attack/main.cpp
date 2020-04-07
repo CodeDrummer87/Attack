@@ -7,7 +7,7 @@
 #include "Animation.h"
 #include "Entity.h"
 
-#include "Tank.h"
+#include "Player.h"
 #include "Shell.h"
 
 using namespace std;
@@ -132,11 +132,11 @@ int main()
 
 #pragma endregion
 
-	Tank *player_1 = new Tank(burgundy_tank, explosion_burg_tank, 550, 800, 1, "player");
-	Tank *player_2 = new Tank(yellow_tank, explosion_yel_tank, 750, 800, 1, "player");
-	Tank *player_3 = new Tank(purple_tank, explosion_purp_tank, 950, 800, 1, "player");
-	Tank *player_4 = new Tank(lightblue_tank, explosion_lb_tank, 1150, 800, 1, "player");
-	Tank *player_5 = new Tank(hemo_tank, explosion_hemo_tank, 1350, 800, 1, "player");
+	Player *player_1 = new Player(burgundy_tank, explosion_burg_tank, 550, 800, 1, "player", 1);
+	Player *player_2 = new Player(yellow_tank, explosion_yel_tank, 750, 800, 1, "player", 1);
+	Player *player_3 = new Player(purple_tank, explosion_purp_tank, 950, 800, 1, "player", 1);
+	Player *player_4 = new Player(lightblue_tank, explosion_lb_tank, 1150, 800, 1, "player", 1);
+	Player *player_5 = new Player(hemo_tank, explosion_hemo_tank, 1350, 800, 1, "player", 1);
 
 	vector<Entity*> entities;
 	entities.push_back(player_1);
@@ -146,11 +146,11 @@ int main()
 	entities.push_back(player_5);
 
 	//.:: Enemies ::: (temporary code for testing)
-	Tank* squad[5];
+	Player* squad[5];
 	int enemyPositionX = 550;
 	for (int i = 0; i < 5; i++)
 	{
-		squad[i] = new Tank(enemy_1, explosion_enemy_1, enemyPositionX, 300, 3, "enemy");
+		squad[i] = new Player(enemy_1, explosion_enemy_1, enemyPositionX, 300, 3, "enemy", 1);
 		entities.push_back(squad[i]);
 		enemyPositionX += 200;
 	}
@@ -474,7 +474,7 @@ int main()
 				{
 					if (a->name == "tank" && b->name == "tank" || b->name == "destroyed")
 						a->collideEntities(b);
-					if (a->name != "smoke" && b->name != "smoke")
+					if (a->name != "smoke" && a->name != "explosion" && b->name != "smoke" && b->name != "explosion")
 						if (a->name == "shell" && b->name == "tank" || b->name == "destroyed")
 							a->damageEntity(b, sArmor);
 				}

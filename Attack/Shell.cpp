@@ -5,7 +5,7 @@
 
 Shell::Shell() {}
 
-Shell::Shell(Animation &a, Animation &b, Tank* tank)
+Shell::Shell(Animation &a, Animation &b, Player* tank)
 {
 	tokenId = tank->tokenId;
 	range = 400;
@@ -22,6 +22,7 @@ Shell::Shell(Animation &a, Animation &b, Tank* tank)
 	playAnimation = isExist = true;
 	status = ALIVE;
 	hitPoints = 0;
+	level = tank->level;
 }
 
 Shell::~Shell() {}
@@ -80,4 +81,9 @@ void Shell::update(double time)
 void Shell::allowShot()
 {
 	own->isShot = true;
+}
+
+void Shell::grantAccess()
+{
+	own->nickDown();
 }

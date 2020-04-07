@@ -7,7 +7,7 @@ using namespace sf;
 
 Tank::Tank() {}
 
-Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, string army_)
+Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, string army_, int lvl)
 {
 	tokenId = ++counter;
 	name = "tank";
@@ -27,7 +27,8 @@ Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, string army_)
 	traffic.down.dir = true;	traffic.down.barId = 0;
 	traffic.left.dir = true;	traffic.left.barId = 0;
 
-	hitPoints = 2;
+	level = lvl;
+	hitPoints = 1 + level;
 }
 
 Tank::~Tank() {}

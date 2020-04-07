@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Entity.h"
-#include "Tank.h"
+#include "Player.h"
 
 class Shell : public Entity
 {
@@ -9,11 +9,11 @@ private:
 	float range;	// Max flight range
 	float dist;		// The way done
 	Animation animSpare;
-	Tank *own;
+	Player *own;
 public:
-	//.:: Constructor ::::::::::::::::::::::
+	//.:: Constructors :::::::::::::::::::::
 	Shell();
-	Shell(Animation&, Animation&, Tank*);
+	Shell(Animation&, Animation&, Player*);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Shell();
@@ -21,4 +21,5 @@ public:
 	//.:: Methods_of_class :::::::::::::::::
 	void update(double);
 	void allowShot();
+	void grantAccess();
 };

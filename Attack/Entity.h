@@ -40,6 +40,7 @@ public:
 	Status status;
 	Traffic traffic;
 	int hitPoints;
+	int level;
 	//.:: Constructors ::::::::::::::::::::::
 	Entity();
 	Entity(Animation&, Entity*, string);

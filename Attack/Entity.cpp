@@ -33,7 +33,7 @@ Entity::Entity(Animation &a, Entity *tank, string name_)
 	anim.sprite.setPosition(x, y);
 	isExist = playAnimation = true;
 	status = ALIVE;
-	hitPoints = 0;
+	hitPoints  = level = 0;
 }
 
 Entity::~Entity() {}
@@ -49,13 +49,6 @@ void Entity::update(double time)
 		{
 			x = own->x;
 			y = own->y;
-		}
-		if (name == "shell")
-		{
-			if (status == DEAD)
-			{
-				isExist = false;
-			}
 		}
 	}
 }
@@ -231,7 +224,12 @@ void Entity::damageEntity(Entity *e, Sound &armorSound)
 		if (anim.getShellRect(true).intersects(e->anim.getShellRect(false)))
 		{
 			armorSound.play();
-			--(e->hitPoints);
+			if (this->name == "shell" & e->name == "tank")
+			{
+				e->hitPoints -= level;
+				if (e->hitPoints <= 0)
+					static_cast<Shell*>(this)->grantAccess();
+			}
 			status = DEAD;
 			if (name == "shell")
 				static_cast<Shell*>(this)->allowShot();
