@@ -9,8 +9,8 @@ enum Status { DEAD, ALIVE, WOUNDED };
 
 struct Ban
 {
-	bool dir;	//.:: Direction
-	int barId;	//.:: Barrier ID
+	bool dir;	//.:: Direction open / close
+	int barId;	//.:: Barrier ID (if Direction is close)
 };
 
 struct Traffic
@@ -39,6 +39,7 @@ public:
 	bool isExist;
 	Status status;
 	Traffic traffic;
+	int hitPoints;
 	//.:: Constructors ::::::::::::::::::::::
 	Entity();
 	Entity(Animation&, Entity*, string);

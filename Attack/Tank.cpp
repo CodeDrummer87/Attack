@@ -26,6 +26,8 @@ Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, string army_)
 	traffic.right.dir = true;	traffic.right.barId = 0;
 	traffic.down.dir = true;	traffic.down.barId = 0;
 	traffic.left.dir = true;	traffic.left.barId = 0;
+
+	hitPoints = 2;
 }
 
 Tank::~Tank() {}
@@ -39,6 +41,13 @@ void Tank::update(double time)
 	}
 	else
 	{
+		if (hitPoints > 1)
+			status = ALIVE;
+		else if (hitPoints == 1)
+			status = WOUNDED;
+		else
+			status = DEAD;
+		//::::::::::::::::::::::::
 		if (status == ALIVE)
 		{
 			x += dx;

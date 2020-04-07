@@ -32,6 +32,7 @@ Entity::Entity(Animation &a, Entity *tank, string name_)
 	anim.sprite.setPosition(x, y);
 	isExist = playAnimation = true;
 	status = ALIVE;
+	hitPoints = 0;
 }
 
 Entity::~Entity() {}
@@ -218,10 +219,15 @@ double Entity::getCoordY(bool isShell)
 
 void Entity::damageEntity(Entity *e, Sound &armorSound)
 {
-	if (anim.getShellRect(true).intersects(e->anim.getShellRect(false)))
-	{
-		status = DEAD; armorSound.play();
-	}
+	if (army != e->army)
+		if (anim.getShellRect(true).intersects(e->anim.getShellRect(false)))
+		{
+			if (e->hitPoints > 1)
+				armorSound.play();
+			status = DEAD;	 
+			--(e->hitPoints);
+
+		}
 }
 
 void Entity::draw(RenderWindow &app)

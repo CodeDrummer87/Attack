@@ -21,6 +21,7 @@ Shell::Shell(Animation &a, Animation &b, Tank* tank)
 	anim.sprite.setPosition(x, y);
 	playAnimation = isExist = true;
 	status = ALIVE;
+	hitPoints = 0;
 }
 
 Shell::~Shell() {}
