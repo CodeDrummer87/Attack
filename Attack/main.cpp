@@ -63,7 +63,8 @@ int main()
 
 #pragma region Textures
 
-	Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke, tEnemy_1;
+	Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke, tEnemy_1,
+		tRank;
 	bTank.loadFromImage(iBurgundyTank);
 	yTank.loadFromImage(iYellowTank);
 	pTank.loadFromImage(iPurpleTank);
@@ -74,6 +75,7 @@ int main()
 	tShellExp.loadFromFile("source/images/models/explosion/shell_explosion.png");
 	tSmoke.loadFromFile("source/images/models/smoke/smoke.png");
 	tEnemy_1.loadFromImage(iEnemy_1);
+	tRank.loadFromFile("source/images/attributes/ranks.png");
 
 #pragma endregion
 
@@ -81,7 +83,7 @@ int main()
 
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf,
 		burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf,
-		shellExpBuf, enemy_1Buf, en_1RoundBuf, armorBuf;
+		shellExpBuf, enemy_1Buf, en_1RoundBuf, armorBuf, prefermentBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
@@ -94,28 +96,30 @@ int main()
 	enemy_1Buf.loadFromFile("source/sounds/tank/movement/move_5.ogg");
 	en_1RoundBuf.loadFromFile("source/sounds/tank/round/enemy1_round.ogg");
 	armorBuf.loadFromFile("source/sounds/tank/armor.ogg");
+	prefermentBuf.loadFromFile("source/sounds/effects/preferment.ogg");
 
-	Sound sArmor;
+	Sound sArmor, sPreferment;
 	sArmor.setBuffer(armorBuf);		sArmor.setLoop(false);
+	sPreferment.setBuffer(prefermentBuf);	sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
 
 #pragma endregion
 
 #pragma region Animations
 
 	Animation burgundy_tank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_burg_tank(bTank, tankExpBuf, 0, 64, 64, 64, 0.008, 12);
+	Animation explosion_burg_tank(bTank, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
 
 	Animation yellow_tank(yTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_yel_tank(yTank, tankExpBuf, 0, 64, 64, 64, 0.008, 12);
+	Animation explosion_yel_tank(yTank, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
 
 	Animation purple_tank(pTank, pTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_purp_tank(pTank, tankExpBuf, 0, 64, 64, 64, 0.008, 12);
+	Animation explosion_purp_tank(pTank, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
 
 	Animation lightblue_tank(lbTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_lb_tank(lbTank, tankExpBuf, 0, 64, 64, 64, 0.008, 12);
+	Animation explosion_lb_tank(lbTank, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
 
 	Animation hemo_tank(hTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_hemo_tank(hTank, tankExpBuf, 0, 64, 64, 64, 0.008, 12);
+	Animation explosion_hemo_tank(hTank, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
 
 	Animation aBurgTankRound(tTankRound, burgTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
 	Animation aYelTankRound(tTankRound, yelTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
@@ -123,9 +127,10 @@ int main()
 	Animation aShell(tShell, 0, 0, 64, 64, 0.01, 2);
 	Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.01, 7);
 	Animation aSmoke(tSmoke, 0, 0, 64, 64, 0.006, 5);
+	Animation aRank(tRank, 0, 0, 60, 134, 1, 18);
 
 	Animation enemy_1(tEnemy_1, enemy_1Buf, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_enemy_1(tEnemy_1, tankExpBuf, 0, 64, 64, 64, 0.008, 12);
+	Animation explosion_enemy_1(tEnemy_1, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
 	Animation aEnemy1Round(tTankRound, en_1RoundBuf, 0, 0, 40, 36, 0.015, 8);
 
 #pragma endregion
@@ -285,6 +290,7 @@ int main()
 
 		if (player_1->status != DEAD)
 		{
+			//.:: Smoking :::::::::::::::::::
 			if (player_1->status == WOUNDED)
 			{
 				if (!player_1->isSmoking)
@@ -292,6 +298,19 @@ int main()
 					player_1->isSmoking = true;
 					Entity *smoke = new Entity(aSmoke, player_1, "smoke");
 					entities.push_back(smoke);
+				}
+			}
+
+			//.:: GetRank ::::::::::::::::::
+			if (player_1->preferment)
+			{
+				player_1->preferment = false;
+				sPreferment.play();
+				if (!player_1->hasRank)
+				{
+					player_1->hasRank = true;
+					Entity *rank = new Entity(aRank, player_1, "rank");
+					entities.push_back(rank);
 				}
 			}
 
@@ -320,6 +339,7 @@ int main()
 
 		if (player_2->status != DEAD)
 		{
+			//.:: Smoking ::::::::::::::::::
 			if (player_2->status == WOUNDED)
 			{
 				if (!player_2->isSmoking)
@@ -327,6 +347,19 @@ int main()
 					player_2->isSmoking = true;
 					Entity *smoke = new Entity(aSmoke, player_2, "smoke");
 					entities.push_back(smoke);
+				}
+			}
+
+			//.:: GetRank ::::::::::::::::::
+			if (player_2->preferment)
+			{
+				player_2->preferment = false;
+				sPreferment.play();
+				if (!player_2->hasRank)
+				{
+					player_2->hasRank = true;
+					Entity *rank = new Entity(aRank, player_2, "rank");
+					entities.push_back(rank);
 				}
 			}
 
@@ -355,6 +388,7 @@ int main()
 
 		if (player_3->status != DEAD)
 		{
+			//.:: Smoking ::::::::::::::::::
 			if (player_3->status == WOUNDED)
 			{
 				if (!player_3->isSmoking)
@@ -362,6 +396,19 @@ int main()
 					player_3->isSmoking = true;
 					Entity *smoke = new Entity(aSmoke, player_3, "smoke");
 					entities.push_back(smoke);
+				}
+			}
+
+			//.:: GetRank ::::::::::::::::::
+			if (player_3->preferment)
+			{
+				player_3->preferment = false;
+				sPreferment.play();
+				if (!player_3->hasRank)
+				{
+					player_3->hasRank = true;
+					Entity *rank = new Entity(aRank, player_3, "rank");
+					entities.push_back(rank);
 				}
 			}
 
@@ -390,6 +437,7 @@ int main()
 
 		if (player_4->status != DEAD)
 		{
+			//.:: Smoking ::::::::::::::::::
 			if (player_4->status == WOUNDED)
 			{
 				if (!player_4->isSmoking)
@@ -397,6 +445,19 @@ int main()
 					player_4->isSmoking = true;
 					Entity *smoke = new Entity(aSmoke, player_4, "smoke");
 					entities.push_back(smoke);
+				}
+			}
+
+			//.:: GetRank ::::::::::::::::::
+			if (player_4->preferment)
+			{
+				player_4->preferment = false;
+				sPreferment.play();
+				if (!player_4->hasRank)
+				{
+					player_4->hasRank = true;
+					Entity *rank = new Entity(aRank, player_4, "rank");
+					entities.push_back(rank);
 				}
 			}
 
@@ -425,6 +486,7 @@ int main()
 
 		if (player_5->status != DEAD)
 		{
+			//.:: Smoking ::::::::::::::::::
 			if (player_5->status == WOUNDED)
 			{
 				if (!player_5->isSmoking)
@@ -432,6 +494,19 @@ int main()
 					player_5->isSmoking = true;
 					Entity *smoke = new Entity(aSmoke, player_5, "smoke");
 					entities.push_back(smoke);
+				}
+			}
+
+			//.:: GetRank ::::::::::::::::::
+			if (player_5->preferment)
+			{
+				player_5->preferment = false;
+				sPreferment.play();
+				if (!player_5->hasRank)
+				{
+					player_5->hasRank = true;
+					Entity *rank = new Entity(aRank, player_5, "rank");
+					entities.push_back(rank);
 				}
 			}
 
@@ -474,7 +549,8 @@ int main()
 				{
 					if (a->name == "tank" && b->name == "tank" || b->name == "destroyed")
 						a->collideEntities(b);
-					if (a->name != "smoke" && a->name != "explosion" && b->name != "smoke" && b->name != "explosion")
+					if (a->name != "smoke" && a->name != "explosion" && a->name != "rank"
+						&& b->name != "smoke" && b->name != "explosion" && b->name != "rank")
 						if (a->name == "shell" && b->name == "tank" || b->name == "destroyed")
 							a->damageEntity(b, sArmor);
 				}

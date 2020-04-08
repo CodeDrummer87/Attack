@@ -6,9 +6,11 @@ class Player : public Tank
 {
 private:
 	int totalKills;
-	int currentKillCounter;
+	int currentExperience;
 	int experience;
 public:
+	bool hasRank;
+	bool preferment;
 	//.:: Constructors :::::::::::::::::::::
 	Player();
 	Player(Animation&, Animation&, int, int, int, string, int);
@@ -18,6 +20,7 @@ public:
 
 	//.:: Methods_of_class :::::::::::::::::
 	void update(double);
-	void nickDown();
+	void nickDown(int);
+	void improveTank(int);
 };
 

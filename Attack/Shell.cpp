@@ -83,7 +83,7 @@ void Shell::allowShot()
 	own->isShot = true;
 }
 
-void Shell::grantAccess()
+void Shell::conveyExperience(int experience)
 {
-	own->nickDown();
+	own->nickDown(experience);
 }

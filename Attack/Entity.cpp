@@ -14,24 +14,35 @@ Entity::Entity() {}
 
 Entity::Entity(Animation &a, Entity *tank, string name_)
 {
+	anim = a;
+
 	if (name_ == "smoke")
 	{
 		dir = 1;
 		x = tank->x;
 		y = tank->y;
+		playAnimation = true;
 	}
 	if (name_ == "explosion")
 	{
 		dir = tank->dir;
 		x = tank->getCoordX(true);
 		y = tank->getCoordY(true);
+		playAnimation = true;
+	}
+	if (name_ == "rank")
+	{
+		dir = 1;
+		x = tank->x + 32;
+		y = tank->y - 32;
+		playAnimation = false;
+		anim.sprite.setScale(0.9f, 0.9f);
 	}
 	
 	name = name_;
-	anim = a;
 	own = tank;
 	anim.sprite.setPosition(x, y);
-	isExist = playAnimation = true;
+	isExist = true;
 	status = ALIVE;
 	hitPoints  = level = 0;
 }
@@ -49,6 +60,26 @@ void Entity::update(double time)
 		{
 			x = own->x;
 			y = own->y;
+			if (own->status != WOUNDED)
+			{
+				if (own->name == "tank")
+					static_cast<Tank*>(own)->isSmoking = false;
+				isExist = false;
+			}
+		}
+		if (name == "rank")
+		{
+			if (own->level >= 10)
+				anim.sprite.setScale(0.6f, 0.6f);
+
+			if (own->level <= 19)
+				anim.frame = own->level - 2;
+			else
+				anim.frame = 17;
+			x = own->x + 32;
+			y = own->y - 32;
+			if (own->status == DEAD)
+				isExist = false;
 		}
 	}
 }
@@ -228,7 +259,7 @@ void Entity::damageEntity(Entity *e, Sound &armorSound)
 			{
 				e->hitPoints -= level;
 				if (e->hitPoints <= 0)
-					static_cast<Shell*>(this)->grantAccess();
+					static_cast<Shell*>(this)->conveyExperience(e->level);
 			}
 			status = DEAD;
 			if (name == "shell")
