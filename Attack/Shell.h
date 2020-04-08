@@ -6,10 +6,10 @@
 class Shell : public Entity
 {
 private:
-	float range;	// Max flight range
 	float dist;		// The way done
 	Animation animSpare;
 	Player *own;
+
 public:
 	//.:: Constructors :::::::::::::::::::::
 	Shell();

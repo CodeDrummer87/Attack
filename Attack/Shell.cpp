@@ -8,7 +8,6 @@ Shell::Shell() {}
 Shell::Shell(Animation &a, Animation &b, Player* tank)
 {
 	tokenId = tank->tokenId;
-	range = 400;
 	dist = 0.0;
 	name = "shell";
 	army = tank->army;
@@ -34,29 +33,29 @@ void Shell::update(double time)
 		if (dir == 1)
 		{
 			dx = 0;
-			dy = -0.4 * time;
+			dy = -0.4 * time - (double)(level / 3);
 			dist -= dy;
 		}
 		if (dir == 2)
 		{
 			dy = 0;
-			dx = 0.4 * time;
+			dx = 0.4 * time + (double)(level / 3);
 			dist += dx;
 		}
 		if (dir == 3)
 		{
 			dx = 0;
-			dy = 0.4 * time;
+			dy = 0.4 * time + (double)(level / 3);
 			dist += dy;
 		}
 		if (dir == 4)
 		{
 			dy = 0;
-			dx = -0.4 * time;
+			dx = -0.4 * time - (double)(level / 3);
 			dist -= dx;
 		}
 
-		if (abs(dist) >= range)
+		if (abs(dist) >= 350 + (float)level * 50)
 		{
 			status = WOUNDED;
 			anim = animSpare;

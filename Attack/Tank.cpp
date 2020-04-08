@@ -43,9 +43,21 @@ void Tank::update(double time)
 	else
 	{
 		if (hitPoints > 1)
-			status = ALIVE;
+		{
+			if (status != ALIVE)
+			{
+				status = ALIVE;
+				anim.sound.setPitch(0.9f);
+			}
+		}
 		else if (hitPoints == 1)
-			status = WOUNDED;
+		{
+			if (status != WOUNDED)
+			{
+				status = WOUNDED;
+				anim.sound.setPitch(0.5f);
+			}
+		}
 		else
 			status = DEAD;
 		//::::::::::::::::::::::::
@@ -93,7 +105,7 @@ void Tank::accelerate(int dir_, double acc)
 	case 1:
 		toLeft = toRight = 0;
 		if (traffic.up.dir)
-			toUp = acc;
+			toUp = acc - ((double)level / 100);
 		else
 			toUp = 0;
 		break;
@@ -101,7 +113,7 @@ void Tank::accelerate(int dir_, double acc)
 	case 2:
 		toUp = toDown = 0;
 		if (traffic.right.dir)
-			toRight = acc;
+			toRight = acc + ((double)level / 100);
 		else
 			toRight = 0;
 		break;
@@ -109,7 +121,7 @@ void Tank::accelerate(int dir_, double acc)
 	case 3:
 		toLeft = toRight = 0;
 		if (traffic.down.dir)
-			toDown = acc;
+			toDown = acc + ((double)level / 100);
 		else
 			toDown = 0;
 		break;
@@ -117,7 +129,7 @@ void Tank::accelerate(int dir_, double acc)
 	case 4:
 		toUp = toDown = 0;
 		if (traffic.left.dir)
-			toLeft = acc;
+			toLeft = acc - ((double)level / 100);
 		else
 			toLeft = 0;
 		break;

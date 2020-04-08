@@ -38,7 +38,6 @@ void Player::nickDown(int exp)
 void Player::improveTank(int residual)
 {
 	++level;
-	status = ALIVE;
 	hitPoints = level + 1;
 	experience *= 2;
 	currentExperience = residual;

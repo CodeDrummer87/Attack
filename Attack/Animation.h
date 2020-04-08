@@ -10,11 +10,10 @@ using namespace std;
 
 class Animation
 {
-private:
-	Sound sound;
 public:
 	float frame, speed;
 	Sprite sprite;
+	Sound sound;
 
 	vector<IntRect> frames;
 	//.:: Constructors ::::::::::::::::::::::
