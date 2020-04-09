@@ -95,8 +95,16 @@ void Entity::collideEntities(Entity *e)
 			{
 				if (traffic.up.barId == 0 && checkBarrierId(1, e->tokenId))
 				{
-					traffic.up.dir = false;
-					traffic.up.barId = e->tokenId;
+					if (e->dir == 1 && e->y > y)
+					{
+						traffic.down.dir = false;
+						traffic.down.barId = e->tokenId;
+					}
+					else
+					{
+						traffic.up.dir = false;
+						traffic.up.barId = e->tokenId;
+					}
 
 					if (e->dy == 0)
 					{
@@ -112,8 +120,16 @@ void Entity::collideEntities(Entity *e)
 			{
 				if (traffic.right.barId == 0 && checkBarrierId(2, e->tokenId))
 				{
-					traffic.right.dir = false;
-					traffic.right.barId = e->tokenId;
+					if (e->dir == 2 && e->x < x)
+					{
+						traffic.left.dir = false;
+						traffic.left.barId = e->tokenId;
+					}
+					else
+					{
+						traffic.right.dir = false;
+						traffic.right.barId = e->tokenId;
+					}
 
 					if (e->dx == 0)
 					{
@@ -129,8 +145,16 @@ void Entity::collideEntities(Entity *e)
 			{
 				if (traffic.down.barId == 0 && checkBarrierId(3, e->tokenId))
 				{
-					traffic.down.dir = false;
-					traffic.down.barId = e->tokenId;
+					if (e->dir == 3 && e->y < y)
+					{
+						traffic.up.dir = false;
+						traffic.up.barId = e->tokenId;
+					}
+					else
+					{
+						traffic.down.dir = false;
+						traffic.down.barId = e->tokenId;
+					}
 
 					if (e->dy == 0)
 					{
@@ -146,8 +170,16 @@ void Entity::collideEntities(Entity *e)
 			{
 				if (traffic.left.barId == 0 && checkBarrierId(4, e->tokenId))
 				{
-					traffic.left.dir = false;
-					traffic.left.barId = e->tokenId;
+					if (e->dir == 4 && e->x > x)
+					{
+						traffic.right.dir = false;
+						traffic.right.barId = e->tokenId;
+					}
+					else
+					{
+						traffic.left.dir = false;
+						traffic.left.barId = e->tokenId;
+					}
 
 					if (e->dx == 0)
 					{
