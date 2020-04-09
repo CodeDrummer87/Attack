@@ -332,6 +332,15 @@ int main()
 			}
 			else player_1->playAnimation = false;
 		}
+		else
+		{
+			if (!player_1->isSmoking && player_1->makeSureDestroyed())
+			{
+				player_1->isSmoking = true;
+				Entity *smoke = new Entity(aSmoke, player_1, "smoke");
+				entities.push_back(smoke);
+			}
+		}
 
 #pragma endregion
 
@@ -380,6 +389,15 @@ int main()
 				player_2->accelerate(4, -0.08 * time);
 			}
 			else player_2->playAnimation = false;
+		}
+		else
+		{
+			if (!player_2->isSmoking && player_2->makeSureDestroyed())
+			{
+				player_2->isSmoking = true;
+				Entity *smoke = new Entity(aSmoke, player_2, "smoke");
+				entities.push_back(smoke);
+			}
 		}
 
 #pragma endregion
@@ -430,6 +448,15 @@ int main()
 			}
 			else player_3->playAnimation = false;
 		}
+		else
+		{
+			if (!player_3->isSmoking && player_3->makeSureDestroyed())
+			{
+				player_3->isSmoking = true;
+				Entity *smoke = new Entity(aSmoke, player_3, "smoke");
+				entities.push_back(smoke);
+			}
+		}
 
 #pragma endregion
 
@@ -478,6 +505,15 @@ int main()
 				player_4->accelerate(4, -0.08 * time);
 			}
 			else player_4->playAnimation = false;
+		}
+		else
+		{
+			if (!player_4->isSmoking && player_4->makeSureDestroyed())
+			{
+				player_4->isSmoking = true;
+				Entity *smoke = new Entity(aSmoke, player_4, "smoke");
+				entities.push_back(smoke);
+			}
 		}
 
 #pragma endregion
@@ -528,18 +564,38 @@ int main()
 			}
 			else player_5->playAnimation = false;
 		}
+		else
+		{
+			if (!player_5->isSmoking && player_5->makeSureDestroyed())
+			{
+				player_5->isSmoking = true;
+				Entity *smoke = new Entity(aSmoke, player_5, "smoke");
+				entities.push_back(smoke);
+			}
+		}
 
 #pragma endregion
 
 		//.:: Temporary code for testing :::
 		for (int i = 0; i < 5; i++)
 			if (squad[i]->status == WOUNDED)
+			{
 				if (!squad[i]->isSmoking)
 				{
 					squad[i]->isSmoking = true;
 					Entity *smoke = new Entity(aSmoke, squad[i], "smoke");
 					entities.push_back(smoke);
 				}
+			}
+			else if (squad[i]->status == DEAD)
+			{
+				if (!squad[i]->isSmoking && squad[i]->makeSureDestroyed())
+				{
+					squad[i]->isSmoking = true;
+					Entity *smoke = new Entity(aSmoke,squad[i], "smoke");
+					entities.push_back(smoke);
+				}
+			}
 		//----------------------------------
 
 		//.:: collision :::

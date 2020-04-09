@@ -24,4 +24,5 @@ public:
 	//.:: Methods_of_class :::::::::::::::::
 	void update(double);
 	void accelerate(int, double);		// direction and accelerate
+	bool makeSureDestroyed();
 };

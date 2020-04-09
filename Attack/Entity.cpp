@@ -15,6 +15,7 @@ Entity::Entity() {}
 Entity::Entity(Animation &a, Entity *tank, string name_)
 {
 	anim = a;
+	hitPoints = level = 0;
 
 	if (name_ == "smoke")
 	{
@@ -22,6 +23,8 @@ Entity::Entity(Animation &a, Entity *tank, string name_)
 		x = tank->x;
 		y = tank->y;
 		playAnimation = true;
+		if (tank->status == DEAD) level = 1;
+		else level = 0;
 	}
 	if (name_ == "explosion")
 	{
@@ -44,7 +47,6 @@ Entity::Entity(Animation &a, Entity *tank, string name_)
 	anim.sprite.setPosition(x, y);
 	isExist = true;
 	status = ALIVE;
-	hitPoints  = level = 0;
 }
 
 Entity::~Entity() {}
@@ -56,17 +58,22 @@ void Entity::update(double time)
 		if(name == "explosion")
 			if (anim.isEnd(time))
 				isExist = false;
+
 		if (name == "smoke")
 		{
-			x = own->x;
-			y = own->y;
-			if (own->status != WOUNDED)
+			if (level == 0)
 			{
-				if (own->name == "tank")
-					static_cast<Tank*>(own)->isSmoking = false;
-				isExist = false;
+				x = own->x;
+				y = own->y;
+				if (own->status != WOUNDED)
+				{
+					if (own->name == "tank")
+						static_cast<Tank*>(own)->isSmoking = false;
+					isExist = false;
+				}
 			}
 		}
+
 		if (name == "rank")
 		{
 			if (own->level >= 10)

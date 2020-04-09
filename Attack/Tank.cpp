@@ -90,6 +90,7 @@ void Tank::update(double time)
 			{			
 				anim = aTankExplosion;
 				transition = true;
+				isSmoking = false;
 			}
 		}
 	}
@@ -138,4 +139,9 @@ void Tank::accelerate(int dir_, double acc)
 	dx += toLeft + toRight;
 	dy += toUp + toDown;
 	toUp = toRight = toDown = toLeft = 0;
+}
+
+bool Tank::makeSureDestroyed()
+{
+	return destroyed;
 }
