@@ -138,7 +138,7 @@ int main()
 #pragma endregion
 
 	Player *player_1 = new Player(burgundy_tank, explosion_burg_tank, 550, 800, 1, "player", 1);
-	Player *player_2 = new Player(yellow_tank, explosion_yel_tank, 750, 800, 1, "player", 5);
+	Player *player_2 = new Player(yellow_tank, explosion_yel_tank, 750, 800, 1, "player", 1);
 	Player *player_3 = new Player(purple_tank, explosion_purp_tank, 950, 800, 1, "player", 1);
 	Player *player_4 = new Player(lightblue_tank, explosion_lb_tank, 1150, 800, 1, "player", 1);
 	Player *player_5 = new Player(hemo_tank, explosion_hemo_tank, 1350, 800, 1, "player", 1);

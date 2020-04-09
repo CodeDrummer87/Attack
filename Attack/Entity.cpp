@@ -258,7 +258,7 @@ void Entity::damageEntity(Entity *e, Sound &armorSound)
 			if (this->name == "shell" & e->name == "tank")
 			{
 				e->hitPoints -= level;
-				if (e->hitPoints <= 0)
+				if (army == "player" && e->hitPoints <= 0)
 					static_cast<Shell*>(this)->conveyExperience(e->level);
 			}
 			status = DEAD;

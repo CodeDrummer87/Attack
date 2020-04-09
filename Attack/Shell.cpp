@@ -33,25 +33,25 @@ void Shell::update(double time)
 		if (dir == 1)
 		{
 			dx = 0;
-			dy = -0.4 * time - (double)(level / 3);
+			dy = -0.4 * time - ((double)level / 7);
 			dist -= dy;
 		}
 		if (dir == 2)
 		{
 			dy = 0;
-			dx = 0.4 * time + (double)(level / 3);
+			dx = 0.4 * time + ((double)level / 7);
 			dist += dx;
 		}
 		if (dir == 3)
 		{
 			dx = 0;
-			dy = 0.4 * time + (double)(level / 3);
+			dy = 0.4 * time + ((double)level / 7);
 			dist += dy;
 		}
 		if (dir == 4)
 		{
 			dy = 0;
-			dx = -0.4 * time - (double)(level / 3);
+			dx = -0.4 * time - ((double)level / 7);
 			dist -= dx;
 		}
 
