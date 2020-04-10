@@ -294,9 +294,12 @@ void Entity::damageEntity(Entity *e, Sound &armorSound)
 		if (anim.getShellRect(true).intersects(e->anim.getShellRect(false)))
 		{
 			armorSound.play();
-			if (this->name == "shell" & e->name == "tank")
+			if (this->name == "shell" && e->name == "tank")
 			{
-				e->hitPoints -= level;
+				if (level >= e->hitPoints && e->hitPoints > 1)
+					e->hitPoints = 1;
+				else
+					e->hitPoints -= level;
 				if (army == "player" && e->hitPoints <= 0)
 					static_cast<Shell*>(this)->conveyExperience(e->level);
 			}
