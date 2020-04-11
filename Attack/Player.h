@@ -13,7 +13,7 @@ public:
 	bool preferment;
 	//.:: Constructors :::::::::::::::::::::
 	Player();
-	Player(Animation&, Animation&, int, int, int, string, int);
+	Player(Animation&, Animation&, int, int, int, int);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Player();

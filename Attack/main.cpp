@@ -10,6 +10,8 @@
 #include "Player.h"
 #include "Shell.h"
 
+#include "Enemy.h"
+
 using namespace std;
 using namespace sf;
 
@@ -137,11 +139,11 @@ int main()
 
 #pragma endregion
 
-	Player *player_1 = new Player(burgundy_tank, explosion_burg_tank, 550, 800, 1, "player", 1);
-	Player *player_2 = new Player(yellow_tank, explosion_yel_tank, 750, 800, 1, "player", 1);
-	Player *player_3 = new Player(purple_tank, explosion_purp_tank, 950, 800, 1, "player", 1);
-	Player *player_4 = new Player(lightblue_tank, explosion_lb_tank, 1150, 800, 1, "player", 1);
-	Player *player_5 = new Player(hemo_tank, explosion_hemo_tank, 1350, 800, 1, "player", 1);
+	Player *player_1 = new Player(burgundy_tank, explosion_burg_tank, 550, 800, 1, 1);
+	Player *player_2 = new Player(yellow_tank, explosion_yel_tank, 750, 800, 1, 1);
+	Player *player_3 = new Player(purple_tank, explosion_purp_tank, 950, 800, 1, 1);
+	Player *player_4 = new Player(lightblue_tank, explosion_lb_tank, 1150, 800, 1, 1);
+	Player *player_5 = new Player(hemo_tank, explosion_hemo_tank, 1350, 800, 1, 1);
 
 	vector<Entity*> entities;
 	entities.push_back(player_1);
@@ -151,11 +153,11 @@ int main()
 	entities.push_back(player_5);
 
 	//.:: Enemies ::: (temporary code for testing)
-	Player* squad[5];
+	Enemy* squad[5];
 	int enemyPositionX = 550;
 	for (int i = 0; i < 5; i++)
 	{
-		squad[i] = new Player(enemy_1, explosion_enemy_1, enemyPositionX, 300, 3, "enemy", 1);
+		squad[i] = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, 300, 3, 1);
 		entities.push_back(squad[i]);
 		enemyPositionX += 200;
 	}

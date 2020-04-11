@@ -2,9 +2,10 @@
 
 Player::Player() {}
 
-Player::Player(Animation &a, Animation &b, int X, int Y, int dir_, string army_, int lvl)
-	: Tank(a, b, X, Y, dir_, army_, lvl)
+Player::Player(Animation &a, Animation &b, int X, int Y, int dir_, int lvl)
+	: Tank(a, b, X, Y, dir_, lvl)
 {
+	army = "player";
 	totalKills = currentExperience = 0;
 	if (level > 1)
 		experience = pow(2, level - 1);

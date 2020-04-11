@@ -7,11 +7,10 @@ using namespace sf;
 
 Tank::Tank() {}
 
-Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, string army_, int lvl)
+Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, int lvl)
 {
 	tokenId = ++counter;
 	name = "tank";
-	army = army_;
 	dir = dir_;
 	anim = a;
 	aTankExplosion = b;

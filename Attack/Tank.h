@@ -16,7 +16,7 @@ public:
 
 	//.:: Constructors :::::::::::::::::::::
 	Tank();
-	Tank(Animation&, Animation&, int, int, int, string, int);
+	Tank(Animation&, Animation&, int, int, int, int);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Tank();

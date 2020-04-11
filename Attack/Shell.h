@@ -8,12 +8,12 @@ class Shell : public Entity
 private:
 	float dist;		// The way done
 	Animation animSpare;
-	Player *own;
+	Tank *own;
 
 public:
 	//.:: Constructors :::::::::::::::::::::
 	Shell();
-	Shell(Animation&, Animation&, Player*);
+	Shell(Animation&, Animation&, Tank*);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Shell();

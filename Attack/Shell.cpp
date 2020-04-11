@@ -5,7 +5,7 @@
 
 Shell::Shell() {}
 
-Shell::Shell(Animation &a, Animation &b, Player* tank)
+Shell::Shell(Animation &a, Animation &b, Tank* tank)
 {
 	tokenId = tank->tokenId;
 	dist = 0.0;
@@ -84,5 +84,6 @@ void Shell::allowShot()
 
 void Shell::conveyExperience(int experience)
 {
-	own->nickDown(experience);
+	if (own->army == "player")
+		static_cast<Player*>(own)->nickDown(experience);
 }
