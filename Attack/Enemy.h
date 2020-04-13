@@ -5,7 +5,6 @@
 class Enemy : public Tank
 {
 public:
-	int currentDir;
 	//.:: Constructors ::::::::::::::::::::::
 	Enemy();
 	Enemy(Animation&, Animation&, int, int, int, int);
@@ -15,7 +14,6 @@ public:
 
 	//.:: Methods_of_class ::::::::::::::::::
 	void update(double);
-	bool checkDir();
 	void changeDir();
 };
 
