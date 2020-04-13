@@ -100,8 +100,9 @@ int main()
 	armorBuf.loadFromFile("source/sounds/tank/armor.ogg");
 	prefermentBuf.loadFromFile("source/sounds/effects/preferment.ogg");
 
-	Sound sArmor, sPreferment;
-	sArmor.setBuffer(armorBuf);		sArmor.setLoop(false);
+	Sound enemy_1Move, sArmor, sPreferment;
+	enemy_1Move.setBuffer(enemy_1Buf);		enemy_1Move.setLoop(true);
+	sArmor.setBuffer(armorBuf);				sArmor.setLoop(false);
 	sPreferment.setBuffer(prefermentBuf);	sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
 
 #pragma endregion
@@ -131,7 +132,7 @@ int main()
 	Animation aSmoke(tSmoke, 0, 0, 64, 64, 0.006, 5);
 	Animation aRank(tRank, 0, 0, 60, 134, 1, 18);
 
-	Animation enemy_1(tEnemy_1, enemy_1Buf, 0, 0, 64, 64, 0.016, 2);
+	Animation enemy_1(tEnemy_1, 0, 0, 64, 64, 0.016, 2);
 	Animation explosion_enemy_1(tEnemy_1, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
 	Animation aEnemy1Round(tTankRound, en_1RoundBuf, 0, 0, 40, 36, 0.015, 8);
 
@@ -153,15 +154,19 @@ int main()
 	entities.push_back(player_5);
 
 	//.:: Enemies ::: (temporary code for testing)
-	Enemy* squad[5];
-	int enemyPositionX = 550;
-	for (int i = 0; i < 5; i++)
+	const int eTanks = 11;
+
+	Enemy* squad[eTanks];
+	int enemyPositionX = 250;
+	for (int i = 0; i < eTanks; i++)
 	{
 		squad[i] = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, 300, 3, 1);
 		entities.push_back(squad[i]);
-		enemyPositionX += 200;
+		enemyPositionX += 150;
 	}
 	int er = 0;		//enemy round
+	enemy_1Move.play();
+	bool enemy_1Alive = true;
 	//--------------------------------------------
 
 	Clock clock;
@@ -282,7 +287,7 @@ int main()
 						}
 					}
 					++er;
-					if (er >= 5) er = 0;
+					if (er >= eTanks) er = 0;
 				}
 				//-----------------------------------
 			}
@@ -579,17 +584,22 @@ int main()
 #pragma endregion
 
 		//.:: Temporary code for testing :::
-		for (int i = 0; i < 5; i++)
-			if (squad[i]->status == WOUNDED)
+		enemy_1Alive = false;
+		for (int i = 0; i < eTanks; i++)
+			if (squad[i]->status != DEAD)
 			{
-				if (!squad[i]->isSmoking)
+				enemy_1Alive = true;
+				if (squad[i]->status == WOUNDED)
 				{
-					squad[i]->isSmoking = true;
-					Entity *smoke = new Entity(aSmoke, squad[i], "smoke");
-					entities.push_back(smoke);
+					if (!squad[i]->isSmoking)
+					{
+						squad[i]->isSmoking = true;
+						Entity *smoke = new Entity(aSmoke, squad[i], "smoke");
+						entities.push_back(smoke);
+					}
 				}
 			}
-			else if (squad[i]->status == DEAD)
+			else
 			{
 				if (!squad[i]->isSmoking && squad[i]->makeSureDestroyed())
 				{
@@ -599,6 +609,8 @@ int main()
 				}
 			}
 		//----------------------------------
+		if (!enemy_1Alive)
+			enemy_1Move.stop();
 
 		//.:: collision :::
 		for (auto a : entities)
