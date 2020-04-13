@@ -22,4 +22,5 @@ public:
 	void update(double);
 	void allowShot();
 	void conveyExperience(int);
+	void ceaseEnemyFire();
 };

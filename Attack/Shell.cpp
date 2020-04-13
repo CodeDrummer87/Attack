@@ -3,6 +3,8 @@
 #include "Shell.h"
 #include "Animation.h"
 
+#include "Enemy.h"
+
 Shell::Shell() {}
 
 Shell::Shell(Animation &a, Animation &b, Tank* tank)
@@ -86,4 +88,10 @@ void Shell::conveyExperience(int experience)
 {
 	if (own->army == "player")
 		static_cast<Player*>(own)->nickDown(experience);
+}
+
+void Shell::ceaseEnemyFire()
+{
+	if (own->army == "enemy")
+		static_cast<Enemy*>(own)->round = false;
 }

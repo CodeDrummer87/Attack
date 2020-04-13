@@ -5,6 +5,8 @@
 class Enemy : public Tank
 {
 public:
+	bool round;
+
 	//.:: Constructors ::::::::::::::::::::::
 	Enemy();
 	Enemy(Animation&, Animation&, int, int, int, int);

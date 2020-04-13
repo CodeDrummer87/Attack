@@ -588,6 +588,17 @@ int main()
 		for (int i = 0; i < eTanks; i++)
 			if (squad[i]->status != DEAD)
 			{
+				if(squad[i]->round)
+					if (squad[i]->isShot)
+					{
+						squad[i]->round = false;
+						squad[i]->isShot = false;
+						Entity *round = new Entity(aEnemy1Round, squad[i], "explosion");
+						Shell *shell = new Shell(aShell, aShellExp, squad[i]);
+						entities.push_back(round);
+						entities.push_back(shell);
+					}
+
 				enemy_1Alive = true;
 				if (squad[i]->status == WOUNDED)
 				{

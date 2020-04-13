@@ -209,10 +209,7 @@ void Entity::collideEntities(Entity *e)
 	else
 	{
 		if (name == "tank" && army == "enemy")
-		{
 			static_cast<Enemy*>(this)->clearAllDirections();
-			static_cast<Enemy*>(e)->clearAllDirections();
-		}
 
 		if (!traffic.right.dir)
 		{		
@@ -244,6 +241,38 @@ void Entity::collideEntities(Entity *e)
 			{
 				traffic.down.barId = 0;	traffic.down.dir = true;
 			}
+		}
+	}
+
+	//.:: Enemy tanks conduct targeted fire
+	if (name == "tank" && army == "enemy" && e->name == "tank" && e->army == "player")
+	{
+		switch (dir)
+		{
+		case 1:
+			if (y > e->y)
+				if (x >= e->x - 32 && x <= e->x + 32 && y - e->y <= 400)
+					if (!static_cast<Enemy*>(this)->round)
+						static_cast<Enemy*>(this)->round = true;
+			break;
+		case 2:
+			if (x < e->x)
+				if (y >= e->y - 32 && y <= e->y + 32 && e->x - x <= 400)
+					if (!static_cast<Enemy*>(this)->round)
+						static_cast<Enemy*>(this)->round = true;
+			break;
+		case 3:
+			if (y < e->y)
+				if (x >= e->x - 32 && x <= e->x + 32 && e->y - y <= 400)
+					if (!static_cast<Enemy*>(this)->round)
+						static_cast<Enemy*>(this)->round = true;
+			break;
+		case 4:
+			if (x > e->x)
+				if (y >= e->y - 32 && y <= e->y + 32 && x - e->x <= 400)
+					if (!static_cast<Enemy*>(this)->round)
+						static_cast<Enemy*>(this)->round = true;
+			break;
 		}
 	}
 }
@@ -316,6 +345,8 @@ void Entity::damageEntity(Entity *e, Sound &armorSound)
 					e->hitPoints -= level;
 				if (army == "player" && e->hitPoints <= 0)
 					static_cast<Shell*>(this)->conveyExperience(e->level);
+				if (army == "enemy" && e->hitPoints <= 0)
+					static_cast<Shell*>(this)->ceaseEnemyFire();
 			}
 			status = DEAD;
 			if (name == "shell")
