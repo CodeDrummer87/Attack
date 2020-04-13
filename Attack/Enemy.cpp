@@ -17,44 +17,36 @@ void Enemy::update(double time)
 	switch (dir)
 	{
 	case 1:
-		accelerate(1, -0.05 * time);
 		if (y <= 32)
-		{
 			traffic.up.dir = false;
-			changeDir();
-		}
+		if (traffic.up.dir)
+			accelerate(1, -0.05 * time);
 		else
-			traffic.up.dir = true;
+			changeDir();
 		break;
 	case 2:
-		accelerate(2, 0.05 * time);
 		if (x >= 1888)
-		{
 			traffic.right.dir = false;
-			changeDir();
-		}
+		if (traffic.right.dir)
+			accelerate(2, 0.05 * time);
 		else
-			traffic.right.dir = true;
+			changeDir();
 		break;
 	case 3:
-		accelerate(3, 0.05 * time);
 		if (y >= 1048)
-		{
 			traffic.down.dir = false;
+		if (traffic.down.dir)
+			accelerate(dir, 0.05 * time);
+		else
 			changeDir();
-		}
-		else 
-			traffic.down.dir = true;
 		break;
 	case 4:
-		accelerate(4, -0.05 * time);
 		if (x <= 32)
-		{
 			traffic.left.dir = false;
-			changeDir();
-		}
+		if (traffic.left.dir)
+			accelerate(dir, -0.05 * time);
 		else
-			traffic.left.dir = true;
+			changeDir();
 		break;
 	}
 
@@ -71,4 +63,36 @@ void Enemy::changeDir()
 			break;
 	}
 	dir = d;
+}
+
+void Enemy::enemyCollide(Entity* e)
+{
+	switch (dir)
+	{
+	case 1: 
+		if (e->dir == 3)
+			traffic.up.dir = false;
+		changeDir();
+		break;
+	case 2: 
+		if (e->dir == 4)
+			traffic.right.dir = false;
+		changeDir();
+		break;
+	case 3:
+		if (e->dir == 1)
+			traffic.down.dir = false;
+		changeDir();
+		break;
+	case 4:
+		if (e->dir == 2)
+			traffic.left.dir = false;
+		changeDir();
+		break;
+	}
+}
+
+void Enemy::clearAllDirections()
+{
+	traffic.up.dir = traffic.right.dir = traffic.down.dir = traffic.left.dir = true;
 }

@@ -6,6 +6,8 @@
 #include <SFML\Graphics.hpp>
 #include "Shell.h"
 
+#include "Enemy.h"
+
 using namespace sf;
 
 int Entity::counter = 0;
@@ -95,6 +97,12 @@ void Entity::collideEntities(Entity *e)
 {
 	if (anim.getRect(dir).intersects(e->anim.getRect(e->dir)))
 	{
+		if (name == "tank" && army == "enemy")
+			static_cast<Enemy*>(this)->enemyCollide(e);
+			
+		if (e->name == "tank" && e->army == "enemy")
+			static_cast<Enemy*>(e)->enemyCollide(this);
+
 		switch (dir)
 		{
 		case 1:
@@ -200,6 +208,12 @@ void Entity::collideEntities(Entity *e)
 	}
 	else
 	{
+		if (name == "tank" && army == "enemy")
+		{
+			static_cast<Enemy*>(this)->clearAllDirections();
+			static_cast<Enemy*>(e)->clearAllDirections();
+		}
+
 		if (!traffic.right.dir)
 		{		
 			if (traffic.right.barId == e->tokenId)
