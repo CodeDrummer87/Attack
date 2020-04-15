@@ -11,6 +11,7 @@
 #include "Shell.h"
 
 #include "Enemy.h"
+#include "FirstStage.h"
 
 using namespace std;
 using namespace sf;
@@ -632,7 +633,7 @@ int main()
 						a->collideEntities(b);
 					if (a->name != "smoke" && a->name != "explosion" && a->name != "rank"
 						&& b->name != "smoke" && b->name != "explosion" && b->name != "rank")
-						if (a->name == "shell" && b->name == "tank" || b->name == "destroyed")
+						if (a->name == "shell" && b->name == "tank")
 							a->damageEntity(b, sArmor);
 				}
 
@@ -649,6 +650,7 @@ int main()
 
 		app.clear();
 		//.:: display entities :::
+		drawMap(FirstStage, app, rectangle);
 		for (auto e : entities)
 			e->draw(app);
 		app.display();

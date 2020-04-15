@@ -86,7 +86,7 @@ void Shell::allowShot()
 
 void Shell::conveyExperience(int experience)
 {
-	if (own->army == "player")
+	if (own->army == "player" && own->status != DEAD)
 		static_cast<Player*>(own)->nickDown(experience);
 }
 

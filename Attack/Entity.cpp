@@ -244,7 +244,7 @@ void Entity::collideEntities(Entity *e)
 		}
 	}
 
-	//.:: Enemy tanks conduct targeted fire
+	//.:: Enemy tanks conduct targeted fire :::
 	if (name == "tank" && army == "enemy" && e->name == "tank" && e->army == "player")
 	{
 		switch (dir)
