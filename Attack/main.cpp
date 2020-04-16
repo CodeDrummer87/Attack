@@ -67,7 +67,7 @@ int main()
 #pragma region Textures
 
 	Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke, tEnemy_1,
-		tRank;
+		tRank, tMap;
 	bTank.loadFromImage(iBurgundyTank);
 	yTank.loadFromImage(iYellowTank);
 	pTank.loadFromImage(iPurpleTank);
@@ -79,6 +79,7 @@ int main()
 	tSmoke.loadFromFile("source/images/models/smoke/smoke.png");
 	tEnemy_1.loadFromImage(iEnemy_1);
 	tRank.loadFromFile("source/images/attributes/ranks.png");
+	tMap.loadFromFile("source/images/map.png");
 
 #pragma endregion
 
@@ -137,15 +138,17 @@ int main()
 	Animation explosion_enemy_1(tEnemy_1, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
 	Animation aEnemy1Round(tTankRound, en_1RoundBuf, 0, 0, 40, 36, 0.015, 8);
 
-#pragma endregion
+	Animation map(tMap, 0, 64, 32, 32, 0.003, 3);
 
 #pragma endregion
 
-	Player *player_1 = new Player(burgundy_tank, explosion_burg_tank, 550, 800, 1, 1);
-	Player *player_2 = new Player(yellow_tank, explosion_yel_tank, 750, 800, 1, 1);
-	Player *player_3 = new Player(purple_tank, explosion_purp_tank, 950, 800, 1, 1);
-	Player *player_4 = new Player(lightblue_tank, explosion_lb_tank, 1150, 800, 1, 1);
-	Player *player_5 = new Player(hemo_tank, explosion_hemo_tank, 1350, 800, 1, 1);
+#pragma endregion
+
+	Player *player_1 = new Player(burgundy_tank, explosion_burg_tank, 790, 1000, 1, 1);
+	Player *player_2 = new Player(yellow_tank, explosion_yel_tank, 870, 950, 1, 1);
+	Player *player_3 = new Player(purple_tank, explosion_purp_tank, 950, 900, 1, 1);
+	Player *player_4 = new Player(lightblue_tank, explosion_lb_tank, 1030, 950, 1, 1);
+	Player *player_5 = new Player(hemo_tank, explosion_hemo_tank, 1110, 1000, 1, 1);
 
 	vector<Entity*> entities;
 	entities.push_back(player_1);
@@ -155,7 +158,7 @@ int main()
 	entities.push_back(player_5);
 
 	//.:: Enemies ::: (temporary code for testing)
-	const int eTanks = 11;
+	const int eTanks = 1;
 
 	Enemy* squad[eTanks];
 	int enemyPositionX = 250;
@@ -650,7 +653,7 @@ int main()
 
 		app.clear();
 		//.:: display entities :::
-		drawMap(FirstStage, app, rectangle);
+		drawMap(FirstStage, app, map, time);
 		for (auto e : entities)
 			e->draw(app);
 		app.display();
