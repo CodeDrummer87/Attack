@@ -11,6 +11,8 @@ private:
 	Tank *own;
 
 public:
+	bool explosion;
+
 	//.:: Constructors :::::::::::::::::::::
 	Shell();
 	Shell(Animation&, Animation&, Tank*);

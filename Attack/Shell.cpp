@@ -24,6 +24,7 @@ Shell::Shell(Animation &a, Animation &b, Tank* tank)
 	status = ALIVE;
 	hitPoints = 0;
 	level = tank->level;
+	explosion = false;
 }
 
 Shell::~Shell() {}
@@ -58,6 +59,9 @@ void Shell::update(double time)
 		}
 
 		if (abs(dist) >= 350 + (float)level * 50)
+			explosion = true;
+
+		if (explosion)
 		{
 			status = WOUNDED;
 			anim = animSpare;
@@ -68,15 +72,11 @@ void Shell::update(double time)
 		y += dy;
 	}
 	else if (status == WOUNDED)
-	{
 		if (anim.isEnd(time))
-			status = DEAD;
-	}
-	else
-	{
-		isExist = false;
-		own->isShot = true;
-	}
+		{
+			isExist = false;
+			own->isShot = true;
+		}
 }
 
 void Shell::allowShot()

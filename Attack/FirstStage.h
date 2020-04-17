@@ -9,40 +9,40 @@ const int W = 61;
 
 String FirstStage[H] = 
 {
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"                                                             ",
-	"WWWWWWWWWWWWWWWWWWWWWWWWWWWFFFFFFWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-	"WWWWWWWWWWWWWWWWWWWWWWWWWWWFFFFFFWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+	"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+	"B            B                                 B            B",
+	"B            B                                 B            B",
+	"B            B                                 B            B",
+	"B            B                                 B            B",
+	"B            B                                 B            B",
+	"B            B                                 B            B",
+	"B            BFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB            B",
+	"B   BBBBBBBBBBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBBBBBBBBBB   B",
+	"BbbbWWWWFFFFFFFFFFWWWWWWWWWWWWWWWWWWWWWWWWWFFFFFFFFFFWWWWbbbB",
+	"BbbbWWWWFFFFFFFFFFWWWWWWWWWWWWWWWWWWWWWWWWWFFFFFFFFFFWWWWbbbB",
+	"BbbbWWWWbbbbFFFFFFbbbbbbbbbbbbbbbbbbbbbbbbbFFFFFFbbbbWWWWbbbB",
+	"BbbbWWWWbbbbFFFFFFbbbbbbbbbbbUbbbbbbbbbbbbbFFFFFFbbbbWWWWbbbB",
+	"BbbbWWWWWWWWWWWWWWbb      bbbbbbb        bbWWWWWWWWWWWWWWbbbB",
+	"BbbbWWWWWWWWWWWWWWbb      bbbbbbb        bbWWWWWWWWWWWWWWbbbB",
+	"B                            B                              B",
+	"B                            B                              B",
+	"B            BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB             B",
+	"B                                                           B",
+	"B                                                           B",
+	"BWWWWWWWWWWWWWWWWWWWWWWWWWWFFFFFFWWWWWWWWWWWWWWWWWWWWWWWWWWWB",
+	"BWWWWWWWWWWWWWWWWWWWWWWWWWWFFFFFFWWWWWWWWWWWWWWWWWWWWWWWWWWWB",
 	"BBBBBBBBBBBBBBBBBBBBBBBBBBBFFFFFFBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
 	"BBBBBBBBBBBWWWWWWWWWWWWWWWWFFFFFFWWWWWWWWWWWWWWWWWBBBBBBBBBBB",
 	"BBBBBBBBBBWWWWWWWWWWWWWWWWWFFFFFFWWWWWWWWWWWWWWWWWWBBBBBBBBBB",
 	"BBBBBBBBBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBBBBBBBBB",
-	"BBBBBBBBFFFFFFFFF                           FFFFFFFFFBBBBBBBB",
-	"BBBBBBBFFFFFFFF                               FFFFFFFFBBBBBBB",
-	"BBBBBBFFFFFFF                                   FFFFFFFBBBBBB",
-	"BBBBBFFFFFFF                                     FFFFFFFBBBBB",
-	"BBBBFFFFFFF                                       FFFFFFFBBBB",
-	"BBBFFFFFFF                                         FFFFFFFBBB",
-	"BBFFFFFFF                                           FFFFFFFBB",
-	"BFFFFFFF                                             FFFFFFFB"
+	"BBBBBBBBFFFFFFFFFbbbbbbbbbbbbbbbbbbbbbbbbbbbFFFFFFFFFBBBBBBBB",
+	"BBBBBBBFFFFFFFFbbbbbb                   bbbbbbFFFFFFFFBBBBBBB",
+	"BBBBBBFFFFFFFbbbbbbb                     bbbbbbbFFFFFFFBBBBBB",
+	"BBBBBFFFFFFFbbbbbbb                       bbbbbbbFFFFFFFBBBBB",
+	"BBBBFFFFFFFbbbbbbb                         bbbbbbbFFFFFFFBBBB",
+	"BBBFFFFFFFbbbbbbb                           bbbbbbbFFFFFFFBBB",
+	"BBFFFFFFFbbbbbbb                             bbbbbbbFFFFFFFBB",
+	"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
 };
 
 RectangleShape rectangle(Vector2f(32, 32));
@@ -59,6 +59,10 @@ void drawMap(String map[H], RenderWindow &app, Animation &a, double time)
 				a.sprite.setTextureRect(IntRect(32, 32, 32, 32));
 			if (map[i][j] == 'B')
 				a.sprite.setTextureRect(IntRect(0, 32, 32, 32));
+			if (map[i][j] == 'b')
+				a.sprite.setTextureRect(IntRect(96, 32, 32, 32));
+			if (map[i][j] == 'U')
+				a.sprite.setTextureRect(IntRect(128, 32, 32, 32));
 			if (map[i][j] == ' ')
 				continue;
 

@@ -138,11 +138,13 @@ int main()
 	Animation explosion_enemy_1(tEnemy_1, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
 	Animation aEnemy1Round(tTankRound, en_1RoundBuf, 0, 0, 40, 36, 0.015, 8);
 
-	Animation map(tMap, 0, 64, 32, 32, 0.003, 3);
+	Animation map(tMap, 0, 64, 32, 32, 0.003, 8);
 
 #pragma endregion
 
 #pragma endregion
+
+	Player pl1(burgundy_tank, explosion_burg_tank, 790, 1000, 1, 1);
 
 	Player *player_1 = new Player(burgundy_tank, explosion_burg_tank, 790, 1000, 1, 1);
 	Player *player_2 = new Player(yellow_tank, explosion_yel_tank, 870, 950, 1, 1);
@@ -161,14 +163,14 @@ int main()
 	const int eTanks = 1;
 
 	Enemy* squad[eTanks];
-	int enemyPositionX = 250;
+	int enemyPositionX = 300;
 	for (int i = 0; i < eTanks; i++)
 	{
 		squad[i] = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, 300, 3, 1);
 		entities.push_back(squad[i]);
 		enemyPositionX += 150;
 	}
-	int er = 0;		//enemy round
+
 	enemy_1Move.play();
 	bool enemy_1Alive = true;
 	//--------------------------------------------
@@ -275,25 +277,6 @@ int main()
 						}
 					}
 				}
-
-				//.:: Temporary code for testing :::
-				if (event.key.code == Keyboard::BackSpace)
-				{
-					if (squad[er]->status != DEAD)
-					{
-						if (squad[er]->isShot)
-						{
-							squad[er]->isShot = false;
-							Entity *round1 = new Entity(aEnemy1Round, squad[er], "explosion");
-							Shell *shell1 = new Shell(aShell, aShellExp, squad[er]);
-							entities.push_back(round1);
-							entities.push_back(shell1);
-						}
-					}
-					++er;
-					if (er >= eTanks) er = 0;
-				}
-				//-----------------------------------
 			}
 		}
 
@@ -630,6 +613,8 @@ int main()
 		//.:: collision :::
 		for (auto a : entities)
 			for (auto b : entities)
+			{
+				a->getCollision(FirstStage);
 				if (a->tokenId != b->tokenId)
 				{
 					if (a->name == "tank" && b->name == "tank" || b->name == "destroyed")
@@ -639,6 +624,7 @@ int main()
 						if (a->name == "shell" && b->name == "tank")
 							a->damageEntity(b, sArmor);
 				}
+			}
 
 		//.:: update entities :::
 		for (auto i  = entities.begin(); i != entities.end();)
@@ -653,9 +639,9 @@ int main()
 
 		app.clear();
 		//.:: display entities :::
-		drawMap(FirstStage, app, map, time);
 		for (auto e : entities)
 			e->draw(app);
+		drawMap(FirstStage, app, map, time);
 		app.display();
 	}
 

@@ -56,5 +56,6 @@ public:
 	double getCoordY(bool);
 	void damageEntity(Entity*, Sound&);
 	void draw(RenderWindow&);
+	void getCollision(String[]);
 };
 

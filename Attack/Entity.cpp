@@ -359,3 +359,18 @@ void Entity::draw(RenderWindow &app)
 	anim.sprite.setPosition(x, y);
 	app.draw(anim.sprite);
 }
+
+void Entity::getCollision(String map[])
+{
+	if (name == "shell")
+	{
+		for (int i = y / 32; i < (y + anim.getShellRect(dir).height) / 32; i++)
+			for (int j = x / 32; j < (x + anim.getShellRect(dir).width) / 32; j++)
+				if (map[i][j] == 'b' || map[i][j] == 'B')
+				{
+					static_cast<Shell*>(this)->explosion = true;
+					if (map[i][j] == 'b')
+						map[i][j] = ' ';
+				}
+	}
+}
