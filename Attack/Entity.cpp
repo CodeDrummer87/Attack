@@ -348,7 +348,7 @@ void Entity::damageEntity(Entity *e, Sound &armorSound)
 				if (army == "enemy" && e->hitPoints <= 0)
 					static_cast<Shell*>(this)->ceaseEnemyFire();
 			}
-			status = DEAD;
+			isExist = false;
 			if (name == "shell")
 				static_cast<Shell*>(this)->allowShot();
 		}

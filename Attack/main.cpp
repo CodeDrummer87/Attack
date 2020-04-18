@@ -638,10 +638,10 @@ int main()
 		}
 
 		app.clear();
+		drawMap(FirstStage, app, map, time);
 		//.:: display entities :::
 		for (auto e : entities)
 			e->draw(app);
-		drawMap(FirstStage, app, map, time);
 		app.display();
 	}
 
