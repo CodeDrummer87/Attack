@@ -373,4 +373,34 @@ void Entity::getCollision(String map[])
 						map[i][j] = ' ';
 				}
 	}
+	else
+	{
+		for (int i = (anim.getRect(dir).top + 15) / 32; i < (y + anim.getRect(dir).height) / 32; i++)
+			for (int j = (anim.getRect(dir).left + 14) / 32; j < (x + anim.getRect(dir).width) / 32; j++)
+			{
+				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+				{
+					if (name == "tank" && army == "player")
+					{
+						if (i * 32 < y && (j * 32 > x - 15 && j * 32 < x + 15) && checkBarrierId(1, i * j))
+							if (dy < 0)
+								dy += 0.2F;
+					
+						if (i * 32 > y && (j * 32 > x - 15 && j * 32 < x + 15) && checkBarrierId(3, i * j))
+							if (dy > 0)
+								dy -= 0.2F;
+
+						if (j * 32 > x && (i * 32 > y - 15 && i * 32 < y + 15) && checkBarrierId(2, i * j))
+							if (dx > 0)
+								dx -= 0.2F;
+
+						if (j * 32 < x && (i * 32 > y - 15 && i * 32 < y + 15) && checkBarrierId(4, i * j))
+							if (dx < 0)
+								dx += 0.2F;
+					}
+					if (name == "tank" && army == "enemy")
+						static_cast<Enemy*>(this)->changeDir();
+				}
+			}
+	}
 }

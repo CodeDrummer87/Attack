@@ -163,12 +163,12 @@ int main()
 	const int eTanks = 1;
 
 	Enemy* squad[eTanks];
-	int enemyPositionX = 300;
+	int enemyPositionX = 100;
 	for (int i = 0; i < eTanks; i++)
 	{
-		squad[i] = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, 300, 3, 1);
+		squad[i] = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, 150, 3, 1);
 		entities.push_back(squad[i]);
-		enemyPositionX += 150;
+		enemyPositionX += 100;
 	}
 
 	enemy_1Move.play();

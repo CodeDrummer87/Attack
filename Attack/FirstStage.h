@@ -36,11 +36,11 @@ String FirstStage[H] =
 	"BBBBBBBBBBWWWWWWWWWWWWWWWWWFFFFFFWWWWWWWWWWWWWWWWWWBBBBBBBBBB",
 	"BBBBBBBBBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBBBBBBBBB",
 	"BBBBBBBBFFFFFFFFFbbbbbbbbbbbbbbbbbbbbbbbbbbbFFFFFFFFFBBBBBBBB",
-	"BBBBBBBFFFFFFFFbbbbbb                   bbbbbbFFFFFFFFBBBBBBB",
+	"BBBBBBBFFFFFFFFbbbbb                     bbbbbFFFFFFFFBBBBBBB",
 	"BBBBBBFFFFFFFbbbbbbb                     bbbbbbbFFFFFFFBBBBBB",
-	"BBBBBFFFFFFFbbbbbbb                       bbbbbbbFFFFFFFBBBBB",
+	"BBBBBFFFFFFFbbbbbb                         bbbbbbFFFFFFFBBBBB",
 	"BBBBFFFFFFFbbbbbbb                         bbbbbbbFFFFFFFBBBB",
-	"BBBFFFFFFFbbbbbbb                           bbbbbbbFFFFFFFBBB",
+	"BBBFFFFFFFbbbbbb                             bbbbbbFFFFFFFBBB",
 	"BBFFFFFFFbbbbbbb                             bbbbbbbFFFFFFFBB",
 	"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
 };
