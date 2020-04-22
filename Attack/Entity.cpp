@@ -364,14 +364,32 @@ void Entity::getCollision(String map[])
 {
 	if (name == "shell")
 	{
+		static int neighborCoordX;
+		static int neighborCoordY;
+
 		for (int i = y / 32; i < (y + anim.getShellRect(dir).height) / 32; i++)
 			for (int j = x / 32; j < (x + anim.getShellRect(dir).width) / 32; j++)
+			{
+				neighborCoordX = j;
+				neighborCoordY = i;
+				if (dir % 2 == 0)
+					neighborCoordY = (i * 32 + 32) / 32;
+				else
+					neighborCoordX = (j * 32 + 32) / 32;
+
 				if (map[i][j] == 'b' || map[i][j] == 'B')
 				{
 					static_cast<Shell*>(this)->explosion = true;
 					if (map[i][j] == 'b')
 						map[i][j] = ' ';
 				}
+
+				if (map[neighborCoordY][neighborCoordX] == 'b')
+				{
+					static_cast<Shell*>(this)->explosion = true;
+					map[neighborCoordY][neighborCoordX] = ' ';
+				}	
+			}
 	}
 	else
 	{
@@ -380,26 +398,27 @@ void Entity::getCollision(String map[])
 			{
 				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
 				{
-					if (name == "tank" && army == "player")
+					if (name == "tank")
 					{
-						if (i * 32 < y && (j * 32 > x - 15 && j * 32 < x + 15) && checkBarrierId(1, i * j))
+						if (i * 32 < y && j * 32 > x - 26 && j * 32 < x + 26)
 							if (dy < 0)
 								dy += 0.2F;
 					
-						if (i * 32 > y && (j * 32 > x - 15 && j * 32 < x + 15) && checkBarrierId(3, i * j))
+						if (i * 32 > y && j * 32 > x - 26 && j * 32 < x + 26)
 							if (dy > 0)
 								dy -= 0.2F;
 
-						if (j * 32 > x && (i * 32 > y - 15 && i * 32 < y + 15) && checkBarrierId(2, i * j))
+						if (j * 32 > x && i * 32 > y - 26 && i * 32 < y + 26)
 							if (dx > 0)
 								dx -= 0.2F;
 
-						if (j * 32 < x && (i * 32 > y - 15 && i * 32 < y + 15) && checkBarrierId(4, i * j))
+						if (j * 32 < x && i * 32 > y - 26 && i * 32 < y + 26)
 							if (dx < 0)
 								dx += 0.2F;
+
+						if (army == "enemy")
+							static_cast<Enemy*>(this)->changeDir();
 					}
-					if (name == "tank" && army == "enemy")
-						static_cast<Enemy*>(this)->changeDir();
 				}
 			}
 	}

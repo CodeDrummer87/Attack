@@ -144,8 +144,6 @@ int main()
 
 #pragma endregion
 
-	Player pl1(burgundy_tank, explosion_burg_tank, 790, 1000, 1, 1);
-
 	Player *player_1 = new Player(burgundy_tank, explosion_burg_tank, 790, 1000, 1, 1);
 	Player *player_2 = new Player(yellow_tank, explosion_yel_tank, 870, 950, 1, 1);
 	Player *player_3 = new Player(purple_tank, explosion_purp_tank, 950, 900, 1, 1);
@@ -160,7 +158,7 @@ int main()
 	entities.push_back(player_5);
 
 	//.:: Enemies ::: (temporary code for testing)
-	const int eTanks = 1;
+	const int eTanks = 9;
 
 	Enemy* squad[eTanks];
 	int enemyPositionX = 100;
@@ -168,7 +166,7 @@ int main()
 	{
 		squad[i] = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, 150, 3, 1);
 		entities.push_back(squad[i]);
-		enemyPositionX += 100;
+		enemyPositionX += 200;
 	}
 
 	enemy_1Move.play();
@@ -614,7 +612,8 @@ int main()
 		for (auto a : entities)
 			for (auto b : entities)
 			{
-				a->getCollision(FirstStage);
+				if (a->name == "tank" || a->name == "shell")
+					a->getCollision(FirstStage);
 				if (a->tokenId != b->tokenId)
 				{
 					if (a->name == "tank" && b->name == "tank" || b->name == "destroyed")

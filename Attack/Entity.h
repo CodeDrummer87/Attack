@@ -58,4 +58,3 @@ public:
 	void draw(RenderWindow&);
 	void getCollision(String[]);
 };
-

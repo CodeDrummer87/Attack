@@ -116,7 +116,7 @@ FloatRect Animation::getShellRect(bool isShell)
 	FloatRect rect = sprite.getGlobalBounds();
 	
 	if (isShell)
-		return FloatRect(rect.left, rect.top, 12, 12);
+		return FloatRect(rect.left, rect.top, 8, 8);
 	else
 		return FloatRect(rect.left, rect.top, 25, 25);
 }

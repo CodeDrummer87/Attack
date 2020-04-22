@@ -20,4 +20,3 @@ public:
 	void enemyCollide(Entity*);
 	void clearAllDirections();
 };
-
