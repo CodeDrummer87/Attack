@@ -91,7 +91,7 @@ void Enemy::enemyCollide(Entity* e)
 	case 4:
 		traffic.left.dir = false;
 		if (e->dir == 2)
-			traffic.right.dir = false;
+			e->traffic.right.dir = false;
 		break;
 	}
 

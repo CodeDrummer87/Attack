@@ -55,18 +55,30 @@ void drawMap(String map[H], RenderWindow &app, Animation &a, double time)
 		{
 			if (map[i][j] == 'W')
 				a.sprite.setTextureRect(a.frames[(int)a.frame]);
-			if (map[i][j] == 'F')
-				a.sprite.setTextureRect(IntRect(32, 32, 32, 32));
 			if (map[i][j] == 'B')
 				a.sprite.setTextureRect(IntRect(0, 32, 32, 32));
 			if (map[i][j] == 'b')
 				a.sprite.setTextureRect(IntRect(96, 32, 32, 32));
 			if (map[i][j] == 'U')
 				a.sprite.setTextureRect(IntRect(128, 32, 32, 32));
-			if (map[i][j] == ' ')
+			if (map[i][j] == ' ' || map[i][j] == 'F')
 				continue;
 
 			a.sprite.setPosition(j * 32, i * 32);
 			app.draw(a.sprite);
+		}
+}
+
+void drawForest(String map[H], RenderWindow &app, Animation &a)
+{
+	for (int i = 0; i < H; i++)
+		for (int j = 0; j < W; j++)
+		{
+			if (map[i][j] == 'F')
+			{
+				a.sprite.setTextureRect(IntRect(32, 32, 32, 32));
+				a.sprite.setPosition(j * 32, i * 32);
+				app.draw(a.sprite);
+			}
 		}
 }

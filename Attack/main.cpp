@@ -647,6 +647,7 @@ int main()
 		//.:: display entities :::
 		for (auto e : entities)
 			e->draw(app);
+		drawForest(FirstStage, app, map);
 		app.display();
 	}
 

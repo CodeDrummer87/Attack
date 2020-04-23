@@ -436,11 +436,6 @@ void Entity::getCollision(String map[])
 							static_cast<Enemy*>(this)->changeDir();
 					}
 				}
-
-				if (map[i][j] == 'F' && name == "tank")
-					anim.sprite.setColor(Color::Black);
-				if (map[i][j] == ' ')
-					anim.sprite.setColor(Color::White);
 			}
 	}
 }
