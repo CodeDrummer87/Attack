@@ -436,6 +436,15 @@ void Entity::getCollision(String map[])
 							static_cast<Enemy*>(this)->changeDir();
 					}
 				}
+
+				if (map[i][j] == 'U' && name == "tank")
+				{
+					if (army == "player")
+					{
+						static_cast<Player*>(this)->preferment = true;
+						map[i][j] = ' ';
+					}
+				}
 			}
 	}
 }
