@@ -158,15 +158,21 @@ int main()
 	entities.push_back(player_5);
 
 	//.:: Enemies ::: (temporary code for testing)
-	const int eTanks = 9;
+	const int eTanks = 18;
 
 	Enemy* squad[eTanks];
-	int enemyPositionX = 100;
+	int enemyPositionX = 70;
+	int enemyPositionY = 150;
 	for (int i = 0; i < eTanks; i++)
 	{
-		squad[i] = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, 150, 3, 1);
+		squad[i] = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, enemyPositionY, 3, 1);
 		entities.push_back(squad[i]);
 		enemyPositionX += 200;
+		if (i == 9)
+		{
+			enemyPositionX = 100;
+			enemyPositionY += 75;
+		}
 	}
 
 	enemy_1Move.play();

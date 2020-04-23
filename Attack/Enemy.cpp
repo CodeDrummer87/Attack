@@ -70,27 +70,32 @@ void Enemy::enemyCollide(Entity* e)
 {
 	switch (dir)
 	{
-	case 1: 
+	case 1:
+		traffic.up.dir = false;
 		if (e->dir == 3)
-			traffic.up.dir = false;
-		changeDir();
+			e->traffic.down.dir = false;
 		break;
-	case 2: 
+
+	case 2:
+		traffic.right.dir = false;
 		if (e->dir == 4)
-			traffic.right.dir = false;
-		changeDir();
+			e->traffic.left.dir = false;
 		break;
+
 	case 3:
+		traffic.down.dir = false;
 		if (e->dir == 1)
-			traffic.down.dir = false;
-		changeDir();
+			e->traffic.up.dir = false;
 		break;
+
 	case 4:
+		traffic.left.dir = false;
 		if (e->dir == 2)
-			traffic.left.dir = false;
-		changeDir();
+			traffic.right.dir = false;
 		break;
 	}
+
+	changeDir();
 }
 
 void Enemy::clearAllDirections()

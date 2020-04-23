@@ -401,25 +401,46 @@ void Entity::getCollision(String map[])
 					if (name == "tank")
 					{
 						if (i * 32 < y && j * 32 > x - 26 && j * 32 < x + 26)
+						{
 							if (dy < 0)
 								dy += 0.2F;
+							if (army == "enemy")
+								dy += 0.2F;
+						}
 					
 						if (i * 32 > y && j * 32 > x - 26 && j * 32 < x + 26)
+						{
 							if (dy > 0)
 								dy -= 0.2F;
+							if (army == "enemy")
+								dy -= 0.2F;
+						}
 
 						if (j * 32 > x && i * 32 > y - 26 && i * 32 < y + 26)
+						{
 							if (dx > 0)
 								dx -= 0.2F;
+							if (army == "enemy")
+								dx -= 0.2F;
+						}
 
 						if (j * 32 < x && i * 32 > y - 26 && i * 32 < y + 26)
+						{
 							if (dx < 0)
 								dx += 0.2F;
+							if (army == "enemy")
+								dx += 0.2F;
+						}
 
 						if (army == "enemy")
 							static_cast<Enemy*>(this)->changeDir();
 					}
 				}
+
+				if (map[i][j] == 'F' && name == "tank")
+					anim.sprite.setColor(Color::Black);
+				if (map[i][j] == ' ')
+					anim.sprite.setColor(Color::White);
 			}
 	}
 }
