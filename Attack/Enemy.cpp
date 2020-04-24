@@ -71,27 +71,19 @@ void Enemy::enemyCollide(Entity* e)
 	switch (dir)
 	{
 	case 1:
-		traffic.up.dir = false;
-		if (e->dir == 3)
-			e->traffic.down.dir = false;
+		dy += 0.4F;
 		break;
 
 	case 2:
-		traffic.right.dir = false;
-		if (e->dir == 4)
-			e->traffic.left.dir = false;
+		dx -= 0.4F;
 		break;
 
 	case 3:
-		traffic.down.dir = false;
-		if (e->dir == 1)
-			e->traffic.up.dir = false;
+		dy -= 0.4F;
 		break;
 
 	case 4:
-		traffic.left.dir = false;
-		if (e->dir == 2)
-			e->traffic.right.dir = false;
+		dx += 0.4F;
 		break;
 	}
 

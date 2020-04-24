@@ -78,7 +78,7 @@ void Entity::update(double time)
 
 		if (name == "rank")
 		{
-			if (own->level >= 10)
+			if (own->level >= 6)
 				anim.sprite.setScale(0.6f, 0.6f);
 
 			if (own->level <= 19)
@@ -103,108 +103,114 @@ void Entity::collideEntities(Entity *e)
 		if (e->name == "tank" && e->army == "enemy")
 			static_cast<Enemy*>(e)->enemyCollide(this);
 
-		switch (dir)
-		{
-		case 1:
-			if (dy != 0)
+		if (army != "enemy")
+			switch (dir)
 			{
-				if (traffic.up.barId == 0 && checkBarrierId(1, e->tokenId))
+			case 1:
+				if (dy != 0)
 				{
-					if (e->dir == 1 && e->y > y)
+					if (traffic.up.barId == 0 && checkBarrierId(1, e->tokenId))
 					{
-						traffic.down.dir = false;
-						traffic.down.barId = e->tokenId;
-					}
-					else
-					{
-						traffic.up.dir = false;
-						traffic.up.barId = e->tokenId;
-					}
+						if (e->dir == 1 && e->y > y)
+						{
+							traffic.down.dir = false;
+							traffic.down.barId = e->tokenId;
+						}
+						else if (e->dir == 4 && e->x > x)
+						{
+							e->traffic.left.dir = false;
+							e->traffic.left.barId = tokenId;
+						}
+						else
+						{
+							traffic.up.dir = false;
+							traffic.up.barId = e->tokenId;
+						}
 
-					if (e->dy == 0)
-					{
-						e->traffic.down.dir = false;
-						e->traffic.down.barId = tokenId;
+						if (e->dy == 0)
+						{
+							e->traffic.down.dir = false;
+							e->traffic.down.barId = tokenId;
+						}
 					}
 				}
-			}
-			break;
+				break;
 
-		case 2:
-			if (dx != 0)
-			{
-				if (traffic.right.barId == 0 && checkBarrierId(2, e->tokenId))
+			case 2:
+				if (dx != 0)
 				{
-					if (e->dir == 2 && e->x < x)
+					if (traffic.right.barId == 0 && checkBarrierId(2, e->tokenId))
 					{
-						traffic.left.dir = false;
-						traffic.left.barId = e->tokenId;
-					}
-					else
-					{
-						traffic.right.dir = false;
-						traffic.right.barId = e->tokenId;
-					}
+						if (e->dir == 2 && e->x < x)
+						{
+							traffic.left.dir = false;
+							traffic.left.barId = e->tokenId;
+						}
+						else
+						{
+							traffic.right.dir = false;
+							traffic.right.barId = e->tokenId;
+						}
 
-					if (e->dx == 0)
-					{
-						e->traffic.left.dir = false;
-						e->traffic.left.barId = tokenId;
+						if (e->dx == 0)
+						{
+							e->traffic.left.dir = false;
+							e->traffic.left.barId = tokenId;
+						}
 					}
 				}
-			}
-			break;
+				break;
 
-		case 3:
-			if (dy != 0)
-			{
-				if (traffic.down.barId == 0 && checkBarrierId(3, e->tokenId))
+			case 3:
+				if (dy != 0)
 				{
-					if (e->dir == 3 && e->y < y)
+					if (traffic.down.barId == 0 && checkBarrierId(3, e->tokenId))
 					{
-						traffic.up.dir = false;
-						traffic.up.barId = e->tokenId;
-					}
-					else
-					{
-						traffic.down.dir = false;
-						traffic.down.barId = e->tokenId;
-					}
+						if (e->dir == 3 && e->y < y)
+						{
+							traffic.up.dir = false;
+							traffic.up.barId = e->tokenId;
+						}
+						else
+						{
+							traffic.down.dir = false;
+							traffic.down.barId = e->tokenId;
+						}
 
-					if (e->dy == 0)
-					{
-						e->traffic.up.dir = false;
-						e->traffic.up.barId = tokenId;
+						if (e->dy == 0)
+						{
+							e->traffic.up.dir = false;
+							e->traffic.up.barId = tokenId;
+						}
 					}
 				}
-			}
-			break;
+				break;
 
-		case 4:
-			if (dx != 0)
-			{
-				if (traffic.left.barId == 0 && checkBarrierId(4, e->tokenId))
+			case 4:
+				if (dx != 0)
 				{
-					if (e->dir == 4 && e->x > x)
+					if (traffic.left.barId == 0 && checkBarrierId(4, e->tokenId))
 					{
-						traffic.right.dir = false;
-						traffic.right.barId = e->tokenId;
-					}
-					else
-					{
-						traffic.left.dir = false;
-						traffic.left.barId = e->tokenId;
-					}
+						if (e->dir == 4 && e->x > x)
+						{
+							traffic.right.dir = false;
+							traffic.right.barId = e->tokenId;
+						}
+						else
+						{
+							traffic.left.dir = false;
+							traffic.left.barId = e->tokenId;
+						}
 
-					if (e->dx == 0)
-					{
-						e->traffic.right.dir = false;
-						e->traffic.right.barId = tokenId;
+						if (e->dx == 0)
+						{
+							e->traffic.right.dir = false;
+							e->traffic.right.barId = tokenId;
+						}
 					}
 				}
+				break;
 			}
-			break;
-		}
 	}
 	else
 	{
