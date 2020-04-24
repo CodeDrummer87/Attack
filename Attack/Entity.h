@@ -21,6 +21,8 @@ struct Traffic
 	Ban left;
 };
 
+extern String FirstStage[];
+
 class Entity
 {
 private:
@@ -57,4 +59,5 @@ public:
 	void damageEntity(Entity*, Sound&);
 	void draw(RenderWindow&);
 	void getCollision(String[]);
+	bool checkObstacles(String[]);
 };

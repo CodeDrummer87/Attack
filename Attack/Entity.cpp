@@ -258,26 +258,33 @@ void Entity::collideEntities(Entity *e)
 		case 1:
 			if (y > e->y)
 				if (x >= e->x - 32 && x <= e->x + 32 && y - e->y <= 400)
-					if (!static_cast<Enemy*>(this)->round)
-						static_cast<Enemy*>(this)->round = true;
+					if (this->checkObstacles(FirstStage))
+						if (!static_cast<Enemy*>(this)->round)
+							static_cast<Enemy*>(this)->round = true;
 			break;
+
 		case 2:
 			if (x < e->x)
 				if (y >= e->y - 32 && y <= e->y + 32 && e->x - x <= 400)
-					if (!static_cast<Enemy*>(this)->round)
-						static_cast<Enemy*>(this)->round = true;
+					if (this->checkObstacles(FirstStage))
+						if (!static_cast<Enemy*>(this)->round)
+							static_cast<Enemy*>(this)->round = true;
 			break;
+
 		case 3:
 			if (y < e->y)
 				if (x >= e->x - 32 && x <= e->x + 32 && e->y - y <= 400)
-					if (!static_cast<Enemy*>(this)->round)
-						static_cast<Enemy*>(this)->round = true;
+					if (this->checkObstacles(FirstStage))
+						if (!static_cast<Enemy*>(this)->round)
+							static_cast<Enemy*>(this)->round = true;
 			break;
+
 		case 4:
 			if (x > e->x)
 				if (y >= e->y - 32 && y <= e->y + 32 && x - e->x <= 400)
-					if (!static_cast<Enemy*>(this)->round)
-						static_cast<Enemy*>(this)->round = true;
+					if (this->checkObstacles(FirstStage))
+						if (!static_cast<Enemy*>(this)->round)
+							static_cast<Enemy*>(this)->round = true;
 			break;
 		}
 	}
@@ -368,89 +375,155 @@ void Entity::draw(RenderWindow &app)
 
 void Entity::getCollision(String map[])
 {
-	if (name == "shell")
-	{
-		static int neighborCoordX;
-		static int neighborCoordY;
+	if (name != "explosion")
+		if (name == "shell")
+		{
+			static int neighborCoordX;
+			static int neighborCoordY;
 
-		for (int i = y / 32; i < (y + anim.getShellRect(dir).height) / 32; i++)
-			for (int j = x / 32; j < (x + anim.getShellRect(dir).width) / 32; j++)
-			{
-				neighborCoordX = j;
-				neighborCoordY = i;
-				if (dir % 2 == 0)
-					neighborCoordY = (i * 32 + 32) / 32;
-				else
-					neighborCoordX = (j * 32 + 32) / 32;
+			for (int i = y / 32; i < (y + anim.getShellRect(dir).height) / 32; i++)
+				for (int j = x / 32; j < (x + anim.getShellRect(dir).width) / 32; j++)
+				{
+					neighborCoordX = j;
+					neighborCoordY = i;
+					if (dir % 2 == 0)
+						neighborCoordY = (i * 32 + 32) / 32;
+					else
+						neighborCoordX = (j * 32 + 32) / 32;
 
-				if (map[i][j] == 'b' || map[i][j] == 'B')
-				{
-					static_cast<Shell*>(this)->explosion = true;
-					if (map[i][j] == 'b')
-						map[i][j] = ' ';
-				}
-
-				if (map[neighborCoordY][neighborCoordX] == 'b')
-				{
-					static_cast<Shell*>(this)->explosion = true;
-					map[neighborCoordY][neighborCoordX] = ' ';
-				}	
-			}
-	}
-	else
-	{
-		for (int i = (anim.getRect(dir).top + 15) / 32; i < (y + anim.getRect(dir).height) / 32; i++)
-			for (int j = (anim.getRect(dir).left + 14) / 32; j < (x + anim.getRect(dir).width) / 32; j++)
-			{
-				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
-				{
-					if (name == "tank")
+					if (map[i][j] == 'b' || map[i][j] == 'B')
 					{
-						if (i * 32 < y && j * 32 > x - 26 && j * 32 < x + 26)
+						static_cast<Shell*>(this)->explosion = true;
+						if (map[i][j] == 'b')
+							map[i][j] = ' ';
+					}
+
+					if (map[neighborCoordY][neighborCoordX] == 'b')
+					{
+						static_cast<Shell*>(this)->explosion = true;
+						map[neighborCoordY][neighborCoordX] = ' ';
+					}	
+				}
+		}
+		else
+		{
+			for (int i = (anim.getRect(dir).top + 15) / 32; i < (y + anim.getRect(dir).height) / 32; i++)
+				for (int j = (anim.getRect(dir).left + 14) / 32; j < (x + anim.getRect(dir).width) / 32; j++)
+				{
+					if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+					{
+						if (name == "tank")
 						{
-							if (dy < 0)
-								dy += 0.2F;
-							if (army == "enemy")
-								dy += 0.2F;
-						}
+							if (i * 32 < y && j * 32 > x - 26 && j * 32 < x + 26)
+							{
+								if (dy < 0)
+									dy += 0.2F;
+								if (army == "enemy")
+									dy += 0.2F;
+							}
 					
-						if (i * 32 > y && j * 32 > x - 26 && j * 32 < x + 26)
-						{
-							if (dy > 0)
-								dy -= 0.2F;
-							if (army == "enemy")
-								dy -= 0.2F;
-						}
+							if (i * 32 > y && j * 32 > x - 26 && j * 32 < x + 26)
+							{
+								if (dy > 0)
+									dy -= 0.2F;
+								if (army == "enemy")
+									dy -= 0.2F;
+							}
 
-						if (j * 32 > x && i * 32 > y - 26 && i * 32 < y + 26)
-						{
-							if (dx > 0)
-								dx -= 0.2F;
-							if (army == "enemy")
-								dx -= 0.2F;
-						}
+							if (j * 32 > x && i * 32 > y - 26 && i * 32 < y + 26)
+							{
+								if (dx > 0)
+									dx -= 0.2F;
+								if (army == "enemy")
+									dx -= 0.2F;
+							}
 
-						if (j * 32 < x && i * 32 > y - 26 && i * 32 < y + 26)
-						{
-							if (dx < 0)
-								dx += 0.2F;
-							if (army == "enemy")
-								dx += 0.2F;
-						}
+							if (j * 32 < x && i * 32 > y - 26 && i * 32 < y + 26)
+							{
+								if (dx < 0)
+									dx += 0.2F;
+								if (army == "enemy")
+									dx += 0.2F;
+							}
 
-						if (army == "enemy")
-							static_cast<Enemy*>(this)->changeDir();
+							if (army == "enemy")
+								static_cast<Enemy*>(this)->changeDir();
+						}
 					}
-				}
 
-				if (map[i][j] == 'U' && name == "tank")
-				{
-					if (army == "player")
+					if (map[i][j] == 'U' && name == "tank")
 					{
-						static_cast<Player*>(this)->preferment = true;
-						map[i][j] = ' ';
+						if (army == "player")
+						{
+							static_cast<Player*>(this)->preferment = true;
+							map[i][j] = ' ';
+						}
 					}
 				}
+		}
+}
+
+bool Entity::checkObstacles(String map[])
+{
+	int i = y / 32;
+	int iStart = i;
+
+	int j = x / 32;
+	int jStart = j;
+
+	int subtrahend = 12;
+	bool clear = true;
+
+	switch (dir)
+	{
+	case 1:
+		if (iStart - 12 < 0)
+			subtrahend = iStart;
+
+		for ( ; i > iStart - subtrahend; i--)
+			if (map[i][j] == 'B')
+			{
+				clear = false;
+				break;
 			}
+		break;
+
+	case 2:
+		if (jStart + 12 > 34)
+			subtrahend = 34 - jStart;
+
+		for ( ; j < jStart + subtrahend; j++)
+			if (map[i][j] == 'B')
+			{
+				clear = false;
+				break;
+			}
+		break;
+
+	case 3:
+		if (iStart + 12 > 61)
+			subtrahend = 61 - iStart;
+
+		for ( ; i < iStart + subtrahend; i++)
+			if (map[i][j] == 'B')
+			{
+				clear = false;
+				break;
+			}
+		break;
+
+	case 4:
+		if (jStart - 12 < 0)
+			subtrahend = jStart;
+
+		for ( ; j > jStart - subtrahend; j--)
+			if (map[i][j] == 'b')
+			{
+				clear = false;
+				break;
+			}
+		break;
 	}
+
+	return clear;
 }

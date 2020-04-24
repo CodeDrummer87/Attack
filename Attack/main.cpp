@@ -162,7 +162,7 @@ int main()
 
 	Enemy* squad[eTanks];
 	int enemyPositionX = 70;
-	int enemyPositionY = 150;
+	int enemyPositionY = 100;
 	for (int i = 0; i < eTanks; i++)
 	{
 		squad[i] = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, enemyPositionY, 3, 1);
@@ -171,7 +171,7 @@ int main()
 		if (i == 9)
 		{
 			enemyPositionX = 100;
-			enemyPositionY += 75;
+			enemyPositionY += 65;
 		}
 	}
 

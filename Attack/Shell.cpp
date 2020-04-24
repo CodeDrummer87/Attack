@@ -65,6 +65,7 @@ void Shell::update(double time)
 		{
 			status = WOUNDED;
 			anim = animSpare;
+			name = "explosion";
 			dir = rand() % 360;
 		}
 
