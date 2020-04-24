@@ -26,12 +26,6 @@ int main()
 	int sizeX = GetSystemMetrics(SM_CXFULLSCREEN);
 	int sizeY = GetSystemMetrics(SM_CYFULLSCREEN);
 
-	if (sizeX > 1500 && sizeX < 1920)
-	{
-		sizeX = 1920;
-		sizeY = 1080;
-	}
-
 	RenderWindow app(VideoMode(sizeX, sizeY), "Attack", Style::Fullscreen);
 	app.setFramerateLimit(60);
 	app.setMouseCursorVisible(false);
@@ -106,6 +100,10 @@ int main()
 	enemy_1Move.setBuffer(enemy_1Buf);		enemy_1Move.setLoop(true);
 	sArmor.setBuffer(armorBuf);				sArmor.setLoop(false);
 	sPreferment.setBuffer(prefermentBuf);	sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
+
+	Music chapter_finale;
+	chapter_finale.openFromFile("source/sounds/music/chapter_finale.ogg");
+	chapter_finale.play();
 
 #pragma endregion
 
@@ -612,7 +610,10 @@ int main()
 			}
 		//----------------------------------
 		if (!enemy_1Alive)
+		{
 			enemy_1Move.stop();
+			app.close();
+		}
 
 		//.:: collision :::
 		for (auto a : entities)
