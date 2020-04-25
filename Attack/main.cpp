@@ -26,6 +26,12 @@ int main()
 	int sizeX = GetSystemMetrics(SM_CXFULLSCREEN);
 	int sizeY = GetSystemMetrics(SM_CYFULLSCREEN);
 
+	if (sizeX > 1500 && sizeX < 1920)
+	{
+		sizeX = 1920;
+		sizeY = 1080;
+	}
+
 	RenderWindow app(VideoMode(sizeX, sizeY), "Attack", Style::Fullscreen);
 	app.setFramerateLimit(60);
 	app.setMouseCursorVisible(false);
@@ -604,7 +610,7 @@ int main()
 				if (!squad[i]->isSmoking && squad[i]->makeSureDestroyed())
 				{
 					squad[i]->isSmoking = true;
-					Entity *smoke = new Entity(aSmoke,squad[i], "smoke");
+					Entity *smoke = new Entity(aSmoke, squad[i], "smoke");
 					entities.push_back(smoke);
 				}
 			}

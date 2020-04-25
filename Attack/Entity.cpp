@@ -63,10 +63,11 @@ void Entity::update(double time)
 
 		if (name == "smoke")
 		{
+			x = own->x;
+			y = own->y;
+
 			if (level == 0)
 			{
-				x = own->x;
-				y = own->y;
 				if (own->status != WOUNDED)
 				{
 					if (own->name == "tank")
@@ -133,6 +134,17 @@ void Entity::collideEntities(Entity *e)
 							e->traffic.down.barId = tokenId;
 						}
 					}
+
+					//.:: Push the burning skeleton :::
+					if (name == "tank" && e->name == "destroyed" && y > e->y && x > e->x - 20 && x < e->x + 20)
+					{
+						traffic.up.dir = e->traffic.up.dir = true;
+						dy /= 3;
+						if (e->dir != 2)
+							e->y = y - 52;
+						else
+							e->y = y - 40;
+					}
 				}
 				break;
 
@@ -157,6 +169,14 @@ void Entity::collideEntities(Entity *e)
 							e->traffic.left.dir = false;
 							e->traffic.left.barId = tokenId;
 						}
+					}
+
+					//.:: Push the burning skeleton :::
+					if (name == "tank" && e->name == "destroyed" && x < e->x && y > e->y - 20 && y < e->y + 20)
+					{
+						traffic.right.dir = e->traffic.right.dir = true;
+						dx /= 3;
+						e->x = x + 52;
 					}
 				}
 				break;
@@ -183,6 +203,14 @@ void Entity::collideEntities(Entity *e)
 							e->traffic.up.barId = tokenId;
 						}
 					}
+
+					//.:: Push the burning skeleton :::
+					if (name == "tank" && e->name == "destroyed" && y < e->y && x > e->x - 20 && x < e->x + 20)
+					{
+						traffic.down.dir = e->traffic.down.dir = true;
+						dy /= 3;
+						e->y = y + 52;
+					}
 				}
 				break;
 
@@ -191,11 +219,12 @@ void Entity::collideEntities(Entity *e)
 				{
 					if (traffic.left.barId == 0 && checkBarrierId(4, e->tokenId))
 					{
-						if (e->dir == 4 && e->x > x)
-						{
-							traffic.right.dir = false;
-							traffic.right.barId = e->tokenId;
-						}
+						if (e->name != "destroyed")
+							if (e->dir == 4 && e->x > x)
+							{
+								traffic.right.dir = false;
+								traffic.right.barId = e->tokenId;
+							}
 						else
 						{
 							traffic.left.dir = false;
@@ -207,6 +236,17 @@ void Entity::collideEntities(Entity *e)
 							e->traffic.right.dir = false;
 							e->traffic.right.barId = tokenId;
 						}
+					}
+
+					//.:: Push the burning skeleton :::
+					if (name == "tank" && e->name == "destroyed" && x > e->x && y > e->y - 20 && y < e->y + 20)
+					{
+						traffic.left.dir = e->traffic.left.dir = true;
+						dx /= 3;
+						if (e->dir != 4 && e->dir != 1)
+							e->x = x - 52;
+						else
+							e->x = x - 40;
 					}
 				}
 				break;
@@ -517,7 +557,7 @@ bool Entity::checkObstacles(String map[])
 			subtrahend = jStart;
 
 		for ( ; j > jStart - subtrahend; j--)
-			if (map[i][j] == 'b')
+			if (map[i][j] == 'B')
 			{
 				clear = false;
 				break;

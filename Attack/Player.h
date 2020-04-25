@@ -11,6 +11,7 @@ private:
 public:
 	bool hasRank;
 	bool preferment;
+
 	//.:: Constructors :::::::::::::::::::::
 	Player();
 	Player(Animation&, Animation&, int, int, int, int);
