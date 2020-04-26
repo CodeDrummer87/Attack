@@ -19,8 +19,8 @@ String FirstStage[H] =
 	"B   BBBBBBBBBB     WWWWWWWWWWWWWWWWWWWWWWW     BBBBBBBBBB   B",
 	"BbbbWWWWFFFFFF     WWWWWWWWWWWWWWWWWWWWWWW     FFFFFFWWWWbbbB",
 	"BbbbWWWWFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFWWWWbbbB",
-	"BbbbWWWWbbbbFFFFFFbbbbbbbbbbbbbbbbbbbbbbbbbFFFFFFbbbbWWWWbbbB",
-	"BbbbWWWWbbbbFFFFFFbbbbbbbbbbbUbbbbbbbbbbbbbFFFFFFbbbbWWWWbbbB",
+	"BbbbWWWWbbbbFFFFFF        bbbbbbb          FFFFFFbbbbWWWWbbbB",
+	"BbbbWWWWbbbbFFFFFF   R    bbbUbbb    R     FFFFFFbbbbWWWWbbbB",
 	"BbbbWWWWbbbWWWWWWWbb      bbbbbbb        bbWWWWWWWbbbWWWWbbbB",
 	"BbbbWWWWbUbWWWWWWWbb      bbbbbbb        bbWWWWWWWbUbWWWWbbbB",
 	"B                            B                              B",
@@ -50,6 +50,7 @@ RectangleShape rectangle(Vector2f(32, 32));
 void drawMap(String map[H], RenderWindow &app, Animation &a, double time)
 {
 	a.update(time, true, 1);
+
 	for (int i = 0; i < H; i++)
 		for (int j = 0; j < W; j++)
 		{
@@ -61,7 +62,7 @@ void drawMap(String map[H], RenderWindow &app, Animation &a, double time)
 				a.sprite.setTextureRect(IntRect(96, 32, 32, 32));
 			if (map[i][j] == 'U')
 				a.sprite.setTextureRect(IntRect(128, 32, 32, 32));
-			if (map[i][j] == ' ' || map[i][j] == 'F')
+			if (map[i][j] == ' ' || map[i][j] == 'F' || map[i][j] == 'R')
 				continue;
 
 			a.sprite.setPosition(j * 32, i * 32);
@@ -69,8 +70,10 @@ void drawMap(String map[H], RenderWindow &app, Animation &a, double time)
 		}
 }
 
-void drawForest(String map[H], RenderWindow &app, Animation &a)
+void drawForestAndIcons(String map[H], RenderWindow &app, Animation &a, Animation &aIcon, double time)
 {
+	aIcon.update(time, true, 1);
+
 	for (int i = 0; i < H; i++)
 		for (int j = 0; j < W; j++)
 		{
@@ -79,6 +82,13 @@ void drawForest(String map[H], RenderWindow &app, Animation &a)
 				a.sprite.setTextureRect(IntRect(32, 32, 32, 32));
 				a.sprite.setPosition(j * 32, i * 32);
 				app.draw(a.sprite);
+			}
+
+			if (map[i][j] == 'R')
+			{
+				aIcon.sprite.setTextureRect(aIcon.frames[(int)aIcon.frame]);
+				aIcon.sprite.setPosition(j * 32, i * 32);
+				app.draw(aIcon.sprite);
 			}
 		}
 }

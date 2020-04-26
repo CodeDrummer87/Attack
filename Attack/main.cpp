@@ -43,7 +43,7 @@ int main()
 
 #pragma region Images
 
-	Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank, iEnemy_1;
+	Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank, iEnemy_1, iIcon;
 	iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 	iBurgundyTank.createMaskFromColor(Color::White);
 
@@ -62,12 +62,15 @@ int main()
 	iEnemy_1.loadFromFile("source/images/models/tanks/enemies/enemy_1.png");
 	iEnemy_1.createMaskFromColor(Color::White);
 
+	iIcon.loadFromFile("source/images/icons.png");
+	iIcon.createMaskFromColor(Color::White);
+
 #pragma endregion
 
 #pragma region Textures
 
 	Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke, tEnemy_1,
-		tRank, tMap;
+		tRank, tMap, tIcon;
 	bTank.loadFromImage(iBurgundyTank);
 	yTank.loadFromImage(iYellowTank);
 	pTank.loadFromImage(iPurpleTank);
@@ -80,6 +83,7 @@ int main()
 	tEnemy_1.loadFromImage(iEnemy_1);
 	tRank.loadFromFile("source/images/attributes/ranks.png");
 	tMap.loadFromFile("source/images/map.png");
+	tIcon.loadFromImage(iIcon);
 
 #pragma endregion
 
@@ -87,7 +91,8 @@ int main()
 
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf,
 		burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf,
-		shellExpBuf, enemy_1Buf, en_1RoundBuf, armorBuf, prefermentBuf;
+		shellExpBuf, enemy_1Buf, en_1RoundBuf, armorBuf, prefermentBuf,
+		takingIconBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
@@ -101,11 +106,13 @@ int main()
 	en_1RoundBuf.loadFromFile("source/sounds/tank/round/enemy1_round.ogg");
 	armorBuf.loadFromFile("source/sounds/tank/armor.ogg");
 	prefermentBuf.loadFromFile("source/sounds/effects/preferment.ogg");
+	takingIconBuf.loadFromFile("source/sounds/icons/take_icon.ogg");
 
-	Sound enemy_1Move, sArmor, sPreferment;
+	Sound enemy_1Move, sArmor, sPreferment, sTakingIcon;
 	enemy_1Move.setBuffer(enemy_1Buf);		enemy_1Move.setLoop(true);
 	sArmor.setBuffer(armorBuf);				sArmor.setLoop(false);
 	sPreferment.setBuffer(prefermentBuf);	sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
+	sTakingIcon.setBuffer(takingIconBuf);	sTakingIcon.setLoop(false);
 
 	Music chapter_finale;
 	chapter_finale.openFromFile("source/sounds/music/chapter_finale.ogg");
@@ -143,6 +150,7 @@ int main()
 	Animation aEnemy1Round(tTankRound, en_1RoundBuf, 0, 0, 40, 36, 0.015, 8);
 
 	Animation map(tMap, 0, 64, 32, 32, 0.003, 8);
+	Animation icons(tIcon, 0, 0, 32, 32, 0.008, 22);
 
 #pragma endregion
 
@@ -626,7 +634,7 @@ int main()
 			for (auto b : entities)
 			{
 				if (a->name == "tank" || a->name == "shell")
-					a->getCollision(FirstStage);
+					a->getCollision(FirstStage, sTakingIcon);
 				if (a->tokenId != b->tokenId)
 				{
 					if (a->name == "tank" && b->name == "tank" || b->name == "destroyed")
@@ -654,7 +662,7 @@ int main()
 		//.:: display entities :::
 		for (auto e : entities)
 			e->draw(app);
-		drawForest(FirstStage, app, map);
+		drawForestAndIcons(FirstStage, app, map, icons, time);
 		app.display();
 	}
 

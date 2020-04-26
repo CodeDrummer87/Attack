@@ -413,7 +413,7 @@ void Entity::draw(RenderWindow &app)
 	app.draw(anim.sprite);
 }
 
-void Entity::getCollision(String map[])
+void Entity::getCollision(String map[], Sound &sound)
 {
 	if (name != "explosion")
 		if (name == "shell")
@@ -495,7 +495,18 @@ void Entity::getCollision(String map[])
 					{
 						if (army == "player")
 						{
+							sound.play();
 							static_cast<Player*>(this)->preferment = true;
+							map[i][j] = ' ';
+						}
+					}
+
+					if (map[i][j] == 'R' && name == "tank")
+					{
+						if (hitPoints < 1 + level)
+						{
+							sound.play();
+							++hitPoints;
 							map[i][j] = ' ';
 						}
 					}
