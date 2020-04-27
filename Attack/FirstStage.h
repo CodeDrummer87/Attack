@@ -27,7 +27,7 @@ String FirstStage[H] =
 	"B                           UBU                             B",
 	"B            BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB             B",
 	"B                                                           B",
-	"B                                                           B",
+	"B                            C                              B",
 	"B                                                           B",
 	"BWWWWWWWWWWWWWWWWWWWWWWWWWWFFFFFFWWWWWWWWWWWWWWWWWWWWWWWWWWWB",
 	"BWWWWWWWWWWWWWWWWWWWWWWWWWWFFFFFFWWWWWWWWWWWWWWWWWWWWWWWWWWWB",
@@ -60,7 +60,7 @@ void drawMap(String map[H], RenderWindow &app, Animation &a, double time)
 				a.sprite.setTextureRect(IntRect(0, 32, 32, 32));
 			if (map[i][j] == 'b')
 				a.sprite.setTextureRect(IntRect(96, 32, 32, 32));
-			if (map[i][j] == ' ' || map[i][j] == 'F' || map[i][j] == 'R' || map[i][j] == 'U')
+			if (map[i][j] == ' ' || map[i][j] == 'F' || map[i][j] == 'R' || map[i][j] == 'U' || map[i][j] == 'C')
 				continue;
 
 			a.sprite.setPosition(j * 32, i * 32);
@@ -70,7 +70,7 @@ void drawMap(String map[H], RenderWindow &app, Animation &a, double time)
 
 void drawForestAndIcons(String map[H], RenderWindow &app, Animation &a, Animation icons[], double time)
 {
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 3; i++)
 		icons[i].update(time, true, 1);
 
 	for (int i = 0; i < H; i++)
@@ -95,6 +95,13 @@ void drawForestAndIcons(String map[H], RenderWindow &app, Animation &a, Animatio
 				icons[1].sprite.setTextureRect(icons[1].frames[(int)icons[1].frame]);
 				icons[1].sprite.setPosition(j * 32, i * 32);
 				app.draw(icons[1].sprite);
+			}
+
+			if (map[i][j] == 'C')
+			{
+				icons[2].sprite.setTextureRect(icons[2].frames[(int)icons[2].frame]);
+				icons[2].sprite.setPosition(j * 32, i * 32);
+				app.draw(icons[2].sprite);
 			}
 		}
 }

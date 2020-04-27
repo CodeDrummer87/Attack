@@ -510,6 +510,13 @@ void Entity::getCollision(String map[], Sound &sound)
 							map[i][j] = ' ';
 						}
 					}
+
+					if (map[i][j] == 'C' && name == "tank" && army == "player")
+					{
+						sound.play();
+						map[i][j] = ' ';
+						//.:: Snap camera to player...
+					}
 				}
 		}
 }

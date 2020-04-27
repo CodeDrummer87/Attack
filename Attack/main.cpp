@@ -43,7 +43,7 @@ int main()
 
 #pragma region Images
 
-	Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank, iEnemy_1, iIcon;
+	Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank, iEnemy_1, iMap, iIcon;
 	iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 	iBurgundyTank.createMaskFromColor(Color::White);
 
@@ -61,6 +61,9 @@ int main()
 
 	iEnemy_1.loadFromFile("source/images/models/tanks/enemies/enemy_1.png");
 	iEnemy_1.createMaskFromColor(Color::White);
+
+	iMap.loadFromFile("source/images/map.png");
+	iMap.createMaskFromColor(Color::White);
 
 	iIcon.loadFromFile("source/images/icons.png");
 	iIcon.createMaskFromColor(Color::White);
@@ -82,7 +85,7 @@ int main()
 	tSmoke.loadFromFile("source/images/models/smoke/smoke.png");
 	tEnemy_1.loadFromImage(iEnemy_1);
 	tRank.loadFromFile("source/images/attributes/ranks.png");
-	tMap.loadFromFile("source/images/map.png");
+	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
 
 #pragma endregion
@@ -149,11 +152,12 @@ int main()
 	Animation explosion_enemy_1(tEnemy_1, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
 	Animation aEnemy1Round(tTankRound, en_1RoundBuf, 0, 0, 40, 36, 0.015, 8);
 
-	Animation map(tMap, 0, 64, 32, 32, 0.003, 8);
+	Animation map(tMap, 0, 64, 32, 32, 0.003, 4);
 	Animation iconRepair(tIcon, 0, 0, 32, 32, 0.01, 22);
 	Animation iconPreferment(tIcon, 0, 32, 32, 32, 0.02, 22);
+	Animation iconCamera(tIcon, 0, 64, 32, 32, 0.02, 22);
 
-	Animation icons[] = { iconRepair, iconPreferment };
+	Animation icons[] = { iconRepair, iconPreferment, iconCamera };
 
 #pragma endregion
 
