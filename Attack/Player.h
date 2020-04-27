@@ -11,6 +11,7 @@ private:
 public:
 	bool hasRank;
 	bool preferment;
+	bool isCommander;
 
 	//.:: Constructors :::::::::::::::::::::
 	Player();

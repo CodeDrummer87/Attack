@@ -515,7 +515,7 @@ void Entity::getCollision(String map[], Sound &sound)
 					{
 						sound.play();
 						map[i][j] = ' ';
-						//.:: Snap camera to player...
+						static_cast<Player*>(this)->isCommander = true;
 					}
 				}
 		}

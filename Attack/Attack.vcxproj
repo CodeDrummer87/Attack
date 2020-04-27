@@ -153,6 +153,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Shell.h" />
     <ClInclude Include="Tank.h" />
+    <ClInclude Include="View.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

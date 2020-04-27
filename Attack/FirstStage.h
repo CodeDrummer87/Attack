@@ -4,12 +4,46 @@
 
 using namespace sf;
 
-const int H = 34;
+const int H = 68;
 const int W = 61;
 
 String FirstStage[H] = 
 {
 	"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
+	"B                                                           B",
 	"B                                                           B",
 	"B                                                           B",
 	"B                                                           B",
@@ -56,11 +90,11 @@ void drawMap(String map[H], RenderWindow &app, Animation &a, double time)
 		{
 			if (map[i][j] == 'W')
 				a.sprite.setTextureRect(a.frames[(int)a.frame]);
-			if (map[i][j] == 'B')
+			else if (map[i][j] == 'B')
 				a.sprite.setTextureRect(IntRect(0, 32, 32, 32));
-			if (map[i][j] == 'b')
+			else if (map[i][j] == 'b')
 				a.sprite.setTextureRect(IntRect(96, 32, 32, 32));
-			if (map[i][j] == ' ' || map[i][j] == 'F' || map[i][j] == 'R' || map[i][j] == 'U' || map[i][j] == 'C')
+			else
 				continue;
 
 			a.sprite.setPosition(j * 32, i * 32);

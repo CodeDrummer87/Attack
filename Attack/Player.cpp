@@ -12,7 +12,7 @@ Player::Player(Animation &a, Animation &b, int X, int Y, int dir_, int lvl)
 	else
 		experience = 2;
 
-	hasRank = preferment = false;
+	hasRank = preferment = isCommander = false;
 }
 
 Player::~Player() {}

@@ -18,32 +18,24 @@ void Enemy::update(double time)
 	switch (dir)
 	{
 	case 1:
-		if (y <= 32)
-			traffic.up.dir = false;
 		if (traffic.up.dir)
 			accelerate(1, -0.05 * time);
 		else
 			changeDir();
 		break;
 	case 2:
-		if (x >= 1888)
-			traffic.right.dir = false;
 		if (traffic.right.dir)
 			accelerate(2, 0.05 * time);
 		else
 			changeDir();
 		break;
 	case 3:
-		if (y >= 1048)
-			traffic.down.dir = false;
 		if (traffic.down.dir)
 			accelerate(dir, 0.05 * time);
 		else
 			changeDir();
 		break;
 	case 4:
-		if (x <= 32)
-			traffic.left.dir = false;
 		if (traffic.left.dir)
 			accelerate(dir, -0.05 * time);
 		else

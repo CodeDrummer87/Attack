@@ -13,6 +13,8 @@
 #include "Enemy.h"
 #include "FirstStage.h"
 
+#include "View.h"
+
 using namespace std;
 using namespace sf;
 
@@ -36,6 +38,9 @@ int main()
 	app.setFramerateLimit(60);
 	app.setMouseCursorVisible(false);
 	app.setKeyRepeatEnabled(false);
+
+	view.reset(FloatRect(0, 0, sizeX, sizeY));
+	view.setCenter(960, 1610);
 
 #pragma endregion
 
@@ -163,11 +168,11 @@ int main()
 
 #pragma endregion
 
-	Player *player_1 = new Player(burgundy_tank, explosion_burg_tank, 790, 1000, 1, 1);
-	Player *player_2 = new Player(yellow_tank, explosion_yel_tank, 870, 950, 1, 1);
-	Player *player_3 = new Player(purple_tank, explosion_purp_tank, 950, 900, 1, 1);
-	Player *player_4 = new Player(lightblue_tank, explosion_lb_tank, 1030, 950, 1, 1);
-	Player *player_5 = new Player(hemo_tank, explosion_hemo_tank, 1110, 1000, 1, 1);
+	Player *player_1 = new Player(burgundy_tank, explosion_burg_tank, 790, 2100, 1, 1);
+	Player *player_2 = new Player(yellow_tank, explosion_yel_tank, 870, 2050, 1, 1);
+	Player *player_3 = new Player(purple_tank, explosion_purp_tank, 950, 2000, 1, 1);
+	Player *player_4 = new Player(lightblue_tank, explosion_lb_tank, 1030, 2050, 1, 1);
+	Player *player_5 = new Player(hemo_tank, explosion_hemo_tank, 1110, 2100, 1, 1);
 
 	vector<Entity*> entities;
 	entities.push_back(player_1);
@@ -348,6 +353,9 @@ int main()
 				player_1->accelerate(4, -0.08 * time);
 			}
 			else player_1->playAnimation = false;
+
+			if (player_1->isCommander)
+				setViewCoordinates(player_1->getCoordY(false));
 		}
 		else
 		{
@@ -406,6 +414,9 @@ int main()
 				player_2->accelerate(4, -0.08 * time);
 			}
 			else player_2->playAnimation = false;
+
+			if (player_2->isCommander)
+				setViewCoordinates(player_2->getCoordY(false));
 		}
 		else
 		{
@@ -464,6 +475,9 @@ int main()
 				player_3->accelerate(4, -0.08 * time);
 			}
 			else player_3->playAnimation = false;
+
+			if (player_3->isCommander)
+				setViewCoordinates(player_3->getCoordY(false));
 		}
 		else
 		{
@@ -522,6 +536,9 @@ int main()
 				player_4->accelerate(4, -0.08 * time);
 			}
 			else player_4->playAnimation = false;
+
+			if (player_4->isCommander)
+				setViewCoordinates(player_4->getCoordY(false));
 		}
 		else
 		{
@@ -580,6 +597,9 @@ int main()
 				player_5->accelerate(4, -0.08 * time);
 			}
 			else player_5->playAnimation = false;
+
+			if (player_5->isCommander)
+				setViewCoordinates(player_5->getCoordY(false));
 		}
 		else
 		{
@@ -664,6 +684,7 @@ int main()
 			else i++;
 		}
 
+		app.setView(view);
 		app.clear();
 		drawMap(FirstStage, app, map, time);
 		//.:: display entities :::
