@@ -150,7 +150,10 @@ int main()
 	Animation aEnemy1Round(tTankRound, en_1RoundBuf, 0, 0, 40, 36, 0.015, 8);
 
 	Animation map(tMap, 0, 64, 32, 32, 0.003, 8);
-	Animation icons(tIcon, 0, 0, 32, 32, 0.008, 22);
+	Animation iconRepair(tIcon, 0, 0, 32, 32, 0.01, 22);
+	Animation iconPreferment(tIcon, 0, 32, 32, 32, 0.02, 22);
+
+	Animation icons[] = { iconRepair, iconPreferment };
 
 #pragma endregion
 

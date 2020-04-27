@@ -60,9 +60,7 @@ void drawMap(String map[H], RenderWindow &app, Animation &a, double time)
 				a.sprite.setTextureRect(IntRect(0, 32, 32, 32));
 			if (map[i][j] == 'b')
 				a.sprite.setTextureRect(IntRect(96, 32, 32, 32));
-			if (map[i][j] == 'U')
-				a.sprite.setTextureRect(IntRect(128, 32, 32, 32));
-			if (map[i][j] == ' ' || map[i][j] == 'F' || map[i][j] == 'R')
+			if (map[i][j] == ' ' || map[i][j] == 'F' || map[i][j] == 'R' || map[i][j] == 'U')
 				continue;
 
 			a.sprite.setPosition(j * 32, i * 32);
@@ -70,9 +68,10 @@ void drawMap(String map[H], RenderWindow &app, Animation &a, double time)
 		}
 }
 
-void drawForestAndIcons(String map[H], RenderWindow &app, Animation &a, Animation &aIcon, double time)
+void drawForestAndIcons(String map[H], RenderWindow &app, Animation &a, Animation icons[], double time)
 {
-	aIcon.update(time, true, 1);
+	for (int i = 0; i < 2; i++)
+		icons[i].update(time, true, 1);
 
 	for (int i = 0; i < H; i++)
 		for (int j = 0; j < W; j++)
@@ -86,9 +85,16 @@ void drawForestAndIcons(String map[H], RenderWindow &app, Animation &a, Animatio
 
 			if (map[i][j] == 'R')
 			{
-				aIcon.sprite.setTextureRect(aIcon.frames[(int)aIcon.frame]);
-				aIcon.sprite.setPosition(j * 32, i * 32);
-				app.draw(aIcon.sprite);
+				icons[0].sprite.setTextureRect(icons[0].frames[(int)icons[0].frame]);
+				icons[0].sprite.setPosition(j * 32, i * 32);
+				app.draw(icons[0].sprite);
+			}
+
+			if (map[i][j] == 'U')
+			{
+				icons[1].sprite.setTextureRect(icons[1].frames[(int)icons[1].frame]);
+				icons[1].sprite.setPosition(j * 32, i * 32);
+				app.draw(icons[1].sprite);
 			}
 		}
 }
