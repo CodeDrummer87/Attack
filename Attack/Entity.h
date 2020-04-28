@@ -59,5 +59,5 @@ public:
 	void damageEntity(Entity*, Sound&);
 	void draw(RenderWindow&);
 	void getCollision(String[], Sound&);
-	bool checkObstacles(String[]);
+	bool checkObstacles(String[], char);
 };

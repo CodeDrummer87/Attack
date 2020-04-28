@@ -298,7 +298,7 @@ void Entity::collideEntities(Entity *e)
 		case 1:
 			if (y > e->y)
 				if (x >= e->x - 32 && x <= e->x + 32 && y - e->y <= 400)
-					if (this->checkObstacles(FirstStage))
+					if (this->checkObstacles(FirstStage, 'B'))
 						if (!static_cast<Enemy*>(this)->round)
 							static_cast<Enemy*>(this)->round = true;
 			break;
@@ -306,7 +306,7 @@ void Entity::collideEntities(Entity *e)
 		case 2:
 			if (x < e->x)
 				if (y >= e->y - 32 && y <= e->y + 32 && e->x - x <= 400)
-					if (this->checkObstacles(FirstStage))
+					if (this->checkObstacles(FirstStage, 'B'))
 						if (!static_cast<Enemy*>(this)->round)
 							static_cast<Enemy*>(this)->round = true;
 			break;
@@ -314,7 +314,7 @@ void Entity::collideEntities(Entity *e)
 		case 3:
 			if (y < e->y)
 				if (x >= e->x - 32 && x <= e->x + 32 && e->y - y <= 400)
-					if (this->checkObstacles(FirstStage))
+					if (this->checkObstacles(FirstStage, 'B'))
 						if (!static_cast<Enemy*>(this)->round)
 							static_cast<Enemy*>(this)->round = true;
 			break;
@@ -322,7 +322,7 @@ void Entity::collideEntities(Entity *e)
 		case 4:
 			if (x > e->x)
 				if (y >= e->y - 32 && y <= e->y + 32 && x - e->x <= 400)
-					if (this->checkObstacles(FirstStage))
+					if (this->checkObstacles(FirstStage, 'B'))
 						if (!static_cast<Enemy*>(this)->round)
 							static_cast<Enemy*>(this)->round = true;
 			break;
@@ -450,6 +450,13 @@ void Entity::getCollision(String map[], Sound &sound)
 			for (int i = (anim.getRect(dir).top + 15) / 32; i < (y + anim.getRect(dir).height) / 32; i++)
 				for (int j = (anim.getRect(dir).left + 14) / 32; j < (x + anim.getRect(dir).width) / 32; j++)
 				{
+					//.:: Enemy tanks destroy brick walls :::
+					if (name == "tank" && army == "enemy" && !this->checkObstacles(map, 'b') && this->checkObstacles(map, 'B'))
+					{
+						if (!static_cast<Enemy*>(this)->round)
+							static_cast<Enemy*>(this)->round = true;
+					}
+
 					if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
 					{
 						if (name == "tank")
@@ -521,7 +528,7 @@ void Entity::getCollision(String map[], Sound &sound)
 		}
 }
 
-bool Entity::checkObstacles(String map[])
+bool Entity::checkObstacles(String map[], char ch)
 {
 	int i = y / 32;
 	int iStart = i;
@@ -539,7 +546,7 @@ bool Entity::checkObstacles(String map[])
 			subtrahend = iStart;
 
 		for ( ; i > iStart - subtrahend; i--)
-			if (map[i][j] == 'B')
+			if (map[i][j] == ch)
 			{
 				clear = false;
 				break;
@@ -551,7 +558,7 @@ bool Entity::checkObstacles(String map[])
 			subtrahend = 34 - jStart;
 
 		for ( ; j < jStart + subtrahend; j++)
-			if (map[i][j] == 'B')
+			if (map[i][j] == ch)
 			{
 				clear = false;
 				break;
@@ -562,8 +569,8 @@ bool Entity::checkObstacles(String map[])
 		if (iStart + 12 > 61)
 			subtrahend = 61 - iStart;
 
-		for ( ; i < iStart + subtrahend; i++)
-			if (map[i][j] == 'B')
+		for (; i < iStart + subtrahend; i++)
+			if (map[i][j] == ch)
 			{
 				clear = false;
 				break;
@@ -575,7 +582,7 @@ bool Entity::checkObstacles(String map[])
 			subtrahend = jStart;
 
 		for ( ; j > jStart - subtrahend; j--)
-			if (map[i][j] == 'B')
+			if (map[i][j] == ch)
 			{
 				clear = false;
 				break;
