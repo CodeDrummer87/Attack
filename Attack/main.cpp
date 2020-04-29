@@ -48,7 +48,7 @@ int main()
 
 #pragma region Images
 
-	Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank, iEnemy_1, iMap, iIcon;
+	Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank, iEnemy_1, iEnemy_2, iMap, iIcon;
 	iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 	iBurgundyTank.createMaskFromColor(Color::White);
 
@@ -67,6 +67,9 @@ int main()
 	iEnemy_1.loadFromFile("source/images/models/tanks/enemies/enemy_1.png");
 	iEnemy_1.createMaskFromColor(Color::White);
 
+	iEnemy_2.loadFromFile("source/images/models/tanks/enemies/enemy_2.png");
+	iEnemy_2.createMaskFromColor(Color::White);
+
 	iMap.loadFromFile("source/images/map.png");
 	iMap.createMaskFromColor(Color::White);
 
@@ -77,8 +80,8 @@ int main()
 
 #pragma region Textures
 
-	Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke, tEnemy_1,
-		tRank, tMap, tIcon;
+	Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke,
+		tEnemy_1, tEnemy_2, tRank, tMap, tIcon;
 	bTank.loadFromImage(iBurgundyTank);
 	yTank.loadFromImage(iYellowTank);
 	pTank.loadFromImage(iPurpleTank);
@@ -89,6 +92,7 @@ int main()
 	tShellExp.loadFromFile("source/images/models/explosion/shell_explosion.png");
 	tSmoke.loadFromFile("source/images/models/smoke/smoke.png");
 	tEnemy_1.loadFromImage(iEnemy_1);
+	tEnemy_2.loadFromImage(iEnemy_2);
 	tRank.loadFromFile("source/images/attributes/ranks.png");
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -157,6 +161,9 @@ int main()
 	Animation explosion_enemy_1(tEnemy_1, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
 	Animation aEnemy1Round(tTankRound, en_1RoundBuf, 0, 0, 40, 36, 0.015, 8);
 
+	Animation enemy_2(tEnemy_2, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_enemy_2(tEnemy_2, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
+
 	Animation map(tMap, 0, 64, 32, 32, 0.003, 4);
 	Animation iconRepair(tIcon, 0, 0, 32, 32, 0.01, 22);
 	Animation iconPreferment(tIcon, 0, 32, 32, 32, 0.02, 22);
@@ -182,20 +189,24 @@ int main()
 	entities.push_back(player_5);
 
 	//.:: Enemies ::: (temporary code for testing)
-	const int eTanks = 18;
+	const int eTanks = 36;
 
 	Enemy* squad[eTanks];
 	int enemyPositionX = 70;
 	int enemyPositionY = 100;
 	for (int i = 0; i < eTanks; i++)
 	{
-		squad[i] = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, enemyPositionY, 3, 1);
+		if (i <= 18)
+			squad[i] = new Enemy(enemy_2, explosion_enemy_2, enemyPositionX, enemyPositionY, 3, 2);
+		else
+			squad[i] = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, enemyPositionY, 3, 1);
+
 		entities.push_back(squad[i]);
 		enemyPositionX += 200;
-		if (i == 9)
+		if (i == 9 || i == 18 || i == 27)
 		{
 			enemyPositionX = 100;
-			enemyPositionY += 65;
+			enemyPositionY += 400;
 		}
 	}
 
