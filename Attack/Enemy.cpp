@@ -57,32 +57,3 @@ void Enemy::changeDir()
 	}
 	dir = d;
 }
-
-void Enemy::enemyCollide(Entity* e)
-{
-	switch (dir)
-	{
-	case 1:
-		dy += 0.4F;
-		break;
-
-	case 2:
-		dx -= 0.4F;
-		break;
-
-	case 3:
-		dy -= 0.4F;
-		break;
-
-	case 4:
-		dx += 0.4F;
-		break;
-	}
-
-	changeDir();
-}
-
-void Enemy::clearAllDirections()
-{
-	traffic.up.dir = traffic.right.dir = traffic.down.dir = traffic.left.dir = true;
-}

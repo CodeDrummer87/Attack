@@ -98,165 +98,155 @@ void Entity::collideEntities(Entity *e)
 {
 	if (anim.getRect(dir).intersects(e->anim.getRect(e->dir)))
 	{
-		if (name == "tank" && army == "enemy")
-			static_cast<Enemy*>(this)->enemyCollide(e);
-			
-		if (e->name == "tank" && e->army == "enemy")
-			static_cast<Enemy*>(e)->enemyCollide(this);
-
-		if (army != "enemy")
-			switch (dir)
+		switch (dir)
+		{
+		case 1:
+			if (army == "player" && dy != 0 || army == "enemy")
 			{
-			case 1:
-				if (dy != 0)
+				if (traffic.up.barId == 0 && checkBarrierId(1, e->tokenId))
 				{
-					if (traffic.up.barId == 0 && checkBarrierId(1, e->tokenId))
+					if (e->dir == 1 && e->y > y)
 					{
-						if (e->dir == 1 && e->y > y)
-						{
-							traffic.down.dir = false;
-							traffic.down.barId = e->tokenId;
-						}
-						else if (e->dir == 4 && e->x > x)
-						{
-							e->traffic.left.dir = false;
-							e->traffic.left.barId = tokenId;
-						}
-						else
-						{
-							traffic.up.dir = false;
-							traffic.up.barId = e->tokenId;
-						}
-
-						if (e->dy == 0)
-						{
-							e->traffic.down.dir = false;
-							e->traffic.down.barId = tokenId;
-						}
+						traffic.down.dir = false;
+						traffic.down.barId = e->tokenId;
 					}
-
-					//.:: Push the burning skeleton :::
-					if (name == "tank" && e->name == "destroyed" && y > e->y && x > e->x - 20 && x < e->x + 20)
+					else if (e->dir == 4 && e->x > x)
 					{
-						traffic.up.dir = e->traffic.up.dir = true;
-						dy /= 3;
-						if (e->dir != 2)
-							e->y = y - 52;
-						else
-							e->y = y - 40;
+						e->traffic.left.dir = false;
+						e->traffic.left.barId = tokenId;
+					}
+					else
+					{
+						traffic.up.dir = false;
+						traffic.up.barId = e->tokenId;
+					}
+	
+					if (e->dy == 0)
+					{
+						e->traffic.down.dir = false;
+						e->traffic.down.barId = tokenId;
 					}
 				}
-				break;
 
-			case 2:
-				if (dx != 0)
+				//.:: Push the burning skeleton :::
+				if (name == "tank" && e->name == "destroyed" && y > e->y && x > e->x - 20 && x < e->x + 20)
 				{
-					if (traffic.right.barId == 0 && checkBarrierId(2, e->tokenId))
+					traffic.up.dir = e->traffic.up.dir = true;
+					dy /= 3;
+					if (e->dir != 2)
+						e->y = y - 52;
+					else
+						e->y = y - 40;
+				}
+			}
+			break;
+
+		case 2:
+			if (army == "player" && dx != 0 || army == "enemy")
+			{
+				if (traffic.right.barId == 0 && checkBarrierId(2, e->tokenId))
+				{
+					if (e->dir == 2 && e->x < x)
 					{
-						if (e->dir == 2 && e->x < x)
-						{
-							traffic.left.dir = false;
-							traffic.left.barId = e->tokenId;
-						}
-						else
+						traffic.left.dir = false;
+						traffic.left.barId = e->tokenId;
+					}
+					else
+					{
+						traffic.right.dir = false;
+						traffic.right.barId = e->tokenId;
+					}
+
+					if (e->dx == 0)
+					{
+						e->traffic.left.dir = false;
+						e->traffic.left.barId = tokenId;
+					}
+				}
+
+				//.:: Push the burning skeleton :::
+				if (name == "tank" && e->name == "destroyed" && x < e->x && y > e->y - 20 && y < e->y + 20)
+				{
+					traffic.right.dir = e->traffic.right.dir = true;
+					dx /= 3;
+					e->x = x + 52;
+				}
+			}
+			break;
+
+		case 3:
+			if (army == "player" && dy != 0 || army == "enemy")
+			{
+				if (traffic.down.barId == 0 && checkBarrierId(3, e->tokenId))
+				{
+					if (e->dir == 3 && e->y < y)
+					{
+						traffic.up.dir = false;
+						traffic.up.barId = e->tokenId;
+					}
+					else
+					{
+						traffic.down.dir = false;
+						traffic.down.barId = e->tokenId;
+					}
+
+					if (e->dy == 0)
+					{
+						e->traffic.up.dir = false;
+						e->traffic.up.barId = tokenId;
+					}
+				}
+
+				//.:: Push the burning skeleton :::
+				if (name == "tank" && e->name == "destroyed" && y < e->y && x > e->x - 20 && x < e->x + 20)
+				{
+					traffic.down.dir = e->traffic.down.dir = true;
+					dy /= 3;
+					e->y = y + 52;
+				}
+			}
+			break;
+
+		case 4:
+			if (army == "player" && dx != 0 || army == "enemy")
+			{
+				if (traffic.left.barId == 0 && checkBarrierId(4, e->tokenId))
+				{
+					if (e->name != "destroyed")
+						if (e->dir == 4 && e->x > x)
 						{
 							traffic.right.dir = false;
 							traffic.right.barId = e->tokenId;
 						}
-
-						if (e->dx == 0)
-						{
-							e->traffic.left.dir = false;
-							e->traffic.left.barId = tokenId;
-						}
+					else
+					{
+						traffic.left.dir = false;
+						traffic.left.barId = e->tokenId;
 					}
 
-					//.:: Push the burning skeleton :::
-					if (name == "tank" && e->name == "destroyed" && x < e->x && y > e->y - 20 && y < e->y + 20)
+					if (e->dx == 0)
 					{
-						traffic.right.dir = e->traffic.right.dir = true;
-						dx /= 3;
-						e->x = x + 52;
+						e->traffic.right.dir = false;
+						e->traffic.right.barId = tokenId;
 					}
 				}
-				break;
 
-			case 3:
-				if (dy != 0)
+				//.:: Push the burning skeleton :::
+				if (name == "tank" && e->name == "destroyed" && x > e->x && y > e->y - 20 && y < e->y + 20)
 				{
-					if (traffic.down.barId == 0 && checkBarrierId(3, e->tokenId))
-					{
-						if (e->dir == 3 && e->y < y)
-						{
-							traffic.up.dir = false;
-							traffic.up.barId = e->tokenId;
-						}
-						else
-						{
-							traffic.down.dir = false;
-							traffic.down.barId = e->tokenId;
-						}
-
-						if (e->dy == 0)
-						{
-							e->traffic.up.dir = false;
-							e->traffic.up.barId = tokenId;
-						}
-					}
-
-					//.:: Push the burning skeleton :::
-					if (name == "tank" && e->name == "destroyed" && y < e->y && x > e->x - 20 && x < e->x + 20)
-					{
-						traffic.down.dir = e->traffic.down.dir = true;
-						dy /= 3;
-						e->y = y + 52;
-					}
+					traffic.left.dir = e->traffic.left.dir = true;
+					dx /= 3;
+					if (e->dir != 4 && e->dir != 1)
+						e->x = x - 52;
+					else
+						e->x = x - 40;
 				}
-				break;
-
-			case 4:
-				if (dx != 0)
-				{
-					if (traffic.left.barId == 0 && checkBarrierId(4, e->tokenId))
-					{
-						if (e->name != "destroyed")
-							if (e->dir == 4 && e->x > x)
-							{
-								traffic.right.dir = false;
-								traffic.right.barId = e->tokenId;
-							}
-						else
-						{
-							traffic.left.dir = false;
-							traffic.left.barId = e->tokenId;
-						}
-
-						if (e->dx == 0)
-						{
-							e->traffic.right.dir = false;
-							e->traffic.right.barId = tokenId;
-						}
-					}
-
-					//.:: Push the burning skeleton :::
-					if (name == "tank" && e->name == "destroyed" && x > e->x && y > e->y - 20 && y < e->y + 20)
-					{
-						traffic.left.dir = e->traffic.left.dir = true;
-						dx /= 3;
-						if (e->dir != 4 && e->dir != 1)
-							e->x = x - 52;
-						else
-							e->x = x - 40;
-					}
-				}
-				break;
 			}
+			break;
+		}
 	}
 	else
 	{
-		if (name == "tank" && army == "enemy")
-			static_cast<Enemy*>(this)->clearAllDirections();
-
 		if (!traffic.right.dir)
 		{		
 			if (traffic.right.barId == e->tokenId)

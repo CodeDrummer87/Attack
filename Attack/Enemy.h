@@ -17,6 +17,4 @@ public:
 	//.:: Methods_of_class ::::::::::::::::::
 	void update(double);
 	void changeDir();
-	void enemyCollide(Entity*);
-	void clearAllDirections();
 };
