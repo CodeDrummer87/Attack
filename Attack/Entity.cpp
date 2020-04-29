@@ -83,7 +83,7 @@ void Entity::update(double time)
 				anim.sprite.setScale(0.6f, 0.6f);
 
 			if (own->level <= 19)
-				anim.frame = own->level - 2;
+				anim.frame = float(own->level - 2);
 			else
 				anim.frame = 17;
 			x = own->x + 32;
@@ -333,17 +333,32 @@ void Entity::collideEntities(Entity *e)
 /// The method exists to protect against repeated intersection
 /// with an already intersecting object.
 /// Checking goes in all directions except one (first parameter)
-bool Entity::checkBarrierId(int dir, int id)
+bool Entity::checkBarrierId(int dir_, int id)
 {
 	bool check = true;
-	if (traffic.up.dir != dir && traffic.up.barId == id)
-		check = false;
-	else if (traffic.right.dir != dir && traffic.right.barId == id)
-		check = false;
-	else if (traffic.down.dir != dir && traffic.down.barId == id)
-		check = false;
-	else if (traffic.left.dir != dir && traffic.left.barId == id)
-		check = false;
+
+	switch (dir_)
+	{
+	case 1: 
+		if (traffic.left.barId == id || traffic.down.barId == id || traffic.right.barId == id)
+			check = false;
+		break;
+
+	case 2:
+		if (traffic.up.barId == id || traffic.down.barId == id || traffic.left.barId == id)
+			check = false;
+		break;
+
+	case 3:
+		if (traffic.up.barId == id || traffic.left.barId == id || traffic.right.barId == id)
+			check = false;
+		break;
+
+	case 4:
+		if (traffic.up.barId == id || traffic.down.barId == id || traffic.right.barId == id)
+			check = false;
+		break;
+	}
 
 	return check;
 }
@@ -451,7 +466,7 @@ void Entity::getCollision(String map[], Sound &sound)
 				for (int j = (anim.getRect(dir).left + 14) / 32; j < (x + anim.getRect(dir).width) / 32; j++)
 				{
 					//.:: Enemy tanks destroy brick walls :::
-					if (name == "tank" && army == "enemy" && !this->checkObstacles(map, 'b') && this->checkObstacles(map, 'B'))
+					if (name == "tank" && army == "enemy" && !this->checkObstacles(map, 'b'))
 					{
 						if (!static_cast<Enemy*>(this)->round)
 							static_cast<Enemy*>(this)->round = true;
@@ -537,7 +552,6 @@ bool Entity::checkObstacles(String map[], char ch)
 	int jStart = j;
 
 	int subtrahend = 12;
-	bool clear = true;
 
 	switch (dir)
 	{
@@ -545,24 +559,30 @@ bool Entity::checkObstacles(String map[], char ch)
 		if (iStart - 12 < 0)
 			subtrahend = iStart;
 
-		for ( ; i > iStart - subtrahend; i--)
+		for (; i > iStart - subtrahend; i--)
+		{
 			if (map[i][j] == ch)
-			{
-				clear = false;
-				break;
-			}
+				return false;
+
+			if (ch == 'b')
+				if (map[i][j] == 'B')
+					return true;
+		}
 		break;
 
 	case 2:
 		if (jStart + 12 > 34)
 			subtrahend = 34 - jStart;
 
-		for ( ; j < jStart + subtrahend; j++)
+		for (; j < jStart + subtrahend; j++)
+		{
 			if (map[i][j] == ch)
-			{
-				clear = false;
-				break;
-			}
+				return false;
+		
+			if (ch == 'b')
+				if (map[i][j] == 'B')
+					return true;
+		}
 		break;
 
 	case 3:
@@ -570,25 +590,31 @@ bool Entity::checkObstacles(String map[], char ch)
 			subtrahend = 61 - iStart;
 
 		for (; i < iStart + subtrahend; i++)
+		{
 			if (map[i][j] == ch)
-			{
-				clear = false;
-				break;
-			}
+				return false;
+
+			if (ch == 'b')
+				if (map[i][j] == 'B')
+					return true;
+		}
 		break;
 
 	case 4:
 		if (jStart - 12 < 0)
 			subtrahend = jStart;
 
-		for ( ; j > jStart - subtrahend; j--)
+		for (; j > jStart - subtrahend; j--)
+		{
 			if (map[i][j] == ch)
-			{
-				clear = false;
-				break;
-			}
+				return false;
+
+			if (ch == 'b')
+				if (map[i][j] == 'B')
+					return true;
+		}
 		break;
 	}
 
-	return clear;
+	return true;
 }
