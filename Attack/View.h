@@ -14,5 +14,25 @@ void setViewCoordinates(double y)
 	if (y < 540)
 		y = 540;
 
-	view.setCenter(960, y);
+	view.setCenter(float(960), float(y));
+}
+
+void defineNewCommander(vector<Player*> team)
+{
+	Player* newCommander = team[0];
+	int lvl = 0;
+
+	for (auto p : team)
+	{
+		if (p->status != DEAD && !p->isCommander)
+		{
+			if (p->level > lvl)
+			{
+				newCommander = p;
+				lvl = p->level;
+			}
+		}
+	}
+
+	newCommander->isCommander = true;
 }

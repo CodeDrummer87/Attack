@@ -14,30 +14,36 @@ Enemy::~Enemy() {}
 
 void Enemy::update(double time)
 {
-	int speed;
+	float speed;
+
+	if (level % 2 == 0)
+		speed = 0.07;
+	else
+		speed = 0.05;
+
 	switch (dir)
 	{
 	case 1:
 		if (traffic.up.dir)
-			accelerate(1, -0.05 * time);
+			accelerate(1, -speed * time);
 		else
 			changeDir();
 		break;
 	case 2:
 		if (traffic.right.dir)
-			accelerate(2, 0.05 * time);
+			accelerate(2, speed * time);
 		else
 			changeDir();
 		break;
 	case 3:
 		if (traffic.down.dir)
-			accelerate(dir, 0.05 * time);
+			accelerate(dir, speed * time);
 		else
 			changeDir();
 		break;
 	case 4:
 		if (traffic.left.dir)
-			accelerate(dir, -0.05 * time);
+			accelerate(dir, -speed * time);
 		else
 			changeDir();
 		break;

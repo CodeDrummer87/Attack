@@ -48,7 +48,7 @@ int main()
 
 #pragma region Images
 
-	Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank, iEnemy_1, iEnemy_2, iMap, iIcon;
+	Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank, iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iMap, iIcon;
 	iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 	iBurgundyTank.createMaskFromColor(Color::White);
 
@@ -70,6 +70,12 @@ int main()
 	iEnemy_2.loadFromFile("source/images/models/tanks/enemies/enemy_2.png");
 	iEnemy_2.createMaskFromColor(Color::White);
 
+	iEnemy_3.loadFromFile("source/images/models/tanks/enemies/enemy_3.png");
+	iEnemy_3.createMaskFromColor(Color::White);
+
+	iEnemy_4.loadFromFile("source/images/models/tanks/enemies/enemy_4.png");
+	iEnemy_4.createMaskFromColor(Color::White);
+
 	iMap.loadFromFile("source/images/map.png");
 	iMap.createMaskFromColor(Color::White);
 
@@ -81,7 +87,7 @@ int main()
 #pragma region Textures
 
 	Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke,
-		tEnemy_1, tEnemy_2, tRank, tMap, tIcon;
+		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tRank, tMap, tIcon;
 	bTank.loadFromImage(iBurgundyTank);
 	yTank.loadFromImage(iYellowTank);
 	pTank.loadFromImage(iPurpleTank);
@@ -93,6 +99,8 @@ int main()
 	tSmoke.loadFromFile("source/images/models/smoke/smoke.png");
 	tEnemy_1.loadFromImage(iEnemy_1);
 	tEnemy_2.loadFromImage(iEnemy_2);
+	tEnemy_3.loadFromImage(iEnemy_3);
+	tEnemy_4.loadFromImage(iEnemy_4);
 	tRank.loadFromFile("source/images/attributes/ranks.png");
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -164,6 +172,12 @@ int main()
 	Animation enemy_2(tEnemy_2, 0, 0, 64, 64, 0.016, 2);
 	Animation explosion_enemy_2(tEnemy_2, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
 
+	Animation enemy_3(tEnemy_3, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_enemy_3(tEnemy_3, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
+
+	Animation enemy_4(tEnemy_4, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_enemy_4(tEnemy_4, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
+
 	Animation map(tMap, 0, 64, 32, 32, 0.003, 4);
 	Animation iconRepair(tIcon, 0, 0, 32, 32, 0.01, 22);
 	Animation iconPreferment(tIcon, 0, 32, 32, 32, 0.02, 22);
@@ -181,6 +195,13 @@ int main()
 	Player *player_4 = new Player(lightblue_tank, explosion_lb_tank, 1030, 2050, 1, 1);
 	Player *player_5 = new Player(hemo_tank, explosion_hemo_tank, 1110, 2100, 1, 1);
 
+	vector<Player*> team;
+	team.push_back(player_1);
+	team.push_back(player_2);
+	team.push_back(player_3);
+	team.push_back(player_4);
+	team.push_back(player_5);
+
 	vector<Entity*> entities;
 	entities.push_back(player_1);
 	entities.push_back(player_2);
@@ -196,7 +217,11 @@ int main()
 	int enemyPositionY = 100;
 	for (int i = 0; i < eTanks; i++)
 	{
-		if (i <= 18)
+		if (i <= 9)
+			squad[i] = new Enemy(enemy_4, explosion_enemy_4, enemyPositionX, enemyPositionY, 3, 4);
+		else if (i > 9 && i <= 18)
+			squad[i] = new Enemy(enemy_3, explosion_enemy_3, enemyPositionX, enemyPositionY, 3, 3);
+		else if (i > 18 && i <= 27)
 			squad[i] = new Enemy(enemy_2, explosion_enemy_2, enemyPositionX, enemyPositionY, 3, 2);
 		else
 			squad[i] = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, enemyPositionY, 3, 1);
@@ -370,6 +395,12 @@ int main()
 		}
 		else
 		{
+			if (player_1->isCommander)
+			{
+				player_1->isCommander = false;
+				defineNewCommander(team);
+			}
+
 			if (!player_1->isSmoking && player_1->makeSureDestroyed())
 			{
 				player_1->isSmoking = true;
@@ -431,6 +462,12 @@ int main()
 		}
 		else
 		{
+			if (player_2->isCommander)
+			{
+				player_2->isCommander = false;
+				defineNewCommander(team);
+			}
+
 			if (!player_2->isSmoking && player_2->makeSureDestroyed())
 			{
 				player_2->isSmoking = true;
@@ -492,6 +529,12 @@ int main()
 		}
 		else
 		{
+			if (player_3->isCommander)
+			{
+				player_3->isCommander = false;
+				defineNewCommander(team);
+			}
+
 			if (!player_3->isSmoking && player_3->makeSureDestroyed())
 			{
 				player_3->isSmoking = true;
@@ -553,6 +596,12 @@ int main()
 		}
 		else
 		{
+			if (player_4->isCommander)
+			{
+				player_4->isCommander = false;
+				defineNewCommander(team);
+			}
+
 			if (!player_4->isSmoking && player_4->makeSureDestroyed())
 			{
 				player_4->isSmoking = true;
@@ -614,6 +663,12 @@ int main()
 		}
 		else
 		{
+			if (player_5->isCommander)
+			{
+				player_5->isCommander = false;
+				defineNewCommander(team);
+			}
+
 			if (!player_5->isSmoking && player_5->makeSureDestroyed())
 			{
 				player_5->isSmoking = true;
