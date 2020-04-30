@@ -21,32 +21,35 @@ void Enemy::update(double time)
 	else
 		speed = 0.05;
 
-	switch (dir)
+	if (name != "destroyed")
 	{
-	case 1:
-		if (traffic.up.dir)
-			accelerate(1, -speed * time);
-		else
-			changeDir();
-		break;
-	case 2:
-		if (traffic.right.dir)
-			accelerate(2, speed * time);
-		else
-			changeDir();
-		break;
-	case 3:
-		if (traffic.down.dir)
-			accelerate(dir, speed * time);
-		else
-			changeDir();
-		break;
-	case 4:
-		if (traffic.left.dir)
-			accelerate(dir, -speed * time);
-		else
-			changeDir();
-		break;
+		switch (dir)
+		{
+		case 1:
+			if (traffic.up.dir)
+				accelerate(1, -speed * time);
+			else
+				changeDir();
+			break;
+		case 2:
+			if (traffic.right.dir)
+				accelerate(2, speed * time);
+			else
+				changeDir();
+			break;
+		case 3:
+			if (traffic.down.dir)
+				accelerate(dir, speed * time);
+			else
+				changeDir();
+			break;
+		case 4:
+			if (traffic.left.dir)
+				accelerate(dir, -speed * time);
+			else
+				changeDir();
+			break;
+		}
 	}
 
 	Tank::update(time);

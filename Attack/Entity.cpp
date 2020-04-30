@@ -28,11 +28,20 @@ Entity::Entity(Animation &a, Entity *tank, string name_)
 		if (tank->status == DEAD) level = 1;
 		else level = 0;
 	}
-	if (name_ == "explosion")
+	if (name_ == "explosion" || name_ == "drowning")
 	{
 		dir = tank->dir;
-		x = tank->getCoordX(true);
-		y = tank->getCoordY(true);
+		if (name_ == "explosion")
+		{
+			x = tank->getCoordX(true);
+			y = tank->getCoordY(true);
+		}
+		else
+		{
+			x = tank->getCoordX(false);
+			y = tank->getCoordY(false);
+			anim.sprite.setColor(Color::Cyan);
+		}
 		playAnimation = true;
 	}
 	if (name_ == "rank")
@@ -57,12 +66,24 @@ void Entity::update(double time)
 {
 	if (isExist)
 	{
-		if(name == "explosion")
+		if (name == "explosion")
 			if (anim.isEnd(time))
 				isExist = false;
 
+		if (name == "drowning")
+			if (anim.isEnd(time))
+			{
+				if (own->army == "enemy")
+					own->isExist = false;
+				isExist = false;
+			}
+
+
 		if (name == "smoke")
 		{
+			if (static_cast<Tank*>(own)->isDrowned && !static_cast<Tank*>(own)->isTowed)
+				isExist = false;
+
 			x = own->x;
 			y = own->y;
 
@@ -105,26 +126,29 @@ void Entity::collideEntities(Entity *e)
 			{
 				if (traffic.up.barId == 0 && checkBarrierId(1, e->tokenId))
 				{
-					if (e->dir == 1 && e->y > y)
+					if (e->name != "destroyed")
 					{
-						traffic.down.dir = false;
-						traffic.down.barId = e->tokenId;
-					}
-					else if (e->dir == 4 && e->x > x)
-					{
-						e->traffic.left.dir = false;
-						e->traffic.left.barId = tokenId;
-					}
-					else
-					{
-						traffic.up.dir = false;
-						traffic.up.barId = e->tokenId;
-					}
-	
-					if (e->dy == 0)
-					{
-						e->traffic.down.dir = false;
-						e->traffic.down.barId = tokenId;
+						if (e->dir == 1 && e->y > y)
+						{
+							traffic.down.dir = false;
+							traffic.down.barId = e->tokenId;
+						}
+						else if (e->dir == 4 && e->x > x)
+						{
+							e->traffic.left.dir = false;
+							e->traffic.left.barId = tokenId;
+						}
+						else
+						{
+							traffic.up.dir = false;
+							traffic.up.barId = e->tokenId;
+						}
+
+						if (e->dy == 0)
+						{
+							e->traffic.down.dir = false;
+							e->traffic.down.barId = tokenId;
+						}
 					}
 				}
 
@@ -132,7 +156,9 @@ void Entity::collideEntities(Entity *e)
 				if (name == "tank" && e->name == "destroyed" && y > e->y && x > e->x - 20 && x < e->x + 20)
 				{
 					traffic.up.dir = e->traffic.up.dir = true;
-					dy /= 3;
+					traffic.up.barId = e->tokenId;
+					static_cast<Tank*>(e)->isTowed = true;
+					dy /= 2;
 					if (e->dir != 2)
 						e->y = y - 52;
 					else
@@ -146,21 +172,24 @@ void Entity::collideEntities(Entity *e)
 			{
 				if (traffic.right.barId == 0 && checkBarrierId(2, e->tokenId))
 				{
-					if (e->dir == 2 && e->x < x)
+					if (e->name != "destroyed")
 					{
-						traffic.left.dir = false;
-						traffic.left.barId = e->tokenId;
-					}
-					else
-					{
-						traffic.right.dir = false;
-						traffic.right.barId = e->tokenId;
-					}
+						if (e->dir == 2 && e->x < x)
+						{
+							traffic.left.dir = false;
+							traffic.left.barId = e->tokenId;
+						}
+						else
+						{
+							traffic.right.dir = false;
+							traffic.right.barId = e->tokenId;
+						}
 
-					if (e->dx == 0)
-					{
-						e->traffic.left.dir = false;
-						e->traffic.left.barId = tokenId;
+						if (e->dx == 0)
+						{
+							e->traffic.left.dir = false;
+							e->traffic.left.barId = tokenId;
+						}
 					}
 				}
 
@@ -168,7 +197,9 @@ void Entity::collideEntities(Entity *e)
 				if (name == "tank" && e->name == "destroyed" && x < e->x && y > e->y - 20 && y < e->y + 20)
 				{
 					traffic.right.dir = e->traffic.right.dir = true;
-					dx /= 3;
+					traffic.right.barId = e->tokenId;
+					static_cast<Tank*>(e)->isTowed = true;
+					dx /= 2;
 					e->x = x + 52;
 				}
 			}
@@ -179,21 +210,24 @@ void Entity::collideEntities(Entity *e)
 			{
 				if (traffic.down.barId == 0 && checkBarrierId(3, e->tokenId))
 				{
-					if (e->dir == 3 && e->y < y)
+					if (e->name != "destroyed")
 					{
-						traffic.up.dir = false;
-						traffic.up.barId = e->tokenId;
-					}
-					else
-					{
-						traffic.down.dir = false;
-						traffic.down.barId = e->tokenId;
-					}
+						if (e->dir == 3 && e->y < y)
+						{
+							traffic.up.dir = false;
+							traffic.up.barId = e->tokenId;
+						}
+						else
+						{
+							traffic.down.dir = false;
+							traffic.down.barId = e->tokenId;
+						}
 
-					if (e->dy == 0)
-					{
-						e->traffic.up.dir = false;
-						e->traffic.up.barId = tokenId;
+						if (e->dy == 0)
+						{
+							e->traffic.up.dir = false;
+							e->traffic.up.barId = tokenId;
+						}
 					}
 				}
 
@@ -201,7 +235,9 @@ void Entity::collideEntities(Entity *e)
 				if (name == "tank" && e->name == "destroyed" && y < e->y && x > e->x - 20 && x < e->x + 20)
 				{
 					traffic.down.dir = e->traffic.down.dir = true;
-					dy /= 3;
+					traffic.down.barId = e->tokenId;
+					static_cast<Tank*>(e)->isTowed = true;
+					dy /= 2;
 					e->y = y + 52;
 				}
 			}
@@ -213,21 +249,23 @@ void Entity::collideEntities(Entity *e)
 				if (traffic.left.barId == 0 && checkBarrierId(4, e->tokenId))
 				{
 					if (e->name != "destroyed")
+					{
 						if (e->dir == 4 && e->x > x)
 						{
 							traffic.right.dir = false;
 							traffic.right.barId = e->tokenId;
 						}
-					else
-					{
-						traffic.left.dir = false;
-						traffic.left.barId = e->tokenId;
-					}
+						else
+						{
+							traffic.left.dir = false;
+							traffic.left.barId = e->tokenId;
+						}
 
-					if (e->dx == 0)
-					{
-						e->traffic.right.dir = false;
-						e->traffic.right.barId = tokenId;
+						if (e->dx == 0)
+						{
+							e->traffic.right.dir = false;
+							e->traffic.right.barId = tokenId;
+						}
 					}
 				}
 
@@ -235,7 +273,9 @@ void Entity::collideEntities(Entity *e)
 				if (name == "tank" && e->name == "destroyed" && x > e->x && y > e->y - 20 && y < e->y + 20)
 				{
 					traffic.left.dir = e->traffic.left.dir = true;
-					dx /= 3;
+					traffic.left.barId = e->tokenId;
+					static_cast<Tank*>(e)->isTowed = true;
+					dx /= 2;
 					if (e->dir != 4 && e->dir != 1)
 						e->x = x - 52;
 					else
@@ -247,6 +287,32 @@ void Entity::collideEntities(Entity *e)
 	}
 	else
 	{
+		//.:: End of towning ::::
+		if (traffic.up.barId == e->tokenId && static_cast<Tank*>(e)->isTowed)
+		{
+			traffic.up.barId = 0;
+			static_cast<Tank*>(e)->isTowed = false;
+		}
+
+		if (traffic.right.barId == e->tokenId && static_cast<Tank*>(e)->isTowed)
+		{
+			traffic.right.barId = 0;
+			static_cast<Tank*>(e)->isTowed = false;
+		}
+
+		if (traffic.down.barId == e->tokenId && static_cast<Tank*>(e)->isTowed)
+		{
+			traffic.down.barId = 0;
+			static_cast<Tank*>(e)->isTowed = false;
+		}
+
+		if (traffic.left.barId == e->tokenId && static_cast<Tank*>(e)->isTowed)
+		{
+			traffic.left.barId = 0;
+			static_cast<Tank*>(e)->isTowed = false;
+		}
+		//:::::::::::::::::::::::
+
 		if (!traffic.right.dir)
 		{		
 			if (traffic.right.barId == e->tokenId)
@@ -462,7 +528,7 @@ void Entity::getCollision(String map[], Sound &sound)
 							static_cast<Enemy*>(this)->round = true;
 					}
 
-					if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+					if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W' && name != "destroyed")
 					{
 						if (name == "tank")
 						{
@@ -529,6 +595,14 @@ void Entity::getCollision(String map[], Sound &sound)
 						map[i][j] = ' ';
 						static_cast<Player*>(this)->isCommander = true;
 					}
+
+					if (name == "destroyed")
+						if (map[i][j] == 'W' && !static_cast<Tank*>(this)->isTowed)
+						{
+							anim.sprite.setColor(Color::Transparent);
+							if (!static_cast<Tank*>(this)->isDrowned)
+								static_cast<Tank*>(this)->isDrowned = true;
+						}
 				}
 		}
 }

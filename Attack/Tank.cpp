@@ -18,7 +18,7 @@ Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, int lvl)
 	y = Y;
 	anim.sprite.setPosition(x, y);
 	status = ALIVE;
-	isSmoking = destroyed = transition = playAnimation = false;
+	isSmoking = destroyed = transition = playAnimation = isTowed = isDrowned = drowning = false;
 	isExist  = isShot = true;
 	
 	traffic.up.dir = true;		traffic.up.barId = 0;

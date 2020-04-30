@@ -13,6 +13,9 @@ private:
 public:
 	bool isShot;
 	bool isSmoking;
+	bool isTowed;
+	bool isDrowned;
+	bool drowning;
 
 	//.:: Constructors :::::::::::::::::::::
 	Tank();

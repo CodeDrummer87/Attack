@@ -48,7 +48,7 @@ int main()
 
 #pragma region Images
 
-	Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank, iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iMap, iIcon;
+	Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank, iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iMap, iIcon, iDrowning;
 	iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 	iBurgundyTank.createMaskFromColor(Color::White);
 
@@ -82,12 +82,15 @@ int main()
 	iIcon.loadFromFile("source/images/icons.png");
 	iIcon.createMaskFromColor(Color::White);
 
+	iDrowning.loadFromFile("source/images/models/other/drowning.png");
+	iDrowning.createMaskFromColor(Color::White);
+
 #pragma endregion
 
 #pragma region Textures
 
 	Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke,
-		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tRank, tMap, tIcon;
+		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tRank, tMap, tIcon, tDrowning;
 	bTank.loadFromImage(iBurgundyTank);
 	yTank.loadFromImage(iYellowTank);
 	pTank.loadFromImage(iPurpleTank);
@@ -104,6 +107,7 @@ int main()
 	tRank.loadFromFile("source/images/attributes/ranks.png");
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
+	tDrowning.loadFromImage(iDrowning);
 
 #pragma endregion
 
@@ -112,7 +116,7 @@ int main()
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf,
 		burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf,
 		shellExpBuf, enemy_1Buf, en_1RoundBuf, armorBuf, prefermentBuf,
-		takingIconBuf;
+		takingIconBuf, drowningBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
@@ -127,16 +131,17 @@ int main()
 	armorBuf.loadFromFile("source/sounds/tank/armor.ogg");
 	prefermentBuf.loadFromFile("source/sounds/effects/preferment.ogg");
 	takingIconBuf.loadFromFile("source/sounds/icons/take_icon.ogg");
+	drowningBuf.loadFromFile("source/sounds/effects/drowning.ogg");
 
-	Sound enemy_1Move, sArmor, sPreferment, sTakingIcon;
-	enemy_1Move.setBuffer(enemy_1Buf);		enemy_1Move.setLoop(true);
+	Sound enemy_move, sArmor, sPreferment, sTakingIcon;
+	enemy_move.setBuffer(enemy_1Buf);		enemy_move.setLoop(true);
 	sArmor.setBuffer(armorBuf);				sArmor.setLoop(false);
 	sPreferment.setBuffer(prefermentBuf);	sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
 	sTakingIcon.setBuffer(takingIconBuf);	sTakingIcon.setLoop(false);
 
 	Music chapter_finale;
 	chapter_finale.openFromFile("source/sounds/music/chapter_finale.ogg");
-	chapter_finale.play();
+	//chapter_finale.play();
 
 #pragma endregion
 
@@ -185,6 +190,8 @@ int main()
 
 	Animation icons[] = { iconRepair, iconPreferment, iconCamera };
 
+	Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
+
 #pragma endregion
 
 #pragma endregion
@@ -209,24 +216,27 @@ int main()
 	entities.push_back(player_4);
 	entities.push_back(player_5);
 
-	//.:: Enemies ::: (temporary code for testing)
+	//.:: Enemies ::: 
 	const int eTanks = 36;
 
-	Enemy* squad[eTanks];
+	vector<Enemy*> squad;
 	int enemyPositionX = 70;
 	int enemyPositionY = 100;
 	for (int i = 0; i < eTanks; i++)
 	{
+		Enemy *enemy;
 		if (i <= 9)
-			squad[i] = new Enemy(enemy_4, explosion_enemy_4, enemyPositionX, enemyPositionY, 3, 4);
+			enemy = new Enemy(enemy_4, explosion_enemy_4, enemyPositionX, enemyPositionY, 3, 4);
 		else if (i > 9 && i <= 18)
-			squad[i] = new Enemy(enemy_3, explosion_enemy_3, enemyPositionX, enemyPositionY, 3, 3);
+			enemy = new Enemy(enemy_3, explosion_enemy_3, enemyPositionX, enemyPositionY, 3, 3);
 		else if (i > 18 && i <= 27)
-			squad[i] = new Enemy(enemy_2, explosion_enemy_2, enemyPositionX, enemyPositionY, 3, 2);
+			enemy = new Enemy(enemy_2, explosion_enemy_2, enemyPositionX, enemyPositionY, 3, 2);
 		else
-			squad[i] = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, enemyPositionY, 3, 1);
+			enemy = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, enemyPositionY, 3, 1);
 
-		entities.push_back(squad[i]);
+		entities.push_back(enemy);
+		squad.push_back(enemy);
+
 		enemyPositionX += 200;
 		if (i == 9 || i == 18 || i == 27)
 		{
@@ -235,8 +245,8 @@ int main()
 		}
 	}
 
-	enemy_1Move.play();
-	bool enemy_1Alive = true;
+	enemy_move.play();
+	bool enemy_alive = true;
 	//--------------------------------------------
 
 	Clock clock;
@@ -395,6 +405,13 @@ int main()
 		}
 		else
 		{
+			if (player_1->isDrowned && !player_1->drowning)
+			{
+				player_1->drowning = true;
+				Entity* drowning = new Entity(aDrowning, player_1, "drowning");
+				entities.push_back(drowning);
+			}
+
 			if (player_1->isCommander)
 			{
 				player_1->isCommander = false;
@@ -462,6 +479,13 @@ int main()
 		}
 		else
 		{
+			if (player_2->isDrowned && !player_2->drowning)
+			{
+				player_2->drowning = true;
+				Entity* drowning = new Entity(aDrowning, player_2, "drowning");
+				entities.push_back(drowning);
+			}
+
 			if (player_2->isCommander)
 			{
 				player_2->isCommander = false;
@@ -529,6 +553,13 @@ int main()
 		}
 		else
 		{
+			if (player_3->isDrowned && !player_3->drowning)
+			{
+				player_3->drowning = true;
+				Entity* drowning = new Entity(aDrowning, player_3, "drowning");
+				entities.push_back(drowning);
+			}
+
 			if (player_3->isCommander)
 			{
 				player_3->isCommander = false;
@@ -596,6 +627,13 @@ int main()
 		}
 		else
 		{
+			if (player_4->isDrowned && !player_4->drowning)
+			{
+				player_4->drowning = true;
+				Entity* drowning = new Entity(aDrowning, player_4, "drowning");
+				entities.push_back(drowning);
+			}
+
 			if (player_4->isCommander)
 			{
 				player_4->isCommander = false;
@@ -663,6 +701,13 @@ int main()
 		}
 		else
 		{
+			if (player_5->isDrowned && !player_5->drowning)
+			{
+				player_5->drowning = true;
+				Entity* drowning = new Entity(aDrowning, player_5, "drowning");
+				entities.push_back(drowning);
+			}
+
 			if (player_5->isCommander)
 			{
 				player_5->isCommander = false;
@@ -679,46 +724,55 @@ int main()
 
 #pragma endregion
 
-		//.:: Temporary code for testing :::
-		enemy_1Alive = false;
-		for (int i = 0; i < eTanks; i++)
-			if (squad[i]->status != DEAD)
+		enemy_alive = false;
+		//.:: Enemy action
+		for (auto e : squad)
+		{
+			if (e->status != DEAD)
 			{
-				if(squad[i]->round)
-					if (squad[i]->isShot)
+				if (e->round)
+					if (e->isShot)
 					{
-						squad[i]->round = false;
-						squad[i]->isShot = false;
-						Entity *round = new Entity(aEnemy1Round, squad[i], "explosion");
-						Shell *shell = new Shell(aShell, aShellExp, squad[i]);
+						e->round = false;
+						e->isShot = false;
+						Entity *round = new Entity(aEnemy1Round, e, "explosion");
+						Shell *shell = new Shell(aShell, aShellExp, e);
 						entities.push_back(round);
 						entities.push_back(shell);
 					}
 
-				enemy_1Alive = true;
-				if (squad[i]->status == WOUNDED)
+				enemy_alive = true;
+				if (e->status == WOUNDED)
 				{
-					if (!squad[i]->isSmoking)
+					if (!e->isSmoking)
 					{
-						squad[i]->isSmoking = true;
-						Entity *smoke = new Entity(aSmoke, squad[i], "smoke");
+						e->isSmoking = true;
+						Entity *smoke = new Entity(aSmoke, e, "smoke");
 						entities.push_back(smoke);
 					}
 				}
 			}
 			else
 			{
-				if (!squad[i]->isSmoking && squad[i]->makeSureDestroyed())
+				if (e->isDrowned && !e->drowning)
 				{
-					squad[i]->isSmoking = true;
-					Entity *smoke = new Entity(aSmoke, squad[i], "smoke");
+					e->drowning = true;
+					Entity* drowning = new Entity(aDrowning, e, "drowning");
+					entities.push_back(drowning);
+				}
+
+				if (!e->isSmoking && e->makeSureDestroyed())
+				{
+					e->isSmoking = true;
+					Entity *smoke = new Entity(aSmoke, e, "smoke");
 					entities.push_back(smoke);
 				}
 			}
+		}
 		//----------------------------------
-		if (!enemy_1Alive)
+		if (!enemy_alive)
 		{
-			enemy_1Move.stop();
+			enemy_move.stop();
 			app.close();
 		}
 
@@ -726,18 +780,29 @@ int main()
 		for (auto a : entities)
 			for (auto b : entities)
 			{
-				if (a->name == "tank" || a->name == "shell")
+				if (a->name == "tank" || a->name == "shell" || a->name == "destroyed")
 					a->getCollision(FirstStage, sTakingIcon);
 				if (a->tokenId != b->tokenId)
 				{
 					if (a->name == "tank" && b->name == "tank" || b->name == "destroyed")
 						a->collideEntities(b);
-					if (a->name != "smoke" && a->name != "explosion" && a->name != "rank"
-						&& b->name != "smoke" && b->name != "explosion" && b->name != "rank")
+					if (a->name != "smoke" && a->name != "explosion" && a->name != "rank" && a->name != "drowning"
+						&& b->name != "smoke" && b->name != "explosion" && b->name != "rank" && b->name != "drowning")
 						if (a->name == "shell" && b->name == "tank")
 							a->damageEntity(b, sArmor);
 				}
 			}
+
+		//.:: Clearing the list of enemies
+		for (auto j = squad.begin(); j != squad.end();)
+		{
+			Entity *enemy = *j;
+			if (static_cast<Enemy*>(enemy)->drowning)
+			{
+				j = squad.erase(j);
+			}
+			else j++;
+		}
 
 		//.:: update entities :::
 		for (auto i  = entities.begin(); i != entities.end();)
@@ -746,7 +811,11 @@ int main()
 			e->update(time);
 			e->anim.update(time, e->playAnimation, e->dir);
 
-			if (e->isExist == false) { i = entities.erase(i); delete e; }
+			if (e->isExist == false)
+			{
+				i = entities.erase(i);
+				delete e;
+			}
 			else i++;
 		}
 
@@ -761,4 +830,9 @@ int main()
 	}
 
 	return 0;
+}
+//.:: Erasing list function ::::
+void eraseVector(vector<Entity*> team)
+{
+
 }
