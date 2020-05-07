@@ -25,10 +25,10 @@ int main()
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
-	int sizeX = GetSystemMetrics(SM_CXFULLSCREEN);
-	int sizeY = GetSystemMetrics(SM_CYFULLSCREEN);
+	int sizeX = GetSystemMetrics(SM_CXSCREEN);
+	int sizeY = GetSystemMetrics(SM_CYSCREEN);
 
-	if (sizeX > 1500 && sizeX < 1920)
+	if (sizeX != 1280 && sizeY != 1024)
 	{
 		sizeX = 1920;
 		sizeY = 1080;
@@ -40,7 +40,7 @@ int main()
 	app.setKeyRepeatEnabled(false);
 
 	view.reset(FloatRect(0, 0, sizeX, sizeY));
-	view.setCenter(960, 1610);
+	view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
 
 #pragma endregion
 
@@ -141,7 +141,7 @@ int main()
 
 	Music chapter_finale;
 	chapter_finale.openFromFile("source/sounds/music/chapter_finale.ogg");
-	//chapter_finale.play();
+	chapter_finale.play();
 
 #pragma endregion
 
@@ -384,24 +384,24 @@ int main()
 
 			if (Keyboard::isKeyPressed(Keyboard::W))
 			{
-				player_1->accelerate(1, -0.08 * time);
+				player_1->accelerate(1, -0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::D))
 			{
-				player_1->accelerate(2, 0.08 * time);
+				player_1->accelerate(2, 0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::S))
 			{
-				player_1->accelerate(3, 0.08 * time);
+				player_1->accelerate(3, 0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::A))
 			{
-				player_1->accelerate(4, -0.08 * time);
+				player_1->accelerate(4, -0.09 * time);
 			}
 			else player_1->playAnimation = false;
 
 			if (player_1->isCommander)
-				setViewCoordinates(player_1->getCoordY(false));
+				setViewCoordinates(sizeX, sizeY, player_1->getCoordX(false), player_1->getCoordY(false));
 		}
 		else
 		{
@@ -458,24 +458,24 @@ int main()
 
 			if (Keyboard::isKeyPressed(Keyboard::T))
 			{
-				player_2->accelerate(1, -0.08 * time);
+				player_2->accelerate(1, -0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::H))
 			{
-				player_2->accelerate(2, 0.08 * time);
+				player_2->accelerate(2, 0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::G))
 			{
-				player_2->accelerate(3, 0.08 * time);
+				player_2->accelerate(3, 0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::F))
 			{
-				player_2->accelerate(4, -0.08 * time);
+				player_2->accelerate(4, -0.09 * time);
 			}
 			else player_2->playAnimation = false;
 
 			if (player_2->isCommander)
-				setViewCoordinates(player_2->getCoordY(false));
+				setViewCoordinates(sizeX, sizeY, player_2->getCoordX(false), player_2->getCoordY(false));
 		}
 		else
 		{
@@ -532,24 +532,24 @@ int main()
 
 			if (Keyboard::isKeyPressed(Keyboard::I))
 			{
-				player_3->accelerate(1, -0.08 * time);
+				player_3->accelerate(1, -0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::L))
 			{
-				player_3->accelerate(2, 0.08 * time);
+				player_3->accelerate(2, 0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::K))
 			{
-				player_3->accelerate(3, 0.08 * time);
+				player_3->accelerate(3, 0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::J))
 			{
-				player_3->accelerate(4, -0.08 * time);
+				player_3->accelerate(4, -0.09 * time);
 			}
 			else player_3->playAnimation = false;
 
 			if (player_3->isCommander)
-				setViewCoordinates(player_3->getCoordY(false));
+				setViewCoordinates(sizeX, sizeY, player_3->getCoordX(false), player_3->getCoordY(false));
 		}
 		else
 		{
@@ -606,24 +606,24 @@ int main()
 
 			if (Keyboard::isKeyPressed(Keyboard::Up))
 			{
-				player_4->accelerate(1, -0.08 * time);
+				player_4->accelerate(1, -0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::Right))
 			{
-				player_4->accelerate(2, 0.08 * time);
+				player_4->accelerate(2, 0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::Down))
 			{
-				player_4->accelerate(3, 0.08 * time);
+				player_4->accelerate(3, 0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::Left))
 			{
-				player_4->accelerate(4, -0.08 * time);
+				player_4->accelerate(4, -0.09 * time);
 			}
 			else player_4->playAnimation = false;
 
 			if (player_4->isCommander)
-				setViewCoordinates(player_4->getCoordY(false));
+				setViewCoordinates(sizeX, sizeY, player_4->getCoordX(false), player_4->getCoordY(false));
 		}
 		else
 		{
@@ -680,24 +680,24 @@ int main()
 
 			if (Keyboard::isKeyPressed(Keyboard::Numpad8))
 			{
-				player_5->accelerate(1, -0.08 * time);
+				player_5->accelerate(1, -0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::Numpad6))
 			{
-				player_5->accelerate(2, 0.08 * time);
+				player_5->accelerate(2, 0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::Numpad5))
 			{
-				player_5->accelerate(3, 0.08 * time);
+				player_5->accelerate(3, 0.09 * time);
 			}
 			else if (Keyboard::isKeyPressed(Keyboard::Numpad4))
 			{
-				player_5->accelerate(4, -0.08 * time);
+				player_5->accelerate(4, -0.09 * time);
 			}
 			else player_5->playAnimation = false;
 
 			if (player_5->isCommander)
-				setViewCoordinates(player_5->getCoordY(false));
+				setViewCoordinates(sizeX, sizeY, player_5->getCoordX(false), player_5->getCoordY(false));
 		}
 		else
 		{

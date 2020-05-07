@@ -6,15 +6,21 @@ using namespace sf;
 
 View view;
 
-void setViewCoordinates(double y)
+void setViewCoordinates(int sizeX, int sizeY, double x, double y)
 {
-	if (y > 1610)
-		y = 1610;
+	if (x < sizeX / 2)
+		x = sizeX / 2;
 
-	if (y < 540)
-		y = 540;
+	if (x > W * 32 - sizeX / 2 - 32)
+		x = W * 32 - sizeX / 2 - 32;
 
-	view.setCenter(float(960), float(y));
+	if (y > H * 32 - sizeY / 2 - 32)
+		y = H * 32 - sizeY / 2 - 32;
+
+	if (y < sizeY / 2)
+		y = sizeY / 2;
+
+	view.setCenter(float(x), float(y));
 }
 
 void defineNewCommander(vector<Player*> team)

@@ -17,9 +17,9 @@ void Enemy::update(double time)
 	float speed;
 
 	if (level % 2 == 0)
-		speed = 0.07;
+		speed = 0.08;
 	else
-		speed = 0.05;
+		speed = 0.06;
 
 	if (name != "destroyed")
 	{
