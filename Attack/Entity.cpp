@@ -43,6 +43,19 @@ Entity::Entity(Animation &a, Entity *tank, string name_)
 			anim.sprite.setColor(Color::Cyan);
 		}
 		playAnimation = true;
+
+		if (tank->army != "player")
+		{
+			float result = 100 - (abs(y - getViewCoordY()) / 10);
+			if (result > 50)
+				result = 50.F;
+			else if (result < 0)
+				result = 0.F;
+
+			anim.sound.setVolume(result);
+		}
+		else
+			anim.sound.setVolume(50.f);
 	}
 	if (name_ == "rank")
 	{
@@ -681,4 +694,11 @@ bool Entity::checkObstacles(String map[], char ch)
 	}
 
 	return true;
+}
+
+extern View view;
+
+float Entity::getViewCoordY()
+{
+	return view.getCenter().y;
 }

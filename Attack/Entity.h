@@ -60,4 +60,5 @@ public:
 	void draw(RenderWindow&);
 	void getCollision(String[], Sound&);
 	bool checkObstacles(String[], char);
+	float getViewCoordY();
 };

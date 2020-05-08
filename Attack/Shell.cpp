@@ -65,6 +65,17 @@ void Shell::update(double time)
 		{
 			status = WOUNDED;
 			anim = animSpare;
+
+			//.:: Explosion volume depends on the distance to the camera :::
+			float result = 100 - (abs(y - getViewCoordY()) / 10);
+			if (result > 50)
+				result = 50.F;
+			else if (result < 0)
+				result = 0.F;
+			
+			anim.sound.setVolume(result);
+			//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			
 			name = "explosion";
 			dir = rand() % 360;
 		}

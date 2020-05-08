@@ -26,7 +26,7 @@ Animation::Animation(Texture &t, SoundBuffer &b , int x, int y, int width, int h
 	sound.setBuffer(b);
 	sound.setLoop(true);
 	sound.setPitch(0.9f);
-	sound.setVolume(50.f);
+	sound.setVolume(40.f);
 }
 //.:: Shell Constructor
 Animation::Animation(Texture &t, int x, int y, int width, int height, double animSpeed, int count)
