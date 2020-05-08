@@ -366,7 +366,7 @@ void Entity::collideEntities(Entity *e)
 		{
 		case 1:
 			if (y > e->y)
-				if (x >= e->x - 32 && x <= e->x + 32 && y - e->y <= 400)
+				if (x >= e->x - 32 && x <= e->x + 32 && y - e->y <= static_cast<Enemy*>(this)->reachDistance)
 					if (this->checkObstacles(FirstStage, 'B'))
 						if (!static_cast<Enemy*>(this)->round)
 							static_cast<Enemy*>(this)->round = true;
@@ -374,7 +374,7 @@ void Entity::collideEntities(Entity *e)
 
 		case 2:
 			if (x < e->x)
-				if (y >= e->y - 32 && y <= e->y + 32 && e->x - x <= 400)
+				if (y >= e->y - 32 && y <= e->y + 32 && e->x - x <= static_cast<Enemy*>(this)->reachDistance)
 					if (this->checkObstacles(FirstStage, 'B'))
 						if (!static_cast<Enemy*>(this)->round)
 							static_cast<Enemy*>(this)->round = true;
@@ -382,7 +382,7 @@ void Entity::collideEntities(Entity *e)
 
 		case 3:
 			if (y < e->y)
-				if (x >= e->x - 32 && x <= e->x + 32 && e->y - y <= 400)
+				if (x >= e->x - 32 && x <= e->x + 32 && e->y - y <= static_cast<Enemy*>(this)->reachDistance)
 					if (this->checkObstacles(FirstStage, 'B'))
 						if (!static_cast<Enemy*>(this)->round)
 							static_cast<Enemy*>(this)->round = true;
@@ -390,7 +390,7 @@ void Entity::collideEntities(Entity *e)
 
 		case 4:
 			if (x > e->x)
-				if (y >= e->y - 32 && y <= e->y + 32 && x - e->x <= 400)
+				if (y >= e->y - 32 && y <= e->y + 32 && x - e->x <= static_cast<Enemy*>(this)->reachDistance)
 					if (this->checkObstacles(FirstStage, 'B'))
 						if (!static_cast<Enemy*>(this)->round)
 							static_cast<Enemy*>(this)->round = true;

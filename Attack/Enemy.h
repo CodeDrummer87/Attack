@@ -6,6 +6,7 @@ class Enemy : public Tank
 {
 public:
 	bool round;
+	int reachDistance;
 
 	//.:: Constructors ::::::::::::::::::::::
 	Enemy();

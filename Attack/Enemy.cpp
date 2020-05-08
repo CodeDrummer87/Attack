@@ -8,6 +8,7 @@ Enemy::Enemy(Animation &a, Animation &b, int X, int Y, int dir_, int lvl)
 	dir = rand() % 4 + 1;
 	army = "enemy";
 	round = false;
+	reachDistance = 350 + (float)level * 50;
 }
 
 Enemy::~Enemy() {}
