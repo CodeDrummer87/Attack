@@ -150,6 +150,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="FirstStage.h" />
+    <ClInclude Include="Foreground.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Shell.h" />
     <ClInclude Include="Tank.h" />

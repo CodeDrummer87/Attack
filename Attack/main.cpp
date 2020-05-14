@@ -14,6 +14,7 @@
 #include "FirstStage.h"
 
 #include "View.h"
+#include "Foreground.h"
 
 using namespace std;
 using namespace sf;
@@ -34,12 +35,14 @@ int main()
 		sizeY = 1080;
 	}
 
+	view.reset(FloatRect(0, 0, sizeX, sizeY));
+	showForeground(sizeX, sizeY);
+
 	RenderWindow app(VideoMode(sizeX, sizeY), "Attack", Style::Fullscreen);
 	app.setFramerateLimit(60);
 	app.setMouseCursorVisible(false);
 	app.setKeyRepeatEnabled(false);
 
-	view.reset(FloatRect(0, 0, sizeX, sizeY));
 	view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
 
 #pragma endregion
@@ -141,7 +144,7 @@ int main()
 
 	Music chapter_finale;
 	chapter_finale.openFromFile("source/sounds/music/chapter_finale.ogg");
-	chapter_finale.play();
+	//chapter_finale.play();
 
 #pragma endregion
 
@@ -353,6 +356,10 @@ int main()
 				}
 			}
 		}
+
+		//.:: Temporary code :::
+		if (Keyboard::isKeyPressed(Keyboard::Escape))
+			app.close();
 
 #pragma region First Player control
 
@@ -830,9 +837,4 @@ int main()
 	}
 
 	return 0;
-}
-//.:: Erasing list function ::::
-void eraseVector(vector<Entity*> team)
-{
-
 }
