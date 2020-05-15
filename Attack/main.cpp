@@ -396,34 +396,65 @@ int main()
 			if (Keyboard::isKeyPressed(Keyboard::Escape))
 				app.close();
 
+			for (auto p : team)
+			{
+				if (p->status != DEAD)
+				{
+					//.:: Smoking :::::::::::::::
+					if (p->status == WOUNDED)
+					{
+						if (!p->isSmoking)
+						{
+							p->isSmoking = true;
+							Entity * smoke = new Entity(aSmoke, p, "smoke");
+							entities.push_back(smoke);
+						}
+					}
+
+					//.:: GetRank :::::::::::::::
+					if (p->preferment)
+					{
+						p->preferment = false;
+						sPreferment.play();
+						if (!p->hasRank)
+						{
+							p->hasRank = true;
+							Entity *rank = new Entity(aRank, p, "rank");
+							entities.push_back(rank);
+						}
+					}
+
+					if (p->isCommander)
+						setViewCoordinates(sizeX, sizeY, p->getCoordX(false), p->getCoordY(false));
+				}
+				else
+				{
+					if (p->isDrowned && !p->drowning)
+					{
+						p->drowning = true;
+						Entity* drowning = new Entity(aDrowning, p, "drowning");
+						entities.push_back(drowning);
+					}
+
+					if (p->isCommander)
+					{
+						p->isCommander = false;
+						defineNewCommander(team);
+					}
+
+					if (!p->isSmoking && p->makeSureDestroyed())
+					{
+						p->isSmoking = true;
+						Entity *smoke = new Entity(aSmoke, p, "smoke");
+						entities.push_back(smoke);
+					}
+				}
+			}
+
 #pragma region First Player control
 
 			if (team[0]->status != DEAD)
 			{
-				//.:: Smoking :::::::::::::::::::
-				if (team[0]->status == WOUNDED)
-				{
-					if (!team[0]->isSmoking)
-					{
-						team[0]->isSmoking = true;
-						Entity *smoke = new Entity(aSmoke, team[0], "smoke");
-						entities.push_back(smoke);
-					}
-				}
-
-				//.:: GetRank ::::::::::::::::::
-				if (team[0]->preferment)
-				{
-					team[0]->preferment = false;
-					sPreferment.play();
-					if (!team[0]->hasRank)
-					{
-						team[0]->hasRank = true;
-						Entity *rank = new Entity(aRank, team[0], "rank");
-						entities.push_back(rank);
-					}
-				}
-
 				if (Keyboard::isKeyPressed(Keyboard::W))
 				{
 					team[0]->accelerate(1, -0.09 * time);
@@ -441,31 +472,6 @@ int main()
 					team[0]->accelerate(4, -0.09 * time);
 				}
 				else team[0]->playAnimation = false;
-
-				if (team[0]->isCommander)
-					setViewCoordinates(sizeX, sizeY, team[0]->getCoordX(false), team[0]->getCoordY(false));
-			}
-			else
-			{
-				if (team[0]->isDrowned && !team[0]->drowning)
-				{
-					team[0]->drowning = true;
-					Entity* drowning = new Entity(aDrowning, team[0], "drowning");
-					entities.push_back(drowning);
-				}
-
-				if (team[0]->isCommander)
-				{
-					team[0]->isCommander = false;
-					defineNewCommander(team);
-				}
-
-				if (!team[0]->isSmoking && team[0]->makeSureDestroyed())
-				{
-					team[0]->isSmoking = true;
-					Entity *smoke = new Entity(aSmoke, team[0], "smoke");
-					entities.push_back(smoke);
-				}
 			}
 
 #pragma endregion
@@ -476,30 +482,6 @@ int main()
 			{
 				if (team[1]->status != DEAD)
 				{
-					//.:: Smoking ::::::::::::::::::
-					if (team[1]->status == WOUNDED)
-					{
-						if (!team[1]->isSmoking)
-						{
-							team[1]->isSmoking = true;
-							Entity *smoke = new Entity(aSmoke, team[1], "smoke");
-							entities.push_back(smoke);
-						}
-					}
-
-					//.:: GetRank ::::::::::::::::::
-					if (team[1]->preferment)
-					{
-						team[1]->preferment = false;
-						sPreferment.play();
-						if (!team[1]->hasRank)
-						{
-							team[1]->hasRank = true;
-							Entity *rank = new Entity(aRank, team[1], "rank");
-							entities.push_back(rank);
-						}
-					}
-
 					if (Keyboard::isKeyPressed(Keyboard::T))
 					{
 						team[1]->accelerate(1, -0.09 * time);
@@ -517,31 +499,6 @@ int main()
 						team[1]->accelerate(4, -0.09 * time);
 					}
 					else team[1]->playAnimation = false;
-
-					if (team[1]->isCommander)
-						setViewCoordinates(sizeX, sizeY, team[1]->getCoordX(false), team[1]->getCoordY(false));
-				}
-				else
-				{
-					if (team[1]->isDrowned && !team[1]->drowning)
-					{
-						team[1]->drowning = true;
-						Entity* drowning = new Entity(aDrowning, team[1], "drowning");
-						entities.push_back(drowning);
-					}
-
-					if (team[1]->isCommander)
-					{
-						team[1]->isCommander = false;
-						defineNewCommander(team);
-					}
-
-					if (!team[1]->isSmoking && team[1]->makeSureDestroyed())
-					{
-						team[1]->isSmoking = true;
-						Entity *smoke = new Entity(aSmoke, team[1], "smoke");
-						entities.push_back(smoke);
-					}
 				}
 			}
 
@@ -553,30 +510,6 @@ int main()
 			{
 				if (team[2]->status != DEAD)
 				{
-					//.:: Smoking ::::::::::::::::::
-					if (team[2]->status == WOUNDED)
-					{
-						if (!team[2]->isSmoking)
-						{
-							team[2]->isSmoking = true;
-							Entity *smoke = new Entity(aSmoke, team[2], "smoke");
-							entities.push_back(smoke);
-						}
-					}
-
-					//.:: GetRank ::::::::::::::::::
-					if (team[2]->preferment)
-					{
-						team[2]->preferment = false;
-						sPreferment.play();
-						if (!team[2]->hasRank)
-						{
-							team[2]->hasRank = true;
-							Entity *rank = new Entity(aRank, team[2], "rank");
-							entities.push_back(rank);
-						}
-					}
-
 					if (Keyboard::isKeyPressed(Keyboard::I))
 					{
 						team[2]->accelerate(1, -0.09 * time);
@@ -594,31 +527,6 @@ int main()
 						team[2]->accelerate(4, -0.09 * time);
 					}
 					else team[2]->playAnimation = false;
-
-					if (team[2]->isCommander)
-						setViewCoordinates(sizeX, sizeY, team[2]->getCoordX(false), team[2]->getCoordY(false));
-				}
-				else
-				{
-					if (team[2]->isDrowned && !team[2]->drowning)
-					{
-						team[2]->drowning = true;
-						Entity* drowning = new Entity(aDrowning, team[2], "drowning");
-						entities.push_back(drowning);
-					}
-
-					if (team[2]->isCommander)
-					{
-						team[2]->isCommander = false;
-						defineNewCommander(team);
-					}
-
-					if (!team[2]->isSmoking && team[2]->makeSureDestroyed())
-					{
-						team[2]->isSmoking = true;
-						Entity *smoke = new Entity(aSmoke, team[2], "smoke");
-						entities.push_back(smoke);
-					}
 				}
 			}
 
@@ -630,30 +538,6 @@ int main()
 			{
 				if (team[3]->status != DEAD)
 				{
-					//.:: Smoking ::::::::::::::::::
-					if (team[3]->status == WOUNDED)
-					{
-						if (!team[3]->isSmoking)
-						{
-							team[3]->isSmoking = true;
-							Entity *smoke = new Entity(aSmoke, team[3], "smoke");
-							entities.push_back(smoke);
-						}
-					}
-
-					//.:: GetRank ::::::::::::::::::
-					if (team[3]->preferment)
-					{
-						team[3]->preferment = false;
-						sPreferment.play();
-						if (!team[3]->hasRank)
-						{
-							team[3]->hasRank = true;
-							Entity *rank = new Entity(aRank, team[3], "rank");
-							entities.push_back(rank);
-						}
-					}
-
 					if (Keyboard::isKeyPressed(Keyboard::Up))
 					{
 						team[3]->accelerate(1, -0.09 * time);
@@ -671,31 +555,6 @@ int main()
 						team[3]->accelerate(4, -0.09 * time);
 					}
 					else team[3]->playAnimation = false;
-
-					if (team[3]->isCommander)
-						setViewCoordinates(sizeX, sizeY, team[3]->getCoordX(false), team[3]->getCoordY(false));
-				}
-				else
-				{
-					if (team[3]->isDrowned && !team[3]->drowning)
-					{
-						team[3]->drowning = true;
-						Entity* drowning = new Entity(aDrowning, team[3], "drowning");
-						entities.push_back(drowning);
-					}
-
-					if (team[3]->isCommander)
-					{
-						team[3]->isCommander = false;
-						defineNewCommander(team);
-					}
-
-					if (!team[3]->isSmoking && team[3]->makeSureDestroyed())
-					{
-						team[3]->isSmoking = true;
-						Entity *smoke = new Entity(aSmoke, team[3], "smoke");
-						entities.push_back(smoke);
-					}
 				}
 			}
 
@@ -707,30 +566,6 @@ int main()
 			{
 				if (team[4]->status != DEAD)
 				{
-					//.:: Smoking ::::::::::::::::::
-					if (team[4]->status == WOUNDED)
-					{
-						if (!team[4]->isSmoking)
-						{
-							team[4]->isSmoking = true;
-							Entity *smoke = new Entity(aSmoke, team[4], "smoke");
-							entities.push_back(smoke);
-						}
-					}
-
-					//.:: GetRank ::::::::::::::::::
-					if (team[4]->preferment)
-					{
-						team[4]->preferment = false;
-						sPreferment.play();
-						if (!team[4]->hasRank)
-						{
-							team[4]->hasRank = true;
-							Entity *rank = new Entity(aRank, team[4], "rank");
-							entities.push_back(rank);
-						}
-					}
-
 					if (Keyboard::isKeyPressed(Keyboard::Numpad8))
 					{
 						team[4]->accelerate(1, -0.09 * time);
@@ -748,31 +583,6 @@ int main()
 						team[4]->accelerate(4, -0.09 * time);
 					}
 					else team[4]->playAnimation = false;
-
-					if (team[4]->isCommander)
-						setViewCoordinates(sizeX, sizeY, team[4]->getCoordX(false), team[4]->getCoordY(false));
-				}
-				else
-				{
-					if (team[4]->isDrowned && !team[4]->drowning)
-					{
-						team[4]->drowning = true;
-						Entity* drowning = new Entity(aDrowning, team[4], "drowning");
-						entities.push_back(drowning);
-					}
-
-					if (team[4]->isCommander)
-					{
-						team[4]->isCommander = false;
-						defineNewCommander(team);
-					}
-
-					if (!team[4]->isSmoking && team[4]->makeSureDestroyed())
-					{
-						team[4]->isSmoking = true;
-						Entity *smoke = new Entity(aSmoke, team[4], "smoke");
-						entities.push_back(smoke);
-					}
 				}
 			}
 
