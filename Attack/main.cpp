@@ -291,6 +291,8 @@ int main()
 		delete foregroundTheme;
 		//:::::::::::::::::::::::::::::
 
+		float villainViewX = (float)sizeX / 2, villainViewY = (float)sizeY / 2;
+
 		while (app.isOpen())
 		{
 			double time = clock.getElapsedTime().asMicroseconds();
@@ -633,14 +635,25 @@ int main()
 					if (e->isVillain)
 					{
 						if (e->finishVillainTime == 0)
-							e->finishVillainTime = gameTime + 5;
-						if (sLaugh.getStatus() == SoundStream::Stopped)
 						{
 							sLaugh.play();
+							view.reset(FloatRect(0, 0, villainViewX, villainViewY));
+							e->finishVillainTime = gameTime + 5;
 						}
 
-						view.reset(FloatRect(0, 0, (float)sizeX / 2, (float)sizeY / 2));
-						setViewCoordinates((float)sizeX / 2, (float)sizeY / 2, e->getCoordX(false), e->getCoordY(false));
+						if (sizeX != 1280 && sizeY != 1024)
+						{
+							villainViewX -= (float)(sizeX / 600);
+							villainViewY -= (float)(sizeY / 450);
+						}
+						else
+						{
+							villainViewX -= (float)(sizeX / 600);
+							villainViewY -= (float)(sizeY / 600);
+						}
+
+						view.reset(FloatRect(0, 0, villainViewX, villainViewY));
+						setViewCoordinates(villainViewX, villainViewY, e->getCoordX(false), e->getCoordY(false));
 
 						if (gameTime >= e->finishVillainTime)
 						{
@@ -649,6 +662,9 @@ int main()
 							e->finishVillainTime = 0;
 							if (!checkTeamForCommander(team))
 								view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
+
+							villainViewX = (float)sizeX / 2;
+							villainViewY = (float)sizeY / 2;
 						}
 					}
 				}
