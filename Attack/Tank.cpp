@@ -30,6 +30,8 @@ Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, int lvl)
 	hitPoints = 1 + level;
 }
 
+bool Tank::cameraIsNotFree = false;
+
 Tank::~Tank() {}
 
 void Tank::update(double time)

@@ -42,3 +42,14 @@ void defineNewCommander(vector<Player*> team)
 
 	newCommander->isCommander = true;
 }
+
+bool checkTeamForCommander(vector<Player*> team)
+{
+	for (auto p : team)
+	{
+		if (p->isCommander)
+			return true;
+	}
+
+	return false;
+}

@@ -25,4 +25,5 @@ public:
 	void allowShot();
 	void conveyExperience(int);
 	void ceaseEnemyFire();
+	void paintOwn();
 };

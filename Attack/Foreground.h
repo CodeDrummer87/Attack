@@ -5,7 +5,7 @@
 
 #include "Animation.h"
 
-void showForeground(int x, int y, bool &game, int &numberOfPlayers)
+void showForeground(int x, int y, bool &game, int &numberOfPlayers, Sound &start)
 {
 	using namespace sf;
 
@@ -13,6 +13,7 @@ void showForeground(int x, int y, bool &game, int &numberOfPlayers)
 
 	fGround->setFramerateLimit(60);
 	fGround->setMouseCursorVisible(false);
+	fGround->setKeyRepeatEnabled(false);
 
 	SoundBuffer choiceBuf, screamBuf;
 	choiceBuf.loadFromFile("source/sounds/foreground/choose_number_of_players.ogg");
@@ -90,7 +91,10 @@ void showForeground(int x, int y, bool &game, int &numberOfPlayers)
 			}
 
 			if (Keyboard::isKeyPressed(Keyboard::Enter))
+			{
+				start.play();
 				fGround->close();
+			}
 
 			if (Keyboard::isKeyPressed(Keyboard::Down))
 			{

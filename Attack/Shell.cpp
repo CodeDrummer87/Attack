@@ -107,3 +107,14 @@ void Shell::ceaseEnemyFire()
 	if (own->army == "enemy")
 		static_cast<Enemy*>(own)->round = false;
 }
+
+void Shell::paintOwn()
+{
+	own->anim.sprite.setColor(Color::Yellow);
+	own->anim.sprite.setScale(1.1f, 1.1f);
+	if (own->army == "enemy")
+	{
+		static_cast<Enemy*>(own)->isVillain = true;
+		own->cameraIsNotFree = true;
+	}
+}

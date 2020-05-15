@@ -16,6 +16,7 @@ public:
 	bool isTowed;
 	bool isDrowned;
 	bool drowning;
+	static bool cameraIsNotFree;
 
 	//.:: Constructors :::::::::::::::::::::
 	Tank();

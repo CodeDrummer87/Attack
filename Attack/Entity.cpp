@@ -483,7 +483,10 @@ void Entity::damageEntity(Entity *e, Sound &armorSound)
 				if (army == "player" && e->hitPoints <= 0)
 					static_cast<Shell*>(this)->conveyExperience(e->level);
 				if (army == "enemy" && e->hitPoints <= 0)
+				{
+					static_cast<Shell*>(this)->paintOwn();
 					static_cast<Shell*>(this)->ceaseEnemyFire();
+				}
 			}
 			isExist = false;
 			if (name == "shell")

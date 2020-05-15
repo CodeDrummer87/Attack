@@ -7,6 +7,8 @@ class Enemy : public Tank
 public:
 	bool round;
 	int reachDistance;
+	bool isVillain;
+	int finishVillainTime;
 
 	//.:: Constructors ::::::::::::::::::::::
 	Enemy();

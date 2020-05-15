@@ -7,8 +7,9 @@ Enemy::Enemy(Animation &a, Animation &b, int X, int Y, int dir_, int lvl)
 {
 	dir = rand() % 4 + 1;
 	army = "enemy";
-	round = false;
+	round  = isVillain = false;
 	reachDistance = 350 + (float)level * 50;
+	finishVillainTime = 0;
 }
 
 Enemy::~Enemy() {}
@@ -18,9 +19,9 @@ void Enemy::update(double time)
 	float speed;
 
 	if (level % 2 == 0)
-		speed = 0.08;
+		speed = 0.09;
 	else
-		speed = 0.06;
+		speed = 0.08;
 
 	if (name != "destroyed")
 	{

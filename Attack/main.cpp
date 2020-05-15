@@ -37,6 +37,11 @@ int main()
 
 	view.reset(FloatRect(0, 0, sizeX, sizeY));
 
+	SoundBuffer startBuf;
+	startBuf.loadFromFile("source/sounds/foreground/start.ogg");
+
+	Sound start(startBuf);
+
 	Music *foregroundTheme = new Music();
 	foregroundTheme->openFromFile("source/sounds/foreground/main_theme.ogg");
 	foregroundTheme->setVolume(70.f);
@@ -44,13 +49,10 @@ int main()
 
 	bool game = true;
 	int numberOfPlayers = 1;
-	showForeground(sizeX, sizeY, game, numberOfPlayers);
+	showForeground(sizeX, sizeY, game, numberOfPlayers, start);
 
 	if (game)
 	{
-		foregroundTheme->stop();
-		delete foregroundTheme;
-
 		RenderWindow app(VideoMode(sizeX, sizeY), "Attack", Style::Fullscreen);
 		app.setFramerateLimit(60);
 		app.setMouseCursorVisible(false);
@@ -132,7 +134,7 @@ int main()
 		SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf,
 			burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf,
 			shellExpBuf, enemy_1Buf, en_1RoundBuf, armorBuf, prefermentBuf,
-			takingIconBuf, drowningBuf;
+			takingIconBuf, drowningBuf, laughBuf;
 
 		bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 		yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
@@ -148,8 +150,9 @@ int main()
 		prefermentBuf.loadFromFile("source/sounds/effects/preferment.ogg");
 		takingIconBuf.loadFromFile("source/sounds/icons/take_icon.ogg");
 		drowningBuf.loadFromFile("source/sounds/effects/drowning.ogg");
+		laughBuf.loadFromFile("source/sounds/effects/laugh.ogg");
 
-		Sound enemy_move, sArmor, sPreferment, sTakingIcon;
+		Sound enemy_move, sArmor, sPreferment, sTakingIcon, sLaugh(laughBuf);
 		enemy_move.setBuffer(enemy_1Buf);		enemy_move.setLoop(true);
 		sArmor.setBuffer(armorBuf);				sArmor.setLoop(false);
 		sPreferment.setBuffer(prefermentBuf);	sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
@@ -279,6 +282,14 @@ int main()
 		//--------------------------------------------
 
 		Clock clock;
+		Clock gameTimeClock;
+
+		int gameTime = 0;
+
+		//.:: Stop main theme music :::
+		foregroundTheme->stop();
+		delete foregroundTheme;
+		//:::::::::::::::::::::::::::::
 
 		while (app.isOpen())
 		{
@@ -287,6 +298,8 @@ int main()
 
 			time /= 1700;
 
+			gameTime = gameTimeClock.getElapsedTime().asSeconds();
+			
 			Event event;
 			while (app.pollEvent(event))
 			{
@@ -424,7 +437,8 @@ int main()
 						}
 					}
 
-					if (p->isCommander)
+					//.:: Set View :::
+					if (p->isCommander && !p->cameraIsNotFree)
 						setViewCoordinates(sizeX, sizeY, p->getCoordX(false), p->getCoordY(false));
 				}
 				else
@@ -613,6 +627,28 @@ int main()
 							e->isSmoking = true;
 							Entity *smoke = new Entity(aSmoke, e, "smoke");
 							entities.push_back(smoke);
+						}
+					}
+
+					if (e->isVillain)
+					{
+						if (e->finishVillainTime == 0)
+							e->finishVillainTime = gameTime + 5;
+						if (sLaugh.getStatus() == SoundStream::Stopped)
+						{
+							sLaugh.play();
+						}
+
+						view.reset(FloatRect(0, 0, (float)sizeX / 2, (float)sizeY / 2));
+						setViewCoordinates((float)sizeX / 2, (float)sizeY / 2, e->getCoordX(false), e->getCoordY(false));
+
+						if (gameTime >= e->finishVillainTime)
+						{
+							e->isVillain = e->cameraIsNotFree = false;
+							view.reset(FloatRect(0, 0, (float)sizeX, (float)sizeY));
+							e->finishVillainTime = 0;
+							if (!checkTeamForCommander(team))
+								view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
 						}
 					}
 				}
