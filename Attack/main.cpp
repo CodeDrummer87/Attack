@@ -641,16 +641,8 @@ int main()
 							e->finishVillainTime = gameTime + 5;
 						}
 
-						if (sizeX != 1280 && sizeY != 1024)
-						{
-							villainViewX -= (float)(sizeX / 600);
-							villainViewY -= (float)(sizeY / 450);
-						}
-						else
-						{
-							villainViewX -= (float)(sizeX / 600);
-							villainViewY -= (float)(sizeY / 600);
-						}
+						villainViewX -= (float)(sizeX / 1000);
+						villainViewY -= (float)(sizeY / 1000);
 
 						view.reset(FloatRect(0, 0, villainViewX, villainViewY));
 						setViewCoordinates(villainViewX, villainViewY, e->getCoordX(false), e->getCoordY(false));
