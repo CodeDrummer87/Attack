@@ -46,6 +46,8 @@ int main()
 	foregroundTheme->openFromFile("source/sounds/foreground/main_theme.ogg");
 	foregroundTheme->setVolume(70.f);
 	foregroundTheme->play();
+	int fadeOutTime = 0;	//.:: For foregroundTheme music
+	float mainThemeVolume = 70.f;
 
 	bool game = true;
 	int numberOfPlayers = 1;
@@ -286,11 +288,6 @@ int main()
 
 		int gameTime = 0;
 
-		//.:: Stop main theme music :::
-		foregroundTheme->stop();
-		delete foregroundTheme;
-		//:::::::::::::::::::::::::::::
-
 		float villainViewX = (float)sizeX / 2, villainViewY = (float)sizeY / 2;
 
 		while (app.isOpen())
@@ -301,6 +298,22 @@ int main()
 			time /= 1700;
 
 			gameTime = gameTimeClock.getElapsedTime().asSeconds();
+
+			//.:: Fade out time of foregroundTheme :::
+			if (foregroundTheme->getStatus() == SoundStream::Playing)
+			{
+				if (fadeOutTime != 0)
+				{
+					mainThemeVolume -= (float)gameTime;
+					foregroundTheme->setVolume(mainThemeVolume);
+				}
+				else
+					fadeOutTime = gameTime + 5;
+
+				if (gameTime >= fadeOutTime)
+					foregroundTheme->stop();
+			}
+			//.:::::::::::::::::::::::::::::::::::::::
 			
 			Event event;
 			while (app.pollEvent(event))
@@ -648,16 +661,7 @@ int main()
 						setViewCoordinates(villainViewX, villainViewY, e->getCoordX(false), e->getCoordY(false));
 
 						if (gameTime >= e->finishVillainTime)
-						{
-							e->isVillain = e->cameraIsNotFree = false;
-							view.reset(FloatRect(0, 0, (float)sizeX, (float)sizeY));
-							e->finishVillainTime = 0;
-							if (!checkTeamForCommander(team))
-								view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
-
-							villainViewX = (float)sizeX / 2;
-							villainViewY = (float)sizeY / 2;
-						}
+							resetVillainView(e, sizeX, sizeY, team, villainViewX, villainViewY);
 					}
 				}
 				else
@@ -674,6 +678,14 @@ int main()
 						e->isSmoking = true;
 						Entity *smoke = new Entity(aSmoke, e, "smoke");
 						entities.push_back(smoke);
+					}
+
+					if (e->isVillain)
+					{
+						if (sLaugh.getStatus() == SoundStream::Playing)
+							sLaugh.stop();
+						
+						resetVillainView(e, sizeX, sizeY, team, villainViewX, villainViewY);
 					}
 				}
 			}

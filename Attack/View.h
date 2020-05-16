@@ -53,3 +53,15 @@ bool checkTeamForCommander(vector<Player*> team)
 
 	return false;
 }
+
+void resetVillainView(Enemy *e, int &sizeX, int &sizeY, vector<Player*> team, float &villainViewX, float &villainViewY)
+{
+	e->isVillain = e->cameraIsNotFree = false;
+	view.reset(FloatRect(0, 0, (float)sizeX, (float)sizeY));
+	e->finishVillainTime = 0;
+	if (!checkTeamForCommander(team))
+		view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
+
+	villainViewX = (float)sizeX / 2;
+	villainViewY = (float)sizeY / 2;
+}
