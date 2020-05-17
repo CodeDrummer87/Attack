@@ -16,11 +16,13 @@
 #include "View.h"
 #include "Foreground.h"
 
-using namespace std;
-using namespace sf;
+#include "ChapterFinale.h"
 
 int main()
 {
+	using namespace std;
+	using namespace sf;
+
 #pragma region Window Settings
 
 	SetConsoleCP(1251);
@@ -34,6 +36,8 @@ int main()
 		sizeX = 1920;
 		sizeY = 1080;
 	}
+
+#pragma endregion
 
 	view.reset(FloatRect(0, 0, sizeX, sizeY));
 
@@ -51,6 +55,7 @@ int main()
 
 	bool game = true;
 	int numberOfPlayers = 1;
+
 	showForeground(sizeX, sizeY, game, numberOfPlayers, start);
 
 	if (game)
@@ -61,8 +66,6 @@ int main()
 		app.setKeyRepeatEnabled(false);
 
 		view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
-
-#pragma endregion
 
 #pragma region Images | Textures | Sounds | Animations
 
@@ -290,6 +293,10 @@ int main()
 
 		float villainViewX = (float)sizeX / 2, villainViewY = (float)sizeY / 2;
 
+		//.:: For end battle
+		bool battleIsOver = false;
+		int lastSecondsOfChapter = 0;
+
 		while (app.isOpen())
 		{
 			double time = clock.getElapsedTime().asMicroseconds();
@@ -319,7 +326,7 @@ int main()
 			while (app.pollEvent(event))
 			{
 				//.:: Tank rounds :::::::::::::::
-				if (event.type == Event::KeyPressed)
+				if (event.type == Event::KeyPressed && !battleIsOver)
 				{
 					//.:: Tank round (player 1)
 					if (team[0]->status != DEAD)
@@ -420,7 +427,6 @@ int main()
 				}
 			}
 
-			//.:: Temporary code :::
 			if (Keyboard::isKeyPressed(Keyboard::Escape))
 				app.close();
 
@@ -623,7 +629,7 @@ int main()
 			{
 				if (e->status != DEAD)
 				{
-					if (e->round)
+					if (e->round && !battleIsOver)
 						if (e->isShot)
 						{
 							e->round = false;
@@ -690,10 +696,33 @@ int main()
 				}
 			}
 			//----------------------------------
-			if (!enemy_alive)
+			if (!enemy_alive || !checkTeamForSurvivors(team))
 			{
-				enemy_move.stop();
-				app.close();
+				if (!battleIsOver)
+				{
+					enemy_move.stop();
+					chapter_finale.play();
+					battleIsOver = true;
+					lastSecondsOfChapter = gameTime + 7;
+				}
+			}
+
+			if (battleIsOver)
+			{
+				if (sLaugh.getStatus() == SoundStream::Playing)
+				{
+					if (sLaugh.getVolume() >= 0.f)
+					{
+						float volume = sLaugh.getVolume() - 0.7f;
+						sLaugh.setVolume(volume);
+					}
+				}
+
+				if (gameTime >= lastSecondsOfChapter)
+				{
+					app.close();
+					showChapterFinale(sizeX, sizeY);
+				}
 			}
 
 			//.:: collision :::
