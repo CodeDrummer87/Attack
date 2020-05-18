@@ -11,7 +11,7 @@ void showForeground(int x, int y, bool &game, int &numberOfPlayers, Sound &start
 
 	RenderWindow *fGround = new RenderWindow(VideoMode(x, y), "Attack", Style::Fullscreen);
 
-	fGround->setFramerateLimit(60);
+	fGround->setVerticalSyncEnabled(true);
 	fGround->setMouseCursorVisible(false);
 	fGround->setKeyRepeatEnabled(false);
 

@@ -61,7 +61,7 @@ int main()
 	if (game)
 	{
 		RenderWindow app(VideoMode(sizeX, sizeY), "Attack", Style::Fullscreen);
-		app.setFramerateLimit(60);
+		app.setVerticalSyncEnabled(true);
 		app.setMouseCursorVisible(false);
 		app.setKeyRepeatEnabled(false);
 
@@ -165,7 +165,6 @@ int main()
 
 		Music chapter_finale;
 		chapter_finale.openFromFile("source/sounds/music/chapter_finale.ogg");
-		//chapter_finale.play();
 
 #pragma endregion
 
@@ -486,142 +485,149 @@ int main()
 				}
 			}
 
+			if (!battleIsOver)
+			{
 #pragma region First Player control
 
-			if (team[0]->status != DEAD)
-			{
-				if (Keyboard::isKeyPressed(Keyboard::W))
+				if (team[0]->status != DEAD)
 				{
-					team[0]->accelerate(1, -0.09 * time);
+					if (Keyboard::isKeyPressed(Keyboard::W))
+					{
+						team[0]->accelerate(1, -0.09 * time);
+					}
+					else if (Keyboard::isKeyPressed(Keyboard::D))
+					{
+						team[0]->accelerate(2, 0.09 * time);
+					}
+					else if (Keyboard::isKeyPressed(Keyboard::S))
+					{
+						team[0]->accelerate(3, 0.09 * time);
+					}
+					else if (Keyboard::isKeyPressed(Keyboard::A))
+					{
+						team[0]->accelerate(4, -0.09 * time);
+					}
+					else team[0]->playAnimation = false;
 				}
-				else if (Keyboard::isKeyPressed(Keyboard::D))
-				{
-					team[0]->accelerate(2, 0.09 * time);
-				}
-				else if (Keyboard::isKeyPressed(Keyboard::S))
-				{
-					team[0]->accelerate(3, 0.09 * time);
-				}
-				else if (Keyboard::isKeyPressed(Keyboard::A))
-				{
-					team[0]->accelerate(4, -0.09 * time);
-				}
-				else team[0]->playAnimation = false;
-			}
 
 #pragma endregion
 
 #pragma region Second Player control
 
-			if (numberOfPlayers >= 2)
-			{
-				if (team[1]->status != DEAD)
+				if (numberOfPlayers >= 2)
 				{
-					if (Keyboard::isKeyPressed(Keyboard::T))
+					if (team[1]->status != DEAD)
 					{
-						team[1]->accelerate(1, -0.09 * time);
+						if (Keyboard::isKeyPressed(Keyboard::T))
+						{
+							team[1]->accelerate(1, -0.09 * time);
+						}
+						else if (Keyboard::isKeyPressed(Keyboard::H))
+						{
+							team[1]->accelerate(2, 0.09 * time);
+						}
+						else if (Keyboard::isKeyPressed(Keyboard::G))
+						{
+							team[1]->accelerate(3, 0.09 * time);
+						}
+						else if (Keyboard::isKeyPressed(Keyboard::F))
+						{
+							team[1]->accelerate(4, -0.09 * time);
+						}
+						else team[1]->playAnimation = false;
 					}
-					else if (Keyboard::isKeyPressed(Keyboard::H))
-					{
-						team[1]->accelerate(2, 0.09 * time);
-					}
-					else if (Keyboard::isKeyPressed(Keyboard::G))
-					{
-						team[1]->accelerate(3, 0.09 * time);
-					}
-					else if (Keyboard::isKeyPressed(Keyboard::F))
-					{
-						team[1]->accelerate(4, -0.09 * time);
-					}
-					else team[1]->playAnimation = false;
 				}
-			}
 
 #pragma endregion
 
 #pragma region Third Player control
 
-			if (numberOfPlayers >= 3)
-			{
-				if (team[2]->status != DEAD)
+				if (numberOfPlayers >= 3)
 				{
-					if (Keyboard::isKeyPressed(Keyboard::I))
+					if (team[2]->status != DEAD)
 					{
-						team[2]->accelerate(1, -0.09 * time);
+						if (Keyboard::isKeyPressed(Keyboard::I))
+						{
+							team[2]->accelerate(1, -0.09 * time);
+						}
+						else if (Keyboard::isKeyPressed(Keyboard::L))
+						{
+							team[2]->accelerate(2, 0.09 * time);
+						}
+						else if (Keyboard::isKeyPressed(Keyboard::K))
+						{
+							team[2]->accelerate(3, 0.09 * time);
+						}
+						else if (Keyboard::isKeyPressed(Keyboard::J))
+						{
+							team[2]->accelerate(4, -0.09 * time);
+						}
+						else team[2]->playAnimation = false;
 					}
-					else if (Keyboard::isKeyPressed(Keyboard::L))
-					{
-						team[2]->accelerate(2, 0.09 * time);
-					}
-					else if (Keyboard::isKeyPressed(Keyboard::K))
-					{
-						team[2]->accelerate(3, 0.09 * time);
-					}
-					else if (Keyboard::isKeyPressed(Keyboard::J))
-					{
-						team[2]->accelerate(4, -0.09 * time);
-					}
-					else team[2]->playAnimation = false;
 				}
-			}
 
 #pragma endregion
 
 #pragma region Forth Player control
 
-			if (numberOfPlayers >= 4)
-			{
-				if (team[3]->status != DEAD)
+				if (numberOfPlayers >= 4)
 				{
-					if (Keyboard::isKeyPressed(Keyboard::Up))
+					if (team[3]->status != DEAD)
 					{
-						team[3]->accelerate(1, -0.09 * time);
+						if (Keyboard::isKeyPressed(Keyboard::Up))
+						{
+							team[3]->accelerate(1, -0.09 * time);
+						}
+						else if (Keyboard::isKeyPressed(Keyboard::Right))
+						{
+							team[3]->accelerate(2, 0.09 * time);
+						}
+						else if (Keyboard::isKeyPressed(Keyboard::Down))
+						{
+							team[3]->accelerate(3, 0.09 * time);
+						}
+						else if (Keyboard::isKeyPressed(Keyboard::Left))
+						{
+							team[3]->accelerate(4, -0.09 * time);
+						}
+						else team[3]->playAnimation = false;
 					}
-					else if (Keyboard::isKeyPressed(Keyboard::Right))
-					{
-						team[3]->accelerate(2, 0.09 * time);
-					}
-					else if (Keyboard::isKeyPressed(Keyboard::Down))
-					{
-						team[3]->accelerate(3, 0.09 * time);
-					}
-					else if (Keyboard::isKeyPressed(Keyboard::Left))
-					{
-						team[3]->accelerate(4, -0.09 * time);
-					}
-					else team[3]->playAnimation = false;
 				}
-			}
 
 #pragma endregion
 
 #pragma region Fifth Player control
 
-			if (numberOfPlayers == 5)
-			{
-				if (team[4]->status != DEAD)
+				if (numberOfPlayers == 5)
 				{
-					if (Keyboard::isKeyPressed(Keyboard::Numpad8))
+					if (team[4]->status != DEAD)
 					{
-						team[4]->accelerate(1, -0.09 * time);
+						if (Keyboard::isKeyPressed(Keyboard::Numpad8))
+						{
+							team[4]->accelerate(1, -0.09 * time);
+						}
+						else if (Keyboard::isKeyPressed(Keyboard::Numpad6))
+						{
+							team[4]->accelerate(2, 0.09 * time);
+						}
+						else if (Keyboard::isKeyPressed(Keyboard::Numpad5))
+						{
+							team[4]->accelerate(3, 0.09 * time);
+						}
+						else if (Keyboard::isKeyPressed(Keyboard::Numpad4))
+						{
+							team[4]->accelerate(4, -0.09 * time);
+						}
+						else team[4]->playAnimation = false;
 					}
-					else if (Keyboard::isKeyPressed(Keyboard::Numpad6))
-					{
-						team[4]->accelerate(2, 0.09 * time);
-					}
-					else if (Keyboard::isKeyPressed(Keyboard::Numpad5))
-					{
-						team[4]->accelerate(3, 0.09 * time);
-					}
-					else if (Keyboard::isKeyPressed(Keyboard::Numpad4))
-					{
-						team[4]->accelerate(4, -0.09 * time);
-					}
-					else team[4]->playAnimation = false;
 				}
-			}
 
 #pragma endregion
+			}
+			else
+				for (auto p: team)
+					if (p->playAnimation)
+						p->playAnimation = false;
 
 			enemy_alive = false;
 			//.:: Enemy action
@@ -713,15 +719,15 @@ int main()
 				{
 					if (sLaugh.getVolume() >= 0.f)
 					{
-						float volume = sLaugh.getVolume() - 0.7f;
+						float volume = sLaugh.getVolume() - 0.4f;
 						sLaugh.setVolume(volume);
 					}
 				}
 
 				if (gameTime >= lastSecondsOfChapter)
 				{
-					app.close();
 					showChapterFinale(sizeX, sizeY);
+					app.close();
 				}
 			}
 
@@ -769,7 +775,7 @@ int main()
 			}
 
 			app.setView(view);
-			app.clear();
+			app.clear(Color::Black);
 			drawMap(FirstStage, app, map, time);
 			//.:: display entities :::
 			for (auto e : entities)

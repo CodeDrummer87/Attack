@@ -29,7 +29,7 @@ void showChapterFinale(int sizeX, int sizeY)
 		if (Keyboard::isKeyPressed(Keyboard::Escape))
 			app.close();
 
-		app.clear();
+		app.clear(Color::Black);
 		app.draw(text);
 		app.draw(exit);
 		app.display();
