@@ -612,13 +612,22 @@ void Entity::getCollision(String map[], Sound &sound)
 						static_cast<Player*>(this)->isCommander = true;
 					}
 
+					if (map[i][j] == 'A' && name == "tank" && army == "player")
+					{
+						sound.play();
+						map[i][j] = ' ';
+						//.:: air strike code
+					}
+
 					if (name == "destroyed")
+					{
 						if (map[i][j] == 'W' && !static_cast<Tank*>(this)->isTowed)
 						{
 							anim.sprite.setColor(Color::Transparent);
 							if (!static_cast<Tank*>(this)->isDrowned)
 								static_cast<Tank*>(this)->isDrowned = true;
 						}
+					}
 				}
 		}
 }

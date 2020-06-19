@@ -139,7 +139,7 @@ int main()
 		SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf,
 			burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf,
 			shellExpBuf, enemy_1Buf, en_1RoundBuf, armorBuf, prefermentBuf,
-			takingIconBuf, drowningBuf, laughBuf;
+			takingIconBuf, drowningBuf, laughBuf, radioResponseBuf;
 
 		bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 		yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
@@ -156,8 +156,11 @@ int main()
 		takingIconBuf.loadFromFile("source/sounds/icons/take_icon.ogg");
 		drowningBuf.loadFromFile("source/sounds/effects/drowning.ogg");
 		laughBuf.loadFromFile("source/sounds/effects/laugh.ogg");
+		radioResponseBuf.loadFromFile("source/sounds/icons/radio_response.ogg");
 
-		Sound enemy_move, sArmor, sPreferment, sTakingIcon, sLaugh(laughBuf);
+		Sound enemy_move, sArmor, sPreferment, sTakingIcon,
+			sLaugh(laughBuf), sRadioResponse(radioResponseBuf);
+
 		enemy_move.setBuffer(enemy_1Buf);		enemy_move.setLoop(true);
 		sArmor.setBuffer(armorBuf);				sArmor.setLoop(false);
 		sPreferment.setBuffer(prefermentBuf);	sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
@@ -210,8 +213,9 @@ int main()
 		Animation iconRepair(tIcon, 0, 0, 32, 32, 0.01, 22);
 		Animation iconPreferment(tIcon, 0, 32, 32, 32, 0.02, 22);
 		Animation iconCamera(tIcon, 0, 64, 32, 32, 0.02, 22);
+		Animation iconAirStrike(tIcon, 0, 96, 32, 32, 0.02, 22);
 
-		Animation icons[] = { iconRepair, iconPreferment, iconCamera };
+		Animation icons[] = { iconRepair, iconPreferment, iconCamera, iconAirStrike };
 
 		Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
 
