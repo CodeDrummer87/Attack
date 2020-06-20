@@ -71,7 +71,10 @@ int main()
 
 #pragma region Images
 
-		Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank, iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iMap, iIcon, iDrowning;
+		Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank,
+			iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iMap, iIcon, iDrowning,
+			iFighter, iTarget;
+
 		iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 		iBurgundyTank.createMaskFromColor(Color::White);
 
@@ -108,12 +111,19 @@ int main()
 		iDrowning.loadFromFile("source/images/models/other/drowning.png");
 		iDrowning.createMaskFromColor(Color::White);
 
+		iFighter.loadFromFile("source/images/models/fighter.png");
+		iFighter.createMaskFromColor(Color::White);
+
+		iTarget.loadFromFile("source/images/attributes/target.png");
+
 #pragma endregion
 
 #pragma region Textures
 
 		Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke,
-			tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tRank, tMap, tIcon, tDrowning;
+			tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tRank, tMap, tIcon, tDrowning,
+			tFighter, tTarget;
+
 		bTank.loadFromImage(iBurgundyTank);
 		yTank.loadFromImage(iYellowTank);
 		pTank.loadFromImage(iPurpleTank);
@@ -131,6 +141,8 @@ int main()
 		tMap.loadFromImage(iMap);
 		tIcon.loadFromImage(iIcon);
 		tDrowning.loadFromImage(iDrowning);
+		tFighter.loadFromImage(iFighter);
+		tTarget.loadFromImage(iTarget);
 
 #pragma endregion
 
@@ -139,7 +151,7 @@ int main()
 		SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf,
 			burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf,
 			shellExpBuf, enemy_1Buf, en_1RoundBuf, armorBuf, prefermentBuf,
-			takingIconBuf, drowningBuf, laughBuf, radioResponseBuf;
+			takingIconBuf, drowningBuf, laughBuf, radioResponseBuf, fighterFlyBuf;
 
 		bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 		yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
@@ -157,14 +169,17 @@ int main()
 		drowningBuf.loadFromFile("source/sounds/effects/drowning.ogg");
 		laughBuf.loadFromFile("source/sounds/effects/laugh.ogg");
 		radioResponseBuf.loadFromFile("source/sounds/icons/radio_response.ogg");
+		fighterFlyBuf.loadFromFile("source/sounds/effects/fighterFlight.ogg");
 
 		Sound enemy_move, sArmor, sPreferment, sTakingIcon,
-			sLaugh(laughBuf), sRadioResponse(radioResponseBuf);
+			sLaugh(laughBuf), sRadioResponse(radioResponseBuf),
+			sFighterFlight;
 
 		enemy_move.setBuffer(enemy_1Buf);		enemy_move.setLoop(true);
 		sArmor.setBuffer(armorBuf);				sArmor.setLoop(false);
 		sPreferment.setBuffer(prefermentBuf);	sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
 		sTakingIcon.setBuffer(takingIconBuf);	sTakingIcon.setLoop(false);
+		sFighterFlight.setBuffer(fighterFlyBuf);	sFighterFlight.setLoop(false);
 
 		Music chapter_finale;
 		chapter_finale.openFromFile("source/sounds/music/chapter_finale.ogg");
@@ -218,6 +233,7 @@ int main()
 		Animation icons[] = { iconRepair, iconPreferment, iconCamera, iconAirStrike };
 
 		Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
+		Animation aFighter(tFighter, 0, 0, 120, 165, 0.02, 1);
 
 #pragma endregion
 
@@ -733,6 +749,13 @@ int main()
 					showChapterFinale(sizeX, sizeY);
 					app.close();
 				}
+			}
+
+			if (Player::isAirStrike)
+			{
+				Player::isAirStrike = false;
+				sRadioResponse.play();
+				sFighterFlight.play();
 			}
 
 			//.:: collision :::

@@ -13,6 +13,8 @@ public:
 	bool preferment;
 	bool isCommander;
 
+	static bool isAirStrike;
+
 	//.:: Constructors :::::::::::::::::::::
 	Player();
 	Player(Animation&, Animation&, int, int, int, int);

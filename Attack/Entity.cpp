@@ -616,7 +616,8 @@ void Entity::getCollision(String map[], Sound &sound)
 					{
 						sound.play();
 						map[i][j] = ' ';
-						//.:: air strike code
+						
+						Player::isAirStrike = true;
 					}
 
 					if (name == "destroyed")

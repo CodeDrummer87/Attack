@@ -43,3 +43,5 @@ void Player::improveTank(int residual)
 	experience *= 2;
 	currentExperience = residual;
 }
+
+bool Player::isAirStrike = false;
