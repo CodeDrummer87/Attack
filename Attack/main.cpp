@@ -193,40 +193,40 @@ int main()
 #pragma region Animations
 
 		Animation burgundy_tank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
-		Animation explosion_burg_tank(bTank, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
+		Animation explosion_burg_tank(bTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 
 		Animation yellow_tank(yTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
-		Animation explosion_yel_tank(yTank, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
+		Animation explosion_yel_tank(yTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 
 		Animation purple_tank(pTank, pTankBuf, 0, 0, 64, 64, 0.016, 2);
-		Animation explosion_purp_tank(pTank, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
+		Animation explosion_purp_tank(pTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 
 		Animation lightblue_tank(lbTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
-		Animation explosion_lb_tank(lbTank, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
+		Animation explosion_lb_tank(lbTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 
 		Animation hemo_tank(hTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
-		Animation explosion_hemo_tank(hTank, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
+		Animation explosion_hemo_tank(hTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 
 		Animation aBurgTankRound(tTankRound, burgTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
 		Animation aYelTankRound(tTankRound, yelTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
 		Animation aPurpTankRound(tTankRound, purpTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
 		Animation aShell(tShell, 0, 0, 64, 64, 0.01, 2);
-		Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.01, 7);
+		Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.015, 7);
 		Animation aSmoke(tSmoke, 0, 0, 64, 64, 0.006, 5);
 		Animation aRank(tRank, 0, 0, 60, 134, 1, 18);
 
 		Animation enemy_1(tEnemy_1, 0, 0, 64, 64, 0.016, 2);
-		Animation explosion_enemy_1(tEnemy_1, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
+		Animation explosion_enemy_1(tEnemy_1, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 		Animation aEnemy1Round(tTankRound, en_1RoundBuf, 0, 0, 40, 36, 0.015, 8);
 
 		Animation enemy_2(tEnemy_2, 0, 0, 64, 64, 0.016, 2);
-		Animation explosion_enemy_2(tEnemy_2, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
+		Animation explosion_enemy_2(tEnemy_2, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 
 		Animation enemy_3(tEnemy_3, 0, 0, 64, 64, 0.016, 2);
-		Animation explosion_enemy_3(tEnemy_3, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
+		Animation explosion_enemy_3(tEnemy_3, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 
 		Animation enemy_4(tEnemy_4, 0, 0, 64, 64, 0.016, 2);
-		Animation explosion_enemy_4(tEnemy_4, tankExpBuf, 0, 64, 64, 64, 0.009, 12);
+		Animation explosion_enemy_4(tEnemy_4, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 
 		Animation map(tMap, 0, 64, 32, 32, 0.003, 4);
 		Animation iconRepair(tIcon, 0, 0, 32, 32, 0.01, 22);
@@ -321,6 +321,9 @@ int main()
 		bool battleIsOver = false;
 		int lastSecondsOfChapter = 0;
 
+		//.:: For air strike target
+		isExistTarget = false;
+
 		while (app.isOpen())
 		{
 			double time = clock.getElapsedTime().asMicroseconds();
@@ -372,13 +375,19 @@ int main()
 							else
 							{
 								team[0]->xTargetPosition = team[0]->yTargetPosition = 0;
-								team[0]->isAirSpotterMode = false;
+								team[0]->isAirSpotterMode = Tank::cameraIsNotFree  = isExistTarget = false;
+								airSpotter = NULL;
 
 								if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
 								{
 									sAirStrikeQuery.stop();
 								}
 								sAirStrikeConfirm.play();
+
+								if (!checkTeamForCommander(team))
+								{
+									view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
+								}
 							}
 						}
 					}
@@ -405,13 +414,19 @@ int main()
 								else
 								{
 									team[1]->xTargetPosition = team[1]->yTargetPosition = 0;
-									team[1]->isAirSpotterMode = false;
+									team[1]->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
+									airSpotter = NULL;
 
 									if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
 									{
 										sAirStrikeQuery.stop();
 									}
 									sAirStrikeConfirm.play();
+
+									if (!checkTeamForCommander(team))
+									{
+										view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
+									}
 								}
 							}
 						}
@@ -439,13 +454,19 @@ int main()
 								else
 								{
 									team[2]->xTargetPosition = team[2]->yTargetPosition = 0;
-									team[2]->isAirSpotterMode = false;
+									team[2]->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
+									airSpotter = NULL;
 
 									if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
 									{
 										sAirStrikeQuery.stop();
 									}
 									sAirStrikeConfirm.play();
+
+									if (!checkTeamForCommander(team))
+									{
+										view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
+									}
 								}
 							}
 						}
@@ -473,13 +494,19 @@ int main()
 								else
 								{
 									team[3]->xTargetPosition = team[3]->yTargetPosition = 0;
-									team[3]->isAirSpotterMode = false;
+									team[3]->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
+									airSpotter = NULL;
 
 									if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
 									{
 										sAirStrikeQuery.stop();
 									}
 									sAirStrikeConfirm.play();
+
+									if (!checkTeamForCommander(team))
+									{
+										view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
+									}
 								}
 							}
 						}
@@ -507,13 +534,19 @@ int main()
 								else
 								{
 									team[4]->xTargetPosition = team[4]->yTargetPosition = 0;
-									team[4]->isAirSpotterMode = false;
+									team[4]->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
+									airSpotter = NULL;
 
 									if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
 									{
 										sAirStrikeQuery.stop();
 									}
 									sAirStrikeConfirm.play();
+
+									if (!checkTeamForCommander(team))
+									{
+										view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
+									}
 								}
 							}
 						}
@@ -831,15 +864,25 @@ int main()
 				Player::isAirStrike = false;
 				sAirStrikeQuery.play();
 
+				Tank::cameraIsNotFree = true;
+
 				for (int i = 0; i < sizeof(team); i++)
 				{
 					if (team[i]->isAirSpotterMode)
 					{
-						Entity *airStrikeTarget = new Entity(aTarget, team[i], "target");
-						entities.push_back(airStrikeTarget);
+						airSpotter = team[i];
 						break;
 					}
 				}
+
+				Entity *airStrikeTarget = new Entity(aTarget, airSpotter, "target");
+				entities.push_back(airStrikeTarget);
+				isExistTarget = true;
+			}
+
+			if (Tank::cameraIsNotFree && isExistTarget)
+			{
+				setViewCoordinates(sizeX, sizeY, airSpotter->xTargetPosition, airSpotter->yTargetPosition);
 			}
 
 			//.:: collision :::

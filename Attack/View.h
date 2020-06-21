@@ -5,6 +5,8 @@
 using namespace sf;
 
 View view;
+bool isExistTarget;
+Player* airSpotter = NULL;
 
 void setViewCoordinates(int sizeX, int sizeY, double x, double y)
 {
