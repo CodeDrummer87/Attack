@@ -115,6 +115,7 @@ int main()
 		iFighter.createMaskFromColor(Color::White);
 
 		iTarget.loadFromFile("source/images/attributes/target.png");
+		iTarget.createMaskFromColor(Color::White);
 
 #pragma endregion
 
@@ -151,7 +152,8 @@ int main()
 		SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf,
 			burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf,
 			shellExpBuf, enemy_1Buf, en_1RoundBuf, armorBuf, prefermentBuf,
-			takingIconBuf, drowningBuf, laughBuf, radioResponseBuf, fighterFlyBuf;
+			takingIconBuf, drowningBuf, laughBuf, airstrikeQueryBuf, fighterFlightBuf,
+			airstrikeConfirmBuf;
 
 		bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 		yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
@@ -168,18 +170,20 @@ int main()
 		takingIconBuf.loadFromFile("source/sounds/icons/take_icon.ogg");
 		drowningBuf.loadFromFile("source/sounds/effects/drowning.ogg");
 		laughBuf.loadFromFile("source/sounds/effects/laugh.ogg");
-		radioResponseBuf.loadFromFile("source/sounds/icons/radio_response.ogg");
-		fighterFlyBuf.loadFromFile("source/sounds/effects/fighterFlight.ogg");
+		airstrikeQueryBuf.loadFromFile("source/sounds/icons/airstrike_query.ogg");
+		fighterFlightBuf.loadFromFile("source/sounds/effects/fighterFlight.ogg");
+		airstrikeConfirmBuf.loadFromFile("source/sounds/effects/airstrike_confirmation.ogg");
 
 		Sound enemy_move, sArmor, sPreferment, sTakingIcon,
-			sLaugh(laughBuf), sRadioResponse(radioResponseBuf),
-			sFighterFlight;
+			sLaugh(laughBuf), sAirStrikeQuery(airstrikeQueryBuf),
+			sFighterFlight, sAirStrikeConfirm;
 
 		enemy_move.setBuffer(enemy_1Buf);		enemy_move.setLoop(true);
 		sArmor.setBuffer(armorBuf);				sArmor.setLoop(false);
 		sPreferment.setBuffer(prefermentBuf);	sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
 		sTakingIcon.setBuffer(takingIconBuf);	sTakingIcon.setLoop(false);
-		sFighterFlight.setBuffer(fighterFlyBuf);	sFighterFlight.setLoop(false);
+		sFighterFlight.setBuffer(fighterFlightBuf);	sFighterFlight.setLoop(false);
+		sAirStrikeConfirm.setBuffer(airstrikeConfirmBuf); sAirStrikeConfirm.setLoop(false);
 
 		Music chapter_finale;
 		chapter_finale.openFromFile("source/sounds/music/chapter_finale.ogg");
@@ -234,6 +238,7 @@ int main()
 
 		Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
 		Animation aFighter(tFighter, 0, 0, 120, 165, 0.02, 1);
+		Animation aTarget(tTarget, 0, 0, 256, 256, 0.01, 14);
 
 #pragma endregion
 
@@ -352,14 +357,28 @@ int main()
 					{
 						if (event.key.code == Keyboard::LControl)
 						{
-							if (team[0]->isShot)
+							if (!team[0]->isAirSpotterMode)
 							{
-								team[0]->isShot = false;
+								if (team[0]->isShot)
+								{
+									team[0]->isShot = false;
 
-								Entity *round = new Entity(aBurgTankRound, team[0], "explosion");
-								Shell *shell = new Shell(aShell, aShellExp, team[0]);
-								entities.push_back(round);
-								entities.push_back(shell);
+									Entity *round = new Entity(aBurgTankRound, team[0], "explosion");
+									Shell *shell = new Shell(aShell, aShellExp, team[0]);
+									entities.push_back(round);
+									entities.push_back(shell);
+								}
+							}
+							else
+							{
+								team[0]->xTargetPosition = team[0]->yTargetPosition = 0;
+								team[0]->isAirSpotterMode = false;
+
+								if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
+								{
+									sAirStrikeQuery.stop();
+								}
+								sAirStrikeConfirm.play();
 							}
 						}
 					}
@@ -371,14 +390,28 @@ int main()
 						{
 							if (event.key.code == Keyboard::Space)
 							{
-								if (team[1]->isShot)
-								{
-									team[1]->isShot = false;
+								if (!team[1]->isAirSpotterMode)
+								{ 
+									if (team[1]->isShot)
+									{
+										team[1]->isShot = false;
 
-									Entity *round = new Entity(aYelTankRound, team[1], "explosion");
-									Shell *shell = new Shell(aShell, aShellExp, team[1]);
-									entities.push_back(round);
-									entities.push_back(shell);
+										Entity *round = new Entity(aYelTankRound, team[1], "explosion");
+										Shell *shell = new Shell(aShell, aShellExp, team[1]);
+										entities.push_back(round);
+										entities.push_back(shell);
+									}
+								}
+								else
+								{
+									team[1]->xTargetPosition = team[1]->yTargetPosition = 0;
+									team[1]->isAirSpotterMode = false;
+
+									if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
+									{
+										sAirStrikeQuery.stop();
+									}
+									sAirStrikeConfirm.play();
 								}
 							}
 						}
@@ -391,14 +424,28 @@ int main()
 						{
 							if (event.key.code == Keyboard::Enter)
 							{
-								if (team[2]->isShot)
-								{
-									team[2]->isShot = false;
+								if (!team[2]->isAirSpotterMode)
+								{ 
+									if (team[2]->isShot)
+									{
+										team[2]->isShot = false;
 
-									Entity *round = new Entity(aPurpTankRound, team[2], "explosion");
-									Shell *shell = new Shell(aShell, aShellExp, team[2]);
-									entities.push_back(round);
-									entities.push_back(shell);
+										Entity *round = new Entity(aPurpTankRound, team[2], "explosion");
+										Shell *shell = new Shell(aShell, aShellExp, team[2]);
+										entities.push_back(round);
+										entities.push_back(shell);
+									}
+								}
+								else
+								{
+									team[2]->xTargetPosition = team[2]->yTargetPosition = 0;
+									team[2]->isAirSpotterMode = false;
+
+									if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
+									{
+										sAirStrikeQuery.stop();
+									}
+									sAirStrikeConfirm.play();
 								}
 							}
 						}
@@ -411,14 +458,28 @@ int main()
 						{
 							if (event.key.code == Keyboard::RControl)
 							{
-								if (team[3]->isShot)
-								{
-									team[3]->isShot = false;
+								if (!team[3]->isAirSpotterMode)
+								{ 
+									if (team[3]->isShot)
+									{
+										team[3]->isShot = false;
 
-									Entity *round = new Entity(aYelTankRound, team[3], "explosion");
-									Shell *shell = new Shell(aShell, aShellExp, team[3]);
-									entities.push_back(round);
-									entities.push_back(shell);
+										Entity *round = new Entity(aYelTankRound, team[3], "explosion");
+										Shell *shell = new Shell(aShell, aShellExp, team[3]);
+										entities.push_back(round);
+										entities.push_back(shell);
+									}
+								}
+								else
+								{
+									team[3]->xTargetPosition = team[3]->yTargetPosition = 0;
+									team[3]->isAirSpotterMode = false;
+
+									if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
+									{
+										sAirStrikeQuery.stop();
+									}
+									sAirStrikeConfirm.play();
 								}
 							}
 						}
@@ -431,14 +492,28 @@ int main()
 						{
 							if (event.key.code == Keyboard::Numpad7)
 							{
-								if (team[4]->isShot)
-								{
-									team[4]->isShot = false;
+								if (!team[4]->isAirSpotterMode)
+								{ 
+									if (team[4]->isShot)
+									{
+										team[4]->isShot = false;
 
-									Entity *round = new Entity(aBurgTankRound, team[4], "explosion");
-									Shell *shell = new Shell(aShell, aShellExp, team[4]);
-									entities.push_back(round);
-									entities.push_back(shell);
+										Entity *round = new Entity(aBurgTankRound, team[4], "explosion");
+										Shell *shell = new Shell(aShell, aShellExp, team[4]);
+										entities.push_back(round);
+										entities.push_back(shell);
+									}
+								}
+								else
+								{
+									team[4]->xTargetPosition = team[4]->yTargetPosition = 0;
+									team[4]->isAirSpotterMode = false;
+
+									if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
+									{
+										sAirStrikeQuery.stop();
+									}
+									sAirStrikeConfirm.play();
 								}
 							}
 						}
@@ -754,8 +829,17 @@ int main()
 			if (Player::isAirStrike)
 			{
 				Player::isAirStrike = false;
-				sRadioResponse.play();
-				sFighterFlight.play();
+				sAirStrikeQuery.play();
+
+				for (int i = 0; i < sizeof(team); i++)
+				{
+					if (team[i]->isAirSpotterMode)
+					{
+						Entity *airStrikeTarget = new Entity(aTarget, team[i], "target");
+						entities.push_back(airStrikeTarget);
+						break;
+					}
+				}
 			}
 
 			//.:: collision :::

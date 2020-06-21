@@ -14,6 +14,9 @@ public:
 	bool isCommander;
 
 	static bool isAirStrike;
+	bool isAirSpotterMode;
+	double xTargetPosition;
+	double yTargetPosition;
 
 	//.:: Constructors :::::::::::::::::::::
 	Player();

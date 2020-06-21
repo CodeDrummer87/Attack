@@ -65,6 +65,15 @@ Entity::Entity(Animation &a, Entity *tank, string name_)
 		playAnimation = false;
 		anim.sprite.setScale(0.9f, 0.9f);
 	}
+
+	if (name_ == "target")
+	{
+		dir = 1;
+		x = tank->x;
+		y = tank->y;
+		playAnimation = true;
+		anim.sprite.setScale(3.0f, 3.0f);
+	}
 	
 	name = name_;
 	own = tank;
@@ -123,6 +132,14 @@ void Entity::update(double time)
 			x = own->x + 32;
 			y = own->y - 32;
 			if (own->status == DEAD)
+				isExist = false;
+		}
+
+		if (name == "target")
+		{
+			x = static_cast<Player*>(own)->xTargetPosition;
+			y = static_cast<Player*>(own)->yTargetPosition;
+			if (own->status == DEAD || !static_cast<Player*>(own)->isAirSpotterMode)
 				isExist = false;
 		}
 	}
@@ -618,6 +635,7 @@ void Entity::getCollision(String map[], Sound &sound)
 						map[i][j] = ' ';
 						
 						Player::isAirStrike = true;
+						static_cast<Player*>(this)->isAirSpotterMode = true;
 					}
 
 					if (name == "destroyed")

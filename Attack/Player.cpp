@@ -12,7 +12,9 @@ Player::Player(Animation &a, Animation &b, int X, int Y, int dir_, int lvl)
 	else
 		experience = 2;
 
-	hasRank = preferment = isCommander = false;
+	hasRank = preferment = isCommander = isAirSpotterMode = false;
+
+	xTargetPosition = yTargetPosition = 0;
 }
 
 Player::~Player() {}
@@ -27,7 +29,34 @@ void Player::update(double time)
 		improveTank(residual_);
 	}
 	
-	Tank::update(time);
+	if (!isAirSpotterMode)
+	{
+		Tank::update(time);
+	}
+	else
+	{
+		if (xTargetPosition == 0 && yTargetPosition == 0)
+		{
+			xTargetPosition = this->getCoordX(false);
+			yTargetPosition = this->getCoordY(false);
+		}
+
+		switch (dir)
+		{
+		case 1: dy = -0.09 * time - ((double)level / 100);
+			break;
+		case 2: dx = 0.09 * time + ((double)level / 100);
+			break;
+		case 3: dy = 0.09 * time + ((double)level / 100);
+			break;
+		case 4: dx = -0.09 * time - ((double)level / 100);
+			break;
+		}
+
+		xTargetPosition += dx * 5;
+		yTargetPosition += dy * 5;
+		dx = dy = 0;
+	}
 }
 
 void Player::nickDown(int exp)
