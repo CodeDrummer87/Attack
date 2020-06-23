@@ -17,6 +17,7 @@
 #include "Foreground.h"
 
 #include "ChapterFinale.h"
+#include "Air.h"
 
 int main()
 {
@@ -179,15 +180,13 @@ int main()
 		airstrikeConfirmBuf.loadFromFile("source/sounds/effects/airstrike_confirmation.ogg");
 
 		Sound enemy_move, sArmor, sPreferment, sTakingIcon,
-			sLaugh(laughBuf), sAirStrikeQuery(airstrikeQueryBuf),
-			sFighterFlight, sAirStrikeConfirm;
+			sLaugh(laughBuf), sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm;
 
 		enemy_move.setBuffer(enemy_1Buf);		enemy_move.setLoop(true);
 		sArmor.setBuffer(armorBuf);				sArmor.setLoop(false);
 		sPreferment.setBuffer(prefermentBuf);	sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
 		sTakingIcon.setBuffer(takingIconBuf);	sTakingIcon.setLoop(false);
-		sFighterFlight.setBuffer(fighterFlightBuf);	sFighterFlight.setLoop(false);
-		sAirStrikeConfirm.setBuffer(airstrikeConfirmBuf); sAirStrikeConfirm.setLoop(false);
+		sAirStrikeConfirm.setBuffer(airstrikeConfirmBuf); sAirStrikeConfirm.setLoop(false); sAirStrikeConfirm.setVolume(50.f);
 
 		Music chapter_finale;
 		chapter_finale.openFromFile("source/sounds/music/chapter_finale.ogg");
@@ -241,7 +240,7 @@ int main()
 		Animation icons[] = { iconRepair, iconPreferment, iconCamera, iconAirStrike };
 
 		Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
-		Animation aFighter(tFighter, 0, 0, 120, 165, 0.02, 1);
+		Animation aFighter(tFighter, fighterFlightBuf, 0, 0, 120, 165, 0.01, 1);
 		Animation aTarget(tTarget, 0, 0, 256, 256, 0.01, 14);
 		Animation aAirStrikeZone(tAirStrikeZone, 0, 0, 256, 256, 0.01, 1);
 
@@ -406,6 +405,13 @@ int main()
 								{
 									view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
 								}
+
+								Air *fighter_1 = new Air(aFighter, temp->getCoordX(false), H * 32 + 800, 1, "fighter", AirStrikeZone);
+								targetsZone.push_back(fighter_1);
+								Air *fighter_2 = new Air(aFighter, temp->getCoordX(false) - 100, H * 32 + 900, 1, "fighter", AirStrikeZone);
+								targetsZone.push_back(fighter_2);
+								Air *fighter_3 = new Air(aFighter, temp->getCoordX(false) + 100, H * 32 + 900, 1, "fighter", AirStrikeZone);
+								targetsZone.push_back(fighter_3);
 							}
 						}
 					}
@@ -986,7 +992,7 @@ int main()
 				else i++;
 			}
 
-			//.:: update targets :::
+			//.:: update targets and air entities :::
 			for (auto i = targetsZone.begin(); i != targetsZone.end();)
 			{
 				Entity* e = *i;
@@ -1015,7 +1021,7 @@ int main()
 
 			//.:: display targets :::
 			for (auto t : targetsZone)
-				if (t->name == "target")
+				if (t->name == "target" || t->name == "fighter")
 					t->draw(app);
 
 			app.display();
