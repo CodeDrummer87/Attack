@@ -5,7 +5,7 @@
 class Air : public Entity
 {
 private:
-	Entity *currentZone;
+	Entity *attachedObject;
 public:
 	//.:: Constructors :::::::::::::::::::::
 	Air();

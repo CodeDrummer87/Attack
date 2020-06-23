@@ -14,12 +14,7 @@ Air::Air(Animation &a, int X, int Y, int dir_, string name_, Entity *currentAirS
 	playAnimation = isExist = true;
 	status = ALIVE;
 
-	if (name == "fighter")
-	{
-		a.sound.setLoop(false);
-	}
-
-	currentZone = currentAirStrikeZone;
+	attachedObject = currentAirStrikeZone;
 }
 
 Air::~Air()
@@ -33,9 +28,9 @@ void Air::update(double time)
 	x += dx;
 	y += dy;
 
-	if (y <= currentZone->getCoordY(false))
-		if(currentZone->isExist)
-			currentZone->isExist = false;
+	if (name == "fighter" && y <= attachedObject->getCoordY(false))
+		if(attachedObject->isExist)
+			attachedObject->isExist = false;
 
 	if (y <= -150)
 		isExist = false;

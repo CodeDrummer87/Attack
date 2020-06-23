@@ -74,7 +74,7 @@ int main()
 
 		Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank,
 			iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iMap, iIcon, iDrowning,
-			iFighter, iTarget, iAirStrikeZone;
+			iFighter, iTarget, iAirStrikeZone, iFighterTrace;
 
 		iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 		iBurgundyTank.createMaskFromColor(Color::White);
@@ -121,13 +121,16 @@ int main()
 		iAirStrikeZone.loadFromFile("source/images/attributes/airstrike_zone.png");
 		iAirStrikeZone.createMaskFromColor(Color::White);
 
+		iFighterTrace.loadFromFile("source/images/attributes/fighterTrace.png");
+		iFighterTrace.createMaskFromColor(Color::White);
+
 #pragma endregion
 
 #pragma region Textures
 
 		Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke,
 			tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tRank, tMap, tIcon, tDrowning,
-			tFighter, tTarget, tAirStrikeZone;
+			tFighter, tTarget, tAirStrikeZone, tFighterTrace;
 
 		bTank.loadFromImage(iBurgundyTank);
 		yTank.loadFromImage(iYellowTank);
@@ -149,6 +152,7 @@ int main()
 		tFighter.loadFromImage(iFighter);
 		tTarget.loadFromImage(iTarget);
 		tAirStrikeZone.loadFromImage(iAirStrikeZone);
+		tFighterTrace.loadFromImage(iFighterTrace);
 
 #pragma endregion
 
@@ -241,6 +245,7 @@ int main()
 
 		Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
 		Animation aFighter(tFighter, fighterFlightBuf, 0, 0, 120, 165, 0.01, 1);
+		Animation aFighterTrace(tFighterTrace, 0, 0, 120, 165, 0.02, 3);
 		Animation aTarget(tTarget, 0, 0, 256, 256, 0.01, 14);
 		Animation aAirStrikeZone(tAirStrikeZone, 0, 0, 256, 256, 0.01, 1);
 
@@ -408,10 +413,18 @@ int main()
 
 								Air *fighter_1 = new Air(aFighter, temp->getCoordX(false), H * 32 + 800, 1, "fighter", AirStrikeZone);
 								targetsZone.push_back(fighter_1);
-								Air *fighter_2 = new Air(aFighter, temp->getCoordX(false) - 100, H * 32 + 900, 1, "fighter", AirStrikeZone);
+								Air *trace_1 = new Air(aFighterTrace, temp->getCoordX(false), H * 32 + 920, 1, "trace", fighter_1);
+								targetsZone.push_back(trace_1);
+
+								Air *fighter_2 = new Air(aFighter, temp->getCoordX(false) - 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
 								targetsZone.push_back(fighter_2);
-								Air *fighter_3 = new Air(aFighter, temp->getCoordX(false) + 100, H * 32 + 900, 1, "fighter", AirStrikeZone);
+								Air *trace_2 = new Air(aFighterTrace, temp->getCoordX(false) - 150, H * 32 + 1020, 1, "trace", fighter_2);
+								targetsZone.push_back(trace_2);
+
+								Air *fighter_3 = new Air(aFighter, temp->getCoordX(false) + 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
 								targetsZone.push_back(fighter_3);
+								Air *trace_3 = new Air(aFighterTrace, temp->getCoordX(false) + 150, H * 32 + 1020, 1, "trace", fighter_3);
+								targetsZone.push_back(trace_3);
 							}
 						}
 					}
@@ -461,6 +474,21 @@ int main()
 									{
 										view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
 									}
+
+									Air *fighter_1 = new Air(aFighter, temp->getCoordX(false), H * 32 + 800, 1, "fighter", AirStrikeZone);
+									targetsZone.push_back(fighter_1);
+									Air *trace_1 = new Air(aFighterTrace, temp->getCoordX(false), H * 32 + 920, 1, "trace", fighter_1);
+									targetsZone.push_back(trace_1);
+
+									Air *fighter_2 = new Air(aFighter, temp->getCoordX(false) - 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
+									targetsZone.push_back(fighter_2);
+									Air *trace_2 = new Air(aFighterTrace, temp->getCoordX(false) - 150, H * 32 + 1020, 1, "trace", fighter_2);
+									targetsZone.push_back(trace_2);
+
+									Air *fighter_3 = new Air(aFighter, temp->getCoordX(false) + 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
+									targetsZone.push_back(fighter_3);
+									Air *trace_3 = new Air(aFighterTrace, temp->getCoordX(false) + 150, H * 32 + 1020, 1, "trace", fighter_3);
+									targetsZone.push_back(trace_3);
 								}
 							}
 						}
@@ -511,6 +539,21 @@ int main()
 									{
 										view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
 									}
+
+									Air *fighter_1 = new Air(aFighter, temp->getCoordX(false), H * 32 + 800, 1, "fighter", AirStrikeZone);
+									targetsZone.push_back(fighter_1);
+									Air *trace_1 = new Air(aFighterTrace, temp->getCoordX(false), H * 32 + 920, 1, "trace", fighter_1);
+									targetsZone.push_back(trace_1);
+
+									Air *fighter_2 = new Air(aFighter, temp->getCoordX(false) - 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
+									targetsZone.push_back(fighter_2);
+									Air *trace_2 = new Air(aFighterTrace, temp->getCoordX(false) - 150, H * 32 + 1020, 1, "trace", fighter_2);
+									targetsZone.push_back(trace_2);
+
+									Air *fighter_3 = new Air(aFighter, temp->getCoordX(false) + 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
+									targetsZone.push_back(fighter_3);
+									Air *trace_3 = new Air(aFighterTrace, temp->getCoordX(false) + 150, H * 32 + 1020, 1, "trace", fighter_3);
+									targetsZone.push_back(trace_3);
 								}
 							}
 						}
@@ -561,6 +604,21 @@ int main()
 									{
 										view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
 									}
+
+									Air *fighter_1 = new Air(aFighter, temp->getCoordX(false), H * 32 + 800, 1, "fighter", AirStrikeZone);
+									targetsZone.push_back(fighter_1);
+									Air *trace_1 = new Air(aFighterTrace, temp->getCoordX(false), H * 32 + 920, 1, "trace", fighter_1);
+									targetsZone.push_back(trace_1);
+
+									Air *fighter_2 = new Air(aFighter, temp->getCoordX(false) - 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
+									targetsZone.push_back(fighter_2);
+									Air *trace_2 = new Air(aFighterTrace, temp->getCoordX(false) - 150, H * 32 + 1020, 1, "trace", fighter_2);
+									targetsZone.push_back(trace_2);
+
+									Air *fighter_3 = new Air(aFighter, temp->getCoordX(false) + 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
+									targetsZone.push_back(fighter_3);
+									Air *trace_3 = new Air(aFighterTrace, temp->getCoordX(false) + 150, H * 32 + 1020, 1, "trace", fighter_3);
+									targetsZone.push_back(trace_3);
 								}
 							}
 						}
@@ -611,6 +669,21 @@ int main()
 									{
 										view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
 									}
+
+									Air *fighter_1 = new Air(aFighter, temp->getCoordX(false), H * 32 + 800, 1, "fighter", AirStrikeZone);
+									targetsZone.push_back(fighter_1);
+									Air *trace_1 = new Air(aFighterTrace, temp->getCoordX(false), H * 32 + 920, 1, "trace", fighter_1);
+									targetsZone.push_back(trace_1);
+
+									Air *fighter_2 = new Air(aFighter, temp->getCoordX(false) - 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
+									targetsZone.push_back(fighter_2);
+									Air *trace_2 = new Air(aFighterTrace, temp->getCoordX(false) - 150, H * 32 + 1020, 1, "trace", fighter_2);
+									targetsZone.push_back(trace_2);
+
+									Air *fighter_3 = new Air(aFighter, temp->getCoordX(false) + 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
+									targetsZone.push_back(fighter_3);
+									Air *trace_3 = new Air(aFighterTrace, temp->getCoordX(false) + 150, H * 32 + 1020, 1, "trace", fighter_3);
+									targetsZone.push_back(trace_3);
 								}
 							}
 						}
@@ -1021,7 +1094,7 @@ int main()
 
 			//.:: display targets :::
 			for (auto t : targetsZone)
-				if (t->name == "target" || t->name == "fighter")
+				if (t->name == "target" || t->name == "fighter" || t->name == "trace")
 					t->draw(app);
 
 			app.display();
