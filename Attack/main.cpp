@@ -73,7 +73,7 @@ int main()
 
 		Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank,
 			iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iMap, iIcon, iDrowning,
-			iFighter, iTarget;
+			iFighter, iTarget, iAirStrikeZone;
 
 		iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 		iBurgundyTank.createMaskFromColor(Color::White);
@@ -117,13 +117,16 @@ int main()
 		iTarget.loadFromFile("source/images/attributes/target.png");
 		iTarget.createMaskFromColor(Color::White);
 
+		iAirStrikeZone.loadFromFile("source/images/attributes/airstrike_zone.png");
+		iAirStrikeZone.createMaskFromColor(Color::White);
+
 #pragma endregion
 
 #pragma region Textures
 
 		Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke,
 			tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tRank, tMap, tIcon, tDrowning,
-			tFighter, tTarget;
+			tFighter, tTarget, tAirStrikeZone;
 
 		bTank.loadFromImage(iBurgundyTank);
 		yTank.loadFromImage(iYellowTank);
@@ -144,6 +147,7 @@ int main()
 		tDrowning.loadFromImage(iDrowning);
 		tFighter.loadFromImage(iFighter);
 		tTarget.loadFromImage(iTarget);
+		tAirStrikeZone.loadFromImage(iAirStrikeZone);
 
 #pragma endregion
 
@@ -211,7 +215,7 @@ int main()
 		Animation aYelTankRound(tTankRound, yelTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
 		Animation aPurpTankRound(tTankRound, purpTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
 		Animation aShell(tShell, 0, 0, 64, 64, 0.01, 2);
-		Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.015, 7);
+		Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.016, 7);
 		Animation aSmoke(tSmoke, 0, 0, 64, 64, 0.006, 5);
 		Animation aRank(tRank, 0, 0, 60, 134, 1, 18);
 
@@ -239,6 +243,7 @@ int main()
 		Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
 		Animation aFighter(tFighter, 0, 0, 120, 165, 0.02, 1);
 		Animation aTarget(tTarget, 0, 0, 256, 256, 0.01, 14);
+		Animation aAirStrikeZone(tAirStrikeZone, 0, 0, 256, 256, 0.01, 1);
 
 #pragma endregion
 
@@ -324,6 +329,8 @@ int main()
 		//.:: For air strike target
 		isExistTarget = false;
 
+		vector<Entity*> targetsZone;
+
 		while (app.isOpen())
 		{
 			double time = clock.getElapsedTime().asMicroseconds();
@@ -374,9 +381,20 @@ int main()
 							}
 							else
 							{
+								Entity* temp = NULL;
+								for (auto t: targetsZone)
+								{
+									if (t->checkEqualityEntities(airSpotter))
+										temp = t;
+								}
+
+								Entity *AirStrikeZone = new Entity(aAirStrikeZone, temp, "zone");
+								targetsZone.push_back(AirStrikeZone);
+
 								team[0]->xTargetPosition = team[0]->yTargetPosition = 0;
-								team[0]->isAirSpotterMode = Tank::cameraIsNotFree  = isExistTarget = false;
+								team[0]->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
 								airSpotter = NULL;
+
 
 								if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
 								{
@@ -413,6 +431,16 @@ int main()
 								}
 								else
 								{
+									Entity* temp = NULL;
+									for (auto t : targetsZone)
+									{
+										if (t->checkEqualityEntities(airSpotter))
+											temp = t;
+									}
+
+									Entity *AirStrikeZone = new Entity(aAirStrikeZone, temp, "zone");
+									targetsZone.push_back(AirStrikeZone);
+
 									team[1]->xTargetPosition = team[1]->yTargetPosition = 0;
 									team[1]->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
 									airSpotter = NULL;
@@ -453,6 +481,16 @@ int main()
 								}
 								else
 								{
+									Entity* temp = NULL;
+									for (auto t : targetsZone)
+									{
+										if (t->checkEqualityEntities(airSpotter))
+											temp = t;
+									}
+
+									Entity *AirStrikeZone = new Entity(aAirStrikeZone, temp, "zone");
+									targetsZone.push_back(AirStrikeZone);
+
 									team[2]->xTargetPosition = team[2]->yTargetPosition = 0;
 									team[2]->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
 									airSpotter = NULL;
@@ -493,6 +531,16 @@ int main()
 								}
 								else
 								{
+									Entity* temp = NULL;
+									for (auto t : targetsZone)
+									{
+										if (t->checkEqualityEntities(airSpotter))
+											temp = t;
+									}
+
+									Entity *AirStrikeZone = new Entity(aAirStrikeZone, temp, "zone");
+									targetsZone.push_back(AirStrikeZone);
+
 									team[3]->xTargetPosition = team[3]->yTargetPosition = 0;
 									team[3]->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
 									airSpotter = NULL;
@@ -533,6 +581,16 @@ int main()
 								}
 								else
 								{
+									Entity* temp = NULL;
+									for (auto t : targetsZone)
+									{
+										if (t->checkEqualityEntities(airSpotter))
+											temp = t;
+									}
+
+									Entity *AirStrikeZone = new Entity(aAirStrikeZone, temp, "zone");
+									targetsZone.push_back(AirStrikeZone);
+
 									team[4]->xTargetPosition = team[4]->yTargetPosition = 0;
 									team[4]->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
 									airSpotter = NULL;
@@ -876,7 +934,7 @@ int main()
 				}
 
 				Entity *airStrikeTarget = new Entity(aTarget, airSpotter, "target");
-				entities.push_back(airStrikeTarget);
+				targetsZone.push_back(airStrikeTarget);
 				isExistTarget = true;
 			}
 
@@ -928,13 +986,38 @@ int main()
 				else i++;
 			}
 
+			//.:: update targets :::
+			for (auto i = targetsZone.begin(); i != targetsZone.end();)
+			{
+				Entity* e = *i;
+				e->update(time);
+				e->anim.update(time, e->playAnimation, e->dir);
+				if (e->isExist == false)
+				{
+					i = targetsZone.erase(i);
+					delete e;
+				}
+				else i++;
+			}
+
 			app.setView(view);
 			app.clear(Color::Black);
+			//.:: display zones :::
+			for (auto t : targetsZone)
+				if (t->name == "zone")
+					t->draw(app);
+
 			drawMap(FirstStage, app, map, time);
 			//.:: display entities :::
 			for (auto e : entities)
 				e->draw(app);
 			drawForestAndIcons(FirstStage, app, map, icons, time);
+
+			//.:: display targets :::
+			for (auto t : targetsZone)
+				if (t->name == "target")
+					t->draw(app);
+
 			app.display();
 		}
 	}

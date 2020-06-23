@@ -61,4 +61,5 @@ public:
 	void getCollision(String[], Sound&);
 	bool checkObstacles(String[], char);
 	float getViewCoordY();
+	bool checkEqualityEntities(Entity*);
 };

@@ -66,13 +66,18 @@ Entity::Entity(Animation &a, Entity *tank, string name_)
 		anim.sprite.setScale(0.9f, 0.9f);
 	}
 
-	if (name_ == "target")
+	if (name_ == "target" || name_ == "zone")
 	{
 		dir = 1;
 		x = tank->x;
 		y = tank->y;
 		playAnimation = true;
 		anim.sprite.setScale(3.0f, 3.0f);
+
+		if (name_ == "zone")
+		{
+			playAnimation = false;
+		}
 	}
 	
 	name = name_;
@@ -732,4 +737,9 @@ extern View view;
 float Entity::getViewCoordY()
 {
 	return view.getCenter().y;
+}
+
+bool Entity::checkEqualityEntities(Entity* entity)
+{
+	return own == entity;
 }

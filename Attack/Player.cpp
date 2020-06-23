@@ -37,8 +37,8 @@ void Player::update(double time)
 	{
 		if (xTargetPosition == 0 && yTargetPosition == 0)
 		{
-			xTargetPosition = this->getCoordX(false);
-			yTargetPosition = this->getCoordY(false);
+			xTargetPosition = x;
+			yTargetPosition = y;
 		}
 
 		switch (dir)
@@ -54,7 +54,24 @@ void Player::update(double time)
 		}
 
 		xTargetPosition += dx * 5;
+		if (xTargetPosition < 200)
+		{
+			xTargetPosition = 200;
+		}
+		else if (xTargetPosition > 61 * 32 - 200)	//.:: const int W = 61 (FirstStage.h)
+		{
+			xTargetPosition = 61 * 32 - 200;
+		}
+
 		yTargetPosition += dy * 5;
+		if (yTargetPosition < 200)
+		{
+			yTargetPosition = 200;
+		}
+		else if (yTargetPosition > 68 * 32 - 200)	//.:: const int H = 68 (FirstStage.h)
+		{
+			yTargetPosition = 68 * 32 - 200;
+		}
 		dx = dy = 0;
 	}
 }
