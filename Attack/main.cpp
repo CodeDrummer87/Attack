@@ -245,7 +245,7 @@ int main()
 
 		Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
 		Animation aFighter(tFighter, fighterFlightBuf, 0, 0, 120, 165, 0.01, 1);
-		Animation aFighterTrace(tFighterTrace, 0, 0, 120, 165, 0.02, 3);
+		Animation aFighterTrace(tFighterTrace, 0, 0, 120, 165, 0.02, 1);
 		Animation aTarget(tTarget, 0, 0, 256, 256, 0.01, 14);
 		Animation aAirStrikeZone(tAirStrikeZone, 0, 0, 256, 256, 0.01, 1);
 
@@ -366,19 +366,25 @@ int main()
 				//.:: Tank rounds :::::::::::::::
 				if (event.type == Event::KeyPressed && !battleIsOver)
 				{
-					//.:: Tank round (player 1)
-					if (team[0]->status != DEAD)
-					{
-						if (event.key.code == Keyboard::LControl)
-						{
-							if (!team[0]->isAirSpotterMode)
-							{
-								if (team[0]->isShot)
-								{
-									team[0]->isShot = false;
+					Player *currentPlayer = NULL;
+					if (event.key.code == Keyboard::LControl) currentPlayer = team[0];
+					if (event.key.code == Keyboard::Space) currentPlayer = team[1];
+					if (event.key.code == Keyboard::Enter) currentPlayer = team[2];
+					if (event.key.code == Keyboard::RControl) currentPlayer = team[3];
+					if (event.key.code == Keyboard::Numpad7) currentPlayer = team[4];
 
-									Entity *round = new Entity(aBurgTankRound, team[0], "explosion");
-									Shell *shell = new Shell(aShell, aShellExp, team[0]);
+					if (currentPlayer != NULL)
+					{
+						if (currentPlayer->status != DEAD)
+						{
+							if (!currentPlayer->isAirSpotterMode)
+							{
+								if (currentPlayer->isShot)
+								{
+									currentPlayer->isShot = false;
+
+									Entity *round = new Entity(aBurgTankRound, currentPlayer, "explosion");
+									Shell *shell = new Shell(aShell, aShellExp, currentPlayer);
 									entities.push_back(round);
 									entities.push_back(shell);
 								}
@@ -386,7 +392,7 @@ int main()
 							else
 							{
 								Entity* temp = NULL;
-								for (auto t: targetsZone)
+								for (auto t : targetsZone)
 								{
 									if (t->checkEqualityEntities(airSpotter))
 										temp = t;
@@ -395,8 +401,8 @@ int main()
 								Entity *AirStrikeZone = new Entity(aAirStrikeZone, temp, "zone");
 								targetsZone.push_back(AirStrikeZone);
 
-								team[0]->xTargetPosition = team[0]->yTargetPosition = 0;
-								team[0]->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
+								currentPlayer->xTargetPosition = currentPlayer->yTargetPosition = 0;
+								currentPlayer->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
 								airSpotter = NULL;
 
 
@@ -425,266 +431,6 @@ int main()
 								targetsZone.push_back(fighter_3);
 								Air *trace_3 = new Air(aFighterTrace, temp->getCoordX(false) + 150, H * 32 + 1020, 1, "trace", fighter_3);
 								targetsZone.push_back(trace_3);
-							}
-						}
-					}
-
-					//.:: Tank round (player 2)
-					if (numberOfPlayers >= 2)
-					{
-						if (team[1]->status != DEAD)
-						{
-							if (event.key.code == Keyboard::Space)
-							{
-								if (!team[1]->isAirSpotterMode)
-								{ 
-									if (team[1]->isShot)
-									{
-										team[1]->isShot = false;
-
-										Entity *round = new Entity(aYelTankRound, team[1], "explosion");
-										Shell *shell = new Shell(aShell, aShellExp, team[1]);
-										entities.push_back(round);
-										entities.push_back(shell);
-									}
-								}
-								else
-								{
-									Entity* temp = NULL;
-									for (auto t : targetsZone)
-									{
-										if (t->checkEqualityEntities(airSpotter))
-											temp = t;
-									}
-
-									Entity *AirStrikeZone = new Entity(aAirStrikeZone, temp, "zone");
-									targetsZone.push_back(AirStrikeZone);
-
-									team[1]->xTargetPosition = team[1]->yTargetPosition = 0;
-									team[1]->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
-									airSpotter = NULL;
-
-									if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
-									{
-										sAirStrikeQuery.stop();
-									}
-									sAirStrikeConfirm.play();
-
-									if (!checkTeamForCommander(team))
-									{
-										view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
-									}
-
-									Air *fighter_1 = new Air(aFighter, temp->getCoordX(false), H * 32 + 800, 1, "fighter", AirStrikeZone);
-									targetsZone.push_back(fighter_1);
-									Air *trace_1 = new Air(aFighterTrace, temp->getCoordX(false), H * 32 + 920, 1, "trace", fighter_1);
-									targetsZone.push_back(trace_1);
-
-									Air *fighter_2 = new Air(aFighter, temp->getCoordX(false) - 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
-									targetsZone.push_back(fighter_2);
-									Air *trace_2 = new Air(aFighterTrace, temp->getCoordX(false) - 150, H * 32 + 1020, 1, "trace", fighter_2);
-									targetsZone.push_back(trace_2);
-
-									Air *fighter_3 = new Air(aFighter, temp->getCoordX(false) + 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
-									targetsZone.push_back(fighter_3);
-									Air *trace_3 = new Air(aFighterTrace, temp->getCoordX(false) + 150, H * 32 + 1020, 1, "trace", fighter_3);
-									targetsZone.push_back(trace_3);
-								}
-							}
-						}
-					}
-
-					//.:: Tank round (player 3)
-					if (numberOfPlayers >= 3)
-					{
-						if (team[2]->status != DEAD)
-						{
-							if (event.key.code == Keyboard::Enter)
-							{
-								if (!team[2]->isAirSpotterMode)
-								{ 
-									if (team[2]->isShot)
-									{
-										team[2]->isShot = false;
-
-										Entity *round = new Entity(aPurpTankRound, team[2], "explosion");
-										Shell *shell = new Shell(aShell, aShellExp, team[2]);
-										entities.push_back(round);
-										entities.push_back(shell);
-									}
-								}
-								else
-								{
-									Entity* temp = NULL;
-									for (auto t : targetsZone)
-									{
-										if (t->checkEqualityEntities(airSpotter))
-											temp = t;
-									}
-
-									Entity *AirStrikeZone = new Entity(aAirStrikeZone, temp, "zone");
-									targetsZone.push_back(AirStrikeZone);
-
-									team[2]->xTargetPosition = team[2]->yTargetPosition = 0;
-									team[2]->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
-									airSpotter = NULL;
-
-									if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
-									{
-										sAirStrikeQuery.stop();
-									}
-									sAirStrikeConfirm.play();
-
-									if (!checkTeamForCommander(team))
-									{
-										view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
-									}
-
-									Air *fighter_1 = new Air(aFighter, temp->getCoordX(false), H * 32 + 800, 1, "fighter", AirStrikeZone);
-									targetsZone.push_back(fighter_1);
-									Air *trace_1 = new Air(aFighterTrace, temp->getCoordX(false), H * 32 + 920, 1, "trace", fighter_1);
-									targetsZone.push_back(trace_1);
-
-									Air *fighter_2 = new Air(aFighter, temp->getCoordX(false) - 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
-									targetsZone.push_back(fighter_2);
-									Air *trace_2 = new Air(aFighterTrace, temp->getCoordX(false) - 150, H * 32 + 1020, 1, "trace", fighter_2);
-									targetsZone.push_back(trace_2);
-
-									Air *fighter_3 = new Air(aFighter, temp->getCoordX(false) + 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
-									targetsZone.push_back(fighter_3);
-									Air *trace_3 = new Air(aFighterTrace, temp->getCoordX(false) + 150, H * 32 + 1020, 1, "trace", fighter_3);
-									targetsZone.push_back(trace_3);
-								}
-							}
-						}
-					}
-
-					//.:: Tank round (player 4)
-					if (numberOfPlayers >= 4)
-					{
-						if (team[3]->status != DEAD)
-						{
-							if (event.key.code == Keyboard::RControl)
-							{
-								if (!team[3]->isAirSpotterMode)
-								{ 
-									if (team[3]->isShot)
-									{
-										team[3]->isShot = false;
-
-										Entity *round = new Entity(aYelTankRound, team[3], "explosion");
-										Shell *shell = new Shell(aShell, aShellExp, team[3]);
-										entities.push_back(round);
-										entities.push_back(shell);
-									}
-								}
-								else
-								{
-									Entity* temp = NULL;
-									for (auto t : targetsZone)
-									{
-										if (t->checkEqualityEntities(airSpotter))
-											temp = t;
-									}
-
-									Entity *AirStrikeZone = new Entity(aAirStrikeZone, temp, "zone");
-									targetsZone.push_back(AirStrikeZone);
-
-									team[3]->xTargetPosition = team[3]->yTargetPosition = 0;
-									team[3]->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
-									airSpotter = NULL;
-
-									if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
-									{
-										sAirStrikeQuery.stop();
-									}
-									sAirStrikeConfirm.play();
-
-									if (!checkTeamForCommander(team))
-									{
-										view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
-									}
-
-									Air *fighter_1 = new Air(aFighter, temp->getCoordX(false), H * 32 + 800, 1, "fighter", AirStrikeZone);
-									targetsZone.push_back(fighter_1);
-									Air *trace_1 = new Air(aFighterTrace, temp->getCoordX(false), H * 32 + 920, 1, "trace", fighter_1);
-									targetsZone.push_back(trace_1);
-
-									Air *fighter_2 = new Air(aFighter, temp->getCoordX(false) - 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
-									targetsZone.push_back(fighter_2);
-									Air *trace_2 = new Air(aFighterTrace, temp->getCoordX(false) - 150, H * 32 + 1020, 1, "trace", fighter_2);
-									targetsZone.push_back(trace_2);
-
-									Air *fighter_3 = new Air(aFighter, temp->getCoordX(false) + 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
-									targetsZone.push_back(fighter_3);
-									Air *trace_3 = new Air(aFighterTrace, temp->getCoordX(false) + 150, H * 32 + 1020, 1, "trace", fighter_3);
-									targetsZone.push_back(trace_3);
-								}
-							}
-						}
-					}
-
-					//.:: Tank round (player 5)
-					if (numberOfPlayers == 5)
-					{
-						if (team[4]->status != DEAD)
-						{
-							if (event.key.code == Keyboard::Numpad7)
-							{
-								if (!team[4]->isAirSpotterMode)
-								{ 
-									if (team[4]->isShot)
-									{
-										team[4]->isShot = false;
-
-										Entity *round = new Entity(aBurgTankRound, team[4], "explosion");
-										Shell *shell = new Shell(aShell, aShellExp, team[4]);
-										entities.push_back(round);
-										entities.push_back(shell);
-									}
-								}
-								else
-								{
-									Entity* temp = NULL;
-									for (auto t : targetsZone)
-									{
-										if (t->checkEqualityEntities(airSpotter))
-											temp = t;
-									}
-
-									Entity *AirStrikeZone = new Entity(aAirStrikeZone, temp, "zone");
-									targetsZone.push_back(AirStrikeZone);
-
-									team[4]->xTargetPosition = team[4]->yTargetPosition = 0;
-									team[4]->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
-									airSpotter = NULL;
-
-									if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
-									{
-										sAirStrikeQuery.stop();
-									}
-									sAirStrikeConfirm.play();
-
-									if (!checkTeamForCommander(team))
-									{
-										view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
-									}
-
-									Air *fighter_1 = new Air(aFighter, temp->getCoordX(false), H * 32 + 800, 1, "fighter", AirStrikeZone);
-									targetsZone.push_back(fighter_1);
-									Air *trace_1 = new Air(aFighterTrace, temp->getCoordX(false), H * 32 + 920, 1, "trace", fighter_1);
-									targetsZone.push_back(trace_1);
-
-									Air *fighter_2 = new Air(aFighter, temp->getCoordX(false) - 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
-									targetsZone.push_back(fighter_2);
-									Air *trace_2 = new Air(aFighterTrace, temp->getCoordX(false) - 150, H * 32 + 1020, 1, "trace", fighter_2);
-									targetsZone.push_back(trace_2);
-
-									Air *fighter_3 = new Air(aFighter, temp->getCoordX(false) + 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
-									targetsZone.push_back(fighter_3);
-									Air *trace_3 = new Air(aFighterTrace, temp->getCoordX(false) + 150, H * 32 + 1020, 1, "trace", fighter_3);
-									targetsZone.push_back(trace_3);
-								}
 							}
 						}
 					}
