@@ -245,7 +245,7 @@ int main()
 
 		Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
 		Animation aFighter(tFighter, fighterFlightBuf, 0, 0, 120, 165, 0.01, 1);
-		Animation aFighterTrace(tFighterTrace, 0, 0, 120, 165, 0.02, 1);
+		Animation aFighterTrace(tFighterTrace, 0, 0, 120, 150, 0.1, 21);
 		Animation aTarget(tTarget, 0, 0, 256, 256, 0.01, 14);
 		Animation aAirStrikeZone(tAirStrikeZone, 0, 0, 256, 256, 0.01, 1);
 
@@ -367,11 +367,16 @@ int main()
 				if (event.type == Event::KeyPressed && !battleIsOver)
 				{
 					Player *currentPlayer = NULL;
+
 					if (event.key.code == Keyboard::LControl) currentPlayer = team[0];
-					if (event.key.code == Keyboard::Space) currentPlayer = team[1];
-					if (event.key.code == Keyboard::Enter) currentPlayer = team[2];
-					if (event.key.code == Keyboard::RControl) currentPlayer = team[3];
-					if (event.key.code == Keyboard::Numpad7) currentPlayer = team[4];
+					if (numberOfPlayers > 1)
+						if (event.key.code == Keyboard::Space) currentPlayer = team[1];
+					if (numberOfPlayers > 2)
+						if (event.key.code == Keyboard::Enter) currentPlayer = team[2];
+					if (numberOfPlayers > 3)
+						if (event.key.code == Keyboard::RControl) currentPlayer = team[3];
+					if (numberOfPlayers > 4)
+						if (event.key.code == Keyboard::Numpad7) currentPlayer = team[4];
 
 					if (currentPlayer != NULL)
 					{
@@ -419,17 +424,17 @@ int main()
 
 								Air *fighter_1 = new Air(aFighter, temp->getCoordX(false), H * 32 + 800, 1, "fighter", AirStrikeZone);
 								targetsZone.push_back(fighter_1);
-								Air *trace_1 = new Air(aFighterTrace, temp->getCoordX(false), H * 32 + 920, 1, "trace", fighter_1);
+								Air *trace_1 = new Air(aFighterTrace, temp->getCoordX(false), H * 32 + 900, 1, "trace", fighter_1);
 								targetsZone.push_back(trace_1);
 
 								Air *fighter_2 = new Air(aFighter, temp->getCoordX(false) - 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
 								targetsZone.push_back(fighter_2);
-								Air *trace_2 = new Air(aFighterTrace, temp->getCoordX(false) - 150, H * 32 + 1020, 1, "trace", fighter_2);
+								Air *trace_2 = new Air(aFighterTrace, temp->getCoordX(false) - 150, H * 32 + 1000, 1, "trace", fighter_2);
 								targetsZone.push_back(trace_2);
 
 								Air *fighter_3 = new Air(aFighter, temp->getCoordX(false) + 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
 								targetsZone.push_back(fighter_3);
-								Air *trace_3 = new Air(aFighterTrace, temp->getCoordX(false) + 150, H * 32 + 1020, 1, "trace", fighter_3);
+								Air *trace_3 = new Air(aFighterTrace, temp->getCoordX(false) + 150, H * 32 + 1000, 1, "trace", fighter_3);
 								targetsZone.push_back(trace_3);
 							}
 						}
