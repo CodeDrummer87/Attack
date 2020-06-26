@@ -74,7 +74,7 @@ int main()
 
 		Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank,
 			iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iMap, iIcon, iDrowning,
-			iFighter, iTarget, iAirStrikeZone, iFighterTrace;
+			iFighter, iTarget, iAirStrikeZone, iFighterTrace, iAirBomb;
 
 		iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 		iBurgundyTank.createMaskFromColor(Color::White);
@@ -124,13 +124,16 @@ int main()
 		iFighterTrace.loadFromFile("source/images/attributes/fighterTrace.png");
 		iFighterTrace.createMaskFromColor(Color::White);
 
+		iAirBomb.loadFromFile("source/images/attributes/air_bomb.png");
+		iAirBomb.createMaskFromColor(Color::White);
+
 #pragma endregion
 
 #pragma region Textures
 
 		Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke,
 			tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tRank, tMap, tIcon, tDrowning,
-			tFighter, tTarget, tAirStrikeZone, tFighterTrace;
+			tFighter, tTarget, tAirStrikeZone, tFighterTrace, tAirJetsFlame, tAirBomb;
 
 		bTank.loadFromImage(iBurgundyTank);
 		yTank.loadFromImage(iYellowTank);
@@ -153,6 +156,8 @@ int main()
 		tTarget.loadFromImage(iTarget);
 		tAirStrikeZone.loadFromImage(iAirStrikeZone);
 		tFighterTrace.loadFromImage(iFighterTrace);
+		tAirJetsFlame.loadFromFile("source/images/attributes/air_jets_flame.png");
+		tAirBomb.loadFromImage(iAirBomb);
 
 #pragma endregion
 
@@ -162,7 +167,7 @@ int main()
 			burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf,
 			shellExpBuf, enemy_1Buf, en_1RoundBuf, armorBuf, prefermentBuf,
 			takingIconBuf, drowningBuf, laughBuf, airstrikeQueryBuf, fighterFlightBuf,
-			airstrikeConfirmBuf;
+			airstrikeConfirmBuf, bombWhistleBuf;
 
 		bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 		yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
@@ -182,6 +187,7 @@ int main()
 		airstrikeQueryBuf.loadFromFile("source/sounds/icons/airstrike_query.ogg");
 		fighterFlightBuf.loadFromFile("source/sounds/effects/fighterFlight.ogg");
 		airstrikeConfirmBuf.loadFromFile("source/sounds/effects/airstrike_confirmation.ogg");
+		bombWhistleBuf.loadFromFile("source/sounds/effects/bombWhistle.ogg");
 
 		Sound enemy_move, sArmor, sPreferment, sTakingIcon,
 			sLaugh(laughBuf), sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm;
@@ -245,9 +251,11 @@ int main()
 
 		Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
 		Animation aFighter(tFighter, fighterFlightBuf, 0, 0, 120, 165, 0.01, 1);
-		Animation aFighterTrace(tFighterTrace, 0, 0, 120, 150, 0.1, 21);
+		Animation aFighterTrace(tFighterTrace, 0, 0, 120, 165, 0.1, 21);
+		Animation aAirJetsFlame(tAirJetsFlame, 0, 0, 120, 165, 0.1, 21);
 		Animation aTarget(tTarget, 0, 0, 256, 256, 0.01, 14);
 		Animation aAirStrikeZone(tAirStrikeZone, 0, 0, 256, 256, 0.01, 1);
+		Animation aDroppingBomb(tAirBomb, bombWhistleBuf, 0, 0, 64, 64, 0.005, 17);
 
 #pragma endregion
 
@@ -426,16 +434,22 @@ int main()
 								targetsZone.push_back(fighter_1);
 								Air *trace_1 = new Air(aFighterTrace, temp->getCoordX(false), H * 32 + 900, 1, "trace", fighter_1);
 								targetsZone.push_back(trace_1);
+								Air *airJetsFlame_1 = new Air(aAirJetsFlame, temp->getCoordX(false), H * 32 + 950, 1, "flame", fighter_1);
+								targetsZone.push_back(airJetsFlame_1);
 
 								Air *fighter_2 = new Air(aFighter, temp->getCoordX(false) - 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
 								targetsZone.push_back(fighter_2);
 								Air *trace_2 = new Air(aFighterTrace, temp->getCoordX(false) - 150, H * 32 + 1000, 1, "trace", fighter_2);
 								targetsZone.push_back(trace_2);
+								Air *airJetsFlame_2 = new Air(aAirJetsFlame, temp->getCoordX(false) - 150, H * 32 + 1050, 1, "flame", fighter_1);
+								targetsZone.push_back(airJetsFlame_2);
 
 								Air *fighter_3 = new Air(aFighter, temp->getCoordX(false) + 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
 								targetsZone.push_back(fighter_3);
 								Air *trace_3 = new Air(aFighterTrace, temp->getCoordX(false) + 150, H * 32 + 1000, 1, "trace", fighter_3);
 								targetsZone.push_back(trace_3);
+								Air *airJetsFlame_3 = new Air(aAirJetsFlame, temp->getCoordX(false) + 150, H * 32 + 1050, 1, "flame", fighter_1);
+								targetsZone.push_back(airJetsFlame_3);
 							}
 						}
 					}
@@ -773,6 +787,26 @@ int main()
 				setViewCoordinates(sizeX, sizeY, airSpotter->xTargetPosition, airSpotter->yTargetPosition);
 			}
 
+			//.:: bomb dropping :::
+			if (Air::bombStatus == DROPPED)
+			{
+				Air::bombStatus = DESCENT;
+
+				Air* temp = NULL;
+				for (int i = 0; i < sizeof(targetsZone); i++)
+					if (targetsZone[i]->name == "fighter")
+					{
+						temp = static_cast<Air*>(targetsZone[i]);
+						break;
+					}
+
+				if (temp != NULL)
+				{
+					Air *bomb = new Air(aDroppingBomb, temp->getCoordX(false), temp->getCoordY(false), 1, "bomb", temp);
+					targetsZone.push_back(bomb);
+				}
+			}
+
 			//.:: collision :::
 			for (auto a : entities)
 				for (auto b : entities)
@@ -845,7 +879,7 @@ int main()
 
 			//.:: display targets :::
 			for (auto t : targetsZone)
-				if (t->name == "target" || t->name == "fighter" || t->name == "trace")
+				if (t->name != "zone")
 					t->draw(app);
 
 			app.display();

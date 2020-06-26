@@ -17,16 +17,37 @@ Air::Air(Animation &a, int X, int Y, int dir_, string name_, Entity *currentAirS
 	attachedObject = currentAirStrikeZone;
 }
 
+BombStatus Air::bombStatus = ABOARD;
+
 Air::~Air()
 {}
 
 void Air::update(double time)
 {
-	dx = 0;
-	dy = -0.7 * time;
+	if (name != "bomb")
+	{
+		dx = 0;
+		dy = -0.7 * time;
+	}
+	else
+	{
+		dx = 0;
+		dy = -0.05 * time;
+
+		if (anim.isEnd(time))
+		{
+			isExist = false;
+		}
+	}
 
 	x += dx;
 	y += dy;
+
+	if (bombStatus == ABOARD)
+	{
+		if (name == "fighter" && y <= attachedObject->getCoordY(false) + 300)
+			bombStatus = DROPPED;
+	}
 
 	if (name == "fighter" && y <= attachedObject->getCoordY(false))
 		if(attachedObject->isExist)
