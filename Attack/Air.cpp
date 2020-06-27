@@ -19,6 +19,14 @@ Air::Air(Animation &a, int X, int Y, int dir_, string name_, Entity *currentAirS
 
 BombStatus Air::bombStatus = ABOARD;
 
+bool Air::isExistFighter = false;
+
+bool Air::isViewToBomb = false;
+
+bool Air::setCurrentCamera = false;
+
+Air* Air::bomb = NULL;
+
 Air::~Air()
 {}
 
@@ -32,11 +40,16 @@ void Air::update(double time)
 	else
 	{
 		dx = 0;
-		dy = -0.05 * time;
+		dy = -0.09 * time;
 
 		if (anim.isEnd(time))
 		{
 			isExist = false;
+			bombStatus = ABOARD;
+			bomb = NULL;
+			isViewToBomb = false;
+			isExistFighter = false;
+			Air::setCurrentCamera = true;
 		}
 	}
 
@@ -46,7 +59,10 @@ void Air::update(double time)
 	if (bombStatus == ABOARD)
 	{
 		if (name == "fighter" && y <= attachedObject->getCoordY(false) + 300)
+		{
 			bombStatus = DROPPED;
+			isViewToBomb = true;
+		}
 	}
 
 	if (name == "fighter" && y <= attachedObject->getCoordY(false))

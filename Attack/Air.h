@@ -10,6 +10,11 @@ private:
 	Entity *attachedObject;
 public:
 	static BombStatus bombStatus;
+	static bool isExistFighter;
+	static bool isViewToBomb;
+	static Air* bomb;
+	static bool setCurrentCamera;
+
 	//.:: Constructors :::::::::::::::::::::
 	Air();
 	Air(Animation&, int, int, int, string, Entity*);

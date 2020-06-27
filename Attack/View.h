@@ -1,12 +1,14 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "Air.h"
 
 using namespace sf;
 
 View view;
 bool isExistTarget;
 Player* airSpotter = NULL;
+Air * firstFighter = NULL;
 
 void setViewCoordinates(int sizeX, int sizeY, double x, double y)
 {

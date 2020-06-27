@@ -74,7 +74,7 @@ int main()
 
 		Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank,
 			iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iMap, iIcon, iDrowning,
-			iFighter, iTarget, iAirStrikeZone, iFighterTrace, iAirBomb;
+			iFighter, iTarget, iAirStrikeZone, iFighterTrace, iAirBombFirst, iAirBombOther;
 
 		iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 		iBurgundyTank.createMaskFromColor(Color::White);
@@ -124,8 +124,11 @@ int main()
 		iFighterTrace.loadFromFile("source/images/attributes/fighterTrace.png");
 		iFighterTrace.createMaskFromColor(Color::White);
 
-		iAirBomb.loadFromFile("source/images/attributes/air_bomb.png");
-		iAirBomb.createMaskFromColor(Color::White);
+		iAirBombFirst.loadFromFile("source/images/attributes/air_bomb_first.png");
+		iAirBombFirst.createMaskFromColor(Color::White);
+
+		iAirBombOther.loadFromFile("source/images/attributes/air_bomb_other.png");
+		iAirBombOther.createMaskFromColor(Color::White);
 
 #pragma endregion
 
@@ -133,7 +136,7 @@ int main()
 
 		Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke,
 			tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tRank, tMap, tIcon, tDrowning,
-			tFighter, tTarget, tAirStrikeZone, tFighterTrace, tAirJetsFlame, tAirBomb;
+			tFighter, tTarget, tAirStrikeZone, tFighterTrace, tAirJetsFlame, tAirBombFirst, tAirBombOther;
 
 		bTank.loadFromImage(iBurgundyTank);
 		yTank.loadFromImage(iYellowTank);
@@ -157,7 +160,8 @@ int main()
 		tAirStrikeZone.loadFromImage(iAirStrikeZone);
 		tFighterTrace.loadFromImage(iFighterTrace);
 		tAirJetsFlame.loadFromFile("source/images/attributes/air_jets_flame.png");
-		tAirBomb.loadFromImage(iAirBomb);
+		tAirBombFirst.loadFromImage(iAirBombFirst);
+		tAirBombOther.loadFromImage(iAirBombOther);
 
 #pragma endregion
 
@@ -255,7 +259,8 @@ int main()
 		Animation aAirJetsFlame(tAirJetsFlame, 0, 0, 120, 165, 0.1, 21);
 		Animation aTarget(tTarget, 0, 0, 256, 256, 0.01, 14);
 		Animation aAirStrikeZone(tAirStrikeZone, 0, 0, 256, 256, 0.01, 1);
-		Animation aDroppingBomb(tAirBomb, bombWhistleBuf, 0, 0, 64, 64, 0.005, 17);
+		Animation aDroppingFirstBomb(tAirBombFirst, bombWhistleBuf, 0, 0, 64, 64, 0.005, 17);
+		Animation aDroppingOtherBomb(tAirBombOther, bombWhistleBuf, 0, 0, 64, 64, 0.005, 17);
 
 #pragma endregion
 
@@ -415,7 +420,7 @@ int main()
 								targetsZone.push_back(AirStrikeZone);
 
 								currentPlayer->xTargetPosition = currentPlayer->yTargetPosition = 0;
-								currentPlayer->isAirSpotterMode = Tank::cameraIsNotFree = isExistTarget = false;
+								currentPlayer->isAirSpotterMode = isExistTarget = false;
 								airSpotter = NULL;
 
 
@@ -424,11 +429,6 @@ int main()
 									sAirStrikeQuery.stop();
 								}
 								sAirStrikeConfirm.play();
-
-								if (!checkTeamForCommander(team))
-								{
-									view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
-								}
 
 								Air *fighter_1 = new Air(aFighter, temp->getCoordX(false), H * 32 + 800, 1, "fighter", AirStrikeZone);
 								targetsZone.push_back(fighter_1);
@@ -450,6 +450,9 @@ int main()
 								targetsZone.push_back(trace_3);
 								Air *airJetsFlame_3 = new Air(aAirJetsFlame, temp->getCoordX(false) + 150, H * 32 + 1050, 1, "flame", fighter_1);
 								targetsZone.push_back(airJetsFlame_3);
+
+								Air::isExistFighter = true;
+								firstFighter = fighter_1;
 							}
 						}
 					}
@@ -488,7 +491,7 @@ int main()
 					}
 
 					//.:: Set View :::
-					if (p->isCommander && !p->cameraIsNotFree)
+					if (p->isCommander && !Tank::cameraIsNotFree)
 						setViewCoordinates(sizeX, sizeY, p->getCoordX(false), p->getCoordY(false));
 				}
 				else
@@ -782,11 +785,6 @@ int main()
 				isExistTarget = true;
 			}
 
-			if (Tank::cameraIsNotFree && isExistTarget)
-			{
-				setViewCoordinates(sizeX, sizeY, airSpotter->xTargetPosition, airSpotter->yTargetPosition);
-			}
-
 			//.:: bomb dropping :::
 			if (Air::bombStatus == DROPPED)
 			{
@@ -802,9 +800,53 @@ int main()
 
 				if (temp != NULL)
 				{
-					Air *bomb = new Air(aDroppingBomb, temp->getCoordX(false), temp->getCoordY(false), 1, "bomb", temp);
+					Air *bomb = new Air(aDroppingFirstBomb, temp->getCoordX(false), temp->getCoordY(false), 1, "bomb", temp);
 					targetsZone.push_back(bomb);
+
+					Air *bomb_2 = new Air(aDroppingOtherBomb, temp->getCoordX(false) - 150, temp->getCoordY(false) + 100, 1, "bomb", temp);
+					targetsZone.push_back(bomb_2);
+
+					Air *bomb_3 = new Air(aDroppingOtherBomb, temp->getCoordX(false) + 150, temp->getCoordY(false) + 100, 1, "bomb", temp);
+					targetsZone.push_back(bomb_3);
+
+					Air::bomb = bomb;
 				}
+			}
+
+			//.:: The camera shows time scenes
+			if (Tank::cameraIsNotFree)
+			{
+				if (isExistTarget)
+					setViewCoordinates(sizeX, sizeY, airSpotter->xTargetPosition, airSpotter->yTargetPosition);
+
+				if (Air::isExistFighter)
+				{
+					if (!Air::isViewToBomb)
+						setViewCoordinates(sizeX, sizeY, firstFighter->getCoordX(false), firstFighter->getCoordY(false));
+					else
+					{
+						villainViewX -= villainViewX / 200;
+						villainViewY -= villainViewY / 200;
+
+						view.reset(FloatRect(0, 0, villainViewX, villainViewY));
+						setViewCoordinates(villainViewX, villainViewY, Air::bomb->getCoordX(false), Air::bomb->getCoordY(false));
+					}
+				}	
+			}
+
+			//.:: Reset current camera settings :::
+			if (Air::setCurrentCamera)
+			{
+				Air::setCurrentCamera = false;
+				Tank::cameraIsNotFree = false;
+
+				view.reset(FloatRect(0, 0, (float)sizeX, (float)sizeY));
+
+				if (!checkTeamForCommander(team))
+					view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
+
+				villainViewX = (float)sizeX / 2;
+				villainViewY = (float)sizeY / 2;
 			}
 
 			//.:: collision :::
@@ -877,7 +919,7 @@ int main()
 				e->draw(app);
 			drawForestAndIcons(FirstStage, app, map, icons, time);
 
-			//.:: display targets :::
+			//.:: display all air entities except zones :::
 			for (auto t : targetsZone)
 				if (t->name != "zone")
 					t->draw(app);
