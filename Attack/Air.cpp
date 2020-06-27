@@ -17,6 +17,19 @@ Air::Air(Animation &a, int X, int Y, int dir_, string name_, Entity *currentAirS
 	attachedObject = currentAirStrikeZone;
 }
 
+Air::Air(Animation &a, int X, int Y, int dir_, string name_)
+{
+	anim = a;
+	name = name_;
+	x = X;
+	y = Y;
+	dir = dir_;
+	anim.sprite.setPosition(x, y);
+	anim.sprite.setScale(1.5f, 1.5f);
+	playAnimation = isExist = true;
+	status = ALIVE;
+}
+
 BombStatus Air::bombStatus = ABOARD;
 
 bool Air::isExistFighter = false;
@@ -25,6 +38,8 @@ bool Air::isViewToBomb = false;
 
 bool Air::setCurrentCamera = false;
 
+bool Air::isExplosionBomb = false;
+
 Air* Air::bomb = NULL;
 
 Air::~Air()
@@ -32,43 +47,60 @@ Air::~Air()
 
 void Air::update(double time)
 {
-	if (name != "bomb")
+	if (name != "explosion")
 	{
-		dx = 0;
-		dy = -0.7 * time;
+		if (name != "bomb")
+		{
+			dx = 0;
+			dy = -0.7 * time;
+		}
+		else
+		{
+			dx = 0;
+			dy = -0.09 * time;
+
+			if (isExplosionBomb)
+			{
+				isExist = false;
+				bombStatus = ABOARD;
+				isViewToBomb = false;
+				isExistFighter = false;
+				Air::setCurrentCamera = true;
+				isExplosionBomb = false;
+			}
+
+			if (anim.isEnd(time))
+			{
+				isExplosionBomb = true;
+				anim.sprite.setColor(Color::Transparent);
+			}
+		}
+
+		x += dx;
+		y += dy;
+
+		if (bombStatus == ABOARD)
+		{
+			if (name == "fighter" && y <= attachedObject->getCoordY(false) + 300)
+			{
+				bombStatus = DROPPED;
+				isViewToBomb = true;
+			}
+		}
+
+		if (name == "fighter" && y <= attachedObject->getCoordY(false))
+			if (attachedObject->isExist)
+				attachedObject->isExist = false;
+
+		if (y <= -150)
+			isExist = false;
 	}
 	else
 	{
-		dx = 0;
-		dy = -0.09 * time;
-
 		if (anim.isEnd(time))
 		{
-			isExist = false;
-			bombStatus = ABOARD;
 			bomb = NULL;
-			isViewToBomb = false;
-			isExistFighter = false;
-			Air::setCurrentCamera = true;
+			isExist = false;
 		}
 	}
-
-	x += dx;
-	y += dy;
-
-	if (bombStatus == ABOARD)
-	{
-		if (name == "fighter" && y <= attachedObject->getCoordY(false) + 300)
-		{
-			bombStatus = DROPPED;
-			isViewToBomb = true;
-		}
-	}
-
-	if (name == "fighter" && y <= attachedObject->getCoordY(false))
-		if(attachedObject->isExist)
-			attachedObject->isExist = false;
-
-	if (y <= -150)
-		isExist = false;
 }

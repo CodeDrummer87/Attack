@@ -73,8 +73,8 @@ int main()
 #pragma region Images
 
 		Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank,
-			iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iMap, iIcon, iDrowning,
-			iFighter, iTarget, iAirStrikeZone, iFighterTrace, iAirBombFirst, iAirBombOther;
+			iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iMap, iIcon, iDrowning, iTarget,
+			iAirStrikeZone, iAirBomb, iBombExplosion;
 
 		iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 		iBurgundyTank.createMaskFromColor(Color::White);
@@ -112,23 +112,17 @@ int main()
 		iDrowning.loadFromFile("source/images/models/other/drowning.png");
 		iDrowning.createMaskFromColor(Color::White);
 
-		iFighter.loadFromFile("source/images/models/fighter.png");
-		iFighter.createMaskFromColor(Color::White);
-
 		iTarget.loadFromFile("source/images/attributes/target.png");
 		iTarget.createMaskFromColor(Color::White);
 
 		iAirStrikeZone.loadFromFile("source/images/attributes/airstrike_zone.png");
 		iAirStrikeZone.createMaskFromColor(Color::White);
 
-		iFighterTrace.loadFromFile("source/images/attributes/fighterTrace.png");
-		iFighterTrace.createMaskFromColor(Color::White);
+		iAirBomb.loadFromFile("source/images/attributes/air_bomb.png");
+		iAirBomb.createMaskFromColor(Color::White);
 
-		iAirBombFirst.loadFromFile("source/images/attributes/air_bomb_first.png");
-		iAirBombFirst.createMaskFromColor(Color::White);
-
-		iAirBombOther.loadFromFile("source/images/attributes/air_bomb_other.png");
-		iAirBombOther.createMaskFromColor(Color::White);
+		iBombExplosion.loadFromFile("source/images/models/explosion/bomb_explosion.png");
+		iBombExplosion.createMaskFromColor(Color::White);
 
 #pragma endregion
 
@@ -136,7 +130,7 @@ int main()
 
 		Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke,
 			tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tRank, tMap, tIcon, tDrowning,
-			tFighter, tTarget, tAirStrikeZone, tFighterTrace, tAirJetsFlame, tAirBombFirst, tAirBombOther;
+			tFighter, tTarget, tAirStrikeZone, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion;
 
 		bTank.loadFromImage(iBurgundyTank);
 		yTank.loadFromImage(iYellowTank);
@@ -155,13 +149,13 @@ int main()
 		tMap.loadFromImage(iMap);
 		tIcon.loadFromImage(iIcon);
 		tDrowning.loadFromImage(iDrowning);
-		tFighter.loadFromImage(iFighter);
+		tFighter.loadFromFile("source/images/models/fighter.png");
 		tTarget.loadFromImage(iTarget);
 		tAirStrikeZone.loadFromImage(iAirStrikeZone);
-		tFighterTrace.loadFromImage(iFighterTrace);
+		tFighterTrace.loadFromFile("source/images/attributes/fighterTrace.png");
 		tAirJetsFlame.loadFromFile("source/images/attributes/air_jets_flame.png");
-		tAirBombFirst.loadFromImage(iAirBombFirst);
-		tAirBombOther.loadFromImage(iAirBombOther);
+		tAirBomb.loadFromImage(iAirBomb);
+		tBombExplosion.loadFromImage(iBombExplosion);
 
 #pragma endregion
 
@@ -171,7 +165,7 @@ int main()
 			burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf,
 			shellExpBuf, enemy_1Buf, en_1RoundBuf, armorBuf, prefermentBuf,
 			takingIconBuf, drowningBuf, laughBuf, airstrikeQueryBuf, fighterFlightBuf,
-			airstrikeConfirmBuf, bombWhistleBuf;
+			airstrikeConfirmBuf, bombWhistleBuf, bombExplosionBuf;
 
 		bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 		yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
@@ -192,6 +186,7 @@ int main()
 		fighterFlightBuf.loadFromFile("source/sounds/effects/fighterFlight.ogg");
 		airstrikeConfirmBuf.loadFromFile("source/sounds/effects/airstrike_confirmation.ogg");
 		bombWhistleBuf.loadFromFile("source/sounds/effects/bombWhistle.ogg");
+		bombExplosionBuf.loadFromFile("source/sounds/explosion/bomb_explosion.ogg");
 
 		Sound enemy_move, sArmor, sPreferment, sTakingIcon,
 			sLaugh(laughBuf), sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm;
@@ -259,8 +254,8 @@ int main()
 		Animation aAirJetsFlame(tAirJetsFlame, 0, 0, 120, 165, 0.1, 21);
 		Animation aTarget(tTarget, 0, 0, 256, 256, 0.01, 14);
 		Animation aAirStrikeZone(tAirStrikeZone, 0, 0, 256, 256, 0.01, 1);
-		Animation aDroppingFirstBomb(tAirBombFirst, bombWhistleBuf, 0, 0, 64, 64, 0.005, 17);
-		Animation aDroppingOtherBomb(tAirBombOther, bombWhistleBuf, 0, 0, 64, 64, 0.005, 17);
+		Animation aDroppingBomb(tAirBomb, bombWhistleBuf, 0, 0, 64, 64, 0.005, 17);
+		Animation aBombExplosion(tBombExplosion, bombExplosionBuf, 0, 0, 150, 150, 0.008, 14);
 
 #pragma endregion
 
@@ -800,17 +795,30 @@ int main()
 
 				if (temp != NULL)
 				{
-					Air *bomb = new Air(aDroppingFirstBomb, temp->getCoordX(false), temp->getCoordY(false), 1, "bomb", temp);
+					Air *bomb = new Air(aDroppingBomb, temp->getCoordX(false), temp->getCoordY(false), 1, "bomb", temp);
 					targetsZone.push_back(bomb);
 
-					Air *bomb_2 = new Air(aDroppingOtherBomb, temp->getCoordX(false) - 150, temp->getCoordY(false) + 100, 1, "bomb", temp);
+					Air *bomb_2 = new Air(aDroppingBomb, temp->getCoordX(false) - 150, temp->getCoordY(false) + 100, 1, "bomb", temp);
 					targetsZone.push_back(bomb_2);
 
-					Air *bomb_3 = new Air(aDroppingOtherBomb, temp->getCoordX(false) + 150, temp->getCoordY(false) + 100, 1, "bomb", temp);
+					Air *bomb_3 = new Air(aDroppingBomb, temp->getCoordX(false) + 150, temp->getCoordY(false) + 100, 1, "bomb", temp);
 					targetsZone.push_back(bomb_3);
 
 					Air::bomb = bomb;
 				}
+			}
+
+			//.:: air bomb explosions :::
+			if (Air::isExplosionBomb)
+			{
+				Air *bombExplosion = new Air(aBombExplosion, Air::bomb->getCoordX(false), Air::bomb->getCoordY(false), 0, "explosion");
+				targetsZone.push_back(bombExplosion);
+
+				Air *bombExplosion_2 = new Air(aBombExplosion, Air::bomb->getCoordX(false) - 150, Air::bomb->getCoordY(false) + 100, 0, "explosion");
+				targetsZone.push_back(bombExplosion_2);
+
+				Air *bombExplosion_3 = new Air(aBombExplosion, Air::bomb->getCoordX(false) + 150, Air::bomb->getCoordY(false) + 100, 0, "explosion");
+				targetsZone.push_back(bombExplosion_3);
 			}
 
 			//.:: The camera shows time scenes
