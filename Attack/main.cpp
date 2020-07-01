@@ -19,6 +19,9 @@
 #include "ChapterFinale.h"
 #include "Air.h"
 
+#include "Plane.h"
+#include "Bomb.h"
+
 int main()
 {
 	using namespace std;
@@ -249,6 +252,7 @@ int main()
 		Animation icons[] = { iconRepair, iconPreferment, iconCamera, iconAirStrike };
 
 		Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
+
 		Animation aFighter(tFighter, fighterFlightBuf, 0, 0, 120, 165, 0.01, 1);
 		Animation aFighterTrace(tFighterTrace, 0, 0, 120, 165, 0.1, 21);
 		Animation aAirJetsFlame(tAirJetsFlame, 0, 0, 120, 165, 0.1, 21);
@@ -338,10 +342,7 @@ int main()
 		bool battleIsOver = false;
 		int lastSecondsOfChapter = 0;
 
-		//.:: For air strike target
-		isExistTarget = false;
-
-		vector<Entity*> targetsZone;
+		vector<Entity*> airEntities;
 
 		while (app.isOpen())
 		{
@@ -350,7 +351,7 @@ int main()
 
 			time /= 1700;
 
-			gameTime = gameTimeClock.getElapsedTime().asSeconds();
+			gameTime = (int)(gameTimeClock.getElapsedTime().asSeconds());
 
 			//.:: Fade out time of foregroundTheme :::
 			if (foregroundTheme->getStatus() == SoundStream::Playing)
@@ -390,7 +391,7 @@ int main()
 					{
 						if (currentPlayer->status != DEAD)
 						{
-							if (!currentPlayer->isAirSpotterMode)
+							if (!currentPlayer->isAirSpotter)
 							{
 								if (currentPlayer->isShot)
 								{
@@ -402,52 +403,43 @@ int main()
 									entities.push_back(shell);
 								}
 							}
-							else
+							else //.:: Air Spotter Mode
 							{
-								Entity* temp = NULL;
-								for (auto t : targetsZone)
+								for (auto e : airEntities)
 								{
-									if (t->checkEqualityEntities(airSpotter))
-										temp = t;
+									if (e->name == "target" && e->tokenId == currentPlayer->tokenId)
+									{
+										e->status = WOUNDED;
+										currentPlayer->isAirSpotter = false;
+
+										if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
+											sAirStrikeQuery.stop();
+										sAirStrikeConfirm.play();
+
+										//.:: Creating a Bomber Link :::
+										for (int i = 0; i < 3; i++)
+										{
+											int x = e->getCoordX(false);
+											int y = H * 32 + 800;
+
+											if (i == 1)
+											{
+												x -= 150;
+												y += 100;
+											}
+											else if (i == 2)
+											{
+												x += 150;
+												y += 100;
+											}
+
+											Plane *fighter = new Plane(aFighter, aFighterTrace, aAirJetsFlame, x, y, "fighter", e);
+											airEntities.push_back(fighter);
+										}
+										
+										break;
+									}
 								}
-
-								Entity *AirStrikeZone = new Entity(aAirStrikeZone, temp, "zone");
-								targetsZone.push_back(AirStrikeZone);
-
-								currentPlayer->xTargetPosition = currentPlayer->yTargetPosition = 0;
-								currentPlayer->isAirSpotterMode = isExistTarget = false;
-								airSpotter = NULL;
-
-
-								if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
-								{
-									sAirStrikeQuery.stop();
-								}
-								sAirStrikeConfirm.play();
-
-								Air *fighter_1 = new Air(aFighter, temp->getCoordX(false), H * 32 + 800, 1, "fighter", AirStrikeZone);
-								targetsZone.push_back(fighter_1);
-								Air *trace_1 = new Air(aFighterTrace, temp->getCoordX(false), H * 32 + 900, 1, "trace", fighter_1);
-								targetsZone.push_back(trace_1);
-								Air *airJetsFlame_1 = new Air(aAirJetsFlame, temp->getCoordX(false), H * 32 + 950, 1, "flame", fighter_1);
-								targetsZone.push_back(airJetsFlame_1);
-
-								Air *fighter_2 = new Air(aFighter, temp->getCoordX(false) - 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
-								targetsZone.push_back(fighter_2);
-								Air *trace_2 = new Air(aFighterTrace, temp->getCoordX(false) - 150, H * 32 + 1000, 1, "trace", fighter_2);
-								targetsZone.push_back(trace_2);
-								Air *airJetsFlame_2 = new Air(aAirJetsFlame, temp->getCoordX(false) - 150, H * 32 + 1050, 1, "flame", fighter_1);
-								targetsZone.push_back(airJetsFlame_2);
-
-								Air *fighter_3 = new Air(aFighter, temp->getCoordX(false) + 150, H * 32 + 900, 1, "fighter", AirStrikeZone);
-								targetsZone.push_back(fighter_3);
-								Air *trace_3 = new Air(aFighterTrace, temp->getCoordX(false) + 150, H * 32 + 1000, 1, "trace", fighter_3);
-								targetsZone.push_back(trace_3);
-								Air *airJetsFlame_3 = new Air(aAirJetsFlame, temp->getCoordX(false) + 150, H * 32 + 1050, 1, "flame", fighter_1);
-								targetsZone.push_back(airJetsFlame_3);
-
-								Air::isExistFighter = true;
-								firstFighter = fighter_1;
 							}
 						}
 					}
@@ -485,7 +477,26 @@ int main()
 						}
 					}
 
-					//.:: Set View :::
+					//.:: Air Spotter Mode ::::::
+					if (p->isAirSpotter)
+					{
+						if (p->isTargetCreated)
+						{
+							p->isTargetCreated = false;
+							sAirStrikeQuery.play();
+
+							Air *targetBomb = new Air(aTarget, aAirStrikeZone, p, "target");
+							airEntities.push_back(targetBomb);
+
+							if (!Tank::cameraIsNotFree)
+								Tank::cameraIsNotFree = true;
+						}
+						
+						if (Tank::cameraIsNotFree)
+							setViewCoordinates(sizeX, sizeY, p->xTargetPosition, p->yTargetPosition);
+					}
+
+					//.:: Set View ::::::::::::::
 					if (p->isCommander && !Tank::cameraIsNotFree)
 						setViewCoordinates(sizeX, sizeY, p->getCoordX(false), p->getCoordY(false));
 				}
@@ -698,7 +709,7 @@ int main()
 						villainViewY -= villainViewY / 1000;
 
 						view.reset(FloatRect(0, 0, villainViewX, villainViewY));
-						setViewCoordinates(villainViewX, villainViewY, e->getCoordX(false), e->getCoordY(false));
+						setViewCoordinates((int)villainViewX, (int)villainViewY, e->getCoordX(false), e->getCoordY(false));
 
 						if (gameTime >= e->finishVillainTime)
 							resetVillainView(e, sizeX, sizeY, team, villainViewX, villainViewY);
@@ -759,102 +770,58 @@ int main()
 				}
 			}
 
-			if (Player::isAirStrike)
+			for (auto e : airEntities)
 			{
-				Player::isAirStrike = false;
-				sAirStrikeQuery.play();
-
-				Tank::cameraIsNotFree = true;
-
-				for (int i = 0; i < sizeof(team); i++)
+				if (e->name == "fighter")
 				{
-					if (team[i]->isAirSpotterMode)
+					//.:: bomb dropping :::
+					if (static_cast<Plane*>(e)->bombStatus == DROPPED)
 					{
-						airSpotter = team[i];
-						break;
+						static_cast<Plane*>(e)->bombStatus = DESCENT;
+
+						Bomb *bomb = new Bomb(aDroppingBomb, aBombExplosion, e->getCoordX(false), e->getCoordY(false), "bomb");
+						airEntities.push_back(bomb);
 					}
 				}
-
-				Entity *airStrikeTarget = new Entity(aTarget, airSpotter, "target");
-				targetsZone.push_back(airStrikeTarget);
-				isExistTarget = true;
-			}
-
-			//.:: bomb dropping :::
-			if (Air::bombStatus == DROPPED)
-			{
-				Air::bombStatus = DESCENT;
-
-				Air* temp = NULL;
-				for (int i = 0; i < sizeof(targetsZone); i++)
-					if (targetsZone[i]->name == "fighter")
-					{
-						temp = static_cast<Air*>(targetsZone[i]);
-						break;
-					}
-
-				if (temp != NULL)
-				{
-					Air *bomb = new Air(aDroppingBomb, temp->getCoordX(false), temp->getCoordY(false), 1, "bomb", temp);
-					targetsZone.push_back(bomb);
-
-					Air *bomb_2 = new Air(aDroppingBomb, temp->getCoordX(false) - 150, temp->getCoordY(false) + 100, 1, "bomb", temp);
-					targetsZone.push_back(bomb_2);
-
-					Air *bomb_3 = new Air(aDroppingBomb, temp->getCoordX(false) + 150, temp->getCoordY(false) + 100, 1, "bomb", temp);
-					targetsZone.push_back(bomb_3);
-
-					Air::bomb = bomb;
-				}
-			}
-
-			//.:: air bomb explosions :::
-			if (Air::isExplosionBomb)
-			{
-				Air *bombExplosion = new Air(aBombExplosion, Air::bomb->getCoordX(false), Air::bomb->getCoordY(false), 0, "explosion");
-				targetsZone.push_back(bombExplosion);
-
-				Air *bombExplosion_2 = new Air(aBombExplosion, Air::bomb->getCoordX(false) - 150, Air::bomb->getCoordY(false) + 100, 0, "explosion");
-				targetsZone.push_back(bombExplosion_2);
-
-				Air *bombExplosion_3 = new Air(aBombExplosion, Air::bomb->getCoordX(false) + 150, Air::bomb->getCoordY(false) + 100, 0, "explosion");
-				targetsZone.push_back(bombExplosion_3);
 			}
 
 			//.:: The camera shows time scenes
 			if (Tank::cameraIsNotFree)
 			{
-				if (isExistTarget)
-					setViewCoordinates(sizeX, sizeY, airSpotter->xTargetPosition, airSpotter->yTargetPosition);
+				Plane *plane = static_cast<Plane*>(Plane::leader.plane);
 
-				if (Air::isExistFighter)
+				if (Plane::leader.openPosition)
 				{
-					if (!Air::isViewToBomb)
-						setViewCoordinates(sizeX, sizeY, firstFighter->getCoordX(false), firstFighter->getCoordY(false));
+					if (plane->bombStatus == ABOARD)
+						setViewCoordinates(sizeX, sizeY, plane->getCoordX(false), plane->getCoordY(false));
+				}
+
+				if (Bomb::firstBomb.openPosition)
+				{
+					Bomb *bomb = static_cast<Bomb*>(Bomb::firstBomb.bomb);
+
+					if (bomb == NULL)
+					{
+						Tank::cameraIsNotFree = false;
+						Bomb::firstBomb.openPosition = false;
+
+						view.reset(FloatRect(0, 0, (float)sizeX, (float)sizeY));
+
+						if (!checkTeamForCommander(team))
+							view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
+
+						villainViewX = (float)sizeX / 2;
+						villainViewY = (float)sizeY / 2;
+					}
 					else
 					{
 						villainViewX -= villainViewX / 200;
 						villainViewY -= villainViewY / 200;
 
 						view.reset(FloatRect(0, 0, villainViewX, villainViewY));
-						setViewCoordinates(villainViewX, villainViewY, Air::bomb->getCoordX(false), Air::bomb->getCoordY(false));
+						setViewCoordinates(villainViewX, villainViewY, bomb->getCoordX(false), bomb->getCoordY(false));
 					}
-				}	
-			}
-
-			//.:: Reset current camera settings :::
-			if (Air::setCurrentCamera)
-			{
-				Air::setCurrentCamera = false;
-				Tank::cameraIsNotFree = false;
-
-				view.reset(FloatRect(0, 0, (float)sizeX, (float)sizeY));
-
-				if (!checkTeamForCommander(team))
-					view.setCenter(W * 32 / 2 - 16, H * 32 - sizeY / 2 - 32);
-
-				villainViewX = (float)sizeX / 2;
-				villainViewY = (float)sizeY / 2;
+				}
 			}
 
 			//.:: collision :::
@@ -900,15 +867,15 @@ int main()
 				else i++;
 			}
 
-			//.:: update targets and air entities :::
-			for (auto i = targetsZone.begin(); i != targetsZone.end();)
+			//.:: update air entities :::
+			for (auto i = airEntities.begin(); i != airEntities.end();)
 			{
 				Entity* e = *i;
 				e->update(time);
 				e->anim.update(time, e->playAnimation, e->dir);
 				if (e->isExist == false)
 				{
-					i = targetsZone.erase(i);
+					i = airEntities.erase(i);
 					delete e;
 				}
 				else i++;
@@ -917,9 +884,9 @@ int main()
 			app.setView(view);
 			app.clear(Color::Black);
 			//.:: display zones :::
-			for (auto t : targetsZone)
-				if (t->name == "zone")
-					t->draw(app);
+			for (auto e : airEntities)
+				if (e->name == "zone")
+					e->draw(app);
 
 			drawMap(FirstStage, app, map, time);
 			//.:: display entities :::
@@ -928,9 +895,9 @@ int main()
 			drawForestAndIcons(FirstStage, app, map, icons, time);
 
 			//.:: display all air entities except zones :::
-			for (auto t : targetsZone)
-				if (t->name != "zone")
-					t->draw(app);
+			for (auto e : airEntities)
+				if (e->name != "zone")
+					e->draw(app);
 
 			app.display();
 		}

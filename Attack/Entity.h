@@ -57,9 +57,8 @@ public:
 	double getCoordX(bool);
 	double getCoordY(bool);
 	void damageEntity(Entity*, Sound&);
-	void draw(RenderWindow&);
+	virtual void draw(RenderWindow&);
 	void getCollision(String[], Sound&);
 	bool checkObstacles(String[], char);
 	float getViewCoordY();
-	bool checkEqualityEntities(Entity*);
 };

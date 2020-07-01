@@ -13,14 +13,15 @@ public:
 	bool preferment;
 	bool isCommander;
 
-	static bool isAirStrike;
-	bool isAirSpotterMode;
+	bool isAirSpotter;
+	bool isTargetCreated;
+
 	double xTargetPosition;
 	double yTargetPosition;
 
 	//.:: Constructors :::::::::::::::::::::
 	Player();
-	Player(Animation&, Animation&, int, int, int, int);
+	Player(Animation&, Animation&, double, double, int, int);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Player();
@@ -30,4 +31,3 @@ public:
 	void nickDown(int);
 	void improveTank(int);
 };
-

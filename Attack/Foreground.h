@@ -43,7 +43,7 @@ void showForeground(int x, int y, bool &game, int &numberOfPlayers, Sound &start
 
 	Text *attack = new Text("ATTACK", font_2, attackSize);
 	attack->setFillColor(Color::Red);
-	attack->setPosition(x/2 - (x/2)/1.5, y/2 - (y/2)/1.5);
+	attack->setPosition((float)(x/2 - (x/2)/1.5), (float)(y/2 - (y/2)/1.5));
 	textList.push_back(attack);
 
 	Text *subdivision = new Text("Subdivision Formation", font_1, subDiv);

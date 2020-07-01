@@ -2,7 +2,7 @@
 
 Player::Player() {}
 
-Player::Player(Animation &a, Animation &b, int X, int Y, int dir_, int lvl)
+Player::Player(Animation &a, Animation &b, double X, double Y, int dir_, int lvl)
 	: Tank(a, b, X, Y, dir_, lvl)
 {
 	army = "player";
@@ -12,8 +12,9 @@ Player::Player(Animation &a, Animation &b, int X, int Y, int dir_, int lvl)
 	else
 		experience = 2;
 
-	hasRank = preferment = isCommander = isAirSpotterMode = false;
+	hasRank = preferment = isCommander  = false;
 
+	isAirSpotter = isTargetCreated = false;
 	xTargetPosition = yTargetPosition = 0;
 }
 
@@ -29,7 +30,7 @@ void Player::update(double time)
 		improveTank(residual_);
 	}
 	
-	if (!isAirSpotterMode)
+	if (!isAirSpotter)
 	{
 		Tank::update(time);
 	}
@@ -89,5 +90,3 @@ void Player::improveTank(int residual)
 	experience *= 2;
 	currentExperience = residual;
 }
-
-bool Player::isAirStrike = false;

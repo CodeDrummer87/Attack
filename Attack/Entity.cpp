@@ -127,8 +127,10 @@ void Entity::update(double time)
 
 		if (name == "rank")
 		{
-			if (own->level >= 6)
+			if (own->level >= 6 && own->level <= 9)
 				anim.sprite.setScale(0.6f, 0.6f);
+			else if (own->level >= 10)
+				anim.sprite.setScale(0.4f, 0.4f);
 
 			if (own->level <= 19)
 				anim.frame = float(own->level - 2);
@@ -137,14 +139,6 @@ void Entity::update(double time)
 			x = own->x + 32;
 			y = own->y - 32;
 			if (own->status == DEAD)
-				isExist = false;
-		}
-
-		if (name == "target")
-		{
-			x = static_cast<Player*>(own)->xTargetPosition;
-			y = static_cast<Player*>(own)->yTargetPosition;
-			if (own->status == DEAD || !static_cast<Player*>(own)->isAirSpotterMode)
 				isExist = false;
 		}
 	}
@@ -639,8 +633,8 @@ void Entity::getCollision(String map[], Sound &sound)
 						sound.play();
 						map[i][j] = ' ';
 						
-						Player::isAirStrike = true;
-						static_cast<Player*>(this)->isAirSpotterMode = true;
+						static_cast<Player*>(this)->isAirSpotter = true;
+						static_cast<Player*>(this)->isTargetCreated = true;					
 					}
 
 					if (name == "destroyed")
@@ -737,9 +731,4 @@ extern View view;
 float Entity::getViewCoordY()
 {
 	return view.getCenter().y;
-}
-
-bool Entity::checkEqualityEntities(Entity* entity)
-{
-	return own == entity;
 }

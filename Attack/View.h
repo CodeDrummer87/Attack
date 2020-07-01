@@ -1,14 +1,10 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "Air.h"
 
 using namespace sf;
 
 View view;
-bool isExistTarget;
-Player* airSpotter = NULL;
-Air * firstFighter = NULL;
 
 void setViewCoordinates(int sizeX, int sizeY, double x, double y)
 {
@@ -60,7 +56,7 @@ bool checkTeamForCommander(vector<Player*> team)
 
 void resetVillainView(Enemy *e, int &sizeX, int &sizeY, vector<Player*> team, float &villainViewX, float &villainViewY)
 {
-	e->isVillain = e->cameraIsNotFree = false;
+	e->isVillain = Tank::cameraIsNotFree = false;
 	view.reset(FloatRect(0, 0, (float)sizeX, (float)sizeY));
 	e->finishVillainTime = 0;
 	if (!checkTeamForCommander(team))
