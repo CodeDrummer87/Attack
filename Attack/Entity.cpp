@@ -631,11 +631,14 @@ void Entity::getCollision(String map[], Sound &sound)
 
 					if (map[i][j] == 'A' && name == "tank" && army == "player")
 					{
-						sound.play();
-						map[i][j] = ' ';
-						
-						static_cast<Player*>(this)->isAirSpotter = true;
-						static_cast<Player*>(this)->isTargetCreated = true;					
+						if (!static_cast<Player*>(this)->isAirSpotter)
+						{
+							sound.play();
+							map[i][j] = ' ';
+
+							static_cast<Player*>(this)->isAirSpotter = true;
+							static_cast<Player*>(this)->isTargetCreated = true;
+						}
 					}
 
 					if (name == "destroyed")
@@ -745,7 +748,7 @@ void Entity::takeDamageByArea(String map[], Entity *e)
 			this->hitPoints = 0;
 	
 		for (int i = b.top / 32 - b.height / 1.1 / 32; i < b.top / 32 + b.height / 1.1 / 32; i++)
-			for (int j = b.left / 32 - b.width / 2 / 32; j < b.left / 32 + b.width / 2 / 32; j++)
+			for (int j = b.left / 32 - b.width / 15 / 32; j < b.left / 32 + b.width / 32; j++)
 			{
 				if (i > 0 && j > 0)
 					if (map[i][j] == 'b' || map[i][j] == 'F')
