@@ -7,6 +7,7 @@
 #include "Shell.h"
 
 #include "Enemy.h"
+#include "Area.h"
 
 using namespace sf;
 
@@ -731,4 +732,24 @@ extern View view;
 float Entity::getViewCoordY()
 {
 	return view.getCenter().y;
+}
+
+void Entity::takeDamageByArea(String map[], Entity *e)
+{
+	if (this->name == "tank" && e->name == "destructionZone")
+	{
+		FloatRect a = this->anim.sprite.getGlobalBounds();
+		FloatRect b = static_cast<Area*>(e)->area.getGlobalBounds();
+
+		if (a.intersects(b))
+			this->hitPoints = 0;
+	
+		for (int i = b.top / 32 - b.height / 1.1 / 32; i < b.top / 32 + b.height / 1.1 / 32; i++)
+			for (int j = b.left / 32 - b.width / 2 / 32; j < b.left / 32 + b.width / 2 / 32; j++)
+			{
+				if (i > 0 && j > 0)
+					if (map[i][j] == 'b' || map[i][j] == 'F')
+						map[i][j] = ' ';
+			}
+	}
 }

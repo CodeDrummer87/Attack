@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClCompile Include="Air.cpp" />
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Area.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -151,6 +152,7 @@
   <ItemGroup>
     <ClInclude Include="Air.h" />
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Area.h" />
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="ChapterFinale.h" />
     <ClInclude Include="Enemy.h" />

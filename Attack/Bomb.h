@@ -14,6 +14,7 @@ private:
 	Animation animSpare;
 public:
 	static FirstBomb firstBomb;
+	bool coordsTransmitted;
 
 	//.:: Constructors :::::::::::::::::::::
 	Bomb();

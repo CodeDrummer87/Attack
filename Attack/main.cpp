@@ -22,6 +22,8 @@
 #include "Plane.h"
 #include "Bomb.h"
 
+#include "Area.h"
+
 int main()
 {
 	using namespace std;
@@ -783,6 +785,17 @@ int main()
 						airEntities.push_back(bomb);
 					}
 				}
+
+				if (e->name == "explosion" && !static_cast<Bomb*>(e)->coordsTransmitted)
+				{
+					static_cast<Bomb*>(e)->coordsTransmitted = true;
+
+					double x = e->getCoordX(false);
+					double y = e->getCoordY(false);
+
+					Area *area = new Area(x, y, (float)150, e, "destructionZone");
+					entities.push_back(area);
+				}
 			}
 
 			//.:: The camera shows time scenes
@@ -839,6 +852,8 @@ int main()
 							if (a->name == "shell" && b->name == "tank")
 								a->damageEntity(b, sArmor);
 					}
+					if (a->name == "tank" && b->name == "destructionZone")
+						a->takeDamageByArea(FirstStage, b);
 				}
 
 			//.:: Clearing the list of enemies

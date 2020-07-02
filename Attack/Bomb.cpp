@@ -21,6 +21,8 @@ Bomb::Bomb(Animation &a, Animation &b, double X, double Y, string name_)
 		firstBomb.openPosition = true;
 		firstBomb.bomb = this;
 	}
+
+	coordsTransmitted = false;
 }
 
 Bomb::~Bomb()
@@ -42,6 +44,7 @@ void Bomb::update(double time)
 
 			status = WOUNDED;
 			anim = animSpare;
+			name = "explosion";
 			anim.sprite.setScale(2.f, 2.f);
 		}
 	}
