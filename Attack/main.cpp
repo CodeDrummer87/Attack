@@ -78,8 +78,8 @@ int main()
 #pragma region Images
 
 		Image iBurgundyTank, iYellowTank, iPurpleTank, iLightBlueTank, iHemoTank,
-			iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iMap, iIcon, iDrowning, iTarget,
-			iAirStrikeZone, iAirBomb, iBombExplosion;
+			iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iMap, iIcon, iDrowning,
+			iTarget, iAirStrikeZone, iAirBomb, iBombExplosion;
 
 		iBurgundyTank.loadFromFile("source/images/models/tanks/players/burgundyTank.png");
 		iBurgundyTank.createMaskFromColor(Color::White);
@@ -108,6 +108,9 @@ int main()
 		iEnemy_4.loadFromFile("source/images/models/tanks/enemies/enemy_4.png");
 		iEnemy_4.createMaskFromColor(Color::White);
 
+		iEnemy_5.loadFromFile("source/images/models/tanks/enemies/enemy_5.png");
+		iEnemy_5.createMaskFromColor(Color::White);
+
 		iMap.loadFromFile("source/images/map.png");
 		iMap.createMaskFromColor(Color::White);
 
@@ -134,7 +137,7 @@ int main()
 #pragma region Textures
 
 		Texture bTank, yTank, pTank, lbTank, hTank, tTankRound, tShell, tShellExp, tSmoke,
-			tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tRank, tMap, tIcon, tDrowning,
+			tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tRank, tMap, tIcon, tDrowning,
 			tFighter, tTarget, tAirStrikeZone, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion;
 
 		bTank.loadFromImage(iBurgundyTank);
@@ -150,6 +153,7 @@ int main()
 		tEnemy_2.loadFromImage(iEnemy_2);
 		tEnemy_3.loadFromImage(iEnemy_3);
 		tEnemy_4.loadFromImage(iEnemy_4);
+		tEnemy_5.loadFromImage(iEnemy_5);
 		tRank.loadFromFile("source/images/attributes/ranks.png");
 		tMap.loadFromImage(iMap);
 		tIcon.loadFromImage(iIcon);
@@ -245,6 +249,9 @@ int main()
 		Animation enemy_4(tEnemy_4, 0, 0, 64, 64, 0.016, 2);
 		Animation explosion_enemy_4(tEnemy_4, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 
+		Animation enemy_5(tEnemy_5, 0, 0, 64, 64, 0.016, 2);
+		Animation explosion_enemy_5(tEnemy_5, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+
 		Animation map(tMap, 0, 64, 32, 32, 0.003, 4);
 		Animation iconRepair(tIcon, 0, 0, 32, 32, 0.01, 22);
 		Animation iconPreferment(tIcon, 0, 32, 32, 32, 0.02, 22);
@@ -301,7 +308,7 @@ int main()
 		}
 
 		//.:: Enemies ::: 
-		const int eTanks = 36;
+		const int eTanks = 45;
 
 		vector<Enemy*> squad;
 		int enemyPositionX = 70;
@@ -310,10 +317,12 @@ int main()
 		{
 			Enemy *enemy;
 			if (i <= 9)
-				enemy = new Enemy(enemy_4, explosion_enemy_4, enemyPositionX, enemyPositionY, 3, 4);
+				enemy = new Enemy(enemy_5, explosion_enemy_5, enemyPositionX, enemyPositionY, 3, 5);
 			else if (i > 9 && i <= 18)
-				enemy = new Enemy(enemy_3, explosion_enemy_3, enemyPositionX, enemyPositionY, 3, 3);
+				enemy = new Enemy(enemy_4, explosion_enemy_4, enemyPositionX, enemyPositionY, 3, 4);
 			else if (i > 18 && i <= 27)
+				enemy = new Enemy(enemy_3, explosion_enemy_3, enemyPositionX, enemyPositionY, 3, 3);
+			else if (i > 27 && i <= 36)
 				enemy = new Enemy(enemy_2, explosion_enemy_2, enemyPositionX, enemyPositionY, 3, 2);
 			else
 				enemy = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, enemyPositionY, 3, 1);
@@ -322,7 +331,7 @@ int main()
 			squad.push_back(enemy);
 
 			enemyPositionX += 200;
-			if (i == 9 || i == 18 || i == 27)
+			if (i == 9 || i == 18 || i == 27 || i == 36)
 			{
 				enemyPositionX = 100;
 				enemyPositionY += 400;
