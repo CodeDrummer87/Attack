@@ -17,4 +17,5 @@ public:
 
 	//.:: Methods_of_class :::::::::::::::::
 	void update(double);
+	Entity* getOwn();
 };

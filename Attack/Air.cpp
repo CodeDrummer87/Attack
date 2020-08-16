@@ -43,3 +43,8 @@ void Air::update(double time)
 		}
 	}
 }
+
+Entity* Air::getOwn()
+{
+	return own;
+}

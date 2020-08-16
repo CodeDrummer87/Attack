@@ -331,7 +331,7 @@ int main()
 			squad.push_back(enemy);
 
 			enemyPositionX += 200;
-			if (i == 9 || i == 18 || i == 27 || i == 36)
+			if (i != 0 && i % 9 == 0)
 			{
 				enemyPositionX = 100;
 				enemyPositionY += 400;
@@ -505,6 +505,26 @@ int main()
 						
 						if (Tank::cameraIsNotFree)
 							setViewCoordinates(sizeX, sizeY, p->xTargetPosition, p->yTargetPosition);
+
+						//.:: A death in spotter mode :::
+						if (p->hitPoints <= 0)
+						{
+							p->isAirSpotter = false;
+							Tank::cameraIsNotFree = false;
+							if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
+							{
+								sAirStrikeQuery.stop();
+							}
+
+							for (auto a : airEntities)
+							{
+								if (a->name == "target" && static_cast<Air*>(a)->getOwn() == p)
+								{
+									a->isExist = false;
+									break;
+								}
+							}
+						}
 					}
 
 					//.:: Set View ::::::::::::::
