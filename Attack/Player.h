@@ -21,7 +21,7 @@ public:
 
 	//.:: Constructors :::::::::::::::::::::
 	Player();
-	Player(Animation&, Animation&, double, double, int, int);
+	Player(Animation&, Animation&, double, double, int, int, const int, const int);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Player();

@@ -12,7 +12,7 @@ public:
 
 	//.:: Constructors ::::::::::::::::::::::
 	Enemy();
-	Enemy(Animation&, Animation&, int, int, int, int);
+	Enemy(Animation&, Animation&, int, int, int, int, const int, const int);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Enemy();

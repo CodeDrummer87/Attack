@@ -279,16 +279,29 @@ int main()
 
 		int a1, a2, b1, b2, c1, c2, d1, d2, e1, e2;
 		a1 = a2 = b1 = b2 = c1 = c2 = d1 = d2 = e1 = e2 = 0;
-
+		
 		switch (numberOfPlayers)
 		{
-		case 1: a1 = 950; a2 = 2050; break;
-		case 2: a1 = 870; a2 = 2050; b1 = 1030; b2 = 2050; break;
-		case 3: a1 = 870; a2 = 2050; b1 = 950; b2 = 2000; c1 = 1030; c2 = 2050; break;
-		case 4: a1 = 810; a2 = 2050; b1 = 890; b2 = 2000;
-			c1 = 1010; c2 = 2000; d1 = 1090; d2 = 2050; break;
-		case 5: a1 = 790; a2 = 2100; b1 = 870; b2 = 2050; c1 = 950; c2 = 2000; 
-			d1 = 1030; d2 = 2050; e1 = 1110; e2 = 2100; break;
+		case 1: a1 = 950; a2 = H * 32 - 126;
+				break;
+		case 2: a1 = 870; a2 = H * 32 - 126;
+				b1 = 1030; b2 = H * 32 - 126;
+				break;
+		case 3: a1 = 870; a2 = H * 32 - 126;
+				b1 = 950; b2 = H * 32 - 176;
+				c1 = 1030; c2 = H * 32 - 126;
+				break;
+		case 4: a1 = 810; a2 = H * 32 - 126;
+				b1 = 890; b2 = H * 32 - 176;
+				c1 = 1010; c2 = H * 32 - 176;
+				d1 = 1090; d2 = H * 32 - 126;
+				break;
+		case 5: a1 = 790; a2 = H * 32 - 76;
+				b1 = 870; b2 = H * 32 - 126;
+				c1 = 950; c2 = H * 32 - 176;
+				d1 = 1030; d2 = H * 32 - 126;
+				e1 = 1110; e2 = H * 32 - 76;
+				break;
 		}
 
 		for (int i = 0; i < numberOfPlayers; i++)
@@ -296,11 +309,11 @@ int main()
 			Player *player;
 			switch (i)
 			{
-			case 0: player = new Player(burgundy_tank, explosion_burg_tank, a1, a2, 1, 1); break;
-			case 1: player = new Player(yellow_tank, explosion_yel_tank, b1, b2, 1, 1); break;
-			case 2: player = new Player(purple_tank, explosion_purp_tank, c1, c2, 1, 1); break;
-			case 3: player = new Player(lightblue_tank, explosion_lb_tank, d1, d2, 1, 1); break;
-			case 4: player = new Player(hemo_tank, explosion_hemo_tank, e1, e2, 1, 1); break;
+			case 0: player = new Player(burgundy_tank, explosion_burg_tank, a1, a2, 1, 1, W, H); break;
+			case 1: player = new Player(yellow_tank, explosion_yel_tank, b1, b2, 1, 1, W, H); break;
+			case 2: player = new Player(purple_tank, explosion_purp_tank, c1, c2, 1, 1, W, H); break;
+			case 3: player = new Player(lightblue_tank, explosion_lb_tank, d1, d2, 1, 1, W, H); break;
+			case 4: player = new Player(hemo_tank, explosion_hemo_tank, e1, e2, 1, 1, W, H); break;
 			}
 
 			team.push_back(player);
@@ -317,15 +330,15 @@ int main()
 		{
 			Enemy *enemy;
 			if (i <= 9)
-				enemy = new Enemy(enemy_5, explosion_enemy_5, enemyPositionX, enemyPositionY, 3, 5);
+				enemy = new Enemy(enemy_5, explosion_enemy_5, enemyPositionX, enemyPositionY, 3, 6, W, H);
 			else if (i > 9 && i <= 18)
-				enemy = new Enemy(enemy_4, explosion_enemy_4, enemyPositionX, enemyPositionY, 3, 4);
+				enemy = new Enemy(enemy_4, explosion_enemy_4, enemyPositionX, enemyPositionY, 3, 5, W, H);
 			else if (i > 18 && i <= 27)
-				enemy = new Enemy(enemy_3, explosion_enemy_3, enemyPositionX, enemyPositionY, 3, 3);
+				enemy = new Enemy(enemy_3, explosion_enemy_3, enemyPositionX, enemyPositionY, 3, 4, W, H);
 			else if (i > 27 && i <= 36)
-				enemy = new Enemy(enemy_2, explosion_enemy_2, enemyPositionX, enemyPositionY, 3, 2);
+				enemy = new Enemy(enemy_2, explosion_enemy_2, enemyPositionX, enemyPositionY, 3, 3, W, H);
 			else
-				enemy = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, enemyPositionY, 3, 1);
+				enemy = new Enemy(enemy_1, explosion_enemy_1, enemyPositionX, enemyPositionY, 3, 1, W, H);
 
 			entities.push_back(enemy);
 			squad.push_back(enemy);

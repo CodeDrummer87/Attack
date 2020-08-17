@@ -2,8 +2,8 @@
 
 Player::Player() {}
 
-Player::Player(Animation &a, Animation &b, double X, double Y, int dir_, int lvl)
-	: Tank(a, b, X, Y, dir_, lvl)
+Player::Player(Animation &a, Animation &b, double X, double Y, int dir_, int lvl, const int W, const int H)
+	: Tank(a, b, X, Y, dir_, lvl, W, H)
 {
 	army = "player";
 	totalKills = currentExperience = 0;
@@ -59,19 +59,19 @@ void Player::update(double time)
 		{
 			xTargetPosition = 200;
 		}
-		else if (xTargetPosition > 61 * 32 - 200)	//.:: const int W = 61 (FirstStage.h)
+		else if (xTargetPosition > mapWidth - 200)
 		{
-			xTargetPosition = 61 * 32 - 200;
+			xTargetPosition = mapWidth - 200;
 		}
 
 		yTargetPosition += dy * 5;
-		if (yTargetPosition < 200)
+		if (yTargetPosition < 200 + 34 * 32)	// Screen height is equal 34 squares (32px, 32px)
 		{
-			yTargetPosition = 200;
+			yTargetPosition = 200 + 34 * 32;
 		}
-		else if (yTargetPosition > 68 * 32 - 200)	//.:: const int H = 68 (FirstStage.h)
+		else if (yTargetPosition > mapHeight - 200)
 		{
-			yTargetPosition = 68 * 32 - 200;
+			yTargetPosition = mapHeight - 200;
 		}
 		dx = dy = 0;
 	}

@@ -7,7 +7,7 @@ using namespace sf;
 
 Tank::Tank() {}
 
-Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, int lvl)
+Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, int lvl, const int W, const int H)
 {
 	tokenId = ++counter;
 	name = "tank";
@@ -28,6 +28,9 @@ Tank::Tank(Animation &a, Animation &b, int X, int Y, int dir_, int lvl)
 
 	level = lvl;
 	hitPoints = 1 + level;
+
+	mapWidth = W * 32;
+	mapHeight = H * 32;
 }
 
 bool Tank::cameraIsNotFree = false;

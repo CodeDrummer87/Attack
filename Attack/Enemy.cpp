@@ -2,8 +2,8 @@
 
 Enemy::Enemy() {}
 
-Enemy::Enemy(Animation &a, Animation &b, int X, int Y, int dir_, int lvl)
-	: Tank(a, b, X, Y, dir_, lvl)
+Enemy::Enemy(Animation &a, Animation &b, int X, int Y, int dir_, int lvl, const int W, const int H)
+	: Tank(a, b, X, Y, dir_, lvl, W, H)
 {
 	dir = rand() % 4 + 1;
 	army = "enemy";

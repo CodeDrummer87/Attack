@@ -10,6 +10,11 @@ private:
 	Animation aTankExplosion;
 	bool destroyed;
 	bool transition;
+
+protected:
+	int mapWidth;
+	int mapHeight;
+
 public:
 	bool isShot;
 	bool isSmoking;
@@ -20,7 +25,7 @@ public:
 
 	//.:: Constructors :::::::::::::::::::::
 	Tank();
-	Tank(Animation&, Animation&, int, int, int, int);
+	Tank(Animation&, Animation&, int, int, int, int, const int, const int);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Tank();
