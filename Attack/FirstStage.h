@@ -10,12 +10,12 @@ const int W = 61;
 String FirstStage[H] = 
 {
 	"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
-	"B                                                           B",
-	"B                                                           B",
-	"B                                                           B",
-	"B                                                           B",
-	"B                                                           B",
-	"B                                                           B",
+	"BFFFFFFWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWFFFFFFB",
+	"BFFFFFWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWFFFFFB",
+	"BFFFF                                                   FFFFB",
+	"BFFF                                                     FFFB",
+	"BFF                                                       FFB",
+	"BF                                                         FB",
 	"B                                                           B",
 	"B                                                           B",
 	"B                                                           B",
