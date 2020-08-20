@@ -554,7 +554,7 @@ void Entity::getCollision(String map[], Sound &sound)
 			for (int i = (anim.getRect(dir).top + 15) / 32; i < (y + anim.getRect(dir).height) / 32; i++)
 				for (int j = (anim.getRect(dir).left + 14) / 32; j < (x + anim.getRect(dir).width) / 32; j++)
 				{
-					//.:: Enemy tanks destroy brick walls :::
+					//.:: Enemy tanks destroys brick walls :::
 					if (name == "tank" && army == "enemy" && !this->checkObstacles(map, 'b'))
 					{
 						if (!static_cast<Enemy*>(this)->round)
