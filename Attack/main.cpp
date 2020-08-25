@@ -187,7 +187,7 @@ int main()
 			burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf,
 			shellExpBuf, enemy_1Buf, en_1RoundBuf, armorBuf, prefermentBuf,
 			takingIconBuf, drowningBuf, laughBuf, airstrikeQueryBuf, fighterFlightBuf,
-			airstrikeConfirmBuf, bombWhistleBuf, bombExplosionBuf;
+			airstrikeConfirmBuf, bombWhistleBuf, bombExplosionBuf, player_hurtBuf;
 
 		bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
 		yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
@@ -209,15 +209,18 @@ int main()
 		airstrikeConfirmBuf.loadFromFile("source/sounds/effects/airstrike_confirmation.ogg");
 		bombWhistleBuf.loadFromFile("source/sounds/effects/bombWhistle.ogg");
 		bombExplosionBuf.loadFromFile("source/sounds/explosion/bomb_explosion.ogg");
+		player_hurtBuf.loadFromFile("source/sounds/tank/player_hurt.ogg");
 
 		Sound enemy_move, sArmor, sPreferment, sTakingIcon,
-			sLaugh(laughBuf), sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm;
+			sLaugh(laughBuf), sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm,
+			sPlayer_hurt;
 
 		enemy_move.setBuffer(enemy_1Buf);		enemy_move.setLoop(true);
 		sArmor.setBuffer(armorBuf);				sArmor.setLoop(false);
 		sPreferment.setBuffer(prefermentBuf);	sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
 		sTakingIcon.setBuffer(takingIconBuf);	sTakingIcon.setLoop(false);
 		sAirStrikeConfirm.setBuffer(airstrikeConfirmBuf); sAirStrikeConfirm.setLoop(false); sAirStrikeConfirm.setVolume(50.f);
+		sPlayer_hurt.setBuffer(player_hurtBuf); sPlayer_hurt.setLoop(false);
 
 		Music chapter_finale;
 		chapter_finale.openFromFile("source/sounds/music/chapter_finale.ogg");
@@ -428,16 +431,37 @@ int main()
 				if (event.type == Event::KeyPressed && !battleIsOver)
 				{
 					Player *currentPlayer = NULL;
+					Animation roundAnimation;
 
-					if (event.key.code == Keyboard::LControl) currentPlayer = team[0];
+					if (event.key.code == Keyboard::LControl)
+					{
+						currentPlayer = team[0];
+						roundAnimation = aBurgTankRound;
+					}
 					if (numberOfPlayers > 1)
-						if (event.key.code == Keyboard::Space) currentPlayer = team[1];
+						if (event.key.code == Keyboard::Space)
+						{
+							currentPlayer = team[1];
+							roundAnimation = aYelTankRound;
+						}
 					if (numberOfPlayers > 2)
-						if (event.key.code == Keyboard::Enter) currentPlayer = team[2];
+						if (event.key.code == Keyboard::Enter)
+						{
+							currentPlayer = team[2];
+							roundAnimation = aPurpTankRound;
+						}
 					if (numberOfPlayers > 3)
-						if (event.key.code == Keyboard::RControl) currentPlayer = team[3];
+						if (event.key.code == Keyboard::RControl)
+						{
+							currentPlayer = team[3];
+							roundAnimation = aYelTankRound;
+						}
 					if (numberOfPlayers > 4)
-						if (event.key.code == Keyboard::Numpad7) currentPlayer = team[4];
+						if (event.key.code == Keyboard::Numpad7)
+						{
+							currentPlayer = team[4];
+							roundAnimation = aBurgTankRound;
+						}
 
 					if (currentPlayer != NULL)
 					{
@@ -449,7 +473,7 @@ int main()
 								{
 									currentPlayer->isShot = false;
 
-									Entity *round = new Entity(aBurgTankRound, currentPlayer, "explosion");
+									Entity *round = new Entity(roundAnimation, currentPlayer, "explosion");
 									Shell *shell = new Shell(aShell, aShellExp, currentPlayer);
 									entities.push_back(round);
 									entities.push_back(shell);
@@ -510,6 +534,7 @@ int main()
 					{
 						if (!p->isSmoking)
 						{
+							sPlayer_hurt.play();
 							p->isSmoking = true;
 							Entity * smoke = new Entity(aSmoke, p, "smoke");
 							entities.push_back(smoke);

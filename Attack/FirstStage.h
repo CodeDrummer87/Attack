@@ -110,7 +110,7 @@ String FirstStage[H] =
 	"BbbbWWWWbUbWWWWWWWbb      bbbbbbb        bbWWWWWWWbUbWWWWbbbB",
 	"B                            B                              B",
 	"B                            B                              B",
-	"B            BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB             B",
+	"B            BBBBBBBBBBBB    B    BBBBBBBBBBBBB             B",
 	"B                                                           B",
 	"B                            C                              B",
 	"B                                                           B",
