@@ -2,19 +2,28 @@
 
 int main()
 {
-	using namespace sf;
+	//.:: Temporary code :::
+	int sizeX = GetSystemMetrics(SM_CXSCREEN);
+	int sizeY = GetSystemMetrics(SM_CYSCREEN);
 
-	RenderWindow app(VideoMode(700, 500), "Attack", Style::Close);
+	if (sizeX != 1280 && sizeY != 1024)
+	{
+		sizeX = 1920;
+		sizeY = 1080;
+	}
+	//::::::::::::::::::::::
+
+	RenderWindow app(VideoMode(sizeX, sizeY), "Attack", Style::Fullscreen);
 	CircleShape shape(100.f);
 	shape.setFillColor(Color::Red);
-
+	shape.setPosition(sizeX /2, sizeY /2);
 
 	while (app.isOpen())
 	{
 		Event event;
 		while (app.pollEvent(event))
 		{
-			if (event.type == Event::Closed)
+			if (event.key.code == Keyboard::Escape)
 				app.close();
 		}
 

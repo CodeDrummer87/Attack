@@ -10,7 +10,7 @@ public:
 	Sprite sprite;
 	Sound sound;
 
-	std::vector<IntRect> frames;
+	vector<IntRect> frames;
 
 	//.:: Constructors :::
 	Animation();
