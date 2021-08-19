@@ -26,5 +26,8 @@
     <ClInclude Include="Animation.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="libraries.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

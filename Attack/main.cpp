@@ -1,4 +1,4 @@
-#include <SFML\Graphics.hpp>
+#include "Animation.h"
 
 int main()
 {
