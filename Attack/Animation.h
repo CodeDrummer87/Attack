@@ -14,6 +14,7 @@ public:
 
 	//.:: Constructors :::
 	Animation();
+	Animation(Texture&, int, int, int, int, double, int);
 	Animation(Texture&, SoundBuffer&, int, int, int, int, double, int);
 
 	//.:: Destructor :::

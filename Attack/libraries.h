@@ -6,6 +6,9 @@
 #include <SFML\System.hpp>
 
 #include <Windows.h>
+#include <vector>
+
+#include <iostream>
 
 using namespace sf;
 using namespace std;
