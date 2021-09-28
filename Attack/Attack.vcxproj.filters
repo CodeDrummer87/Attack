@@ -91,5 +91,8 @@
     <ClInclude Include="stage_20.h">
       <Filter>Файлы заголовков\maps</Filter>
     </ClInclude>
+    <ClInclude Include="View.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
