@@ -1,8 +1,11 @@
 #include "Animation.h"
 #include "maps.h"
 
+#include "View.h"
+
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
+//:::::::::::::::::
 
 enum AppMode { OPTIONS, GAME, SCORING, ENDGAME };
 AppMode mode = OPTIONS;
@@ -168,6 +171,12 @@ int main()
 	app.setMouseCursorVisible(false);
 	app.setKeyRepeatEnabled(false);
 
+	view.reset(FloatRect(0, 0, (float)sizeX, (float)sizeY));
+
+	//.:: temporary code:::
+	double viewPosX = sizeX / 2, viewPosY = mapsHeight[0] * 32 - sizeY / 2;
+	//.::::::::::::::::::::
+
 	Clock clock;
 
 	Clock gameTimeClock;
@@ -296,7 +305,6 @@ int main()
 							}
 						}
 					}
-					//:::::::::::::::::::::::
 				}
 
 #pragma endregion
@@ -315,6 +323,26 @@ int main()
 
 #pragma endregion
 
+			}
+
+			if (mode == GAME)
+			{
+				//.:: Temporary code: view moving :::
+				if (Keyboard::isKeyPressed(Keyboard::Up))
+				{
+					if (viewPosY > sizeY/2)
+						viewPosY -= 10;
+				}
+
+				if (Keyboard::isKeyPressed(Keyboard::Down))
+				{
+					if (viewPosY < mapsHeight[0]*32-sizeY/2)
+						viewPosY += 10;
+				}
+				//:::::::::::::::::::::::
+
+				setViewCoordinates(sizeX, sizeY, viewPosX, viewPosY, index);
+				app.setView(view);
 			}
 
 			if (mode == OPTIONS)

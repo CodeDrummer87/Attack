@@ -162,6 +162,7 @@
     <ClInclude Include="stage_18.h" />
     <ClInclude Include="stage_19.h" />
     <ClInclude Include="stage_20.h" />
+    <ClInclude Include="View.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
