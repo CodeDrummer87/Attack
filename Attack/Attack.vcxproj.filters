@@ -9,6 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="Файлы заголовков\maps">
+      <UniqueIdentifier>{d5f24cdf-22b0-4596-90ae-76cdb5b59829}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,6 +27,69 @@
     </ClInclude>
     <ClInclude Include="libraries.h">
       <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_01.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_02.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="maps.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_03.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_04.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_05.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_06.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_07.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_08.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_09.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_10.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_11.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_12.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_13.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_14.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_15.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_16.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_17.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_18.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_19.h">
+      <Filter>Файлы заголовков\maps</Filter>
+    </ClInclude>
+    <ClInclude Include="stage_20.h">
+      <Filter>Файлы заголовков\maps</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

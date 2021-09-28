@@ -4,6 +4,19 @@
 
 Animation::Animation() {}
 
+Animation::Animation(Texture& t, int x, int y, int width, int height, double animSpeed, int count)
+{
+	frame = 0;
+	speed = animSpeed;
+
+	for (int i = 0; i < count; i++)
+		frames.push_back(IntRect(x + i * width, y, width, height));
+
+	sprite.setTexture(t);
+	sprite.setOrigin(width / 2, height / 2);
+	sprite.setTextureRect(frames[0]);
+}
+
 Animation::Animation(Texture& t, SoundBuffer& b, int x, int y, int width, int height, double animSpeed, int count)
 {
 	frame = 0;

@@ -141,6 +141,27 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="libraries.h" />
+    <ClInclude Include="maps.h" />
+    <ClInclude Include="stage_01.h" />
+    <ClInclude Include="stage_02.h" />
+    <ClInclude Include="stage_03.h" />
+    <ClInclude Include="stage_04.h" />
+    <ClInclude Include="stage_05.h" />
+    <ClInclude Include="stage_06.h" />
+    <ClInclude Include="stage_07.h" />
+    <ClInclude Include="stage_08.h" />
+    <ClInclude Include="stage_09.h" />
+    <ClInclude Include="stage_10.h" />
+    <ClInclude Include="stage_11.h" />
+    <ClInclude Include="stage_12.h" />
+    <ClInclude Include="stage_13.h" />
+    <ClInclude Include="stage_14.h" />
+    <ClInclude Include="stage_15.h" />
+    <ClInclude Include="stage_16.h" />
+    <ClInclude Include="stage_17.h" />
+    <ClInclude Include="stage_18.h" />
+    <ClInclude Include="stage_19.h" />
+    <ClInclude Include="stage_20.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
