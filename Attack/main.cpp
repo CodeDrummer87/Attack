@@ -2,6 +2,7 @@
 #include "maps.h"
 
 #include "View.h"
+#include "Entity.h"
 
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
