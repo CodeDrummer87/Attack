@@ -15,13 +15,13 @@ public:
 	bool isPlayAnimation;
 	bool isExist;
 
-	//.:: Constructor :::
+	//.:: Constructor :::::::::::::::::::::::
 	Entity();
 	Entity(Animation&, double, double, string, int, bool); //.:: anim, x, y, name, dir, isPlayAnimation
 
-	//.:: Destructor :::
+	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Entity();
 
-	//.:: Methods_of_class :::
+	//.:: Methods_of_class  :::::::::::::::::
 
 };
