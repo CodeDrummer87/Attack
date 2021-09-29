@@ -2,6 +2,7 @@
 #include "maps.h"
 
 #include "View.h"
+#include "Entity.h"
 
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
@@ -301,6 +302,7 @@ int main()
 							isUpd = true;
 							if (index + 1 != maps.size())
 							{
+								view.setCenter(float(sizeX / 2), float(sizeY / 2));
 								mode = SCORING;
 							}
 						}
@@ -317,6 +319,8 @@ int main()
 					{
 						++index;
 						isUpd = false;
+						viewPosX = sizeX / 2;
+						viewPosY = mapsHeight[0] * 32 - sizeY / 2;
 						mode = GAME;
 					}
 				}
@@ -345,6 +349,9 @@ int main()
 				app.setView(view);
 			}
 
+			if (mode == SCORING)
+				app.setView(view);
+			
 			if (mode == OPTIONS)
 				star->update(1, true, 0);
 
