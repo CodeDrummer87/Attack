@@ -26,3 +26,39 @@ void Entity::draw(RenderWindow &app)
 	anim.sprite.setPosition(x, y);
 	app.draw(anim.sprite);
 }
+
+double Entity::getCoordX(bool isShell)
+{
+	double xCoordinate = x;
+
+	if (isShell)
+	{
+		switch (dir)
+		{
+		case 1: xCoordinate; break;
+		case 2: xCoordinate += 42; break;
+		case 3: xCoordinate; break;
+		case 4: xCoordinate -= 42; break;
+		}
+	}
+
+	return xCoordinate;
+}
+
+double Entity::getCoordY(bool isShell)
+{
+	double yCoordinate = y;
+
+	if (isShell)
+	{
+		switch (dir)
+		{
+		case 1: yCoordinate -= 42; break;
+		case 2: yCoordinate; break;
+		case 3: yCoordinate += 42; break;
+		case 4: yCoordinate; break;
+		}
+	}
+
+	return yCoordinate;
+}

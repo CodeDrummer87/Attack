@@ -2,8 +2,6 @@
 
 #include "Entity.h"
 
-enum Status { DEAD, ALIVE, WOUNDED };
-
 struct Ban
 {
 	bool dir;	//.:: Direction open / close
@@ -31,9 +29,6 @@ protected:
 
 public:
 	int hitPoints;
-	int level;
-	Status status;
-	string army;
 	Traffic traffic;
 	bool isShot;
 	bool isSmoking;

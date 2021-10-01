@@ -2,14 +2,19 @@
 
 #include "Animation.h"
 
+enum Status { DEAD, ALIVE, WOUNDED };
+
 class Entity
 {
 protected:
 	double x, y, dx, dy;
 
 public:
+	int level;
 	string name;
-	int dir;	
+	string army;
+	int dir;
+	Status status;
 
 	Animation anim;
 	bool isPlayAnimation;
@@ -25,5 +30,8 @@ public:
 	//.:: Methods_of_class  :::::::::::::::::
 	virtual void update(double);
 	virtual void draw(RenderWindow&);
+
+	double getCoordX(bool);
+	double getCoordY(bool);
 
 };
