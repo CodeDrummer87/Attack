@@ -23,5 +23,7 @@ public:
 	virtual ~Entity();
 
 	//.:: Methods_of_class  :::::::::::::::::
+	virtual void update(double);
+	virtual void draw(RenderWindow&);
 
 };
