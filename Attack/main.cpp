@@ -76,25 +76,25 @@ int main()
 
 	//.:: For game start :::
 	SoundBuffer startBuf;
-	startBuf.loadFromFile("source/sounds/effects/start_game/start.ogg");
+	startBuf.loadFromFile("source/sounds/effects/start_game/start.flac");
 	Sound start(startBuf);
 
 	SoundBuffer choiceBuf, screamBuf;
-	choiceBuf.loadFromFile("source/sounds/effects/start_game/choose_number_of_players.ogg");
-	screamBuf.loadFromFile("source/sounds/effects/start_game/scream.ogg");
+	choiceBuf.loadFromFile("source/sounds/effects/start_game/choose_number_of_players.flac");
+	screamBuf.loadFromFile("source/sounds/effects/start_game/scream.flac");
 
 	Sound *choice = new Sound(choiceBuf), *scream = new Sound(screamBuf);
 
 	Music *main_theme = new Music();
-	main_theme->openFromFile("source/sounds/music/main_theme.ogg");
+	main_theme->openFromFile("source/sounds/music/main_theme.flac");
 	//::::::::::::::::::::::
 
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf;
 
-	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
-	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
-	pTankBuf.loadFromFile("source/sounds/tank/movement/move_3.ogg");
-	tankExpBuf.loadFromFile("source/sounds/tank/explosion/tank_explosion.ogg");
+	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
+	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
+	pTankBuf.loadFromFile("source/sounds/tank/movement/move_3.flac");
+	tankExpBuf.loadFromFile("source/sounds/tank/explosion/tank_explosion.flac");
 
 #pragma endregion
 
