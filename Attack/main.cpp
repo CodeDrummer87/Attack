@@ -177,6 +177,10 @@ int main()
 	bool isGamePlay = true;
 	int numberOfPlayers = 1;
 	int index = 0;	//.:: for maps vector
+	//.:: For end battle :::
+	bool battleIsOver = false;
+	int lastSecondsOfChapter = 0;
+	//::::::::::::::::::::::
 
 	main_theme->setVolume(70.f);
 	main_theme->play();
@@ -407,6 +411,83 @@ int main()
 						viewPosY += 10;
 				}
 				//:::::::::::::::::::::::
+
+#pragma region Players control
+
+				if (!battleIsOver)
+				{
+#pragma region First Player control
+
+					if (team[0]->status != DEAD)
+					{
+						if (Joystick::isConnected(0))
+						{
+							double x = Joystick::getAxisPosition(0, Joystick::X);
+							double y = Joystick::getAxisPosition(0, Joystick::Y);
+							if (x == -100)
+							{
+								team[0]->accelerate(4, -0.09 * time);
+							}
+							else if (x == 100)
+							{
+								team[0]->accelerate(2, 0.09 * time);
+							}
+							else if (y == -100)
+							{
+								team[0]->accelerate(1, -0.09 * time);
+							}
+							else if (y == 100)
+							{
+								team[0]->accelerate(3, 0.09 * time);
+							}
+							else
+								team[0]->isPlayAnimation = false;
+						}
+						else
+						{
+							if (Keyboard::isKeyPressed(Keyboard::W))
+							{
+								team[0]->accelerate(1, -0.09 * time);
+							}
+							else if (Keyboard::isKeyPressed(Keyboard::D))
+							{
+								team[0]->accelerate(2, 0.09 * time);
+							}
+							else if (Keyboard::isKeyPressed(Keyboard::S))
+							{
+								team[0]->accelerate(3, 0.09 * time);
+							}
+							else if (Keyboard::isKeyPressed(Keyboard::A))
+							{
+								team[0]->accelerate(4, -0.09 * time);
+							}
+							else team[0]->isPlayAnimation = false;
+						}
+					}
+
+#pragma endregion
+				}
+				else
+					for (auto p : team)
+						if (p->isPlayAnimation)
+							p->isPlayAnimation = false;
+
+#pragma endregion
+
+				//.:: update entities :::
+				for (auto i = entities.begin(); i != entities.end();)
+				{
+					Entity* e = *i;
+					e->update(time);
+					e->anim.update(time, e->isPlayAnimation, e->dir);
+
+					if (e->isExist == false)
+					{
+						i = entities.erase(i);
+						delete e;
+					}
+					else i++;
+				}
 
 				setViewCoordinates(sizeX, sizeY, viewPosX, viewPosY, index);
 				app.setView(view);

@@ -4,10 +4,25 @@
 
 enum Status { DEAD, ALIVE, WOUNDED };
 
+struct Ban
+{
+	bool dir;	//.:: Direction open / close
+	int barId;	//.:: Barrier ID (if Direction is close)
+};
+
+struct Traffic
+{
+	Ban up;
+	Ban right;
+	Ban down;
+	Ban left;
+};
+
 class Tank : public Entity
 {
 private:
 	bool isTransition;
+	double toUp, toRight, toDown, toLeft;
 
 protected:
 	static int counter;
@@ -19,6 +34,7 @@ public:
 	int level;
 	Status status;
 	string army;
+	Traffic traffic;
 	bool isShot;
 	bool isSmoking;
 
@@ -31,5 +47,6 @@ public:
 
 	//.:: Methods_of_class ::::::::::::::::::
 	void update(double);
+	void accelerate(int, double);
 
 };

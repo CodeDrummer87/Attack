@@ -17,6 +17,12 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 	isShot = true;
 	isSmoking = true;
 	hitPoints = level + 1;
+	toUp = toDown = toRight = toLeft = 0;
+
+	traffic.up.dir = true;		traffic.up.barId = 0;
+	traffic.right.dir = true;	traffic.right.barId = 0;
+	traffic.down.dir = true;	traffic.down.barId = 0;
+	traffic.left.dir = true;	traffic.left.barId = 0;
 }
 
 Tank::~Tank()
@@ -85,4 +91,49 @@ void Tank::update(double time)
 			}
 		}
 	}
+}
+
+void Tank::accelerate(int dir_, double acc)
+{
+	isPlayAnimation = true;
+	dir = dir_;
+
+	switch (dir)
+	{
+	case 1:
+		toLeft = toRight = 0;
+		if (traffic.up.dir)
+			toUp = acc - ((double)level / 100);
+		else
+			toUp = 0;
+		break;
+
+	case 2:
+		toUp = toDown = 0;
+		if (traffic.right.dir)
+			toRight = acc + ((double)level / 100);
+		else
+			toRight = 0;
+		break;
+
+	case 3:
+		toLeft = toRight = 0;
+		if (traffic.down.dir)
+			toDown = acc + ((double)level / 100);
+		else
+			toDown = 0;
+		break;
+
+	case 4:
+		toUp = toDown = 0;
+		if (traffic.left.dir)
+			toLeft = acc - ((double)level / 100);
+		else
+			toLeft = 0;
+		break;
+	}
+
+	dx += toLeft + toRight;
+	dy += toUp + toDown;
+	toUp = toRight = toDown = toLeft = 0;
 }
