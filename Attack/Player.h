@@ -16,11 +16,12 @@ public:
 
 	//.:: Constructor ::::::::::::::::::::::
 	Player();
-	Player(Animation&, double, double, string, int, bool, Animation&, string);
+	Player(Animation&, double, double, string, int, bool, Animation&, string, int);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Player();
 
 	//.:: Methods_of_class :::::::::::::::::
-};
+	void update(double);
 
+};

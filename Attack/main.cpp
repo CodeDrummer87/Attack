@@ -4,6 +4,8 @@
 #include "View.h"
 #include "Entity.h"
 
+#include "Player.h"
+
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
 //:::::::::::::::::
@@ -33,12 +35,28 @@ int main()
 
 #pragma region Images
 
-	Image iMap, iIcon;
+	Image iMap, iIcon,
+		iBurgundyTank;
 
 	iMap.loadFromFile("source/images/map.png");
 	iMap.createMaskFromColor(Color::White);
 	iIcon.loadFromFile("source/images/sprites/attributes/icons/icons.png");
 	iIcon.createMaskFromColor(Color::White);
+
+	iBurgundyTank.loadFromFile("source/images/sprites/models/tanks/players/burgundyTank.png");
+	iBurgundyTank.createMaskFromColor(Color::White);
+
+#pragma endregion
+
+#pragma region Textures
+
+	Texture tMap, tIcon,
+		bTank;
+
+	tMap.loadFromImage(iMap);
+	tIcon.loadFromImage(iIcon);
+
+	bTank.loadFromImage(iBurgundyTank);
 
 #pragma endregion
 
@@ -58,15 +76,11 @@ int main()
 	Music *main_theme = new Music();
 	main_theme->openFromFile("source/sounds/music/main_theme.ogg");
 	//::::::::::::::::::::::
-	
-#pragma endregion
 
-#pragma region Textures
+	SoundBuffer bTankBuf, tankExpBuf;
 
-	Texture tMap, tIcon;
-
-	tMap.loadFromImage(iMap);
-	tIcon.loadFromImage(iIcon);
+	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
+	tankExpBuf.loadFromFile("source/sounds/tank/explosion/tank_explosion.ogg");
 
 #pragma endregion
 
@@ -79,6 +93,9 @@ int main()
 	Animation iconAirStrike(tIcon, 0, 96, 32, 32, 0.015, 22);
 
 	Animation icons[] = { iconRepair, iconPreferment, iconCamera, iconAirStrike };
+
+	Animation aBurgTank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
+	Animation aExpBurgTank(bTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 
 #pragma endregion
 
@@ -177,6 +194,52 @@ int main()
 	//.:: temporary code:::
 	double viewPosX = sizeX / 2, viewPosY = mapsHeight[0] * 32 - sizeY / 2;
 	//.::::::::::::::::::::
+
+#pragma region Objects creation
+
+	vector<Entity*> entities;
+	vector<Player*> team;
+
+	int a1, a2, b1, b2, c1, c2, d1, d2, e1, e2;
+	a1 = a2 = b1 = b2 = c1 = c2 = d1 = d2 = e1 = e2 = 0;
+
+	switch (numberOfPlayers)
+	{
+	case 1: a1 = 950; a2 = mapsHeight[0] * 32 - 126;
+		break;
+	case 2: a1 = 870; a2 = mapsHeight[0] * 32 - 126;
+		b1 = 1030; b2 = mapsHeight[0] * 32 - 126;
+		break;
+	case 3: a1 = 870; a2 = mapsHeight[0] * 32 - 126;
+		b1 = 950; b2 = mapsHeight[0] * 32 - 176;
+		c1 = 1030; c2 = mapsHeight[0] * 32 - 126;
+		break;
+	case 4: a1 = 810; a2 = mapsHeight[0] * 32 - 126;
+		b1 = 890; b2 = mapsHeight[0] * 32 - 176;
+		c1 = 1010; c2 = mapsHeight[0] * 32 - 176;
+		d1 = 1090; d2 = mapsHeight[0] * 32 - 126;
+		break;
+	case 5: a1 = 790; a2 = mapsHeight[0] * 32 - 76;
+		b1 = 870; b2 = mapsHeight[0] * 32 - 126;
+		c1 = 950; c2 = mapsHeight[0] * 32 - 176;
+		d1 = 1030; d2 = mapsHeight[0] * 32 - 126;
+		e1 = 1110; e2 = mapsHeight[0] * 32 - 76;
+		break;
+	}
+
+	for (int i = 0; i < numberOfPlayers; i++)
+	{
+		Player *player;
+		switch (i)
+		{
+		case 0: player = new Player(aBurgTank, a1, a2, "player", 1, true, aExpBurgTank, "players", 1); break;
+		}
+
+		team.push_back(player);
+		entities.push_back(player);
+	}
+
+#pragma endregion
 
 	Clock clock;
 
@@ -362,6 +425,9 @@ int main()
 			{
 				//.:: map rendering :::
 				renderMap(maps[index], app, map, time, index);
+				//.:: display entities :::
+				for (auto e : entities)
+					e->draw(app);
 				drawForestAndIcons(maps[index], app, map, icons, time, index);
 			}
 
