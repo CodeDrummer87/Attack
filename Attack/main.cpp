@@ -36,7 +36,7 @@ int main()
 #pragma region Images
 
 	Image iMap, iIcon,
-		iBurgundyTank;
+		iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank;
 
 	iMap.loadFromFile("source/images/map.png");
 	iMap.createMaskFromColor(Color::White);
@@ -45,18 +45,30 @@ int main()
 
 	iBurgundyTank.loadFromFile("source/images/sprites/models/tanks/players/burgundyTank.png");
 	iBurgundyTank.createMaskFromColor(Color::White);
+	iYellowTank.loadFromFile("source/images/sprites/models/tanks/players/yellowTank.png");
+	iYellowTank.createMaskFromColor(Color::White);
+	iPurpleTank.loadFromFile("source/images/sprites/models/tanks/players/purpleTank.png");
+	iPurpleTank.createMaskFromColor(Color::White);
+	iCyanTank.loadFromFile("source/images/sprites/models/tanks/players/lightBlueTank.png");
+	iCyanTank.createMaskFromColor(Color::White);
+	iHemoTank.loadFromFile("source/images/sprites/models/tanks/players/hemoTank.png");
+	iHemoTank.createMaskFromColor(Color::White);
 
 #pragma endregion
 
 #pragma region Textures
 
 	Texture tMap, tIcon,
-		bTank;
+		bTank, yTank, pTank, cTank, hTank;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
 
 	bTank.loadFromImage(iBurgundyTank);
+	yTank.loadFromImage(iYellowTank);
+	pTank.loadFromImage(iPurpleTank);
+	cTank.loadFromImage(iCyanTank);
+	hTank.loadFromImage(iHemoTank);
 
 #pragma endregion
 
@@ -77,9 +89,11 @@ int main()
 	main_theme->openFromFile("source/sounds/music/main_theme.ogg");
 	//::::::::::::::::::::::
 
-	SoundBuffer bTankBuf, tankExpBuf;
+	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.ogg");
+	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.ogg");
+	pTankBuf.loadFromFile("source/sounds/tank/movement/move_3.ogg");
 	tankExpBuf.loadFromFile("source/sounds/tank/explosion/tank_explosion.ogg");
 
 #pragma endregion
@@ -96,6 +110,18 @@ int main()
 
 	Animation aBurgTank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
 	Animation aExpBurgTank(bTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+	
+	Animation aYellowTank(yTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
+	Animation aExpYellowTank(yTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+
+	Animation aPurpTank(pTank, pTankBuf, 0, 0, 64, 64, 0.016, 2);
+	Animation aExpPurpTank(pTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+
+	Animation aCyanTank(cTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
+	Animation aExpCyanTank(cTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+
+	Animation aHemoTank(hTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
+	Animation aExpHemoTank(hTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 
 #pragma endregion
 
@@ -177,7 +203,9 @@ int main()
 	bool isGamePlay = true;
 	int numberOfPlayers = 1;
 	int index = 0;	//.:: for maps vector
-	//.:: For end battle :::
+	//.:: For start and end battle :::
+	bool isStartGame = true;
+	bool isStartBattle = true;
 	bool battleIsOver = false;
 	int lastSecondsOfChapter = 0;
 	//::::::::::::::::::::::
@@ -204,44 +232,9 @@ int main()
 	vector<Entity*> entities;
 	vector<Player*> team;
 
+	//.:: Players tanks start position variables :::
 	int a1, a2, b1, b2, c1, c2, d1, d2, e1, e2;
 	a1 = a2 = b1 = b2 = c1 = c2 = d1 = d2 = e1 = e2 = 0;
-
-	switch (numberOfPlayers)
-	{
-	case 1: a1 = 950; a2 = mapsHeight[0] * 32 - 126;
-		break;
-	case 2: a1 = 870; a2 = mapsHeight[0] * 32 - 126;
-		b1 = 1030; b2 = mapsHeight[0] * 32 - 126;
-		break;
-	case 3: a1 = 870; a2 = mapsHeight[0] * 32 - 126;
-		b1 = 950; b2 = mapsHeight[0] * 32 - 176;
-		c1 = 1030; c2 = mapsHeight[0] * 32 - 126;
-		break;
-	case 4: a1 = 810; a2 = mapsHeight[0] * 32 - 126;
-		b1 = 890; b2 = mapsHeight[0] * 32 - 176;
-		c1 = 1010; c2 = mapsHeight[0] * 32 - 176;
-		d1 = 1090; d2 = mapsHeight[0] * 32 - 126;
-		break;
-	case 5: a1 = 790; a2 = mapsHeight[0] * 32 - 76;
-		b1 = 870; b2 = mapsHeight[0] * 32 - 126;
-		c1 = 950; c2 = mapsHeight[0] * 32 - 176;
-		d1 = 1030; d2 = mapsHeight[0] * 32 - 126;
-		e1 = 1110; e2 = mapsHeight[0] * 32 - 76;
-		break;
-	}
-
-	for (int i = 0; i < numberOfPlayers; i++)
-	{
-		Player *player;
-		switch (i)
-		{
-		case 0: player = new Player(aBurgTank, a1, a2, "player", 1, true, aExpBurgTank, "players", 1); break;
-		}
-
-		team.push_back(player);
-		entities.push_back(player);
-	}
 
 #pragma endregion
 
@@ -249,19 +242,20 @@ int main()
 
 	Clock gameTimeClock;
 	int gameTime = 0;
+	double time = 0.0;
 
 	if (isGamePlay)
 	{
 		while (app.isOpen())
 		{
-			double time = clock.getElapsedTime().asMicroseconds();
+			time = clock.getElapsedTime().asMicroseconds();
 			clock.restart();
 
 			time /= 1700;
 
 #pragma region Fade out time of main_theme music
 
-			if (mode == GAME)
+			if (mode == GAME && main_theme->getStatus() == SoundStream::Playing)
 			{
 				gameTime = (int)(gameTimeClock.getElapsedTime().asSeconds());
 
@@ -269,14 +263,63 @@ int main()
 				{
 					if (fadeOutTime != 0)
 					{
-						mainThemeVolume -= (float)gameTime;
+						mainThemeVolume -= 0.2f;
 						main_theme->setVolume(mainThemeVolume);
+						if (scream->getStatus() == SoundStream::Playing)
+							scream->setVolume(mainThemeVolume);
 					}
 					else
-						fadeOutTime = gameTime + 5;
+						fadeOutTime = gameTime + 7;
 
 					if (gameTime >= fadeOutTime)
 						main_theme->stop();
+				}
+			}
+
+#pragma endregion
+
+#pragma region Set players start position before battle
+
+			if (mode == GAME && index > 0 && isStartBattle)
+			{
+				isStartBattle = false;
+				switch (numberOfPlayers)
+				{
+				case 1: a1 = 950; a2 = mapsHeight[index] * 32 - 126;
+					team[0]->setStartPosition(a1, a2);
+					break;
+				case 2: a1 = 870; a2 = mapsHeight[index] * 32 - 126;
+					b1 = 1030; b2 = mapsHeight[index] * 32 - 126;
+					team[0]->setStartPosition(a1, a2);
+					team[1]->setStartPosition(b1, b2);
+					break;
+				case 3: a1 = 870; a2 = mapsHeight[index] * 32 - 126;
+					b1 = 950; b2 = mapsHeight[index] * 32 - 176;
+					c1 = 1030; c2 = mapsHeight[index] * 32 - 126;
+					team[0]->setStartPosition(a1, a2);
+					team[1]->setStartPosition(b1, b2);
+					team[2]->setStartPosition(c1, c2);
+					break;
+				case 4: a1 = 810; a2 = mapsHeight[index] * 32 - 126;
+					b1 = 890; b2 = mapsHeight[index] * 32 - 176;
+					c1 = 1010; c2 = mapsHeight[index] * 32 - 176;
+					d1 = 1090; d2 = mapsHeight[index] * 32 - 126;
+					team[0]->setStartPosition(a1, a2);
+					team[1]->setStartPosition(b1, b2);
+					team[2]->setStartPosition(c1, c2);
+					team[3]->setStartPosition(d1, d2);
+					break;
+				case 5: a1 = 790; a2 = mapsHeight[index] * 32 - 76;		
+					b1 = 870; b2 = mapsHeight[index] * 32 - 126;		
+					c1 = 950; c2 = mapsHeight[index] * 32 - 176;
+					d1 = 1030; d2 = mapsHeight[index] * 32 - 126;
+					e1 = 1110; e2 = mapsHeight[index] * 32 - 76;
+					team[0]->setStartPosition(a1, a2);
+					team[1]->setStartPosition(b1, b2);
+					team[2]->setStartPosition(c1, c2);
+					team[3]->setStartPosition(d1, d2);
+					team[4]->setStartPosition(e1, e2);
+					break;
 				}
 			}
 
@@ -297,60 +340,104 @@ int main()
 
 				if (mode == OPTIONS)
 				{
-					if (Keyboard::isKeyPressed(Keyboard::Enter))
+					if (isStartGame)
 					{
-						if (numberOfPlayers >= 1)
+						if (Keyboard::isKeyPressed(Keyboard::Enter))
 						{
-							mode = GAME;
-							start.play();
-						}
-
-						choice->play();
-					}
-
-					if (Keyboard::isKeyPressed(Keyboard::Down))
-					{
-						if (numberOfPlayers <= 4)
-						{
-							choice->play();
-							star->sprite.move(0, 70);
-							++numberOfPlayers;
-
 							if (numberOfPlayers >= 1)
 							{
-								isVisibleStar = true;
-								tank_1->setFillColor(Color::Red);
+								switch (numberOfPlayers)
+								{
+								case 1: a1 = 950; a2 = mapsHeight[0] * 32 - 126;
+									break;
+								case 2: a1 = 870; a2 = mapsHeight[0] * 32 - 126;
+									b1 = 1030; b2 = mapsHeight[0] * 32 - 126;
+									break;
+								case 3: a1 = 870; a2 = mapsHeight[0] * 32 - 126;
+									b1 = 950; b2 = mapsHeight[0] * 32 - 176;
+									c1 = 1030; c2 = mapsHeight[0] * 32 - 126;
+									break;
+								case 4: a1 = 810; a2 = mapsHeight[0] * 32 - 126;
+									b1 = 890; b2 = mapsHeight[0] * 32 - 176;
+									c1 = 1010; c2 = mapsHeight[0] * 32 - 176;
+									d1 = 1090; d2 = mapsHeight[0] * 32 - 126;
+									break;
+								case 5: a1 = 790; a2 = mapsHeight[0] * 32 - 76;
+									b1 = 870; b2 = mapsHeight[0] * 32 - 126;
+									c1 = 950; c2 = mapsHeight[0] * 32 - 176;
+									d1 = 1030; d2 = mapsHeight[0] * 32 - 126;
+									e1 = 1110; e2 = mapsHeight[0] * 32 - 76;
+									break;
+								}
+
+								for (int i = 0; i < numberOfPlayers; i++)
+								{
+									Player *player;
+									switch (i)
+									{
+									case 0: player = new Player(aBurgTank, a1, a2, "player", 1, true, aExpBurgTank, "players", 1); break;
+									case 1: player = new Player(aYellowTank, b1, b2, "player", 1, true, aExpYellowTank, "players", 1); break;
+									case 2: player = new Player(aPurpTank, c1, c2, "player", 1, true, aExpPurpTank, "players", 1); break;
+									case 3: player = new Player(aCyanTank, d1, d2, "player", 1, true, aExpCyanTank, "players", 1); break;
+									case 4: player = new Player(aHemoTank, e1, e2, "player", 1, true, aExpHemoTank, "players", 1); break;
+									}
+
+									team.push_back(player);
+									entities.push_back(player);
+								}
+
+								mode = GAME;
+								start.play();
 							}
-							if (numberOfPlayers >= 2)
-								tank_2->setFillColor(Color::Yellow);
-							if (numberOfPlayers >= 3)
-								tank_3->setFillColor(Color::Magenta);
-							if (numberOfPlayers >= 4)
-								tank_4->setFillColor(Color::Cyan);
-							if (numberOfPlayers == 5)
+
+							isStartGame = false;
+							choice->play();
+						}
+
+						if (Keyboard::isKeyPressed(Keyboard::Down))
+						{
+							if (numberOfPlayers <= 4)
 							{
-								scream->play();
-								tank_5->setFillColor(Color::Green);
+								choice->play();
+								star->sprite.move(0, 70);
+								++numberOfPlayers;
+
+								if (numberOfPlayers >= 1)
+								{
+									isVisibleStar = true;
+									tank_1->setFillColor(Color::Red);
+								}
+								if (numberOfPlayers >= 2)
+									tank_2->setFillColor(Color::Yellow);
+								if (numberOfPlayers >= 3)
+									tank_3->setFillColor(Color::Magenta);
+								if (numberOfPlayers >= 4)
+									tank_4->setFillColor(Color::Cyan);
+								if (numberOfPlayers == 5)
+								{
+									scream->play();
+									tank_5->setFillColor(Color::Green);
+								}
 							}
 						}
-					}
 
-					if (Keyboard::isKeyPressed(Keyboard::Up))
-					{
-						if (numberOfPlayers >= 2)
+						if (Keyboard::isKeyPressed(Keyboard::Up))
 						{
-							choice->play();
-							star->sprite.move(0, -70);
-							--numberOfPlayers;
+							if (numberOfPlayers >= 2)
+							{
+								choice->play();
+								star->sprite.move(0, -70);
+								--numberOfPlayers;
 
-							if (numberOfPlayers <= 4)
-								tank_5->setFillColor(Color::White);
-							if (numberOfPlayers <= 3)
-								tank_4->setFillColor(Color::White);
-							if (numberOfPlayers <= 2)
-								tank_3->setFillColor(Color::White);
-							if (numberOfPlayers <= 1)
-								tank_2->setFillColor(Color::White);
+								if (numberOfPlayers <= 4)
+									tank_5->setFillColor(Color::White);
+								if (numberOfPlayers <= 3)
+									tank_4->setFillColor(Color::White);
+								if (numberOfPlayers <= 2)
+									tank_3->setFillColor(Color::White);
+								if (numberOfPlayers <= 1)
+									tank_2->setFillColor(Color::White);
+							}
 						}
 					}
 				}
@@ -388,6 +475,7 @@ int main()
 						isUpd = false;
 						viewPosX = sizeX / 2;
 						viewPosY = mapsHeight[0] * 32 - sizeY / 2;
+						isStartBattle = true;
 						mode = GAME;
 					}
 				}
@@ -398,20 +486,6 @@ int main()
 
 			if (mode == GAME)
 			{
-				//.:: Temporary code: view moving :::
-				if (Keyboard::isKeyPressed(Keyboard::Up))
-				{
-					if (viewPosY > sizeY/2)
-						viewPosY -= 10;
-				}
-
-				if (Keyboard::isKeyPressed(Keyboard::Down))
-				{
-					if (viewPosY < mapsHeight[0]*32-sizeY/2)
-						viewPosY += 10;
-				}
-				//:::::::::::::::::::::::
-
 #pragma region Players control
 
 				if (!battleIsOver)
@@ -462,6 +536,222 @@ int main()
 								team[0]->accelerate(4, -0.09 * time);
 							}
 							else team[0]->isPlayAnimation = false;
+						}
+					}
+
+#pragma endregion
+
+#pragma region Second Player control
+
+					if (numberOfPlayers >= 2)
+					{
+						if (team[1]->status != DEAD)
+						{
+							if (Joystick::isConnected(1))
+							{
+								double x = Joystick::getAxisPosition(1, Joystick::X);
+								double y = Joystick::getAxisPosition(1, Joystick::Y);
+								if (x == -100)
+								{
+									team[1]->accelerate(4, -0.09 * time);
+								}
+								else if (x == 100)
+								{
+									team[1]->accelerate(2, 0.09 * time);
+								}
+								else if (y == -100)
+								{
+									team[1]->accelerate(1, -0.09 * time);
+								}
+								else if (y == 100)
+								{
+									team[1]->accelerate(3, 0.09 * time);
+								}
+								else
+									team[1]->isPlayAnimation = false;
+							}
+							else
+							{
+								if (Keyboard::isKeyPressed(Keyboard::T))
+								{
+									team[1]->accelerate(1, -0.09 * time);
+								}
+								else if (Keyboard::isKeyPressed(Keyboard::H))
+								{
+									team[1]->accelerate(2, 0.09 * time);
+								}
+								else if (Keyboard::isKeyPressed(Keyboard::G))
+								{
+									team[1]->accelerate(3, 0.09 * time);
+								}
+								else if (Keyboard::isKeyPressed(Keyboard::F))
+								{
+									team[1]->accelerate(4, -0.09 * time);
+								}
+								else team[1]->isPlayAnimation = false;
+							}
+						}
+					}
+
+#pragma endregion
+
+#pragma region Third Player control
+
+					if (numberOfPlayers >= 3)
+					{
+						if (team[2]->status != DEAD)
+						{
+							if (Joystick::isConnected(2))
+							{
+								double x = Joystick::getAxisPosition(2, Joystick::X);
+								double y = Joystick::getAxisPosition(2, Joystick::Y);
+								if (x == -100)
+								{
+									team[2]->accelerate(4, -0.09 * time);
+								}
+								else if (x == 100)
+								{
+									team[2]->accelerate(2, 0.09 * time);
+								}
+								else if (y == -100)
+								{
+									team[2]->accelerate(1, -0.09 * time);
+								}
+								else if (y == 100)
+								{
+									team[2]->accelerate(3, 0.09 * time);
+								}
+								else
+									team[2]->isPlayAnimation = false;
+							}
+							else
+							{
+								if (Keyboard::isKeyPressed(Keyboard::I))
+								{
+									team[2]->accelerate(1, -0.09 * time);
+								}
+								else if (Keyboard::isKeyPressed(Keyboard::L))
+								{
+									team[2]->accelerate(2, 0.09 * time);
+								}
+								else if (Keyboard::isKeyPressed(Keyboard::K))
+								{
+									team[2]->accelerate(3, 0.09 * time);
+								}
+								else if (Keyboard::isKeyPressed(Keyboard::J))
+								{
+									team[2]->accelerate(4, -0.09 * time);
+								}
+								else team[2]->isPlayAnimation = false;
+							}
+						}
+					}
+
+#pragma endregion
+
+#pragma region Forth Player control
+
+					if (numberOfPlayers >= 4)
+					{
+						if (team[3]->status != DEAD)
+						{
+							if (Joystick::isConnected(3))
+							{
+								double x = Joystick::getAxisPosition(3, Joystick::X);
+								double y = Joystick::getAxisPosition(3, Joystick::Y);
+								if (x == -100)
+								{
+									team[3]->accelerate(4, -0.09 * time);
+								}
+								else if (x == 100)
+								{
+									team[3]->accelerate(2, 0.09 * time);
+								}
+								else if (y == -100)
+								{
+									team[3]->accelerate(1, -0.09 * time);
+								}
+								else if (y == 100)
+								{
+									team[3]->accelerate(3, 0.09 * time);
+								}
+								else
+									team[3]->isPlayAnimation = false;
+							}
+							else
+							{
+								if (Keyboard::isKeyPressed(Keyboard::Up))
+								{
+									team[3]->accelerate(1, -0.09 * time);
+								}
+								else if (Keyboard::isKeyPressed(Keyboard::Right))
+								{
+									team[3]->accelerate(2, 0.09 * time);
+								}
+								else if (Keyboard::isKeyPressed(Keyboard::Down))
+								{
+									team[3]->accelerate(3, 0.09 * time);
+								}
+								else if (Keyboard::isKeyPressed(Keyboard::Left))
+								{
+									team[3]->accelerate(4, -0.09 * time);
+								}
+								else team[3]->isPlayAnimation = false;
+							}
+						}
+					}
+
+#pragma endregion
+
+#pragma region Fifth Player control
+
+					if (numberOfPlayers == 5)
+					{
+						if (team[4]->status != DEAD)
+						{
+							if (Joystick::isConnected(4))
+							{
+								double x = Joystick::getAxisPosition(4, Joystick::X);
+								double y = Joystick::getAxisPosition(4, Joystick::Y);
+								if (x == -100)
+								{
+									team[4]->accelerate(4, -0.09 * time);
+								}
+								else if (x == 100)
+								{
+									team[4]->accelerate(2, 0.09 * time);
+								}
+								else if (y == -100)
+								{
+									team[4]->accelerate(1, -0.09 * time);
+								}
+								else if (y == 100)
+								{
+									team[4]->accelerate(3, 0.09 * time);
+								}
+								else
+									team[4]->isPlayAnimation = false;
+							}
+							else
+							{
+								if (Keyboard::isKeyPressed(Keyboard::Numpad8))
+								{
+									team[4]->accelerate(1, -0.09 * time);
+								}
+								else if (Keyboard::isKeyPressed(Keyboard::Numpad6))
+								{
+									team[4]->accelerate(2, 0.09 * time);
+								}
+								else if (Keyboard::isKeyPressed(Keyboard::Numpad5))
+								{
+									team[4]->accelerate(3, 0.09 * time);
+								}
+								else if (Keyboard::isKeyPressed(Keyboard::Numpad4))
+								{
+									team[4]->accelerate(4, -0.09 * time);
+								}
+								else team[4]->isPlayAnimation = false;
+							}
 						}
 					}
 

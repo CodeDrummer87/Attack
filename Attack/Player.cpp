@@ -21,3 +21,10 @@ void Player::update(double time)
 {
 	Tank::update(time);
 }
+
+void Player::setStartPosition(double x_, double y_)
+{
+	this->x = x_;
+	this->y = y_;
+	this->dir = 1;
+}
