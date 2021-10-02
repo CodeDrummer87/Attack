@@ -139,6 +139,8 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Shell.cpp" />
+    <ClCompile Include="Smoke.cpp" />
     <ClCompile Include="Tank.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +149,8 @@
     <ClInclude Include="libraries.h" />
     <ClInclude Include="maps.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Shell.h" />
+    <ClInclude Include="Smoke.h" />
     <ClInclude Include="stage_01.h" />
     <ClInclude Include="stage_02.h" />
     <ClInclude Include="stage_03.h" />

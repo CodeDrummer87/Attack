@@ -15,8 +15,8 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 	status = ALIVE;
 	isDestroyed = isTransition = false;
 	isShot = true;
-	isSmoking = true;
-	hitPoints = level + 1;
+	isSmoking = false;
+	hitPoints = level +1;
 	toUp = toDown = toRight = toLeft = 0;
 
 	traffic.up.dir = true;		traffic.up.barId = 0;
