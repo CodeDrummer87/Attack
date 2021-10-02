@@ -61,7 +61,8 @@ int main()
 
 #pragma region Textures
 
-	Texture tMap, tIcon, bTank, yTank, pTank, cTank, hTank, tTankRound, tShell, tShellExp;
+	Texture tMap, tIcon, bTank, yTank, pTank, cTank, hTank, tTankRound, tShell, tShellExp,
+		tSmoke;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -75,6 +76,8 @@ int main()
 	tTankRound.loadFromFile("source/images/sprites/explosions/round.png");
 	tShell.loadFromFile("source/images/sprites/models/other/shell.png");
 	tShellExp.loadFromFile("source/images/sprites/explosions/shell_explosion.png");
+
+	tSmoke.loadFromFile("source/images/sprites/explosions/smoke.png");
 
 #pragma endregion
 
@@ -141,6 +144,7 @@ int main()
 
 	Animation aShell(tShell, 0, 0, 64, 64, 0.01, 2);
 	Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.017, 7);
+	Animation aSmoke(tSmoke, 0, 0, 64, 64, 0.008, 5);
 
 #pragma endregion
 
@@ -246,16 +250,12 @@ int main()
 	double viewPosX = sizeX / 2, viewPosY = mapsHeight[0] * 32 - sizeY / 2;
 	//.::::::::::::::::::::
 
-#pragma region Objects creation
-
 	vector<Entity*> entities;
 	vector<Player*> team;
 
 	//.:: Players tanks start position variables :::
 	int a1, a2, b1, b2, c1, c2, d1, d2, e1, e2;
 	a1 = a2 = b1 = b2 = c1 = c2 = d1 = d2 = e1 = e2 = 0;
-
-#pragma endregion
 
 	Clock clock;
 
@@ -283,9 +283,9 @@ int main()
 					if (fadeOutTime != 0)
 					{
 						mainThemeVolume -= 0.2f;
-						main_theme->setVolume(mainThemeVolume);
+						main_theme->setVolume(mainThemeVolume = mainThemeVolume > 0.f ? mainThemeVolume : 0.f);
 						if (scream->getStatus() == SoundStream::Playing)
-							scream->setVolume(mainThemeVolume);
+							scream->setVolume(mainThemeVolume = mainThemeVolume > 0.f ? mainThemeVolume : 0.f);
 					}
 					else
 						fadeOutTime = gameTime + 7;
@@ -299,7 +299,7 @@ int main()
 
 #pragma region Set players start position before battle
 
-			if (mode == GAME && index > 0 && isStartBattle)
+			if (mode == SCORING && index > 0 && isStartBattle)
 			{
 				isStartBattle = false;
 				switch (numberOfPlayers)
@@ -361,7 +361,7 @@ int main()
 				{
 					if (isStartGame)
 					{
-						if (Keyboard::isKeyPressed(Keyboard::Enter))
+						if (event.type == Event::KeyReleased && event.key.code == Keyboard::Enter)
 						{
 							if (numberOfPlayers >= 1)
 							{
@@ -477,6 +477,8 @@ int main()
 							{
 								view.setCenter(float(sizeX / 2), float(sizeY / 2));
 								mode = SCORING;
+								isStartBattle = true;
+								++index;
 							}
 						}
 					}
@@ -539,11 +541,9 @@ int main()
 				{
 					if (Keyboard::isKeyPressed(Keyboard::Space))
 					{
-						++index;
 						isUpd = false;
 						viewPosX = sizeX / 2;
 						viewPosY = mapsHeight[0] * 32 - sizeY / 2;
-						isStartBattle = true;
 						mode = GAME;
 					}
 				}
@@ -896,6 +896,23 @@ int main()
 							p->isPlayAnimation = false;
 
 #pragma endregion
+
+				for (auto p : team)
+				{
+					if (p->status != DEAD)
+					{
+						//.:: Smoking :::::::::::::::
+						if (p->status == WOUNDED)
+						{
+							if (!p->isSmoking)
+							{
+								p->isSmoking = true;
+								Smoke * smoke = new Smoke(aSmoke, p, "smoke");
+								entities.push_back(smoke);
+							}
+						}
+					}
+				}
 
 				//.:: update entities :::
 				for (auto i = entities.begin(); i != entities.end();)
