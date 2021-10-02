@@ -19,6 +19,7 @@ Shell::Shell(Animation &a, Animation &b, Tank *tank)
 	isExist = isPlayAnimation = true;
 	level = tank->level;
 	isExplosion = false;
+	status = ALIVE;
 }
 
 Shell::~Shell()

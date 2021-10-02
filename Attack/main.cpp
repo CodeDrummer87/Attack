@@ -5,6 +5,9 @@
 #include "Entity.h"
 
 #include "Player.h"
+#include "Shell.h"
+
+#include "Smoke.h"
 
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
@@ -58,8 +61,7 @@ int main()
 
 #pragma region Textures
 
-	Texture tMap, tIcon,
-		bTank, yTank, pTank, cTank, hTank;
+	Texture tMap, tIcon, bTank, yTank, pTank, cTank, hTank, tTankRound, tShell, tShellExp;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -70,11 +72,16 @@ int main()
 	cTank.loadFromImage(iCyanTank);
 	hTank.loadFromImage(iHemoTank);
 
+	tTankRound.loadFromFile("source/images/sprites/explosions/round.png");
+	tShell.loadFromFile("source/images/sprites/models/other/shell.png");
+	tShellExp.loadFromFile("source/images/sprites/explosions/shell_explosion.png");
+
 #pragma endregion
 
 #pragma region Sounds & Music
 
-	//.:: For game start :::
+#pragma region Sounds & music for start game
+
 	SoundBuffer startBuf;
 	startBuf.loadFromFile("source/sounds/effects/start_game/start.flac");
 	Sound start(startBuf);
@@ -87,14 +94,19 @@ int main()
 
 	Music *main_theme = new Music();
 	main_theme->openFromFile("source/sounds/music/main_theme.flac");
-	//::::::::::::::::::::::
 
-	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf;
+#pragma endregion
+
+	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
 	pTankBuf.loadFromFile("source/sounds/tank/movement/move_3.flac");
 	tankExpBuf.loadFromFile("source/sounds/tank/explosion/tank_explosion.flac");
+	burgTankRoundBuf.loadFromFile("source/sounds/tank/round/burgundy_tank_round.flac");
+	purpTankRoundBuf.loadFromFile("source/sounds/tank/round/purple_tank_round.flac");
+	yelTankRoundBuf.loadFromFile("source/sounds/tank/round/yellow_tank_round.flac");
+	shellExpBuf.loadFromFile("source/sounds/explosion/shell_explosion.flac");
 
 #pragma endregion
 
@@ -122,6 +134,13 @@ int main()
 
 	Animation aHemoTank(hTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
 	Animation aExpHemoTank(hTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+
+	Animation aBurgTankRound(tTankRound, burgTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
+	Animation aYelTankRound(tTankRound, yelTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
+	Animation aPurpTankRound(tTankRound, purpTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
+
+	Animation aShell(tShell, 0, 0, 64, 64, 0.01, 2);
+	Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.017, 7);
 
 #pragma endregion
 
@@ -461,6 +480,55 @@ int main()
 							}
 						}
 					}
+
+#pragma region Tank rounds
+		
+					if (event.type == Event::KeyPressed && !battleIsOver)
+					{
+						Player *currentPlayer = NULL;
+						Animation roundAnimation;
+
+						if (event.key.code == Keyboard::LControl)
+						{
+							currentPlayer = team[0];
+							roundAnimation = aBurgTankRound;
+						}
+						
+						if (numberOfPlayers > 1 && event.key.code == Keyboard::Space)
+						{
+							currentPlayer = team[1];
+							roundAnimation = aYelTankRound;
+						}
+						if (numberOfPlayers > 2 && event.key.code == Keyboard::Enter)
+						{
+							currentPlayer = team[2];
+							roundAnimation = aPurpTankRound;
+						}
+						if (numberOfPlayers > 3 && event.key.code == Keyboard::RControl)
+						{
+							currentPlayer = team[3];
+							roundAnimation = aYelTankRound;
+						}
+						if (numberOfPlayers > 4 && event.key.code == Keyboard::Numpad7)
+						{
+							currentPlayer = team[4];
+							roundAnimation = aBurgTankRound;
+						}
+						if (currentPlayer != NULL && currentPlayer->status != DEAD)
+						{
+							if (currentPlayer->isShot)
+							{
+								currentPlayer->isShot = false;
+
+								Smoke *round = new Smoke(roundAnimation, currentPlayer, "explosion");
+								Shell *shell = new Shell(aShell, aShellExp, currentPlayer);
+								entities.push_back(round);
+								entities.push_back(shell);
+							}
+						}
+					}
+
+#pragma endregion
 				}
 
 #pragma endregion
@@ -516,6 +584,19 @@ int main()
 							}
 							else
 								team[0]->isPlayAnimation = false;
+
+							if (Joystick::isButtonPressed(0, 0) || Joystick::isButtonPressed(0, 3))
+							{
+								if (team[0]->status != DEAD && team[0]->isShot)
+								{
+									team[0]->isShot = false;
+
+									Smoke *round = new Smoke(aBurgTankRound, team[0], "explosion");
+									Shell *shell = new Shell(aShell, aShellExp, team[0]);
+									entities.push_back(round);
+									entities.push_back(shell);
+								}
+							}
 						}
 						else
 						{
@@ -569,6 +650,19 @@ int main()
 								}
 								else
 									team[1]->isPlayAnimation = false;
+
+								if (Joystick::isButtonPressed(1, 0) || Joystick::isButtonPressed(1, 3))
+								{
+									if (team[1]->status != DEAD && team[1]->isShot)
+									{
+										team[1]->isShot = false;
+
+										Smoke *round = new Smoke(aYelTankRound, team[1], "explosion");
+										Shell *shell = new Shell(aShell, aShellExp, team[1]);
+										entities.push_back(round);
+										entities.push_back(shell);
+									}
+								}
 							}
 							else
 							{
@@ -623,6 +717,19 @@ int main()
 								}
 								else
 									team[2]->isPlayAnimation = false;
+
+								if (Joystick::isButtonPressed(2, 0) || Joystick::isButtonPressed(2, 3))
+								{
+									if (team[2]->status != DEAD && team[2]->isShot)
+									{
+										team[2]->isShot = false;
+
+										Smoke *round = new Smoke(aPurpTankRound, team[2], "explosion");
+										Shell *shell = new Shell(aShell, aShellExp, team[2]);
+										entities.push_back(round);
+										entities.push_back(shell);
+									}
+								}
 							}
 							else
 							{
@@ -677,6 +784,19 @@ int main()
 								}
 								else
 									team[3]->isPlayAnimation = false;
+
+								if (Joystick::isButtonPressed(3, 0) || Joystick::isButtonPressed(3, 3))
+								{
+									if (team[3]->status != DEAD && team[3]->isShot)
+									{
+										team[3]->isShot = false;
+
+										Smoke *round = new Smoke(aYelTankRound, team[3], "explosion");
+										Shell *shell = new Shell(aShell, aShellExp, team[3]);
+										entities.push_back(round);
+										entities.push_back(shell);
+									}
+								}
 							}
 							else
 							{
@@ -731,6 +851,19 @@ int main()
 								}
 								else
 									team[4]->isPlayAnimation = false;
+
+								if (Joystick::isButtonPressed(4, 0) || Joystick::isButtonPressed(4, 3))
+								{
+									if (team[4]->status != DEAD && team[4]->isShot)
+									{
+										team[4]->isShot = false;
+
+										Smoke *round = new Smoke(aBurgTankRound, team[4], "explosion");
+										Shell *shell = new Shell(aShell, aShellExp, team[4]);
+										entities.push_back(round);
+										entities.push_back(shell);
+									}
+								}
 							}
 							else
 							{
