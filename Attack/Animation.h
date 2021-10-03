@@ -23,4 +23,6 @@ public:
 	//.:: Methods_of_class :::
 	void update(double, bool, int);
 	bool isEnd(double);
+	FloatRect getRect(int);
+
 };

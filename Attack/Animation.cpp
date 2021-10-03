@@ -83,3 +83,16 @@ bool Animation::isEnd(double time)
 {
 	return frame + speed * time >= frames.size();
 }
+
+FloatRect Animation::getRect(int dir)
+{
+	FloatRect rect = sprite.getGlobalBounds();
+	switch (dir)
+	{
+	case 1: return FloatRect(rect.left, rect.top, 39, 52);
+	case 2: return FloatRect(rect.left, rect.top, 52, 39);
+	case 3: return FloatRect(rect.left, rect.top, 52, 52);
+	case 4: return FloatRect(rect.left, rect.top, 39, 52);
+	default: return rect;
+	}
+}

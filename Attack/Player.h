@@ -11,7 +11,7 @@ private:
 
 public:
 	bool hasRank;
-	bool preferment;
+	bool isPreferment;
 	bool isCommander;
 
 	//.:: Constructor ::::::::::::::::::::::
@@ -24,5 +24,7 @@ public:
 	//.:: Methods_of_class :::::::::::::::::
 	void update(double);
 	void setStartPosition(double, double);
+	void checkIconCollision(string[], Sound&);
+	void improveTank(int);
 
 };

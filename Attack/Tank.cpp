@@ -1,5 +1,6 @@
-#include "Tank.h"
+#pragma once
 
+#include "Tank.h"
 
 Tank::Tank()
 {}
