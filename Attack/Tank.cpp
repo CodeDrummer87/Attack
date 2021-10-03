@@ -32,6 +32,7 @@ Tank::~Tank()
 {}
 
 int Tank::counter = 0;
+bool Tank::isBusyCamera = false;
 
 void Tank::update(double time)
 {
@@ -139,4 +140,9 @@ void Tank::accelerate(int dir_, double acc)
 	dx += toLeft + toRight;
 	dy += toUp + toDown;
 	toUp = toRight = toDown = toLeft = 0;
+}
+
+bool Tank::makeSureDestroyed()
+{
+	return isDestroyed;
 }

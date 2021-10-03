@@ -922,7 +922,7 @@ int main()
 							}
 						}
 
-						//.:: GetRank :::::::::::::::
+						//.:: Get Rank :::::::::::::::
 						if (p->isPreferment)
 						{
 							p->isPreferment = false;
@@ -935,8 +935,27 @@ int main()
 							}
 						}
 
+						//.:: Appoint a Commander :::
+						if (p->isCommander && Tank::isBusyCamera)
+							setViewCoordinates(sizeX, sizeY, p->getCoordX(false), p->getCoordY(false), index);
+
 						if (fadeOutTime != 0)
 							p->checkIconCollision(maps[index], sTakingIcon);
+					}
+					else
+					{
+						if (p->isCommander)
+						{
+							p->isCommander = false;
+							p->defineNewCommander(team);
+						}
+
+						if (!p->isSmoking && p->makeSureDestroyed())
+						{
+							p->isSmoking = true;
+							Smoke *smoke = new Smoke(aSmoke, p, "smoke");
+							entities.push_back(smoke);
+						}
 					}
 				}
 
@@ -955,7 +974,8 @@ int main()
 					else i++;
 				}
 
-				setViewCoordinates(sizeX, sizeY, viewPosX, viewPosY, index);
+				if (!Tank::isBusyCamera)
+					setViewCoordinates(sizeX, sizeY, viewPosX, viewPosY, index);
 				app.setView(view);
 			}
 

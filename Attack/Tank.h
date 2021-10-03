@@ -23,9 +23,10 @@ private:
 	double toUp, toRight, toDown, toLeft;
 
 protected:
-	static int counter;
 	Animation aTankExplosion;
 	bool isDestroyed;
+
+	static int counter;
 
 public:
 	int number;
@@ -33,6 +34,8 @@ public:
 	Traffic traffic;
 	bool isShot;
 	bool isSmoking;
+
+	static bool isBusyCamera;
 
 	//.:: Constructor :::::::::::::::::::::::
 	Tank();
@@ -44,5 +47,6 @@ public:
 	//.:: Methods_of_class ::::::::::::::::::
 	void update(double);
 	void accelerate(int, double);
+	bool makeSureDestroyed();
 
 };
