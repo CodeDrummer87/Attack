@@ -8,6 +8,7 @@
 #include "Shell.h"
 
 #include "Smoke.h"
+#include "Rank.h"
 
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
@@ -62,7 +63,7 @@ int main()
 #pragma region Textures
 
 	Texture tMap, tIcon, bTank, yTank, pTank, cTank, hTank, tTankRound, tShell, tShellExp,
-		tSmoke;
+		tSmoke, tRank;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -78,6 +79,7 @@ int main()
 	tShellExp.loadFromFile("source/images/sprites/explosions/shell_explosion.png");
 
 	tSmoke.loadFromFile("source/images/sprites/explosions/smoke.png");
+	tRank.loadFromFile("source/images/sprites/attributes/ranks.png");
 
 #pragma endregion
 
@@ -100,7 +102,8 @@ int main()
 
 #pragma endregion
 
-	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf;
+	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf,
+		takingIconBuf, prefermentBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -110,6 +113,13 @@ int main()
 	purpTankRoundBuf.loadFromFile("source/sounds/tank/round/purple_tank_round.flac");
 	yelTankRoundBuf.loadFromFile("source/sounds/tank/round/yellow_tank_round.flac");
 	shellExpBuf.loadFromFile("source/sounds/explosion/shell_explosion.flac");
+	takingIconBuf.loadFromFile("source/sounds/effects/icons/take_icon.flac");
+	prefermentBuf.loadFromFile("source/sounds/effects/icons/preferment.flac");
+
+	Sound sTakingIcon, sPreferment;
+
+	sTakingIcon.setBuffer(takingIconBuf);		sTakingIcon.setLoop(false);
+	sPreferment.setBuffer(prefermentBuf);		sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
 
 #pragma endregion
 
@@ -145,6 +155,7 @@ int main()
 	Animation aShell(tShell, 0, 0, 64, 64, 0.01, 2);
 	Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.017, 7);
 	Animation aSmoke(tSmoke, 0, 0, 64, 64, 0.008, 5);
+	Animation aRank(tRank, 0, 0, 200, 200, 1, 18);
 
 #pragma endregion
 
@@ -291,8 +302,7 @@ int main()
 						fadeOutTime = gameTime + 7;
 
 					if (gameTime >= fadeOutTime)
-						main_theme->stop();
-				}
+						main_theme->stop();				}
 			}
 
 #pragma endregion
@@ -394,11 +404,11 @@ int main()
 									Player *player;
 									switch (i)
 									{
-									case 0: player = new Player(aBurgTank, a1, a2, "player", 1, true, aExpBurgTank, "players", 1); break;
-									case 1: player = new Player(aYellowTank, b1, b2, "player", 1, true, aExpYellowTank, "players", 1); break;
-									case 2: player = new Player(aPurpTank, c1, c2, "player", 1, true, aExpPurpTank, "players", 1); break;
-									case 3: player = new Player(aCyanTank, d1, d2, "player", 1, true, aExpCyanTank, "players", 1); break;
-									case 4: player = new Player(aHemoTank, e1, e2, "player", 1, true, aExpHemoTank, "players", 1); break;
+									case 0: player = new Player(aBurgTank, a1, a2, "tank", 1, true, aExpBurgTank, "player", 1); break;
+									case 1: player = new Player(aYellowTank, b1, b2, "tank", 1, true, aExpYellowTank, "player", 1); break;
+									case 2: player = new Player(aPurpTank, c1, c2, "tank", 1, true, aExpPurpTank, "player", 1); break;
+									case 3: player = new Player(aCyanTank, d1, d2, "tank", 1, true, aExpCyanTank, "player", 1); break;
+									case 4: player = new Player(aHemoTank, e1, e2, "tank", 1, true, aExpHemoTank, "player", 1); break;
 									}
 
 									team.push_back(player);
@@ -911,6 +921,22 @@ int main()
 								entities.push_back(smoke);
 							}
 						}
+
+						//.:: GetRank :::::::::::::::
+						if (p->isPreferment)
+						{
+							p->isPreferment = false;
+							sPreferment.play();
+							if (!p->hasRank)
+							{
+								p->hasRank = true;
+								Rank *rank = new Rank(aRank, p, "rank");
+								entities.push_back(rank);
+							}
+						}
+
+						if (fadeOutTime != 0)
+							p->checkIconCollision(maps[index], sTakingIcon);
 					}
 				}
 
