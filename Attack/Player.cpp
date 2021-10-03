@@ -52,6 +52,16 @@ void Player::checkIconCollision(string map[], Sound &sound)
 				this->isPreferment = true;
 				map[i][j] = ' ';
 			}
+
+			if (map[i][j] == 'R')
+			{
+				if (hitPoints < 1 + level)
+				{
+					sound.play();
+					++hitPoints;
+					map[i][j] = ' ';
+				}
+			}
 		}
 }
 

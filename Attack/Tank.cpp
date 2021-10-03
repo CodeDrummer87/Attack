@@ -24,6 +24,8 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 	traffic.right.dir = true;	traffic.right.barId = 0;
 	traffic.down.dir = true;	traffic.down.barId = 0;
 	traffic.left.dir = true;	traffic.left.barId = 0;
+
+	number = ++counter;
 }
 
 Tank::~Tank()

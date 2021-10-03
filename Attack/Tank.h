@@ -28,6 +28,7 @@ protected:
 	bool isDestroyed;
 
 public:
+	int number;
 	int hitPoints;
 	Traffic traffic;
 	bool isShot;
