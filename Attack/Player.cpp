@@ -52,6 +52,24 @@ void Player::checkIconCollision(string map[], Sound &sound)
 				this->isPreferment = true;
 				map[i][j] = ' ';
 			}
+
+			if (map[i][j] == 'R')
+			{
+				if (hitPoints < 1 + level)
+				{
+					sound.play();
+					++hitPoints;
+					map[i][j] = ' ';
+				}
+			}
+
+			if (map[i][j] == 'C')
+			{
+				sound.play();
+				this->isCommander = true;
+				Tank::isBusyCamera = true;
+				map[i][j] = ' ';
+			}
 		}
 }
 
@@ -66,4 +84,24 @@ void Player::improveTank(int residual)
 	}
 	else
 		currentExperience = 0;
+}
+
+void Player::defineNewCommander(vector<Player*> team)
+{
+	Player* newCommander = team[0];
+	int lvl = 0;
+
+	for (auto p : team)
+	{
+		if (p->status != DEAD && !p->isCommander)
+		{
+			if (p->level > lvl)
+			{
+				newCommander = p;
+				lvl = p->level;
+			}
+		}
+	}
+
+	newCommander->isCommander = true;
 }

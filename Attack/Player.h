@@ -26,5 +26,6 @@ public:
 	void setStartPosition(double, double);
 	void checkIconCollision(string[], Sound&);
 	void improveTank(int);
+	void defineNewCommander(vector<Player*>);
 
 };

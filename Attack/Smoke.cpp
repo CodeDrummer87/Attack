@@ -18,7 +18,7 @@ Smoke::Smoke(Animation &a, Tank *tank, string name_)
 	if (name == "smoke")
 	{
 		dir = 1;
-		x = tank->getCoordX(false) + 3.f;
+		x = tank->getCoordX(false) + 2.f;
 		y = tank->getCoordY(false) + 2.f;
 	}
 
@@ -43,10 +43,10 @@ void Smoke::update(double time)
 
 		if (name == "smoke")
 		{
-			x = own->getCoordX(false) + 3.f;
+			x = own->getCoordX(false) + 2.f;
 			y = own->getCoordY(false) + 2.f;
 
-			if (own->status != WOUNDED)
+			if (own->status == ALIVE)
 			{
 				if (own->name == "tank")
 					own->isSmoking = false;

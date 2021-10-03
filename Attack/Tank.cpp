@@ -24,12 +24,15 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 	traffic.right.dir = true;	traffic.right.barId = 0;
 	traffic.down.dir = true;	traffic.down.barId = 0;
 	traffic.left.dir = true;	traffic.left.barId = 0;
+
+	number = ++counter;
 }
 
 Tank::~Tank()
 {}
 
 int Tank::counter = 0;
+bool Tank::isBusyCamera = false;
 
 void Tank::update(double time)
 {
@@ -137,4 +140,9 @@ void Tank::accelerate(int dir_, double acc)
 	dx += toLeft + toRight;
 	dy += toUp + toDown;
 	toUp = toRight = toDown = toLeft = 0;
+}
+
+bool Tank::makeSureDestroyed()
+{
+	return isDestroyed;
 }
