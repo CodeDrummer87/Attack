@@ -24,5 +24,6 @@ public:
 	void update(double, bool, int);
 	bool isEnd(double);
 	FloatRect getRect(int);
+	FloatRect getShellRect(bool);
 
 };

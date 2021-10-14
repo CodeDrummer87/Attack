@@ -2,6 +2,8 @@
 
 #include "Entity.h"
 
+enum Camera { NotDefined, StartGame, Commander, Target, FirstPlane, StartGameSetted };
+
 struct Ban
 {
 	bool dir;	//.:: Direction open / close
@@ -35,7 +37,7 @@ public:
 	bool isShot;
 	bool isSmoking;
 
-	static bool isBusyCamera;
+	static Camera camera;
 
 	//.:: Constructor :::::::::::::::::::::::
 	Tank();
@@ -48,5 +50,6 @@ public:
 	void update(double);
 	void accelerate(int, double);
 	bool makeSureDestroyed();
+	void checkMapCollision(string[]);
 
 };
