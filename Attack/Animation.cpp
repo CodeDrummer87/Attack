@@ -96,3 +96,13 @@ FloatRect Animation::getRect(int dir)
 	default: return rect;
 	}
 }
+
+FloatRect Animation::getShellRect(bool isShell)
+{
+	FloatRect rect = sprite.getGlobalBounds();
+
+	if (isShell)
+		return FloatRect(rect.left, rect.top, 8, 8);
+	else
+		return FloatRect(rect.left, rect.top, 27, 27);
+}

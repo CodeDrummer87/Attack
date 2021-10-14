@@ -32,7 +32,7 @@ Tank::~Tank()
 {}
 
 int Tank::counter = 0;
-bool Tank::isBusyCamera = false;
+Camera Tank::camera = StartGame;
 
 void Tank::update(double time)
 {

@@ -23,6 +23,7 @@ public:
 
 	//.:: Methods_of_update :::::::::::::::::
 	void update(double);
+	void checkMapCollision(string[]);
 
 };
 

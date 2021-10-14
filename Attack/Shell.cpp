@@ -75,3 +75,33 @@ void Shell::update(double time)
 			own->isShot = true;
 		}
 }
+
+void Shell::checkMapCollision(string map[])
+{
+	static int neighborCoordX;
+	static int neighborCoordY;
+
+	for (int i = y / 32; i < (y + anim.getShellRect(dir).height) / 32; i++)
+		for (int j = x / 32; j < (x + anim.getShellRect(dir).width) / 32; j++)
+		{
+			neighborCoordX = j;
+			neighborCoordY = i;
+			if (dir % 2 == 0)
+				neighborCoordY = (i * 32 + 32) / 32;
+			else
+				neighborCoordX = (j * 32 + 32) / 32;
+
+			if (map[i][j] == 'b' || map[i][j] == 'B')
+			{
+				static_cast<Shell*>(this)->isExplosion = true;
+				if (map[i][j] == 'b')
+					map[i][j] = ' ';
+			}
+
+			if (map[neighborCoordY][neighborCoordX] == 'b')
+			{
+				static_cast<Shell*>(this)->isExplosion = true;
+				map[neighborCoordY][neighborCoordX] = ' ';
+			}
+		}
+}

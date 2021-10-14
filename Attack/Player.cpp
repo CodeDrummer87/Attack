@@ -117,7 +117,7 @@ void Player::checkIconCollision(string map[], Sound &sound)
 			{
 				sound.play();
 				this->isCommander = true;
-				Tank::isBusyCamera = true;
+				Tank::camera = Camera::Commander;
 				map[i][j] = ' ';
 			}
 

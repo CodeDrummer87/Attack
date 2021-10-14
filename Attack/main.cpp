@@ -296,7 +296,6 @@ int main()
 	//.:: temporary code:::
 	double viewPosX = sizeX / 2, viewPosY = mapsHeight[0] * 32 - sizeY / 2;
 	//.::::::::::::::::::::
-	setViewCoordinates(sizeX, sizeY, viewPosX, viewPosY, index);
 
 	float zoomViewX = (float)sizeX / 2, zoomViewY = (float)sizeY / 2;
 
@@ -310,8 +309,14 @@ int main()
 	int gameTime = 0;
 	double time = 0.0;
 
-	void createBomberLink(Player*, Sound&, Sound&, int, Animation&, Animation&, Animation&);
+#pragma region Functions
+
+	void createSmoke(Tank*, Animation&);
 	void createShot(Player*, Animation&, Animation&, Animation&);
+	void createBomberLink(Player*, Sound&, Sound&, int, Animation&, Animation&, Animation&);
+	void dropBombs(Animation&, Animation&);
+
+#pragma endregion
 
 	if (isGamePlay)
 	{
@@ -591,7 +596,7 @@ int main()
 						viewPosX = sizeX / 2;
 						viewPosY = mapsHeight[0] * 32 - sizeY / 2;
 						mode = GAME;
-						setViewCoordinates(sizeX, sizeY, viewPosX, viewPosY, index);
+						Tank::camera = Camera::StartGame;
 					}
 				}
 
@@ -936,14 +941,8 @@ int main()
 
 						//.:: Smoking :::::::::::::::
 						if (p->status == WOUNDED)
-						{
 							if (!p->isSmoking)
-							{
-								p->isSmoking = true;
-								Smoke * smoke = new Smoke(aSmoke, p, "smoke");
-								entities.push_back(smoke);
-							}
-						}
+								createSmoke(p, aSmoke);
 
 						//.:: Get Rank :::::::::::::::
 						if (p->isPreferment)
@@ -959,7 +958,7 @@ int main()
 						}
 
 						//.:: Appoint a Commander :::
-						if (p->isCommander && Tank::isBusyCamera)
+						if (p->isCommander && Tank::camera == Camera::Commander)
 							setViewCoordinates(sizeX, sizeY, p->getCoordX(false), p->getCoordY(false), index);
 
 						//.:: Air spotter mode :::
@@ -973,11 +972,10 @@ int main()
 								Air *targetBomb = new Air(aTarget, aAirStrikeZone, p, "target");
 								airEntities.push_back(targetBomb);
 
-								if (!Tank::isBusyCamera)
-									Tank::isBusyCamera = true;
+								Tank::camera = Camera::Target;
 							}
 
-							if (Tank::isBusyCamera)
+							if (Tank::camera == Camera::Target)
 								setViewCoordinates(sizeX, sizeY, Player::airSpotter.xTargetPosition, Player::airSpotter.yTargetPosition, index);
 							
 							//.:: A death in spotter mode :::
@@ -988,7 +986,7 @@ int main()
 								Player::airSpotter.xTargetPosition = 0.0;
 								Player::airSpotter.yTargetPosition = 0.0;
 
-								Tank::isBusyCamera = false;
+								Tank::camera = Camera::NotDefined;
 								if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
 									sAirStrikeQuery.stop();
 
@@ -1016,42 +1014,41 @@ int main()
 						}
 
 						if (!p->isSmoking && p->makeSureDestroyed())
-						{
-							p->isSmoking = true;
-							Smoke *smoke = new Smoke(aSmoke, p, "smoke");
-							entities.push_back(smoke);
-						}
+							createSmoke(p, aSmoke);
 					}
 				}
 
 				//.:: Bomb dropping :::
 				if (Plane::leader.bombStatus == BombStatus::DROPPED)
+					dropBombs(aDroppingBomb, aBombExplosion);
+
+				//.:: Collision :::
+				for (auto a : entities)
+					if (a->name == "shell")
+						static_cast<Shell*>(a)->checkMapCollision(maps[index]);
+
+#pragma region Camera settings
+
+				if (Tank::camera == Camera::NotDefined)
 				{
-					Plane::leader.bombStatus = BombStatus::DESCENT;
-					Entity *e = Plane::leader.plane;
-
-					for (int i = 0; i < 3; i++)
-					{
-						a1 = i == 0 ? e->getCoordX(false) :
-							i == 1 ? e->getCoordX(false) - 150 : e->getCoordX(false) + 150;
-						a2 = i == 0 ? e->getCoordY(false) : e->getCoordY(false) + 70;
-
-						Bomb *bomb = new Bomb(aDroppingBomb, aBombExplosion, a1, a2, "bomb");
-						airEntities.push_back(bomb);
-					}
+					if (!Player::checkTeamForCommander(team))
+						Tank::camera = Camera::StartGame;
+					else
+						Tank::camera = Camera::Commander;
 				}
 
-#pragma region The camera shows time scenes
+				if (Tank::camera == Camera::StartGame)
+				{
+					Tank::camera = Camera::StartGameSetted;
+					setViewCoordinates(sizeX, sizeY, viewPosX, viewPosY, index);
+				}
 
-				if (Tank::isBusyCamera)
+				if (Tank::camera == Camera::FirstPlane)
 				{
 					Plane *plane = static_cast<Plane*>(Plane::leader.plane);
-
 					if (Plane::leader.openPosition)
-					{
 						if (plane->leader.bombStatus == ABOARD)
 							setViewCoordinates(sizeX, sizeY, plane->getCoordX(false), plane->getCoordY(false), index);
-					}
 
 					//.:: Focus the camera on the first bomb :::
 					if (Bomb::firstBomb.isOpenPosition)
@@ -1060,7 +1057,7 @@ int main()
 
 						if (bomb == NULL)
 						{
-							Tank::isBusyCamera = false;
+							Tank::camera = Camera::NotDefined;
 							Bomb::firstBomb.isOpenPosition = false;
 
 							view.reset(FloatRect(0, 0, (float)sizeX, (float)sizeY));
@@ -1176,7 +1173,6 @@ int main()
 	return 0;
 }
 
-//.:: createBomberLink :::
 void createBomberLink(Player *player, Sound &sQuery, Sound &sConfirm, int index, Animation &a, Animation &b, Animation &c)
 {
 	for (auto e : airEntities)
@@ -1188,7 +1184,6 @@ void createBomberLink(Player *player, Sound &sQuery, Sound &sConfirm, int index,
 				sQuery.stop();
 			sConfirm.play();
 
-			//.:: Creating a Bomber Link :::
 			int x = 0, y = 0;
 			for (int i = 0; i < 3; i++)
 			{
@@ -1199,12 +1194,12 @@ void createBomberLink(Player *player, Sound &sQuery, Sound &sConfirm, int index,
 				airEntities.push_back(fighter);
 			}
 
+			Tank::camera = Camera::FirstPlane;
 			break;
 		}
 	}
 }
 
-//.:: createShot :::
 void createShot(Player *player, Animation &a, Animation &b, Animation &c)
 {
 	player->isShot = false;
@@ -1213,4 +1208,27 @@ void createShot(Player *player, Animation &a, Animation &b, Animation &c)
 	Shell *shell = new Shell(b, c, player);
 	entities.push_back(round);
 	entities.push_back(shell);
+}
+
+void dropBombs(Animation &a, Animation &b)
+{
+	Plane::leader.bombStatus = BombStatus::DESCENT;
+	Entity *e = Plane::leader.plane;
+
+	int x = 0, y = 0;
+	for (int i = 0; i < 3; i++)
+	{
+		x = i == 0 ? e->getCoordX(false) : i == 1 ? e->getCoordX(false) - 150 : e->getCoordX(false) + 150;
+		y = i == 0 ? e->getCoordY(false) : e->getCoordY(false) + 70;
+
+		Bomb *bomb = new Bomb(a, b, x, y, "bomb");
+		airEntities.push_back(bomb);
+	}
+}
+
+void createSmoke(Tank * p, Animation &a)
+{
+	p->isSmoking = true;
+	Smoke *smoke = new Smoke(a, p, "smoke");
+	entities.push_back(smoke);
 }
