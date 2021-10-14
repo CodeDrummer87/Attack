@@ -10,12 +10,19 @@
 #include "Smoke.h"
 #include "Rank.h"
 
+#include "Air.h"
+#include "Plane.h"
+
+#include "Bomb.h"
+
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
 //:::::::::::::::::
 
 enum AppMode { OPTIONS, GAME, SCORING, ENDGAME };
 AppMode mode = OPTIONS;
+
+vector<Air*> airEntities;
 
 int main()
 {
@@ -40,7 +47,7 @@ int main()
 #pragma region Images
 
 	Image iMap, iIcon,
-		iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank;
+		iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank, iFighter, iAirBomb, iBombExplosion;
 
 	iMap.loadFromFile("source/images/map.png");
 	iMap.createMaskFromColor(Color::White);
@@ -57,13 +64,19 @@ int main()
 	iCyanTank.createMaskFromColor(Color::White);
 	iHemoTank.loadFromFile("source/images/sprites/models/tanks/players/hemoTank.png");
 	iHemoTank.createMaskFromColor(Color::White);
+	iFighter.loadFromFile("source/images/sprites/models/planes/fighter.png");
+	iFighter.createMaskFromColor(Color::White);
+	iAirBomb.loadFromFile("source/images/sprites/models/other/air_bomb.png");
+	iAirBomb.createMaskFromColor(Color::White);
+	iBombExplosion.loadFromFile("source/images/sprites/explosions/bomb_explosion.png");
+	iBombExplosion.createMaskFromColor(Color::White);
 
 #pragma endregion
 
 #pragma region Textures
 
 	Texture tMap, tIcon, bTank, yTank, pTank, cTank, hTank, tTankRound, tShell, tShellExp,
-		tSmoke, tRank;
+		tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -80,6 +93,13 @@ int main()
 
 	tSmoke.loadFromFile("source/images/sprites/explosions/smoke.png");
 	tRank.loadFromFile("source/images/sprites/attributes/ranks.png");
+	tTarget.loadFromFile("source/images/sprites/attributes/target.png");
+	tAirStrikeZone.loadFromFile("source/images/sprites/attributes/airstrike_zone.png");
+	tFighter.loadFromImage(iFighter);
+	tFighterTrace.loadFromFile("source/images/sprites/models/planes/fighterTrace.png");
+	tAirJetsFlame.loadFromFile("source/images/sprites/models/planes/air_jets_flame.png");
+	tAirBomb.loadFromImage(iAirBomb);
+	tBombExplosion.loadFromImage(iBombExplosion);
 
 #pragma endregion
 
@@ -103,7 +123,7 @@ int main()
 #pragma endregion
 
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf,
-		takingIconBuf, prefermentBuf;
+		takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -115,11 +135,17 @@ int main()
 	shellExpBuf.loadFromFile("source/sounds/explosion/shell_explosion.flac");
 	takingIconBuf.loadFromFile("source/sounds/effects/icons/take_icon.flac");
 	prefermentBuf.loadFromFile("source/sounds/effects/icons/preferment.flac");
+	airstrikeQueryBuf.loadFromFile("source/sounds/effects/icons/airstrike_query.flac");
+	airstrikeConfirmBuf.loadFromFile("source/sounds/effects/airstrike_confirmation.flac");
+	fighterFlightBuf.loadFromFile("source/sounds/effects/fighterFlight.flac");
+	bombWhistleBuf.loadFromFile("source/sounds/effects/bombWhistle.flac");
+	bombExplosionBuf.loadFromFile("source/sounds/explosion/bomb_explosion.flac");
 
-	Sound sTakingIcon, sPreferment;
+	Sound sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm;
 
 	sTakingIcon.setBuffer(takingIconBuf);		sTakingIcon.setLoop(false);
 	sPreferment.setBuffer(prefermentBuf);		sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
+	sAirStrikeConfirm.setBuffer(airstrikeConfirmBuf); sAirStrikeConfirm.setLoop(false); sAirStrikeConfirm.setVolume(50.f);
 
 #pragma endregion
 
@@ -156,6 +182,14 @@ int main()
 	Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.017, 7);
 	Animation aSmoke(tSmoke, 0, 0, 64, 64, 0.008, 5);
 	Animation aRank(tRank, 0, 0, 200, 200, 1, 18);
+
+	Animation aTarget(tTarget, 0, 0, 400, 400, 0.007, 6);
+	Animation aAirStrikeZone(tAirStrikeZone, 0, 0, 400, 400, 0.005, 4);
+	Animation aFighter(tFighter, fighterFlightBuf, 0, 0, 120, 165, 0.01, 1);
+	Animation aFighterTrace(tFighterTrace, 0, 0, 120, 165, 0.1, 21);
+	Animation aAirJetsFlame(tAirJetsFlame, 0, 0, 120, 165, 0.1, 21);
+	Animation aDroppingBomb(tAirBomb, bombWhistleBuf, 0, 0, 200, 200, 0.015, 50);
+	Animation aBombExplosion(tBombExplosion, bombExplosionBuf, 0, 0, 150, 150, 0.008, 14);
 
 #pragma endregion
 
@@ -260,6 +294,9 @@ int main()
 	//.:: temporary code:::
 	double viewPosX = sizeX / 2, viewPosY = mapsHeight[0] * 32 - sizeY / 2;
 	//.::::::::::::::::::::
+	setViewCoordinates(sizeX, sizeY, viewPosX, viewPosY, index);
+
+	float zoomViewX = (float)sizeX / 2, zoomViewY = (float)sizeY / 2;
 
 	vector<Entity*> entities;
 	vector<Player*> team;
@@ -528,14 +565,55 @@ int main()
 						}
 						if (currentPlayer != NULL && currentPlayer->status != DEAD)
 						{
-							if (currentPlayer->isShot)
+							//.:: Air Spotter Mode
+							if (Player::airSpotter.isAirSpotter && Player::airSpotter.currentPlayer == currentPlayer)
 							{
-								currentPlayer->isShot = false;
+								for (auto e : airEntities)
+								{
+									if (e->name == "target" && e->number == currentPlayer->number)
+									{
+										e->status = WOUNDED;
 
-								Smoke *round = new Smoke(roundAnimation, currentPlayer, "explosion");
-								Shell *shell = new Shell(aShell, aShellExp, currentPlayer);
-								entities.push_back(round);
-								entities.push_back(shell);
+										if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
+											sAirStrikeQuery.stop();
+										sAirStrikeConfirm.play();
+
+										//.:: Creating a Bomber Link :::
+										for (int i = 0; i < 3; i++)
+										{
+											int x = e->getCoordX(false);
+											int y = mapsHeight[index] * 32 + 800;
+
+											if (i == 1)
+											{
+												x -= 150;
+												y += 100;
+											}
+											else if (i == 2)
+											{
+												x += 150;
+												y += 100;
+											}
+
+											Plane *fighter = new Plane(aFighter, aFighterTrace, aAirJetsFlame, x, y, "fighter", e);
+											airEntities.push_back(fighter);
+										}
+
+										break;
+									}
+								}
+							}
+							else
+							{
+								if (currentPlayer->isShot)
+								{
+									currentPlayer->isShot = false;
+
+									Smoke *round = new Smoke(roundAnimation, currentPlayer, "explosion");
+									Shell *shell = new Shell(aShell, aShellExp, currentPlayer);
+									entities.push_back(round);
+									entities.push_back(shell);
+								}
 							}
 						}
 					}
@@ -555,6 +633,7 @@ int main()
 						viewPosX = sizeX / 2;
 						viewPosY = mapsHeight[0] * 32 - sizeY / 2;
 						mode = GAME;
+						setViewCoordinates(sizeX, sizeY, viewPosX, viewPosY, index);
 					}
 				}
 
@@ -939,6 +1018,50 @@ int main()
 						if (p->isCommander && Tank::isBusyCamera)
 							setViewCoordinates(sizeX, sizeY, p->getCoordX(false), p->getCoordY(false), index);
 
+						//.:: Air spotter mode :::
+						if (Player::airSpotter.isAirSpotter && Player::airSpotter.currentPlayer == p)
+						{
+							if (Player::airSpotter.isTargetCreated)
+							{
+								Player::airSpotter.isTargetCreated = false;
+								sAirStrikeQuery.play();
+
+								Air *targetBomb = new Air(aTarget, aAirStrikeZone, p, "target");
+								airEntities.push_back(targetBomb);
+
+								if (!Tank::isBusyCamera)
+									Tank::isBusyCamera = true;
+							}
+
+							if (Tank::isBusyCamera)
+								setViewCoordinates(sizeX, sizeY, Player::airSpotter.xTargetPosition, Player::airSpotter.yTargetPosition, index);
+							
+							//.:: A death in spotter mode :::
+							if (p->hitPoints <= 0)
+							{
+								Player::airSpotter.isAirSpotter = false;
+								Player::airSpotter.currentPlayer = NULL;
+								Player::airSpotter.xTargetPosition = 0.0;
+								Player::airSpotter.yTargetPosition = 0.0;
+
+								Tank::isBusyCamera = false;
+								if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
+								{
+									sAirStrikeQuery.stop();
+								}
+
+								for (auto a : airEntities)
+								{
+									if (a->name == "target" && static_cast<Air*>(a)->getOwn() == p)
+									{
+										a->isExist = false;
+										break;
+									}
+								}
+							}
+						}
+
+						//::::::::::::::::::::::::::::::::::::::::::::::::::
 						if (fadeOutTime != 0)
 							p->checkIconCollision(maps[index], sTakingIcon);
 					}
@@ -947,7 +1070,7 @@ int main()
 						if (p->isCommander)
 						{
 							p->isCommander = false;
-							p->defineNewCommander(team);
+							Player::defineNewCommander(team);
 						}
 
 						if (!p->isSmoking && p->makeSureDestroyed())
@@ -958,6 +1081,66 @@ int main()
 						}
 					}
 				}
+
+				//.:: Bomb dropping :::
+				if (Plane::leader.bombStatus == BombStatus::DROPPED)
+				{
+					Plane::leader.bombStatus = BombStatus::DESCENT;
+					Entity *e = Plane::leader.plane;
+
+					for (int i = 0; i < 3; i++)
+					{
+						a1 = i == 0 ? e->getCoordX(false) :
+							i == 1 ? e->getCoordX(false) - 150 : e->getCoordX(false) + 150;
+						a2 = i == 0 ? e->getCoordY(false) : e->getCoordY(false) + 70;
+
+						Bomb *bomb = new Bomb(aDroppingBomb, aBombExplosion, a1, a2, "bomb");
+						airEntities.push_back(bomb);
+					}
+				}
+
+#pragma region The camera shows time scenes
+
+				if (Tank::isBusyCamera)
+				{
+					Plane *plane = static_cast<Plane*>(Plane::leader.plane);
+
+					if (Plane::leader.openPosition)
+					{
+						if (plane->leader.bombStatus == ABOARD)
+							setViewCoordinates(sizeX, sizeY, plane->getCoordX(false), plane->getCoordY(false), index);
+					}
+
+					//.:: Focus the camera on the first bomb :::
+					if (Bomb::firstBomb.isOpenPosition)
+					{
+						Bomb *bomb = static_cast<Bomb*>(Bomb::firstBomb.bomb);
+
+						if (bomb == NULL)
+						{
+							Tank::isBusyCamera = false;
+							Bomb::firstBomb.isOpenPosition = false;
+
+							view.reset(FloatRect(0, 0, (float)sizeX, (float)sizeY));
+
+							if (!Player::checkTeamForCommander(team))
+								view.setCenter(mapsWidth[index] * 32 / 2 - 16, mapsHeight[index] * 32 - sizeY / 2 - 32);
+
+							zoomViewX = (float)sizeX / 2;
+							zoomViewY = (float)sizeY / 2;
+						}
+						else
+						{
+							zoomViewX -= zoomViewX / 200;
+							zoomViewY -= zoomViewY / 200;
+
+							view.reset(FloatRect(0, 0, zoomViewX, zoomViewY));
+							setViewCoordinates(zoomViewX, zoomViewY, bomb->getCoordX(false), bomb->getCoordY(false), index);
+						}
+					}
+				}
+
+#pragma endregion
 
 				//.:: update entities :::
 				for (auto i = entities.begin(); i != entities.end();)
@@ -974,8 +1157,20 @@ int main()
 					else i++;
 				}
 
-				if (!Tank::isBusyCamera)
-					setViewCoordinates(sizeX, sizeY, viewPosX, viewPosY, index);
+				//.:: update air entities :::
+				for (auto i = airEntities.begin(); i != airEntities.end();)
+				{
+					Entity* e = *i;
+					e->update(time);
+					e->anim.update(time, e->isPlayAnimation, e->dir);
+					if (e->isExist == false)
+					{
+						i = airEntities.erase(i);
+						delete e;
+					}
+					else i++;
+				}
+
 				app.setView(view);
 			}
 
@@ -990,12 +1185,22 @@ int main()
 
 			if (mode == GAME)
 			{
+				//.:: display zones :::
+				for (auto e : airEntities)
+					if (e->name == "zone")
+						e->draw(app);
+
 				//.:: map rendering :::
 				renderMap(maps[index], app, map, time, index);
 				//.:: display entities :::
 				for (auto e : entities)
 					e->draw(app);
 				drawForestAndIcons(maps[index], app, map, icons, time, index);
+
+				//.:: display all air entities except zones :::
+				for (auto e : airEntities)
+					if (e->name != "zone")
+						e->draw(app);
 			}
 
 #pragma endregion
