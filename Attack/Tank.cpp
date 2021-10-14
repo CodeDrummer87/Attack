@@ -146,3 +146,37 @@ bool Tank::makeSureDestroyed()
 {
 	return isDestroyed;
 }
+
+void Tank::checkMapCollision(string map[])
+{
+	for (int i = (anim.getRect(dir).top + 15) / 32; i < (y + anim.getRect(dir).height) / 32; i++)
+		for (int j = (anim.getRect(dir).left + 14) / 32; j < (x + anim.getRect(dir).width) / 32; j++)
+		{
+			if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+			{
+				if (i * 32 < y && j * 32 > x - 26 && j * 32 < x + 26)
+				{
+					if (dy < 0)
+						dy = 0.F;
+				}
+
+				if (i * 32 > y && j * 32 > x - 26 && j * 32 < x + 26)
+				{
+					if (dy > 0)
+						dy = 0.F;
+				}
+
+				if (j * 32 > x && i * 32 > y - 26 && i * 32 < y + 26)
+				{
+					if (dx > 0)
+						dx = 0.F;
+				}
+
+				if (j * 32 < x && i * 32 > y - 26 && i * 32 < y + 26)
+				{
+					if (dx < 0)
+						dx = 0.F;
+				}
+			}
+		}
+}

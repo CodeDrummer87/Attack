@@ -22,6 +22,8 @@ bool isUpd = false;	//.:: for double click protection
 enum AppMode { OPTIONS, GAME, SCORING, ENDGAME };
 AppMode mode = OPTIONS;
 
+vector<Entity*> entities;
+vector<Player*> team;
 vector<Air*> airEntities;
 
 int main()
@@ -298,9 +300,6 @@ int main()
 
 	float zoomViewX = (float)sizeX / 2, zoomViewY = (float)sizeY / 2;
 
-	vector<Entity*> entities;
-	vector<Player*> team;
-
 	//.:: Players tanks start position variables :::
 	int a1, a2, b1, b2, c1, c2, d1, d2, e1, e2;
 	a1 = a2 = b1 = b2 = c1 = c2 = d1 = d2 = e1 = e2 = 0;
@@ -310,6 +309,9 @@ int main()
 	Clock gameTimeClock;
 	int gameTime = 0;
 	double time = 0.0;
+
+	void createBomberLink(Player*, Sound&, Sound&, int, Animation&, Animation&, Animation&);
+	void createShot(Player*, Animation&, Animation&, Animation&);
 
 	if (isGamePlay)
 	{
@@ -567,54 +569,10 @@ int main()
 						{
 							//.:: Air Spotter Mode
 							if (Player::airSpotter.isAirSpotter && Player::airSpotter.currentPlayer == currentPlayer)
-							{
-								for (auto e : airEntities)
-								{
-									if (e->name == "target" && e->number == currentPlayer->number)
-									{
-										e->status = WOUNDED;
-
-										if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
-											sAirStrikeQuery.stop();
-										sAirStrikeConfirm.play();
-
-										//.:: Creating a Bomber Link :::
-										for (int i = 0; i < 3; i++)
-										{
-											int x = e->getCoordX(false);
-											int y = mapsHeight[index] * 32 + 800;
-
-											if (i == 1)
-											{
-												x -= 150;
-												y += 100;
-											}
-											else if (i == 2)
-											{
-												x += 150;
-												y += 100;
-											}
-
-											Plane *fighter = new Plane(aFighter, aFighterTrace, aAirJetsFlame, x, y, "fighter", e);
-											airEntities.push_back(fighter);
-										}
-
-										break;
-									}
-								}
-							}
+								createBomberLink(currentPlayer, sAirStrikeQuery, sAirStrikeConfirm, index, aFighter, aFighterTrace, aAirJetsFlame);
 							else
-							{
 								if (currentPlayer->isShot)
-								{
-									currentPlayer->isShot = false;
-
-									Smoke *round = new Smoke(roundAnimation, currentPlayer, "explosion");
-									Shell *shell = new Shell(aShell, aShellExp, currentPlayer);
-									entities.push_back(round);
-									entities.push_back(shell);
-								}
-							}
+									createShot(currentPlayer, roundAnimation, aShell, aShellExp);
 						}
 					}
 
@@ -676,14 +634,14 @@ int main()
 
 							if (Joystick::isButtonPressed(0, 0) || Joystick::isButtonPressed(0, 3))
 							{
-								if (team[0]->status != DEAD && team[0]->isShot)
+								if (team[0]->status != DEAD)
 								{
-									team[0]->isShot = false;
-
-									Smoke *round = new Smoke(aBurgTankRound, team[0], "explosion");
-									Shell *shell = new Shell(aShell, aShellExp, team[0]);
-									entities.push_back(round);
-									entities.push_back(shell);
+									//.:: Air Spotter mode :::
+									if(Player::airSpotter.isAirSpotter && Player::airSpotter.currentPlayer == team[0])
+										createBomberLink(team[0], sAirStrikeQuery, sAirStrikeConfirm, index, aFighter, aFighterTrace, aAirJetsFlame);
+									else
+										if (team[0]->isShot)
+											createShot(team[0], aBurgTankRound, aShell, aShellExp);
 								}
 							}
 						}
@@ -742,15 +700,11 @@ int main()
 
 								if (Joystick::isButtonPressed(1, 0) || Joystick::isButtonPressed(1, 3))
 								{
-									if (team[1]->status != DEAD && team[1]->isShot)
-									{
-										team[1]->isShot = false;
-
-										Smoke *round = new Smoke(aYelTankRound, team[1], "explosion");
-										Shell *shell = new Shell(aShell, aShellExp, team[1]);
-										entities.push_back(round);
-										entities.push_back(shell);
-									}
+									if (team[1]->status != DEAD)
+										createBomberLink(team[1], sAirStrikeQuery, sAirStrikeConfirm, index, aFighter, aFighterTrace, aAirJetsFlame);
+									else
+										if (team[1]->isShot)
+											createShot(team[1], aYelTankRound, aShell, aShellExp);
 								}
 							}
 							else
@@ -809,15 +763,11 @@ int main()
 
 								if (Joystick::isButtonPressed(2, 0) || Joystick::isButtonPressed(2, 3))
 								{
-									if (team[2]->status != DEAD && team[2]->isShot)
-									{
-										team[2]->isShot = false;
-
-										Smoke *round = new Smoke(aPurpTankRound, team[2], "explosion");
-										Shell *shell = new Shell(aShell, aShellExp, team[2]);
-										entities.push_back(round);
-										entities.push_back(shell);
-									}
+									if (team[2]->status != DEAD)
+										createBomberLink(team[2], sAirStrikeQuery, sAirStrikeConfirm, index, aFighter, aFighterTrace, aAirJetsFlame);
+									else
+										if (team[2]->isShot)
+											createShot(team[2], aPurpTankRound, aShell, aShellExp);
 								}
 							}
 							else
@@ -876,15 +826,11 @@ int main()
 
 								if (Joystick::isButtonPressed(3, 0) || Joystick::isButtonPressed(3, 3))
 								{
-									if (team[3]->status != DEAD && team[3]->isShot)
-									{
-										team[3]->isShot = false;
-
-										Smoke *round = new Smoke(aYelTankRound, team[3], "explosion");
-										Shell *shell = new Shell(aShell, aShellExp, team[3]);
-										entities.push_back(round);
-										entities.push_back(shell);
-									}
+									if (team[3]->status != DEAD)
+										createBomberLink(team[3], sAirStrikeQuery, sAirStrikeConfirm, index, aFighter, aFighterTrace, aAirJetsFlame);
+									else
+										if (team[3]->isShot)
+											createShot(team[3], aYelTankRound, aShell, aShellExp);
 								}
 							}
 							else
@@ -943,15 +889,11 @@ int main()
 
 								if (Joystick::isButtonPressed(4, 0) || Joystick::isButtonPressed(4, 3))
 								{
-									if (team[4]->status != DEAD && team[4]->isShot)
-									{
-										team[4]->isShot = false;
-
-										Smoke *round = new Smoke(aBurgTankRound, team[4], "explosion");
-										Shell *shell = new Shell(aShell, aShellExp, team[4]);
-										entities.push_back(round);
-										entities.push_back(shell);
-									}
+									if (team[4]->status != DEAD)
+										createBomberLink(team[4], sAirStrikeQuery, sAirStrikeConfirm, index, aFighter, aFighterTrace, aAirJetsFlame);
+									else
+										if (team[4]->isShot)
+											createShot(team[4], aBurgTankRound, aShell, aShellExp);
 								}
 							}
 							else
@@ -990,6 +932,8 @@ int main()
 				{
 					if (p->status != DEAD)
 					{
+						p->checkMapCollision(maps[index]);
+
 						//.:: Smoking :::::::::::::::
 						if (p->status == WOUNDED)
 						{
@@ -1046,9 +990,7 @@ int main()
 
 								Tank::isBusyCamera = false;
 								if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
-								{
 									sAirStrikeQuery.stop();
-								}
 
 								for (auto a : airEntities)
 								{
@@ -1232,4 +1174,43 @@ int main()
 	}
 
 	return 0;
+}
+
+//.:: createBomberLink :::
+void createBomberLink(Player *player, Sound &sQuery, Sound &sConfirm, int index, Animation &a, Animation &b, Animation &c)
+{
+	for (auto e : airEntities)
+	{
+		if (e->name == "target" && e->number == player->number)
+		{
+			e->status = WOUNDED;
+			if (sQuery.getStatus() == SoundStream::Playing)
+				sQuery.stop();
+			sConfirm.play();
+
+			//.:: Creating a Bomber Link :::
+			int x = 0, y = 0;
+			for (int i = 0; i < 3; i++)
+			{
+				x = i == 0 ? e->getCoordX(false) : i == 1 ? e->getCoordX(false) - 150 : e->getCoordX(false) + 150;
+				y = i == 0 ? mapsHeight[index] * 32 + 800 : mapsHeight[index] * 32 + 900;
+
+				Plane *fighter = new Plane(a, b, c, x, y, "fighter", e);
+				airEntities.push_back(fighter);
+			}
+
+			break;
+		}
+	}
+}
+
+//.:: createShot :::
+void createShot(Player *player, Animation &a, Animation &b, Animation &c)
+{
+	player->isShot = false;
+
+	Smoke *round = new Smoke(a, player, "explosion");
+	Shell *shell = new Shell(b, c, player);
+	entities.push_back(round);
+	entities.push_back(shell);
 }
