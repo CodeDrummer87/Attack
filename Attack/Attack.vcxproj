@@ -135,9 +135,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Air.cpp" />
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Rank.cpp" />
     <ClCompile Include="Shell.cpp" />
@@ -145,10 +148,13 @@
     <ClCompile Include="Tank.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Air.h" />
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Bomb.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="libraries.h" />
     <ClInclude Include="maps.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Rank.h" />
     <ClInclude Include="Shell.h" />

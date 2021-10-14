@@ -1,5 +1,6 @@
-#include "Player.h"
+#pragma once
 
+#include "Player.h"
 
 Player::Player()
 {}
@@ -21,6 +22,8 @@ Player::Player(Animation &anim, double x_, double y_, string name_, int dir_, bo
 Player::~Player()
 {}
 
+AirSpotter Player::airSpotter = { false, NULL, false, 0.0, 0.0 };
+
 void Player::update(double time)
 {
 	if (currentExperience >= requiredExperience)
@@ -31,7 +34,54 @@ void Player::update(double time)
 		improveTank(residual_);
 	}
 
-	Tank::update(time);
+	if (airSpotter.isAirSpotter && airSpotter.currentPlayer == this)
+	{
+		if (isPlayAnimation)
+			isPlayAnimation = false;
+
+		if (airSpotter.xTargetPosition == 0.0 && airSpotter.yTargetPosition == 0.0)
+		{
+			airSpotter.xTargetPosition = x;
+			airSpotter.yTargetPosition = y;
+		}
+
+		switch (dir)
+		{
+		case 1: dy = -0.09 * time - ((double)level / 100);
+			break;
+		case 2: dx = 0.09 * time + ((double)level / 100);
+			break;
+		case 3: dy = 0.09 * time + ((double)level / 100);
+			break;
+		case 4: dx = -0.09 * time - ((double)level / 100);
+			break;
+		}
+
+		airSpotter.xTargetPosition += dx * 5;
+		if (airSpotter.xTargetPosition < 200)
+		{
+			airSpotter.xTargetPosition = 200;
+		}
+		else if (airSpotter.xTargetPosition > 61*32 - 200)
+		{
+			airSpotter.xTargetPosition = 61*32 - 200;
+		}
+
+		airSpotter.yTargetPosition += dy * 5;
+		if (airSpotter.yTargetPosition < 200 + 34 * 32)	// Screen height is equal 34 squares (32px, 32px)
+		{
+			airSpotter.yTargetPosition = 200 + 34 * 32;
+		}
+		else if (airSpotter.yTargetPosition > 119*32 - 200)
+		{
+			airSpotter.yTargetPosition = 119 * 32 - 200;
+		}
+		dx = dy = 0;
+	}
+	else
+	{
+		Tank::update(time);
+	}
 }
 
 void Player::setStartPosition(double x_, double y_)
@@ -70,6 +120,19 @@ void Player::checkIconCollision(string map[], Sound &sound)
 				Tank::isBusyCamera = true;
 				map[i][j] = ' ';
 			}
+
+			if (map[i][j] == 'A')
+			{
+				if (!airSpotter.isAirSpotter && airSpotter.currentPlayer == NULL && airSpotter.yTargetPosition == 0.0)
+				{
+					sound.play();
+					map[i][j] = ' ';
+
+					airSpotter.isAirSpotter = true;
+					airSpotter.currentPlayer = this;
+					airSpotter.isTargetCreated = true;
+				}
+			}
 		}
 }
 
@@ -104,4 +167,15 @@ void Player::defineNewCommander(vector<Player*> team)
 	}
 
 	newCommander->isCommander = true;
+}
+
+bool Player::checkTeamForCommander(vector<Player*> team)
+{
+	for (auto p : team)
+	{
+		if (p->isCommander)
+			return true;
+	}
+
+	return false;
 }
