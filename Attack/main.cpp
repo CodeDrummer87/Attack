@@ -14,6 +14,7 @@
 #include "Plane.h"
 
 #include "Bomb.h"
+#include "Enemy.h"
 
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
@@ -23,8 +24,11 @@ enum AppMode { OPTIONS, GAME, SCORING, ENDGAME };
 AppMode mode = OPTIONS;
 
 vector<Entity*> entities;
-vector<Player*> team;
 vector<Air*> airEntities;
+vector<Player*> team;
+vector<Enemy*> squad;
+
+int getEnemyPositionY(int, int, string*);
 
 int main()
 {
@@ -48,8 +52,8 @@ int main()
 
 #pragma region Images
 
-	Image iMap, iIcon,
-		iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank, iFighter, iAirBomb, iBombExplosion;
+	Image iMap, iIcon, iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank, iFighter, iAirBomb, iBombExplosion,
+		iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8;
 
 	iMap.loadFromFile("source/images/map.png");
 	iMap.createMaskFromColor(Color::White);
@@ -73,12 +77,30 @@ int main()
 	iBombExplosion.loadFromFile("source/images/sprites/explosions/bomb_explosion.png");
 	iBombExplosion.createMaskFromColor(Color::White);
 
+	iEnemy_1.loadFromFile("source/images/sprites/models/tanks/enemies/enemy_1.png");
+	iEnemy_1.createMaskFromColor(Color::White);
+	iEnemy_2.loadFromFile("source/images/sprites/models/tanks/enemies/enemy_2.png");
+	iEnemy_2.createMaskFromColor(Color::White);
+	iEnemy_3.loadFromFile("source/images/sprites/models/tanks/enemies/enemy_3.png");
+	iEnemy_3.createMaskFromColor(Color::White);
+	iEnemy_4.loadFromFile("source/images/sprites/models/tanks/enemies/enemy_4.png");
+	iEnemy_4.createMaskFromColor(Color::White);
+	iEnemy_5.loadFromFile("source/images/sprites/models/tanks/enemies/enemy_5.png");
+	iEnemy_5.createMaskFromColor(Color::White);
+	iEnemy_6.loadFromFile("source/images/sprites/models/tanks/enemies/enemy_6.png");
+	iEnemy_6.createMaskFromColor(Color::White);
+	iEnemy_7.loadFromFile("source/images/sprites/models/tanks/enemies/enemy_7.png");
+	iEnemy_7.createMaskFromColor(Color::White);
+	iEnemy_8.loadFromFile("source/images/sprites/models/tanks/enemies/enemy_8.png");
+	iEnemy_8.createMaskFromColor(Color::White);
+
 #pragma endregion
 
 #pragma region Textures
 
 	Texture tMap, tIcon, bTank, yTank, pTank, cTank, hTank, tTankRound, tShell, tShellExp,
-		tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion;
+		tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion,
+		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tEnemy_6, tEnemy_7, tEnemy_8;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -103,6 +125,15 @@ int main()
 	tAirBomb.loadFromImage(iAirBomb);
 	tBombExplosion.loadFromImage(iBombExplosion);
 
+	tEnemy_1.loadFromImage(iEnemy_1);
+	tEnemy_2.loadFromImage(iEnemy_2);
+	tEnemy_3.loadFromImage(iEnemy_3);
+	tEnemy_4.loadFromImage(iEnemy_4);
+	tEnemy_5.loadFromImage(iEnemy_5);
+	tEnemy_6.loadFromImage(iEnemy_6);
+	tEnemy_7.loadFromImage(iEnemy_7);
+	tEnemy_8.loadFromImage(iEnemy_8);
+
 #pragma endregion
 
 #pragma region Sounds & Music
@@ -125,7 +156,8 @@ int main()
 #pragma endregion
 
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf,
-		takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf;
+		takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
+		enemy_1Buf, enemy_1RoundBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -142,9 +174,12 @@ int main()
 	fighterFlightBuf.loadFromFile("source/sounds/effects/fighterFlight.flac");
 	bombWhistleBuf.loadFromFile("source/sounds/effects/bombWhistle.flac");
 	bombExplosionBuf.loadFromFile("source/sounds/explosion/bomb_explosion.flac");
+	enemy_1Buf.loadFromFile("source/sounds/tank/movement/move_5.flac");
+	enemy_1RoundBuf.loadFromFile("source/sounds/tank/round/enemy1_round.flac");
 
-	Sound sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm;
+	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm;
 
+	enemy_move.setBuffer(enemy_1Buf);			enemy_move.setLoop(true);
 	sTakingIcon.setBuffer(takingIconBuf);		sTakingIcon.setLoop(false);
 	sPreferment.setBuffer(prefermentBuf);		sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
 	sAirStrikeConfirm.setBuffer(airstrikeConfirmBuf); sAirStrikeConfirm.setLoop(false); sAirStrikeConfirm.setVolume(50.f);
@@ -192,6 +227,27 @@ int main()
 	Animation aAirJetsFlame(tAirJetsFlame, 0, 0, 120, 165, 0.1, 21);
 	Animation aDroppingBomb(tAirBomb, bombWhistleBuf, 0, 0, 200, 200, 0.015, 50);
 	Animation aBombExplosion(tBombExplosion, bombExplosionBuf, 0, 0, 150, 150, 0.008, 14);
+
+	Animation enemy_1(tEnemy_1, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_enemy_1(tEnemy_1, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+	Animation aEnemy1Round(tTankRound, enemy_1RoundBuf, 0, 0, 40, 36, 0.015, 8);
+	Animation enemy_2(tEnemy_2, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_enemy_2(tEnemy_2, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+	Animation enemy_3(tEnemy_3, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_enemy_3(tEnemy_3, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+	Animation enemy_4(tEnemy_4, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_enemy_4(tEnemy_4, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+	Animation enemy_5(tEnemy_5, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_enemy_5(tEnemy_5, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+	Animation enemy_6(tEnemy_6, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_enemy_6(tEnemy_6, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+	Animation enemy_7(tEnemy_7, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_enemy_7(tEnemy_7, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+	Animation enemy_8(tEnemy_8, 0, 0, 64, 64, 0.016, 2);
+	Animation explosion_enemy_8(tEnemy_8, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+	Animation enemyAnim_1[] = { enemy_1, enemy_2, enemy_3, enemy_4, enemy_5, enemy_6, enemy_7, enemy_8 };
+	Animation explosionEnemyAnim_1[] = { explosion_enemy_1, explosion_enemy_2, explosion_enemy_3, explosion_enemy_4,
+										 explosion_enemy_5, explosion_enemy_6, explosion_enemy_7, explosion_enemy_8 };
 
 #pragma endregion
 
@@ -310,7 +366,8 @@ int main()
 	double time = 0.0;
 
 #pragma region Functions
-
+	
+	void createEnemies(vector<Entity*>&, vector<Enemy*>&, Animation[], Animation[], string*);
 	void createSmoke(Tank*, Animation&);
 	void createShot(Player*, Animation&, Animation&, Animation&);
 	void createBomberLink(Player*, Sound&, Sound&, int, Animation&, Animation&, Animation&);
@@ -394,6 +451,8 @@ int main()
 					team[4]->setStartPosition(e1, e2);
 					break;
 				}
+
+				//createEnemies(entities, squad, enemyAnim_1, explosionEnemyAnim_1);
 			}
 
 #pragma endregion
@@ -465,6 +524,7 @@ int main()
 
 							isStartGame = false;
 							choice->play();
+							createEnemies(entities, squad, enemyAnim_1, explosionEnemyAnim_1, maps[index]);
 						}
 
 						if (Keyboard::isKeyPressed(Keyboard::Down))
@@ -521,6 +581,11 @@ int main()
 
 				if (mode == GAME)
 				{
+					if (enemy_move.getStatus() == SoundStream::Stopped && !battleIsOver)
+						enemy_move.play();
+					else if (enemy_move.getStatus() == SoundStream::Playing && battleIsOver)
+						enemy_move.stop();
+
 					//.:: temporary code :::
 					if (Keyboard::isKeyPressed(Keyboard::N))
 					{
@@ -533,6 +598,7 @@ int main()
 								mode = SCORING;
 								isStartBattle = true;
 								++index;
+								enemy_move.stop();
 							}
 						}
 					}
@@ -1018,6 +1084,12 @@ int main()
 					}
 				}
 
+				for (auto e : squad)
+				{
+					if (e->status != DEAD)
+						e->checkMapCollision(maps[index]);
+				}
+
 				//.:: Bomb dropping :::
 				if (Plane::leader.bombStatus == BombStatus::DROPPED)
 					dropBombs(aDroppingBomb, aBombExplosion);
@@ -1171,6 +1243,112 @@ int main()
 	}
 
 	return 0;
+}
+
+void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation anim[], Animation explosionAnim[], string *map)
+{
+	for (auto j = squad.begin(); j != squad.end();)
+	{
+		j = squad.erase(j);
+		j++;
+	}
+
+	for (auto i = entities.begin(); i != entities.end();)
+	{
+		Entity *enemy = *i;
+		if (static_cast<Entity*>(enemy)->name == "tank" && static_cast<Entity*>(enemy)->army == "enemy")
+		{
+			i = entities.erase(i);
+			delete enemy;
+		}
+		else i++;
+	}
+
+	const int eTanks = 72;
+	double enemyPositionX = 70;
+	double enemyPositionY = 100;
+	int mX = 0, mY = 0;
+	int addValue = 0;
+
+	for (int i = 0; i < eTanks; i++)
+	{
+		mX = (int)(ceil(enemyPositionX / 32));
+		mY = (int)(ceil(enemyPositionY / 32));
+
+		Enemy *enemy;
+		if (i <= 9)
+		{
+			addValue = getEnemyPositionY(mX, mY, map);
+			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[7], "enemy", 8, false);
+		}
+		else if (i > 9 && i <= 18)
+		{
+			addValue = getEnemyPositionY(mX, mY, map);
+			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[6], "enemy", 7, false);
+		}
+		else if (i > 18 && i <= 27)
+		{
+			addValue = getEnemyPositionY(mX, mY, map);
+			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[5], "enemy", 6, false);
+		}
+		else if (i > 27 && i <= 36)
+		{
+			addValue = getEnemyPositionY(mX, mY, map);
+			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[4], "enemy", 5, false);
+		}
+		else if (i > 36 && i <= 45)
+		{
+			addValue = getEnemyPositionY(mX, mY, map);
+			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[3], "enemy", 4, false);
+		}
+		else if (i > 45 && i <= 54)
+		{
+			addValue = getEnemyPositionY(mX, mY, map);
+			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[2], "enemy", 3, false);
+		}
+		else if (i > 54 && i <= 63)
+		{
+			addValue = getEnemyPositionY(mX, mY, map);
+			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[1], "enemy", 2, false);
+		}
+		else
+		{
+			addValue = getEnemyPositionY(mX, mY, map);
+			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[0], "enemy", 1, false);
+		}
+
+		entities.push_back(enemy);
+		squad.push_back(enemy);
+
+		enemyPositionX += 200;
+		if (i != 0 && i % 9 == 0)
+		{
+			enemyPositionX = 100;
+			enemyPositionY += 400;
+		}
+	}
+}
+
+int getEnemyPositionY(int x, int y, string *map)
+{
+	int value = 0;
+
+	while (true)
+	{
+		if (map[y][x] == ' ' || map[y][x] == 'F')
+		{
+			if (value > 0 || value == 0 && map[y-1][x] == 'B' || value == 0 && map[y-1][x] == 'b' || value == 0 && map[y-1][x] == 'W')
+				value += 32;
+			break;
+		}
+		else
+		{
+			value += 32;
+			y++;
+		}
+	}
+
+	return value;
 }
 
 void createBomberLink(Player *player, Sound &sQuery, Sound &sConfirm, int index, Animation &a, Animation &b, Animation &c)

@@ -122,6 +122,6 @@ string SixthStage[] =
 	"B                                                           B",
 	"B                                                           B",
 	"B                                                           B",
-	"B                                                           B",
+	"B    C                                                      B",
 	"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
 };

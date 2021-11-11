@@ -50,6 +50,5 @@ public:
 	void update(double);
 	void accelerate(int, double);
 	bool makeSureDestroyed();
-	void checkMapCollision(string[]);
 
 };

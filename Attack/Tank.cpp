@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Tank.h"
+#include "Enemy.h"
 
 Tank::Tank()
 {}
@@ -64,8 +65,10 @@ void Tank::update(double time)
 		//::::::::::::::::::::::::
 		if (status == ALIVE)
 		{
-			x += dx;
-			y += dy;
+			if (x + dx > 0 && x + dx < 61 * 32)
+				x += dx;
+			if (y + dy > 0 && y + dy < 119 * 32)
+				y += dy;
 			dx = dy = 0;
 		}
 		else if (status == WOUNDED)
@@ -145,38 +148,4 @@ void Tank::accelerate(int dir_, double acc)
 bool Tank::makeSureDestroyed()
 {
 	return isDestroyed;
-}
-
-void Tank::checkMapCollision(string map[])
-{
-	for (int i = (anim.getRect(dir).top + 15) / 32; i < (y + anim.getRect(dir).height) / 32; i++)
-		for (int j = (anim.getRect(dir).left + 14) / 32; j < (x + anim.getRect(dir).width) / 32; j++)
-		{
-			if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
-			{
-				if (i * 32 < y && j * 32 > x - 26 && j * 32 < x + 26)
-				{
-					if (dy < 0)
-						dy = 0.F;
-				}
-
-				if (i * 32 > y && j * 32 > x - 26 && j * 32 < x + 26)
-				{
-					if (dy > 0)
-						dy = 0.F;
-				}
-
-				if (j * 32 > x && i * 32 > y - 26 && i * 32 < y + 26)
-				{
-					if (dx > 0)
-						dx = 0.F;
-				}
-
-				if (j * 32 < x && i * 32 > y - 26 && i * 32 < y + 26)
-				{
-					if (dx < 0)
-						dx = 0.F;
-				}
-			}
-		}
 }

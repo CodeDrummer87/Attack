@@ -115,10 +115,13 @@ void Player::checkIconCollision(string map[], Sound &sound)
 
 			if (map[i][j] == 'C')
 			{
-				sound.play();
-				this->isCommander = true;
-				Tank::camera = Camera::Commander;
-				map[i][j] = ' ';
+				if (Tank::camera != Camera::Target && Tank::camera != Camera::FirstPlane)
+				{
+					sound.play();
+					this->isCommander = true;
+					Tank::camera = Camera::Commander;
+					map[i][j] = ' ';
+				}
 			}
 
 			if (map[i][j] == 'A')
@@ -178,4 +181,31 @@ bool Player::checkTeamForCommander(vector<Player*> team)
 	}
 
 	return false;
+}
+
+void Player::checkMapCollision(string *map)
+{
+	if (dy < 0)
+		for (int i = (y - 20) / 32; i <= (y + 20) / 32; i++)
+			for (int j = (x - 2) / 32; j <= (x + 30) / 32; j++)
+				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+					dy = 0;
+
+	if (dy > 0)
+		for (int i = (y + 20) / 32; i <= (y + 50) / 32; i++)
+			for (int j = (x - 2) / 32; j <= (x + 30) / 32; j++)
+				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+					dy = 0;
+
+	if (dx < 0)
+		for (int i = (y) / 32; i <= (y + 30) / 32; i++)
+			for (int j = (x - 16) / 32; j <= (x + 20) / 32; j++)
+				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+					dx = 0;
+
+	if (dx > 0)
+		for (int i = (y) / 32; i <= (y + 30) / 32; i++)
+			for (int j = (x + 42) / 32; j <= (x + 50) / 32; j++)
+				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+					dx = 0;
 }
