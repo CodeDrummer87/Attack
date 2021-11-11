@@ -111,7 +111,7 @@ string SecondStage[] =
 	"B                   bbb      bbb                            B",
 	"B                  b           bb                           B",
 	"B                             bb                            B",
-	"B                            bb                             B",
+	"B                            bb                         C   B",
 	"B                          bb                               B",
 	"B                        bb                                 B",
 	"B                      bb                                   B",
