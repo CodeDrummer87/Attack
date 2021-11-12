@@ -9,6 +9,8 @@ Enemy::Enemy(Animation &a, double x_, double y_, string name_, int dir_, bool is
 	string army_, int lvl, bool isDoubleCannon_) : Tank(a, x_, y_, name_, dir_, isPlayAnimation_, b, army_, lvl)
 {
 	isDoubleCannon = isDoubleCannon_;
+	
+	updateDestinationDistance();
 }
 
 Enemy::~Enemy()
@@ -49,6 +51,13 @@ void Enemy::update(double time)
 			else
 				changeDir();
 			break;
+		}
+
+		reachedDist += speed * time;
+		if (reachedDist >= destinationDist)
+		{
+			changeDir();
+			updateDestinationDistance();
 		}
 	}
 
@@ -131,4 +140,14 @@ void Enemy::checkMapCollision(string * map)
 				if (!traffic.left.dir)
 					traffic.left.dir = true;
 			}
+}
+
+void Enemy::updateDestinationDistance()
+{
+	reachedDist = 0.0;
+	destinationDist = abs(y - x) + (level + number) * 2;
+	while (destinationDist > 1200)
+		destinationDist /= 2;
+	if (destinationDist < 300)
+		destinationDist += 400;
 }

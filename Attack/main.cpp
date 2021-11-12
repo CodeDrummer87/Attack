@@ -28,7 +28,7 @@ vector<Air*> airEntities;
 vector<Player*> team;
 vector<Enemy*> squad;
 
-int getEnemyPositionY(int, int, string*);
+int getEnemyPositionYOffset(int, int, string*);
 
 int main()
 {
@@ -1278,42 +1278,42 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 		Enemy *enemy;
 		if (i <= 9)
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[7], "enemy", 8, false);
 		}
 		else if (i > 9 && i <= 18)
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[6], "enemy", 7, false);
 		}
 		else if (i > 18 && i <= 27)
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[5], "enemy", 6, false);
 		}
 		else if (i > 27 && i <= 36)
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[4], "enemy", 5, false);
 		}
 		else if (i > 36 && i <= 45)
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[3], "enemy", 4, false);
 		}
 		else if (i > 45 && i <= 54)
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[2], "enemy", 3, false);
 		}
 		else if (i > 54 && i <= 63)
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[1], "enemy", 2, false);
 		}
 		else
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[0], "enemy", 1, false);
 		}
 
@@ -1329,7 +1329,7 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 	}
 }
 
-int getEnemyPositionY(int x, int y, string *map)
+int getEnemyPositionYOffset(int x, int y, string *map)
 {
 	int value = 0;
 

@@ -5,6 +5,8 @@
 class Enemy : public Tank
 {
 private:
+	double reachedDist;
+	double destinationDist;
 	bool isDoubleCannon;
 
 public:
@@ -22,6 +24,7 @@ public:
 	void update(double);
 	void changeDir();
 	void checkMapCollision(string *map);
+	void updateDestinationDistance();
 
 };
 
