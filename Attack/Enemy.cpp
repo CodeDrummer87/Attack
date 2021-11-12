@@ -8,8 +8,10 @@ Enemy::Enemy()
 Enemy::Enemy(Animation &a, double x_, double y_, string name_, int dir_, bool isPlayAnimation_, Animation &b,
 	string army_, int lvl, bool isDoubleCannon_) : Tank(a, x_, y_, name_, dir_, isPlayAnimation_, b, army_, lvl)
 {
+	isShot = false;
 	isDoubleCannon = isDoubleCannon_;
 	
+	defeatDistance = 9 + level;
 	updateDestinationDistance();
 }
 
@@ -144,10 +146,71 @@ void Enemy::checkMapCollision(string * map)
 
 void Enemy::updateDestinationDistance()
 {
+	isReloading = false;
+	
 	reachedDist = 0.0;
 	destinationDist = abs(y - x) + (level + number) * 2;
 	while (destinationDist > 1200)
 		destinationDist /= 2;
 	if (destinationDist < 300)
 		destinationDist += 400;
+}
+
+void Enemy::checkMapTarget(string *map)
+{
+	int dest = 0;
+
+	if (!isReloading)
+	{
+		if (dir == 1)
+			for (int i = (y - 20) / 32; i <= (y + 20) / 32;)
+				for (int j = (x - 2) / 32; j <= (x + 30) / 32;)
+				{
+					dest = i - defeatDistance > 0 ? i - defeatDistance : 0;
+					while (i > dest)
+					{
+						if (map[i][j] == 'b')
+						{
+							isShot = true;
+							return;
+						}
+						i--;
+					}
+					return;
+				}
+
+		if (dir == 4)
+			for (int i = (y) / 32; i <= (y + 30) / 32; i++)
+				for (int j = (x - 16) / 32; j <= (x + 20) / 32; j++)
+				{
+					dest = j - defeatDistance > 0 ? j - defeatDistance : 0;
+					while (j > dest)
+					{
+						if (map[i][j] == 'b')
+						{
+							isShot = true;
+							return;
+						}
+						j--;
+					}
+					return;
+				}
+
+		if (dir == 2)
+			for (int i = (y) / 32; i <= (y + 30) / 32; i++)
+				for (int j = (x + 42) / 32; j <= (x + 50) / 32; j++)
+				{
+					dest = j + defeatDistance < 60 ? j + defeatDistance : 60;
+					while (j < dest)
+					{
+						if (map[i][j] == 'b')
+						{
+							isShot = true;
+							return;
+						}
+						j++;
+					}
+					return;
+				}
+	}
 }

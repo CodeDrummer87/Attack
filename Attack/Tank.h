@@ -36,6 +36,7 @@ public:
 	Traffic traffic;
 	bool isShot;
 	bool isSmoking;
+	bool isReloading;
 
 	static Camera camera;
 

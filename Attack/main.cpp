@@ -369,7 +369,7 @@ int main()
 	
 	void createEnemies(vector<Entity*>&, vector<Enemy*>&, Animation[], Animation[], string*);
 	void createSmoke(Tank*, Animation&);
-	void createShot(Player*, Animation&, Animation&, Animation&);
+	void createShot(Tank*, Animation&, Animation&, Animation&);
 	void createBomberLink(Player*, Sound&, Sound&, int, Animation&, Animation&, Animation&);
 	void dropBombs(Animation&, Animation&);
 
@@ -1087,7 +1087,12 @@ int main()
 				for (auto e : squad)
 				{
 					if (e->status != DEAD)
+					{
 						e->checkMapCollision(maps[index]);
+						e->checkMapTarget(maps[index]);
+						if (e->isShot && !e->isReloading)
+							createShot(e, aEnemy1Round, aShell, aShellExp);
+					}
 				}
 
 				//.:: Bomb dropping :::
@@ -1378,12 +1383,14 @@ void createBomberLink(Player *player, Sound &sQuery, Sound &sConfirm, int index,
 	}
 }
 
-void createShot(Player *player, Animation &a, Animation &b, Animation &c)
+void createShot(Tank *tank, Animation &a, Animation &b, Animation &c)
 {
-	player->isShot = false;
+	tank->isShot = false;
+	if (tank->army == "enemy")
+		tank->isReloading = true;
 
-	Smoke *round = new Smoke(a, player, "explosion");
-	Shell *shell = new Shell(b, c, player);
+	Smoke *round = new Smoke(a, tank, "explosion");
+	Shell *shell = new Shell(b, c, tank);
 	entities.push_back(round);
 	entities.push_back(shell);
 }

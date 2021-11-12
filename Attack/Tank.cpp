@@ -16,7 +16,7 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 
 	status = ALIVE;
 	isDestroyed = isTransition = false;
-	isShot = true;
+	isShot = isReloading = true;
 	isSmoking = false;
 	hitPoints = level +1;
 	toUp = toDown = toRight = toLeft = 0;
