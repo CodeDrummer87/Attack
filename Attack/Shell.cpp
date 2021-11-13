@@ -1,5 +1,6 @@
 #include "Shell.h"
 
+extern View view;
 
 Shell::Shell()
 {}
@@ -63,6 +64,16 @@ void Shell::update(double time)
 			anim = aExplosion;
 			name = "explosion";
 			dir = rand() % 360;
+
+			//.:: Explosion volume depends on the distance to the camera :::::::
+			if (y > view.getCenter().y - 20 * 32 && y < view.getCenter().y + 20 * 32)
+				anim.sound.setVolume(50.f);
+			else if (y > view.getCenter().y - 30 * 32 && y < view.getCenter().y - 20 * 32 ||
+					 y < view.getCenter().y + 30*32 && y > view.getCenter().y + 20*32)
+				anim.sound.setVolume(15.f);
+			else
+				anim.sound.setVolume(0.f);
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 		}
 
 		x += dx;
@@ -73,6 +84,8 @@ void Shell::update(double time)
 		{
 			isExist = false;
 			own->isShot = true;
+			if (own->army == "enemy")
+				own->isReloading = false;
 		}
 }
 

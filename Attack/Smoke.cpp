@@ -1,5 +1,7 @@
 #include "Smoke.h"
 
+extern View view;
+
 Smoke::Smoke()
 {}
 
@@ -13,6 +15,16 @@ Smoke::Smoke(Animation &a, Tank *tank, string name_)
 		dir = tank->dir;
 		x = tank->getCoordX(true);
 		y = tank->getCoordY(true);
+
+		//.:: Explosion volume depends on the distance to the camera :::::::
+		if (y > view.getCenter().y - 20 * 32 && y < view.getCenter().y + 20 * 32)
+			anim.sound.setVolume(50.f);
+		else if (y > view.getCenter().y - 30 * 32 && y < view.getCenter().y - 20 * 32 ||
+			y < view.getCenter().y + 30 * 32 && y > view.getCenter().y + 20 * 32)
+			anim.sound.setVolume(15.f);
+		else
+			anim.sound.setVolume(0.f);
+		//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	}
 
 	if (name == "smoke")

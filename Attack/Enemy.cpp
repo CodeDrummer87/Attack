@@ -146,7 +146,7 @@ void Enemy::checkMapCollision(string * map)
 
 void Enemy::updateDestinationDistance()
 {
-	isReloading = false;
+	//isReloading = false;
 	
 	reachedDist = 0.0;
 	destinationDist = abs(y - x) + (level + number) * 2;
