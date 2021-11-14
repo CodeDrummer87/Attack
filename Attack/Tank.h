@@ -2,7 +2,7 @@
 
 #include "Entity.h"
 
-enum Camera { NotDefined, StartGame, Commander, Target, FirstPlane, StartGameSetted };
+enum Camera { NotDefined, StartGame, Commander, MalevolentTank, Target, FirstPlane, StartGameSetted };
 
 struct Ban
 {

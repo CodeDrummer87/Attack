@@ -1,3 +1,7 @@
+#pragma once
+
+#include "Enemy.h"
+#include "Player.h"
 
 View view;
 
@@ -16,4 +20,15 @@ void setViewCoordinates(int sizeX, int sizeY, double x, double y, int index)
 		y = sizeY / 2;
 
 	view.setCenter(float(x), float(y));
+}
+
+void resetVillainView(int &sizeX, int &sizeY, float &villainViewX, float &villainViewY, int index)
+{
+	Enemy::evilTank = { false, NULL, 0 };
+	Tank::camera = NotDefined;
+	
+	view.reset(FloatRect(0, 0, (float)sizeX, (float)sizeY));
+
+	villainViewX = (float)sizeX / 2;
+	villainViewY = (float)sizeY / 2;
 }

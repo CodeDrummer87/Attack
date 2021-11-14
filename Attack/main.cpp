@@ -28,7 +28,7 @@ vector<Air*> airEntities;
 vector<Player*> team;
 vector<Enemy*> squad;
 
-int getEnemyPositionY(int, int, string*);
+int getEnemyPositionYOffset(int, int, string*);
 
 int main()
 {
@@ -157,7 +157,7 @@ int main()
 
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf,
 		takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
-		enemy_1Buf, enemy_1RoundBuf;
+		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -176,13 +176,16 @@ int main()
 	bombExplosionBuf.loadFromFile("source/sounds/explosion/bomb_explosion.flac");
 	enemy_1Buf.loadFromFile("source/sounds/tank/movement/move_5.flac");
 	enemy_1RoundBuf.loadFromFile("source/sounds/tank/round/enemy1_round.flac");
+	armorBuf.loadFromFile("source/sounds/tank/armor.flac");
+	laughBuf.loadFromFile("source/sounds/effects/laugh.flac");
 
-	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm;
+	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sLaugh(laughBuf);
 
 	enemy_move.setBuffer(enemy_1Buf);			enemy_move.setLoop(true);
 	sTakingIcon.setBuffer(takingIconBuf);		sTakingIcon.setLoop(false);
 	sPreferment.setBuffer(prefermentBuf);		sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
 	sAirStrikeConfirm.setBuffer(airstrikeConfirmBuf); sAirStrikeConfirm.setLoop(false); sAirStrikeConfirm.setVolume(50.f);
+	sArmor.setBuffer(armorBuf);					sArmor.setLoop(false);
 
 #pragma endregion
 
@@ -350,7 +353,7 @@ int main()
 	view.reset(FloatRect(0, 0, (float)sizeX, (float)sizeY));
 
 	//.:: temporary code:::
-	double viewPosX = sizeX / 2, viewPosY = mapsHeight[0] * 32 - sizeY / 2;
+	float viewPosX = sizeX / 2, viewPosY = mapsHeight[0] * 32 - sizeY / 2;
 	//.::::::::::::::::::::
 
 	float zoomViewX = (float)sizeX / 2, zoomViewY = (float)sizeY / 2;
@@ -369,7 +372,7 @@ int main()
 	
 	void createEnemies(vector<Entity*>&, vector<Enemy*>&, Animation[], Animation[], string*);
 	void createSmoke(Tank*, Animation&);
-	void createShot(Player*, Animation&, Animation&, Animation&);
+	void createShot(Tank*, Animation&, Animation&, Animation&);
 	void createBomberLink(Player*, Sound&, Sound&, int, Animation&, Animation&, Animation&);
 	void dropBombs(Animation&, Animation&);
 
@@ -383,13 +386,12 @@ int main()
 			clock.restart();
 
 			time /= 1700;
+			gameTime = (int)(gameTimeClock.getElapsedTime().asSeconds());
 
 #pragma region Fade out time of main_theme music
 
 			if (mode == GAME && main_theme->getStatus() == SoundStream::Playing)
 			{
-				gameTime = (int)(gameTimeClock.getElapsedTime().asSeconds());
-
 				if (main_theme->getStatus() == SoundStream::Playing)
 				{
 					if (fadeOutTime != 0)
@@ -1005,11 +1007,6 @@ int main()
 					{
 						p->checkMapCollision(maps[index]);
 
-						//.:: Smoking :::::::::::::::
-						if (p->status == WOUNDED)
-							if (!p->isSmoking)
-								createSmoke(p, aSmoke);
-
 						//.:: Get Rank :::::::::::::::
 						if (p->isPreferment)
 						{
@@ -1087,17 +1084,37 @@ int main()
 				for (auto e : squad)
 				{
 					if (e->status != DEAD)
+					{
 						e->checkMapCollision(maps[index]);
+						//if (!e->round) e->destroyBrickWalls(maps[index]);
+							//e->checkMapTarget(maps[index]);
+						if (e->round && e->isShot)
+							createShot(e, aEnemy1Round, aShell, aShellExp);
+					}
 				}
 
 				//.:: Bomb dropping :::
 				if (Plane::leader.bombStatus == BombStatus::DROPPED)
 					dropBombs(aDroppingBomb, aBombExplosion);
 
-				//.:: Collision :::
 				for (auto a : entities)
+				{
+					//.:: Smoking :::::::::::::::
+					if (a->name == "tank" || a->name == "destroyed")
+						if (static_cast<Tank*>(a)->status == WOUNDED 
+							|| static_cast<Tank*>(a)->status == DEAD && static_cast<Tank*>(a)->makeSureDestroyed())
+							if (!static_cast<Tank*>(a)->isSmoking)
+								createSmoke((Tank*)a, aSmoke);
+
 					if (a->name == "shell")
 						static_cast<Shell*>(a)->checkMapCollision(maps[index]);
+					
+					//.:: Collide entities :::
+					for (auto b : entities)
+						if (a->name == "shell" && b->name == "tank")
+							if (static_cast<Shell*>(a)->number != static_cast<Tank*>(b)->number)
+								static_cast<Shell*>(a)->damageEntity(static_cast<Tank*>(b), sArmor);
+				}
 
 #pragma region Camera settings
 
@@ -1148,6 +1165,29 @@ int main()
 							view.reset(FloatRect(0, 0, zoomViewX, zoomViewY));
 							setViewCoordinates(zoomViewX, zoomViewY, bomb->getCoordX(false), bomb->getCoordY(false), index);
 						}
+					}
+
+				}
+
+				if (Tank::camera == Camera::MalevolentTank && Enemy::evilTank.isVillain)
+				{
+					if (Enemy::evilTank.tank != NULL)
+					{
+						if (Enemy::evilTank.finishVillainTime == 0)
+						{
+							sLaugh.play();
+							view.reset(FloatRect(0, 0, zoomViewX, zoomViewY));
+							Enemy::evilTank.finishVillainTime = gameTime + 5;
+						}
+
+						zoomViewX -= zoomViewX / 1000;
+						zoomViewY -= zoomViewY / 1000;
+
+						view.reset(FloatRect(0, 0, zoomViewX, zoomViewY));
+						setViewCoordinates((int)zoomViewX, (int)zoomViewY, Enemy::evilTank.tank->getCoordX(false), Enemy::evilTank.tank->getCoordY(false), index);
+
+						if (gameTime >= Enemy::evilTank.finishVillainTime)
+							resetVillainView(sizeX, sizeY, zoomViewX, zoomViewY, index);
 					}
 				}
 
@@ -1278,42 +1318,42 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 		Enemy *enemy;
 		if (i <= 9)
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[7], "enemy", 8, false);
 		}
 		else if (i > 9 && i <= 18)
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[6], "enemy", 7, false);
 		}
 		else if (i > 18 && i <= 27)
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[5], "enemy", 6, false);
 		}
 		else if (i > 27 && i <= 36)
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[4], "enemy", 5, false);
 		}
 		else if (i > 36 && i <= 45)
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[3], "enemy", 4, false);
 		}
 		else if (i > 45 && i <= 54)
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[2], "enemy", 3, false);
 		}
 		else if (i > 54 && i <= 63)
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[1], "enemy", 2, false);
 		}
 		else
 		{
-			addValue = getEnemyPositionY(mX, mY, map);
+			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[0], "enemy", 1, false);
 		}
 
@@ -1329,7 +1369,7 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 	}
 }
 
-int getEnemyPositionY(int x, int y, string *map)
+int getEnemyPositionYOffset(int x, int y, string *map)
 {
 	int value = 0;
 
@@ -1378,12 +1418,12 @@ void createBomberLink(Player *player, Sound &sQuery, Sound &sConfirm, int index,
 	}
 }
 
-void createShot(Player *player, Animation &a, Animation &b, Animation &c)
+void createShot(Tank *tank, Animation &a, Animation &b, Animation &c)
 {
-	player->isShot = false;
+	tank->isShot = false;
 
-	Smoke *round = new Smoke(a, player, "explosion");
-	Shell *shell = new Shell(b, c, player);
+	Smoke *round = new Smoke(a, tank, "explosion");
+	Shell *shell = new Shell(b, c, tank);
 	entities.push_back(round);
 	entities.push_back(shell);
 }
@@ -1408,5 +1448,5 @@ void createSmoke(Tank * p, Animation &a)
 {
 	p->isSmoking = true;
 	Smoke *smoke = new Smoke(a, p, "smoke");
-	entities.push_back(smoke);
+	airEntities.push_back((Air*)smoke);
 }

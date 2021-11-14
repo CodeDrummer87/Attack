@@ -1,5 +1,10 @@
-#include "Shell.h"
+#pragma once
 
+#include "Shell.h"
+#include "Player.h"
+#include "Enemy.h"
+
+extern View view;
 
 Shell::Shell()
 {}
@@ -13,6 +18,7 @@ Shell::Shell(Animation &a, Animation &b, Tank *tank)
 	aExplosion = b;
 	dir = tank->dir;
 	own = tank;
+	number = own->number;
 	x = tank->getCoordX(true);
 	y = tank->getCoordY(true);
 	anim.sprite.setPosition(x, y);
@@ -63,6 +69,19 @@ void Shell::update(double time)
 			anim = aExplosion;
 			name = "explosion";
 			dir = rand() % 360;
+
+			//.:: Explosion volume depends on the distance to the camera :::::::
+			if (army == "enemy")
+			{
+				if (y > view.getCenter().y - 20 * 32 && y < view.getCenter().y + 20 * 32)
+					anim.sound.setVolume(50.f);
+				else if (y > view.getCenter().y - 30 * 32 && y < view.getCenter().y - 20 * 32 ||
+					y < view.getCenter().y + 30 * 32 && y > view.getCenter().y + 20 * 32)
+					anim.sound.setVolume(15.f);
+				else
+					anim.sound.setVolume(0.f);
+			}
+			//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 		}
 
 		x += dx;
@@ -105,3 +124,45 @@ void Shell::checkMapCollision(string map[])
 			}
 		}
 }
+
+void Shell::damageEntity(Tank *t, Sound &armorSound)
+{
+	if (army != t->army)
+		if (anim.getShellRect(true).intersects(t->anim.getShellRect(false)))
+		{
+			armorSound.play();
+			if (this->name == "shell" && t->name == "tank")
+			{
+				if (level >= t->hitPoints && t->hitPoints > 1)
+					t->hitPoints = 1;
+				else
+					t->hitPoints -= level;
+				if (army == "player" && t->hitPoints <= 0)
+					conveyExperience(t->level);
+				if (army == "enemy" && t->hitPoints <= 0)
+				{
+					paintOwn();
+					static_cast<Enemy*>(own)->round = false;
+				}
+			}
+			isExist = false;
+			if (name == "shell")
+				own->isShot = true;
+		}
+}
+
+void Shell::conveyExperience(int experience)
+{
+	if (own->status != DEAD)
+		static_cast<Player*>(own)->nickDown(experience);
+}
+
+void Shell::paintOwn()
+{
+	own->anim.sprite.setColor(Color::Yellow);
+	if (own->army == "enemy")
+	{
+		Enemy::evilTank = { true, own, 0 };
+		Tank::camera = MalevolentTank;
+	}
+} 
