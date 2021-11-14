@@ -8,7 +8,7 @@ Enemy::Enemy()
 Enemy::Enemy(Animation &a, double x_, double y_, string name_, int dir_, bool isPlayAnimation_, Animation &b,
 	string army_, int lvl, bool isDoubleCannon_) : Tank(a, x_, y_, name_, dir_, isPlayAnimation_, b, army_, lvl)
 {
-	isShot = false;
+	round = false;
 	isDoubleCannon = isDoubleCannon_;
 	
 	defeatDistance = 9 + level;
@@ -18,8 +18,7 @@ Enemy::Enemy(Animation &a, double x_, double y_, string name_, int dir_, bool is
 Enemy::~Enemy()
 {}
 
-bool Enemy::isVillain = false;
-int Enemy::finishVillainTime = 0;
+EvilTank Enemy::evilTank = { false, NULL, 0 };
 
 void Enemy::update(double time)
 {
@@ -145,9 +144,7 @@ void Enemy::checkMapCollision(string * map)
 }
 
 void Enemy::updateDestinationDistance()
-{
-	//isReloading = false;
-	
+{	
 	reachedDist = 0.0;
 	destinationDist = abs(y - x) + (level + number) * 2;
 	while (destinationDist > 1200)
@@ -160,7 +157,7 @@ void Enemy::checkMapTarget(string *map)
 {
 	int dest = 0;
 
-	if (!isReloading)
+	if (!round)
 	{
 		if (dir == 1)
 			for (int i = (y - 20) / 32; i <= (y + 20) / 32;)
@@ -171,7 +168,7 @@ void Enemy::checkMapTarget(string *map)
 					{
 						if (map[i][j] == 'b')
 						{
-							isShot = true;
+							round = true;
 							return;
 						}
 						i--;
@@ -188,7 +185,7 @@ void Enemy::checkMapTarget(string *map)
 					{
 						if (map[i][j] == 'b')
 						{
-							isShot = true;
+							round = true;
 							return;
 						}
 						j--;
@@ -205,12 +202,56 @@ void Enemy::checkMapTarget(string *map)
 					{
 						if (map[i][j] == 'b')
 						{
-							isShot = true;
+							round = true;
 							return;
 						}
 						j++;
 					}
 					return;
 				}
+	}
+}
+
+void Enemy::destroyBrickWalls(string *map)
+{
+	int d;
+	int ty = y / 32;
+	int tx = x / 32;
+
+	if (!round)
+	{
+		if (dir == 1)
+		{
+			d = ty - defeatDistance > 0 ? ty - defeatDistance : 1;
+			while (ty > d)
+			{
+				if (map[ty][tx] == 'B') return;
+
+				if (map[ty][tx] == 'b')
+				{
+					round = true;
+					return;				
+				}
+				ty--;
+			}
+			return;
+		}
+
+		if (dir == 3)
+		{
+			d = ty + defeatDistance < 119 ? ty + defeatDistance : 118;
+			while (ty < d)
+			{
+				if (map[ty][tx] == 'B') return;
+
+				if (map[ty][tx] == 'b')
+				{
+					round = true;
+					return;
+				}
+				ty++;
+			}
+			return;
+		}
 	}
 }

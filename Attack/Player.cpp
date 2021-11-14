@@ -209,3 +209,9 @@ void Player::checkMapCollision(string *map)
 				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
 					dx = 0;
 }
+
+void Player::nickDown(int exp)
+{
+	++totalKills;
+	currentExperience += exp;
+}

@@ -2,6 +2,13 @@
 
 #include "Tank.h"
 
+struct EvilTank
+{
+	bool isVillain;
+	Tank *tank;
+	int finishVillainTime;
+};
+
 class Enemy : public Tank
 {
 private:
@@ -13,8 +20,9 @@ private:
 	bool isDoubleCannon;
 
 public:
-	static bool isVillain;
-	static int finishVillainTime;
+	bool round;
+
+	static EvilTank evilTank;
 
 	//.:: Constructor :::::::::::::::::::::::
 	Enemy();
@@ -23,12 +31,14 @@ public:
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Enemy();
 
-	//.:: Method_of_class :::::::::::::::::::
+	//.:: Public_method_of_class ::::::::::::
 	void update(double);
 	void changeDir();
 	void checkMapCollision(string *map);
 	void updateDestinationDistance();
 	void checkMapTarget(string*);
+
+	void destroyBrickWalls(string*);
 
 };
 

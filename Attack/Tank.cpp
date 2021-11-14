@@ -16,7 +16,7 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 
 	status = ALIVE;
 	isDestroyed = isTransition = false;
-	isShot = isReloading = true;
+	isShot = true;
 	isSmoking = false;
 	hitPoints = level +1;
 	toUp = toDown = toRight = toLeft = 0;
@@ -79,8 +79,6 @@ void Tank::update(double time)
 		}
 		else
 		{
-			name = "destroyed";
-			isPlayAnimation = true;
 			if (isTransition)
 			{
 				if (anim.isEnd(time))
@@ -92,6 +90,8 @@ void Tank::update(double time)
 			}
 			else
 			{
+				name = "destroyed";
+				isPlayAnimation = true;
 				anim = aTankExplosion;
 				isTransition = true;
 				isSmoking = false;

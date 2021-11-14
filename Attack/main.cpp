@@ -157,7 +157,7 @@ int main()
 
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf,
 		takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
-		enemy_1Buf, enemy_1RoundBuf;
+		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -176,13 +176,16 @@ int main()
 	bombExplosionBuf.loadFromFile("source/sounds/explosion/bomb_explosion.flac");
 	enemy_1Buf.loadFromFile("source/sounds/tank/movement/move_5.flac");
 	enemy_1RoundBuf.loadFromFile("source/sounds/tank/round/enemy1_round.flac");
+	armorBuf.loadFromFile("source/sounds/tank/armor.flac");
+	laughBuf.loadFromFile("source/sounds/effects/laugh.flac");
 
-	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm;
+	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sLaugh(laughBuf);
 
 	enemy_move.setBuffer(enemy_1Buf);			enemy_move.setLoop(true);
 	sTakingIcon.setBuffer(takingIconBuf);		sTakingIcon.setLoop(false);
 	sPreferment.setBuffer(prefermentBuf);		sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
 	sAirStrikeConfirm.setBuffer(airstrikeConfirmBuf); sAirStrikeConfirm.setLoop(false); sAirStrikeConfirm.setVolume(50.f);
+	sArmor.setBuffer(armorBuf);					sArmor.setLoop(false);
 
 #pragma endregion
 
@@ -350,7 +353,7 @@ int main()
 	view.reset(FloatRect(0, 0, (float)sizeX, (float)sizeY));
 
 	//.:: temporary code:::
-	double viewPosX = sizeX / 2, viewPosY = mapsHeight[0] * 32 - sizeY / 2;
+	float viewPosX = sizeX / 2, viewPosY = mapsHeight[0] * 32 - sizeY / 2;
 	//.::::::::::::::::::::
 
 	float zoomViewX = (float)sizeX / 2, zoomViewY = (float)sizeY / 2;
@@ -383,13 +386,12 @@ int main()
 			clock.restart();
 
 			time /= 1700;
+			gameTime = (int)(gameTimeClock.getElapsedTime().asSeconds());
 
 #pragma region Fade out time of main_theme music
 
 			if (mode == GAME && main_theme->getStatus() == SoundStream::Playing)
 			{
-				gameTime = (int)(gameTimeClock.getElapsedTime().asSeconds());
-
 				if (main_theme->getStatus() == SoundStream::Playing)
 				{
 					if (fadeOutTime != 0)
@@ -1005,11 +1007,6 @@ int main()
 					{
 						p->checkMapCollision(maps[index]);
 
-						//.:: Smoking :::::::::::::::
-						if (p->status == WOUNDED)
-							if (!p->isSmoking)
-								createSmoke(p, aSmoke);
-
 						//.:: Get Rank :::::::::::::::
 						if (p->isPreferment)
 						{
@@ -1089,8 +1086,9 @@ int main()
 					if (e->status != DEAD)
 					{
 						e->checkMapCollision(maps[index]);
-						e->checkMapTarget(maps[index]);
-						if (e->isShot && !e->isReloading)
+						//if (!e->round) e->destroyBrickWalls(maps[index]);
+							//e->checkMapTarget(maps[index]);
+						if (e->round && e->isShot)
 							createShot(e, aEnemy1Round, aShell, aShellExp);
 					}
 				}
@@ -1099,10 +1097,24 @@ int main()
 				if (Plane::leader.bombStatus == BombStatus::DROPPED)
 					dropBombs(aDroppingBomb, aBombExplosion);
 
-				//.:: Collision :::
 				for (auto a : entities)
+				{
+					//.:: Smoking :::::::::::::::
+					if (a->name == "tank" || a->name == "destroyed")
+						if (static_cast<Tank*>(a)->status == WOUNDED 
+							|| static_cast<Tank*>(a)->status == DEAD && static_cast<Tank*>(a)->makeSureDestroyed())
+							if (!static_cast<Tank*>(a)->isSmoking)
+								createSmoke((Tank*)a, aSmoke);
+
 					if (a->name == "shell")
 						static_cast<Shell*>(a)->checkMapCollision(maps[index]);
+					
+					//.:: Collide entities :::
+					for (auto b : entities)
+						if (a->name == "shell" && b->name == "tank")
+							if (static_cast<Shell*>(a)->number != static_cast<Tank*>(b)->number)
+								static_cast<Shell*>(a)->damageEntity(static_cast<Tank*>(b), sArmor);
+				}
 
 #pragma region Camera settings
 
@@ -1153,6 +1165,29 @@ int main()
 							view.reset(FloatRect(0, 0, zoomViewX, zoomViewY));
 							setViewCoordinates(zoomViewX, zoomViewY, bomb->getCoordX(false), bomb->getCoordY(false), index);
 						}
+					}
+
+				}
+
+				if (Tank::camera == Camera::MalevolentTank && Enemy::evilTank.isVillain)
+				{
+					if (Enemy::evilTank.tank != NULL)
+					{
+						if (Enemy::evilTank.finishVillainTime == 0)
+						{
+							sLaugh.play();
+							view.reset(FloatRect(0, 0, zoomViewX, zoomViewY));
+							Enemy::evilTank.finishVillainTime = gameTime + 5;
+						}
+
+						zoomViewX -= zoomViewX / 1000;
+						zoomViewY -= zoomViewY / 1000;
+
+						view.reset(FloatRect(0, 0, zoomViewX, zoomViewY));
+						setViewCoordinates((int)zoomViewX, (int)zoomViewY, Enemy::evilTank.tank->getCoordX(false), Enemy::evilTank.tank->getCoordY(false), index);
+
+						if (gameTime >= Enemy::evilTank.finishVillainTime)
+							resetVillainView(sizeX, sizeY, zoomViewX, zoomViewY, index);
 					}
 				}
 
@@ -1386,8 +1421,6 @@ void createBomberLink(Player *player, Sound &sQuery, Sound &sConfirm, int index,
 void createShot(Tank *tank, Animation &a, Animation &b, Animation &c)
 {
 	tank->isShot = false;
-	if (tank->army == "enemy")
-		tank->isReloading = true;
 
 	Smoke *round = new Smoke(a, tank, "explosion");
 	Shell *shell = new Shell(b, c, tank);
@@ -1415,5 +1448,5 @@ void createSmoke(Tank * p, Animation &a)
 {
 	p->isSmoking = true;
 	Smoke *smoke = new Smoke(a, p, "smoke");
-	entities.push_back(smoke);
+	airEntities.push_back((Air*)smoke);
 }

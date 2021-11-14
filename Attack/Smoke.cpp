@@ -9,21 +9,26 @@ Smoke::Smoke(Animation &a, Tank *tank, string name_)
 {
 	anim = a;
 	name = name_;
+	level = 0;
 	
 	if (name == "explosion")
 	{
 		dir = tank->dir;
 		x = tank->getCoordX(true);
 		y = tank->getCoordY(true);
+		army = tank->army;
 
 		//.:: Explosion volume depends on the distance to the camera :::::::
-		if (y > view.getCenter().y - 20 * 32 && y < view.getCenter().y + 20 * 32)
-			anim.sound.setVolume(50.f);
-		else if (y > view.getCenter().y - 30 * 32 && y < view.getCenter().y - 20 * 32 ||
-			y < view.getCenter().y + 30 * 32 && y > view.getCenter().y + 20 * 32)
-			anim.sound.setVolume(15.f);
-		else
-			anim.sound.setVolume(0.f);
+		if (army == "enemy")
+		{
+			if (y > view.getCenter().y - 20 * 32 && y < view.getCenter().y + 20 * 32)
+				anim.sound.setVolume(50.f);
+			else if (y > view.getCenter().y - 30 * 32 && y < view.getCenter().y - 20 * 32 ||
+				y < view.getCenter().y + 30 * 32 && y > view.getCenter().y + 20 * 32)
+				anim.sound.setVolume(15.f);
+			else
+				anim.sound.setVolume(0.f);
+		}
 		//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	}
 
@@ -32,10 +37,10 @@ Smoke::Smoke(Animation &a, Tank *tank, string name_)
 		dir = 1;
 		x = tank->getCoordX(false) + 2.f;
 		y = tank->getCoordY(false) + 2.f;
+		if (tank->status == DEAD) level = 1;
 	}
 
-	isPlayAnimation = true;
-	level = 0;
+	isPlayAnimation = true;	
 	own = tank;
 	anim.sprite.setPosition(x, y);
 	isExist = true;
@@ -58,11 +63,13 @@ void Smoke::update(double time)
 			x = own->getCoordX(false) + 2.f;
 			y = own->getCoordY(false) + 2.f;
 
-			if (own->status == ALIVE)
+			if (level == 0)
 			{
-				if (own->name == "tank")
-					own->isSmoking = false;
-				isExist = false;
+				if (own->status != WOUNDED)
+				{
+					static_cast<Tank*>(own)->isSmoking = false;
+					isExist = false;
+				}
 			}
 		}
 	}

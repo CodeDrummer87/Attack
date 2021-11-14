@@ -2,7 +2,7 @@
 
 #include "Entity.h"
 
-enum Camera { NotDefined, StartGame, Commander, Target, FirstPlane, StartGameSetted };
+enum Camera { NotDefined, StartGame, Commander, MalevolentTank, Target, FirstPlane, StartGameSetted };
 
 struct Ban
 {
@@ -36,7 +36,6 @@ public:
 	Traffic traffic;
 	bool isShot;
 	bool isSmoking;
-	bool isReloading;
 
 	static Camera camera;
 
