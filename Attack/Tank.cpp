@@ -3,6 +3,8 @@
 #include "Tank.h"
 #include "Enemy.h"
 
+extern View view;
+
 Tank::Tank()
 {}
 
@@ -141,7 +143,18 @@ void Tank::accelerate(int dir_, double acc)
 	}
 
 	dx += toLeft + toRight;
-	dy += toUp + toDown;
+	if (army == "player")
+	{
+		if (y < view.getCenter().y - 510)
+			dy += toDown;
+		else if (y > view.getCenter().y + 510)
+			dy += toUp;
+		else
+			dy += toUp + toDown;
+	}
+	else
+		dy += toUp + toDown;
+	
 	toUp = toRight = toDown = toLeft = 0;
 }
 
