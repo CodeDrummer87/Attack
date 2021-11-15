@@ -1086,8 +1086,8 @@ int main()
 					if (e->status != DEAD)
 					{
 						e->checkMapCollision(maps[index]);
-						//if (!e->round) e->destroyBrickWalls(maps[index]);
-							//e->checkMapTarget(maps[index]);
+						if (!e->round) e->destroyBrickWalls(maps[index]);
+
 						if (e->round && e->isShot)
 							createShot(e, aEnemy1Round, aShell, aShellExp);
 					}
@@ -1421,6 +1421,7 @@ void createBomberLink(Player *player, Sound &sQuery, Sound &sConfirm, int index,
 void createShot(Tank *tank, Animation &a, Animation &b, Animation &c)
 {
 	tank->isShot = false;
+	if (tank->army == "enemy") static_cast<Enemy*>(tank)->round = false;
 
 	Smoke *round = new Smoke(a, tank, "explosion");
 	Shell *shell = new Shell(b, c, tank);

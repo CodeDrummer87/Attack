@@ -36,8 +36,6 @@ public:
 	void changeDir();
 	void checkMapCollision(string *map);
 	void updateDestinationDistance();
-	void checkMapTarget(string*);
-
 	void destroyBrickWalls(string*);
 
 };
