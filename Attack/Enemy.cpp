@@ -11,7 +11,6 @@ Enemy::Enemy(Animation &a, double x_, double y_, string name_, int dir_, bool is
 	round = false;
 	isDoubleCannon = isDoubleCannon_;
 	
-	defeatDistance = 2 + level;
 	updateDestinationDistance();
 }
 
@@ -162,7 +161,7 @@ void Enemy::destroyBrickWalls(string *map)
 	switch (dir)
 	{
 	case 1:
-		dist = tY - defeatDistance;
+		dist = tY - 3;
 		while (tY > dist)
 		{
 			if (map[tY][tX] == 'B')
@@ -179,7 +178,7 @@ void Enemy::destroyBrickWalls(string *map)
 		return;
 
 	case 2:
-		dist = tX + defeatDistance;
+		dist = tX + 3;
 		while (tX < dist)
 		{
 			if (map[tY][tX] == 'B' || map[tY+1][tX] ==  'B')
@@ -196,7 +195,7 @@ void Enemy::destroyBrickWalls(string *map)
 		return;
 
 	case 3:
-		dist = tY + defeatDistance;
+		dist = tY + 3;
 		while (tY < dist)
 		{
 			if (map[tY][tX] == 'B')
@@ -213,7 +212,7 @@ void Enemy::destroyBrickWalls(string *map)
 		return;
 
 	case 4:
-		dist = tX - defeatDistance;
+		dist = tX - 3;
 		while (tX > dist)
 		{
 			if (map[tY][tX] == 'B' || map[tY + 1][tX] == 'B')
@@ -228,5 +227,43 @@ void Enemy::destroyBrickWalls(string *map)
 		}
 
 		return;
+	}
+}
+
+void Enemy::destroyPlayersTanks(Tank *p)
+{
+	if (p->name != "destroyed")
+	{
+		switch (dir)
+		{
+		case 1:
+			if (y - p->getCoordY(false) <= 350 + (float)level * 50 && x > p->getCoordX(false) - 32 && x < p->getCoordX(false) + 32)
+			{
+				round = y > p->getCoordY(false) ? true : false;
+				return;
+			}
+
+		case 2:
+			if (p->getCoordX(false) - x <= 350 + (float)level * 50 && y > p->getCoordY(false) - 32 && y < p->getCoordY(false) + 32)
+			{
+				round = x < p->getCoordX(false) ? true : false;
+				return;
+			}
+
+		case 3:
+			if (p->getCoordY(false) - y <= 350 + (float)level * 50 && x > p->getCoordX(false) - 32 && x < p->getCoordX(false) + 32)
+			{
+				round = y < p->getCoordY(false) ? true : false;
+				return;
+			}
+
+		case 4:
+			if (x - p->getCoordX(false) <= 350 + (float)level * 50 &&
+				y > p->getCoordY(false) - 32 && y < p->getCoordY(false) + 32)
+			{
+				round = x > p->getCoordX(false) ? true : false;
+				return;
+			}
+		}
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Tank.h"
+#include "Player.h"
 
 struct EvilTank
 {
@@ -14,8 +15,6 @@ class Enemy : public Tank
 private:
 	float reachedDist;
 	float destinationDist;
-
-	int defeatDistance;
 
 	bool isDoubleCannon;
 
@@ -37,6 +36,7 @@ public:
 	void checkMapCollision(string *map);
 	void updateDestinationDistance();
 	void destroyBrickWalls(string*);
+	void destroyPlayersTanks(Tank*);
 
 };
 

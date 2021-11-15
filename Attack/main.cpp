@@ -1086,7 +1086,11 @@ int main()
 					if (e->status != DEAD)
 					{
 						e->checkMapCollision(maps[index]);
-						if (!e->round) e->destroyBrickWalls(maps[index]);
+
+						if (!e->round && e->isShot) e->destroyBrickWalls(maps[index]);
+						if (!e->round && e->isShot)
+							for (auto p : team)
+								e->destroyPlayersTanks(p);
 
 						if (e->round && e->isShot)
 							createShot(e, aEnemy1Round, aShell, aShellExp);
