@@ -11,7 +11,6 @@ Enemy::Enemy(Animation &a, double x_, double y_, string name_, int dir_, bool is
 	round = false;
 	isDoubleCannon = isDoubleCannon_;
 	
-	defeatDistance = 9 + level;
 	updateDestinationDistance();
 }
 
@@ -153,105 +152,118 @@ void Enemy::updateDestinationDistance()
 		destinationDist += 400;
 }
 
-void Enemy::checkMapTarget(string *map)
+void Enemy::destroyBrickWalls(string *map)
 {
-	int dest = 0;
+	int tX = x / 32;
+	int tY = y / 32;
+	int dist;
 
-	if (!round)
+	switch (dir)
 	{
-		if (dir == 1)
-			for (int i = (y - 20) / 32; i <= (y + 20) / 32;)
-				for (int j = (x - 2) / 32; j <= (x + 30) / 32;)
-				{
-					dest = i - defeatDistance > 0 ? i - defeatDistance : 0;
-					while (i > dest)
-					{
-						if (map[i][j] == 'b')
-						{
-							round = true;
-							return;
-						}
-						i--;
-					}
-					return;
-				}
+	case 1:
+		dist = tY - 3;
+		while (tY > dist)
+		{
+			if (map[tY][tX] == 'B')
+				return;
+			if (map[tY][tX] == 'b')
+			{
+				round = true;
+				return;
+			}
 
-		if (dir == 4)
-			for (int i = (y) / 32; i <= (y + 30) / 32; i++)
-				for (int j = (x - 16) / 32; j <= (x + 20) / 32; j++)
-				{
-					dest = j - defeatDistance > 0 ? j - defeatDistance : 0;
-					while (j > dest)
-					{
-						if (map[i][j] == 'b')
-						{
-							round = true;
-							return;
-						}
-						j--;
-					}
-					return;
-				}
+			tY--;
+		}
 
-		if (dir == 2)
-			for (int i = (y) / 32; i <= (y + 30) / 32; i++)
-				for (int j = (x + 42) / 32; j <= (x + 50) / 32; j++)
-				{
-					dest = j + defeatDistance < 60 ? j + defeatDistance : 60;
-					while (j < dest)
-					{
-						if (map[i][j] == 'b')
-						{
-							round = true;
-							return;
-						}
-						j++;
-					}
-					return;
-				}
+		return;
+
+	case 2:
+		dist = tX + 3;
+		while (tX < dist)
+		{
+			if (map[tY][tX] == 'B' || map[tY+1][tX] ==  'B')
+				return;
+			if (map[tY][tX] == 'b' || map[tY + 1][tX] == 'b')
+			{
+				round = true;
+				return;
+			}
+
+			tX++;
+		}
+
+		return;
+
+	case 3:
+		dist = tY + 3;
+		while (tY < dist)
+		{
+			if (map[tY][tX] == 'B')
+				return;
+			if (map[tY][tX] == 'b')
+			{
+				round = true;
+				return;
+			}
+
+			tY++;
+		}
+
+		return;
+
+	case 4:
+		dist = tX - 3;
+		while (tX > dist)
+		{
+			if (map[tY][tX] == 'B' || map[tY + 1][tX] == 'B')
+				return;
+			if (map[tY][tX] == 'b' || map[tY + 1][tX] == 'b')
+			{
+				round = true;
+				return;
+			}
+
+			tX--;
+		}
+
+		return;
 	}
 }
 
-void Enemy::destroyBrickWalls(string *map)
+void Enemy::destroyPlayersTanks(Tank *p)
 {
-	int d;
-	int ty = y / 32;
-	int tx = x / 32;
-
-	if (!round)
+	if (p->name != "destroyed")
 	{
-		if (dir == 1)
+		switch (dir)
 		{
-			d = ty - defeatDistance > 0 ? ty - defeatDistance : 1;
-			while (ty > d)
+		case 1:
+			if (y - p->getCoordY(false) <= 350 + (float)level * 50 && x > p->getCoordX(false) - 32 && x < p->getCoordX(false) + 32)
 			{
-				if (map[ty][tx] == 'B') return;
-
-				if (map[ty][tx] == 'b')
-				{
-					round = true;
-					return;				
-				}
-				ty--;
+				round = y > p->getCoordY(false) ? true : false;
+				return;
 			}
-			return;
-		}
 
-		if (dir == 3)
-		{
-			d = ty + defeatDistance < 119 ? ty + defeatDistance : 118;
-			while (ty < d)
+		case 2:
+			if (p->getCoordX(false) - x <= 350 + (float)level * 50 && y > p->getCoordY(false) - 32 && y < p->getCoordY(false) + 32)
 			{
-				if (map[ty][tx] == 'B') return;
-
-				if (map[ty][tx] == 'b')
-				{
-					round = true;
-					return;
-				}
-				ty++;
+				round = x < p->getCoordX(false) ? true : false;
+				return;
 			}
-			return;
+
+		case 3:
+			if (p->getCoordY(false) - y <= 350 + (float)level * 50 && x > p->getCoordX(false) - 32 && x < p->getCoordX(false) + 32)
+			{
+				round = y < p->getCoordY(false) ? true : false;
+				return;
+			}
+
+		case 4:
+			if (x - p->getCoordX(false) <= 350 + (float)level * 50 &&
+				y > p->getCoordY(false) - 32 && y < p->getCoordY(false) + 32)
+			{
+				round = x > p->getCoordX(false) ? true : false;
+				return;
+			}
 		}
 	}
 }
