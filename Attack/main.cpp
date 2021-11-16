@@ -1115,9 +1115,15 @@ int main()
 					
 					//.:: Collide entities :::
 					for (auto b : entities)
+					{
 						if (a->name == "shell" && b->name == "tank")
 							if (static_cast<Shell*>(a)->number != static_cast<Tank*>(b)->number)
 								static_cast<Shell*>(a)->damageEntity(static_cast<Tank*>(b), sArmor);
+						
+						if (a->name == "tank" && b->name == "tank" && static_cast<Tank*>(a)->number != static_cast<Tank*>(b)->number)
+							static_cast<Tank*>(a)->checkTanksCollision((Tank*)b);
+					}
+
 				}
 
 #pragma region Camera settings

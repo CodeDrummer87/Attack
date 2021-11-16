@@ -162,3 +162,85 @@ bool Tank::makeSureDestroyed()
 {
 	return isDestroyed;
 }
+
+void Tank::checkTanksCollision(Tank *t)
+{
+	switch (dir)
+	{
+	case 1:
+		if (y <= t->y + 52 && x > t->x - 32 && x < t->x + 32 && y > t->y)
+		{
+			if (army == "enemy")
+			{
+				traffic.up.dir = false;
+				traffic.up.barId = t->number;
+			}
+			else
+				dy = 0;
+		}
+		else if (y > t->y + 52 && x > t->x - 32 && x < t->x + 32 && y > t->y)
+			if (!traffic.up.dir && traffic.up.barId == t->number && army == "enemy")
+			{
+				traffic.up.dir = true;
+				traffic.up.barId = 0;
+			}
+		break;
+
+	case 2:
+		if (x + 52 >= t->x && y > t->y - 32 && y < t->y + 32 && x < t->x)
+		{
+			if (army == "enemy")
+			{
+				traffic.right.dir = false;
+				traffic.right.barId = t->number;
+			}
+			else
+				dx = 0;
+		}
+		else if (x + 52 < t->x && y > t->y - 32 && y < t->y + 32 && x < t->x)
+			if (!traffic.right.dir && traffic.right.barId == t->number && army == "enemy")
+			{
+				traffic.right.dir = true;
+				traffic.right.barId = 0;
+			}
+		break;
+
+	case 3:
+		if (y + 52 >= t->y && x > t->x - 32 && x < t->x + 32 && y < t->y)
+		{
+			if (army == "enemy")
+			{
+				traffic.down.dir = false;
+				traffic.down.barId = t->number;
+			}
+			else
+				dy = 0;
+		}
+		else if (y + 52 < t->y && x > t->x - 32 && x < t->x + 32 && y < t->y)
+			if (!traffic.down.dir && traffic.down.barId == t->number && army == "enemy")
+			{
+				traffic.down.dir = true;
+				traffic.down.barId = 0;
+			}
+		break;
+
+	case 4:
+		if (x <= t->x + 52 && y > t->y - 32 && y < t->y + 32 && x > t->x)
+		{
+			if (army == "enemy")
+			{
+				traffic.left.dir = false;
+				traffic.left.barId = t->number;
+			}
+			else
+				dx = 0;
+		}
+		else if (x > t->x + 52 && y > t->y - 32 && y < t->y + 32 && x > t->x)
+			if (!traffic.left.dir && traffic.left.barId == t->number && army == "enemy")
+			{
+				traffic.left.dir = true;
+				traffic.left.barId = 0;
+			}
+		break;
+	}
+}
