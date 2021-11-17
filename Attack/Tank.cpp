@@ -17,7 +17,7 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 	level = level_;
 
 	status = ALIVE;
-	isDestroyed = isTransition = false;
+	isDestroyed = isTransition = isDrowned = drowning = false;
 	isShot = true;
 	isSmoking = false;
 	hitPoints = level +1;
@@ -242,5 +242,65 @@ void Tank::checkTanksCollision(Tank *t)
 				traffic.left.barId = 0;
 			}
 		break;
+	}
+}
+
+void Tank::shoveOffTankCarcass(Tank *d)
+{
+	switch (dir)
+	{
+	case 1:
+		if (y <= d->y + 52 && x > d->x - 32 && x < d->x + 32 && y > d->y)
+		{
+			d->dir = 1;
+			dy /= 1.4;
+			d->y = y - 52;
+		}
+		break;
+
+	case 2:
+		if (x + 52 >= d->x && y > d->y - 32 && y < d->y + 32 && x < d->x)
+		{
+			d->dir = 2;
+			dx /= 1.4;
+			d->x = x + 52;
+		}
+		break;
+
+	case 3:
+		if (y + 52 >= d->y && x > d->x - 32 && x < d->x + 32 && y < d->y)
+		{
+			d->dir = 3;
+			dy /= 1.4;
+			d->y = y + 52;
+		}
+		break;
+
+	case 4:
+		if (x < d->x + 52 && y > d->y - 32 && y < d->y + 32 && x > d->x)
+		{
+			d->dir = 4;
+			dx /= 1.4;
+			d->x = x - 52;
+		}
+		break;
+	}
+}
+
+void Tank::sinkTheTankCarcass(string *map)
+{
+	int i = y/32;
+	int j = x/32;
+
+	switch (dir)
+	{
+	case 1: i++; break;
+	case 4: j++; break;
+	}
+
+	if (map[i][j] == 'W')
+	{
+		anim.sprite.setColor(Color::Transparent);
+		this->isDrowned = true;
 	}
 }

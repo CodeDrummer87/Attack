@@ -71,6 +71,9 @@ void Smoke::update(double time)
 					isExist = false;
 				}
 			}
+
+			if (own->isDrowned)
+				isExist = false;
 		}
 	}
 }

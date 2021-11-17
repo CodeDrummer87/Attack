@@ -37,6 +37,9 @@ public:
 	bool isShot;
 	bool isSmoking;
 
+	bool isDrowned;
+	bool drowning;
+
 	static Camera camera;
 
 	//.:: Constructor :::::::::::::::::::::::
@@ -51,5 +54,7 @@ public:
 	void accelerate(int, double);
 	bool makeSureDestroyed();
 	void checkTanksCollision(Tank*);
+	void shoveOffTankCarcass(Tank*);
+	void sinkTheTankCarcass(string*);
 
 };
