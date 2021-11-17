@@ -16,6 +16,8 @@
 #include "Bomb.h"
 #include "Enemy.h"
 
+#include "DrowningModel.h"
+
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
 //:::::::::::::::::
@@ -53,7 +55,7 @@ int main()
 #pragma region Images
 
 	Image iMap, iIcon, iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank, iFighter, iAirBomb, iBombExplosion,
-		iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8;
+		iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8, iDrowning;
 
 	iMap.loadFromFile("source/images/map.png");
 	iMap.createMaskFromColor(Color::White);
@@ -94,13 +96,16 @@ int main()
 	iEnemy_8.loadFromFile("source/images/sprites/models/tanks/enemies/enemy_8.png");
 	iEnemy_8.createMaskFromColor(Color::White);
 
+	iDrowning.loadFromFile("source/images/sprites/other/drowning.png");
+	iDrowning.createMaskFromColor(Color::White);
+
 #pragma endregion
 
 #pragma region Textures
 
 	Texture tMap, tIcon, bTank, yTank, pTank, cTank, hTank, tTankRound, tShell, tShellExp,
 		tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion,
-		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tEnemy_6, tEnemy_7, tEnemy_8;
+		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tEnemy_6, tEnemy_7, tEnemy_8, tDrowning;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -134,6 +139,8 @@ int main()
 	tEnemy_7.loadFromImage(iEnemy_7);
 	tEnemy_8.loadFromImage(iEnemy_8);
 
+	tDrowning.loadFromImage(iDrowning);
+
 #pragma endregion
 
 #pragma region Sounds & Music
@@ -157,7 +164,7 @@ int main()
 
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf,
 		takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
-		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf;
+		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf, drowningBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -178,6 +185,7 @@ int main()
 	enemy_1RoundBuf.loadFromFile("source/sounds/tank/round/enemy1_round.flac");
 	armorBuf.loadFromFile("source/sounds/tank/armor.flac");
 	laughBuf.loadFromFile("source/sounds/effects/laugh.flac");
+	drowningBuf.loadFromFile("source/sounds/effects/drowning.flac");
 
 	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sLaugh(laughBuf);
 
@@ -251,6 +259,8 @@ int main()
 	Animation enemyAnim_1[] = { enemy_1, enemy_2, enemy_3, enemy_4, enemy_5, enemy_6, enemy_7, enemy_8 };
 	Animation explosionEnemyAnim_1[] = { explosion_enemy_1, explosion_enemy_2, explosion_enemy_3, explosion_enemy_4,
 										 explosion_enemy_5, explosion_enemy_6, explosion_enemy_7, explosion_enemy_8 };
+
+	Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
 
 #pragma endregion
 
@@ -1112,12 +1122,31 @@ int main()
 
 					if (a->name == "shell")
 						static_cast<Shell*>(a)->checkMapCollision(maps[index]);
+
+					if (a->name == "destroyed" && !static_cast<Tank*>(a)->isDrowned)
+						static_cast<Tank*>(a)->sinkTheTankCarcass(maps[index]);
+
+					if (a->name == "destroyed" && static_cast<Tank*>(a)->isDrowned && !static_cast<Tank*>(a)->drowning)
+					{
+						static_cast<Tank*>(a)->drowning = true;
+						DrowningModel *drowning = new DrowningModel(aDrowning, (Tank*)a, "drowning");
+						entities.push_back(drowning);
+					}
 					
 					//.:: Collide entities :::
 					for (auto b : entities)
+					{
 						if (a->name == "shell" && b->name == "tank")
 							if (static_cast<Shell*>(a)->number != static_cast<Tank*>(b)->number)
-								static_cast<Shell*>(a)->damageEntity(static_cast<Tank*>(b), sArmor);
+								static_cast<Shell*>(a)->damageEntity((Tank*)(b), sArmor);
+						
+						if (a->name == "tank" && b->name == "tank" && static_cast<Tank*>(a)->number != static_cast<Tank*>(b)->number)
+							static_cast<Tank*>(a)->checkTanksCollision((Tank*)b);
+
+						if (a->name == "tank" && b->name == "destroyed")
+							static_cast<Tank*>(a)->shoveOffTankCarcass((Tank*)b);
+					}
+
 				}
 
 #pragma region Camera settings
@@ -1196,6 +1225,17 @@ int main()
 				}
 
 #pragma endregion
+
+				//.:: Clearing the list of enemies
+				for (auto j = squad.begin(); j != squad.end();)
+				{
+					Entity *enemy = *j;
+					if (static_cast<Enemy*>(enemy)->drowning)
+					{
+						j = squad.erase(j);
+					}
+					else j++;
+				}
 
 				//.:: update entities :::
 				for (auto i = entities.begin(); i != entities.end();)
