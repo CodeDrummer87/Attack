@@ -17,6 +17,7 @@
 #include "Enemy.h"
 
 #include "DrowningModel.h"
+#include "AchievementModel.h"
 
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
@@ -55,7 +56,7 @@ int main()
 #pragma region Images
 
 	Image iMap, iIcon, iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank, iFighter, iAirBomb, iBombExplosion,
-		iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8, iDrowning;
+		iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8, iDrowning, iSpeedUpAchiev;
 
 	iMap.loadFromFile("source/images/map.png");
 	iMap.createMaskFromColor(Color::White);
@@ -98,6 +99,8 @@ int main()
 
 	iDrowning.loadFromFile("source/images/sprites/other/drowning.png");
 	iDrowning.createMaskFromColor(Color::White);
+	iSpeedUpAchiev.loadFromFile("source/images/sprites/other/speed_up_achievement.png");
+	//iSpeedUpAchiev.createMaskFromColor(Color::White);
 
 #pragma endregion
 
@@ -105,7 +108,7 @@ int main()
 
 	Texture tMap, tIcon, bTank, yTank, pTank, cTank, hTank, tTankRound, tShell, tShellExp,
 		tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion,
-		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tEnemy_6, tEnemy_7, tEnemy_8, tDrowning;
+		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tEnemy_6, tEnemy_7, tEnemy_8, tDrowning, tSpeedUpAchiev;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -140,6 +143,7 @@ int main()
 	tEnemy_8.loadFromImage(iEnemy_8);
 
 	tDrowning.loadFromImage(iDrowning);
+	tSpeedUpAchiev.loadFromImage(iSpeedUpAchiev);
 
 #pragma endregion
 
@@ -164,7 +168,7 @@ int main()
 
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf,
 		takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
-		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf, drowningBuf;
+		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf, drowningBuf, speedUpBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -186,6 +190,7 @@ int main()
 	armorBuf.loadFromFile("source/sounds/tank/armor.flac");
 	laughBuf.loadFromFile("source/sounds/effects/laugh.flac");
 	drowningBuf.loadFromFile("source/sounds/effects/drowning.flac");
+	speedUpBuf.loadFromFile("source/sounds/effects/speed_up.flac");
 
 	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sLaugh(laughBuf);
 
@@ -261,6 +266,7 @@ int main()
 										 explosion_enemy_5, explosion_enemy_6, explosion_enemy_7, explosion_enemy_8 };
 
 	Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
+	Animation aSpeedUp(tSpeedUpAchiev, speedUpBuf, 0, 0, 128, 128, 0.009, 24);
 
 #pragma endregion
 
@@ -1085,9 +1091,6 @@ int main()
 							p->isCommander = false;
 							Player::defineNewCommander(team);
 						}
-
-						if (!p->isSmoking && p->makeSureDestroyed())
-							createSmoke(p, aSmoke);
 					}
 				}
 
@@ -1132,7 +1135,7 @@ int main()
 						DrowningModel *drowning = new DrowningModel(aDrowning, (Tank*)a, "drowning");
 						entities.push_back(drowning);
 					}
-					
+				
 					//.:: Collide entities :::
 					for (auto b : entities)
 					{
@@ -1143,10 +1146,17 @@ int main()
 						if (a->name == "tank" && b->name == "tank" && static_cast<Tank*>(a)->number != static_cast<Tank*>(b)->number)
 							static_cast<Tank*>(a)->checkTanksCollision((Tank*)b);
 
-						if (a->name == "tank" && b->name == "destroyed")
+						if (a->name == "tank" && b->name == "destroyed" && static_cast<Tank*>(a)->makeSureTankCollision((Tank*)b))
 							static_cast<Tank*>(a)->shoveOffTankCarcass((Tank*)b);
 					}
 
+					//.:: Achievements :::
+					if (a->name == "tank" && static_cast<Tank*>(a)->isSpeedBonusUp)
+					{
+						static_cast<Tank*>(a)->isSpeedBonusUp = false;
+						AchievementModel *achievement = new AchievementModel(aSpeedUp, (Tank*)a, "achievement");
+						airEntities.push_back((Air*)achievement);
+					}
 				}
 
 #pragma region Camera settings

@@ -131,14 +131,19 @@ void Shell::damageEntity(Tank *t, Sound &armorSound)
 		if (anim.getShellRect(true).intersects(t->anim.getShellRect(false)))
 		{
 			armorSound.play();
-			if (this->name == "shell" && t->name == "tank")
+			if (this->name == "shell" && t->name == "tank" && t->army == "enemy")
 			{
 				if (level >= t->hitPoints && t->hitPoints > 1)
 					t->hitPoints = 1;
 				else
 					t->hitPoints -= level;
+
 				if (army == "player" && t->hitPoints <= 0)
 					conveyExperience(t->level);
+
+				if (army == "player" && dir == t->dir)
+					static_cast<Enemy*>(t)->dir = t->dir + 2 <= 4 ? t->dir + 2 : t->dir - 2;
+
 				if (army == "enemy" && t->hitPoints <= 0)
 				{
 					paintOwn();

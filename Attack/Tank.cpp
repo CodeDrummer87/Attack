@@ -17,7 +17,7 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 	level = level_;
 
 	status = ALIVE;
-	isDestroyed = isTransition = isDrowned = drowning = false;
+	isDestroyed = isTransition = isDrowned = drowning = isSpeedBonusUp = false;
 	isShot = true;
 	isSmoking = false;
 	hitPoints = level +1;
@@ -27,6 +27,11 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 	traffic.right.dir = true;	traffic.right.barId = 0;
 	traffic.down.dir = true;	traffic.down.barId = 0;
 	traffic.left.dir = true;	traffic.left.barId = 0;
+
+	drownedTanks = 3;
+	pusher = NULL;
+	speedBonus = 0.0f;
+	destValue = 5;
 
 	number = ++counter;
 }
@@ -46,6 +51,9 @@ void Tank::update(double time)
 	}
 	else
 	{
+		if (status != DEAD && isSpeedBonusUp)
+			speedBonus = army == "player" ?  speedBonus += 0.12f : speedBonus += 0.3f;
+		
 		if (hitPoints > 1)
 		{
 			if (status != ALIVE)
@@ -112,7 +120,7 @@ void Tank::accelerate(int dir_, double acc)
 	case 1:
 		toLeft = toRight = 0;
 		if (traffic.up.dir)
-			toUp = acc - ((double)level / 100);
+			toUp = acc - ((double)level / 100) - speedBonus;
 		else
 			toUp = 0;
 		break;
@@ -120,7 +128,7 @@ void Tank::accelerate(int dir_, double acc)
 	case 2:
 		toUp = toDown = 0;
 		if (traffic.right.dir)
-			toRight = acc + ((double)level / 100);
+			toRight = acc + ((double)level / 100) + speedBonus;
 		else
 			toRight = 0;
 		break;
@@ -128,7 +136,7 @@ void Tank::accelerate(int dir_, double acc)
 	case 3:
 		toLeft = toRight = 0;
 		if (traffic.down.dir)
-			toDown = acc + ((double)level / 100);
+			toDown = acc + ((double)level / 100) + speedBonus;
 		else
 			toDown = 0;
 		break;
@@ -136,7 +144,7 @@ void Tank::accelerate(int dir_, double acc)
 	case 4:
 		toUp = toDown = 0;
 		if (traffic.left.dir)
-			toLeft = acc - ((double)level / 100);
+			toLeft = acc - ((double)level / 100) - speedBonus;
 		else
 			toLeft = 0;
 		break;
@@ -247,6 +255,9 @@ void Tank::checkTanksCollision(Tank *t)
 
 void Tank::shoveOffTankCarcass(Tank *d)
 {
+	if (d->pusher != this)
+		d->pusher = this;
+
 	switch (dir)
 	{
 	case 1:
@@ -300,7 +311,42 @@ void Tank::sinkTheTankCarcass(string *map)
 
 	if (map[i][j] == 'W')
 	{
+		if (pusher != NULL)
+		{
+			pusher->drownedTanks++;
+			if (pusher->army == "player" ? pusher->drownedTanks >= pusher->destValue : pusher->drownedTanks >= 4)
+			{
+				pusher->isSpeedBonusUp = true;
+				pusher->destValue = pusher->destValue < 80 ? pusher->destValue * 2 : 80;
+			}
+			pusher = NULL;
+		}
+
 		anim.sprite.setColor(Color::Transparent);
 		this->isDrowned = true;
 	}
+}
+
+bool Tank::makeSureTankCollision(Tank *t)
+{
+	switch (dir)
+	{
+	case 1:
+		if (y <= t->y + 52 && x > t->x - 32 && x < t->x + 32 && y > t->y)
+			return true;
+
+	case 2:
+		if (x + 52 >= t->x && y > t->y - 32 && y < t->y + 32 && x < t->x)
+			return true;
+
+	case 3:
+		if (y + 52 >= t->y && x > t->x - 32 && x < t->x + 32 && y < t->y)
+			return true;
+
+	case 4:
+		if (x <= t->x + 52 && y > t->y - 32 && y < t->y + 32 && x > t->x)
+			return true;
+	}
+
+	return false;
 }

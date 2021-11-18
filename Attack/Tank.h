@@ -24,9 +24,15 @@ private:
 	bool isTransition;
 	double toUp, toRight, toDown, toLeft;
 
+	float speedBonus;	//.:: Achievement "Cleaner": Speed boost bonus
+	short destValue;
+
 protected:
 	Animation aTankExplosion;
 	bool isDestroyed;
+
+	int drownedTanks;
+	Tank *pusher;
 
 	static int counter;
 
@@ -39,6 +45,8 @@ public:
 
 	bool isDrowned;
 	bool drowning;
+
+	bool isSpeedBonusUp;
 
 	static Camera camera;
 
@@ -56,5 +64,6 @@ public:
 	void checkTanksCollision(Tank*);
 	void shoveOffTankCarcass(Tank*);
 	void sinkTheTankCarcass(string*);
+	bool makeSureTankCollision(Tank*);
 
 };

@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AchievementModel.cpp" />
     <ClCompile Include="Air.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Bomb.cpp" />
@@ -154,6 +155,7 @@
     <ClCompile Include="Tank.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AchievementModel.h" />
     <ClInclude Include="Air.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Bomb.h" />
