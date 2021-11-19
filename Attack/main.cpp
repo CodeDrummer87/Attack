@@ -1108,6 +1108,15 @@ int main()
 						if (e->round && e->isShot)
 							createShot(e, aEnemy1Round, aShell, aShellExp);
 					}
+					else
+						if (Enemy::evilTank.tank == e)
+						{
+							Enemy::evilTank.tank = NULL;
+							if (sLaugh.getStatus() == SoundStream::Playing)
+								sLaugh.stop();
+
+							resetVillainView(sizeX, sizeY, zoomViewX, zoomViewY, index);
+						}
 				}
 
 				//.:: Bomb dropping :::
@@ -1123,12 +1132,13 @@ int main()
 							if (!static_cast<Tank*>(a)->isSmoking)
 								createSmoke((Tank*)a, aSmoke);
 
+					//.:: Map collision :::::::::
 					if (a->name == "shell")
 						static_cast<Shell*>(a)->checkMapCollision(maps[index]);
 
+					//.:: Drowning ::::::::::::::
 					if (a->name == "destroyed" && !static_cast<Tank*>(a)->isDrowned)
 						static_cast<Tank*>(a)->sinkTheTankCarcass(maps[index]);
-
 					if (a->name == "destroyed" && static_cast<Tank*>(a)->isDrowned && !static_cast<Tank*>(a)->drowning)
 					{
 						static_cast<Tank*>(a)->drowning = true;
@@ -1136,7 +1146,7 @@ int main()
 						entities.push_back(drowning);
 					}
 				
-					//.:: Collide entities :::
+					//.:: Collide entities ::::::
 					for (auto b : entities)
 					{
 						if (a->name == "shell" && b->name == "tank")
@@ -1150,7 +1160,7 @@ int main()
 							static_cast<Tank*>(a)->shoveOffTankCarcass((Tank*)b);
 					}
 
-					//.:: Achievements :::
+					//.:: Achievements ::::::::::
 					if (a->name == "tank" && static_cast<Tank*>(a)->isSpeedBonusUp)
 					{
 						static_cast<Tank*>(a)->isSpeedBonusUp = false;
