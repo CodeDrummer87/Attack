@@ -1081,7 +1081,7 @@ int main()
 						}
 
 						//::::::::::::::::::::::::::::::::::::::::::::::::::
-						if (fadeOutTime != 0)
+						if (fadeOutTime != 0 && Tank::camera == Camera::StartGameSetted || Tank::camera == Camera::Commander)
 							p->checkIconCollision(maps[index], sTakingIcon);
 					}
 					else
@@ -1099,6 +1099,7 @@ int main()
 					if (e->status != DEAD)
 					{
 						e->checkMapCollision(maps[index]);
+						e->checkIconCollisionForEnemy(maps[index], sTakingIcon);
 
 						if (!e->round && e->isShot) e->destroyBrickWalls(maps[index]);
 						if (!e->round && e->isShot)

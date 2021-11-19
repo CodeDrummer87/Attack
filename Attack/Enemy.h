@@ -37,6 +37,7 @@ public:
 	void updateDestinationDistance();
 	void destroyBrickWalls(string*);
 	void destroyPlayersTanks(Tank*);
+	void checkIconCollisionForEnemy(string[], Sound&);
 
 };
 
