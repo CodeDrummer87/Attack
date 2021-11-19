@@ -1162,9 +1162,9 @@ int main()
 					}
 
 					//.:: Achievements ::::::::::
-					if (a->name == "tank" && static_cast<Tank*>(a)->isSpeedBonusUp)
+					if (a->name == "tank" && static_cast<Tank*>(a)->isShowSpeedBonusAchiev)
 					{
-						static_cast<Tank*>(a)->isSpeedBonusUp = false;
+						static_cast<Tank*>(a)->isShowSpeedBonusAchiev = false;
 						AchievementModel *achievement = new AchievementModel(aSpeedUp, (Tank*)a, "achievement");
 						airEntities.push_back((Air*)achievement);
 					}
@@ -1380,47 +1380,25 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 		mX = (int)(ceil(enemyPositionX / 32));
 		mY = (int)(ceil(enemyPositionY / 32));
 
+		addValue = getEnemyPositionYOffset(mX, mY, map);
+
 		Enemy *enemy;
 		if (i <= 9)
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[7], "enemy", 8, false);
-		}
 		else if (i > 9 && i <= 18)
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[6], "enemy", 7, false);
-		}
 		else if (i > 18 && i <= 27)
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[5], "enemy", 6, false);
-		}
 		else if (i > 27 && i <= 36)
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[4], "enemy", 5, false);
-		}
 		else if (i > 36 && i <= 45)
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[3], "enemy", 4, false);
-		}
 		else if (i > 45 && i <= 54)
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[2], "enemy", 3, false);
-		}
 		else if (i > 54 && i <= 63)
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[1], "enemy", 2, false);
-		}
 		else
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[0], "enemy", 1, false);
-		}
 
 		entities.push_back(enemy);
 		squad.push_back(enemy);

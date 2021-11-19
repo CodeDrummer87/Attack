@@ -25,6 +25,7 @@ private:
 	double toUp, toRight, toDown, toLeft;
 
 	float speedBonus;	//.:: Achievement "Cleaner": Speed boost bonus
+	bool isSpeedBonusUp;
 	short destValue;
 
 protected:
@@ -46,7 +47,7 @@ public:
 	bool isDrowned;
 	bool drowning;
 
-	bool isSpeedBonusUp;
+	bool isShowSpeedBonusAchiev;
 
 	static Camera camera;
 
