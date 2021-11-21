@@ -10,13 +10,13 @@ Smoke::Smoke(Animation &a, Tank *tank, string name_)
 	anim = a;
 	name = name_;
 	level = 0;
-	
+	army = tank->army;
+
 	if (name == "explosion")
 	{
 		dir = tank->dir;
 		x = tank->getCoordX(true);
 		y = tank->getCoordY(true);
-		army = tank->army;
 
 		//.:: Explosion volume depends on the distance to the camera :::::::
 		if (army == "enemy")

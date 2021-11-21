@@ -10,6 +10,7 @@ Bomb::Bomb(Animation &a, Animation &b, double X, double Y, string name_)
 	name = name_;
 	anim = a;
 	animSpare = b;
+	army = "player";
 
 	animSpare.sound.setLoop(false);
 	animSpare.sound.setPitch(0.78f);

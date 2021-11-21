@@ -1279,7 +1279,7 @@ int main()
 					e->update(time);
 					e->anim.update(time, e->isPlayAnimation, e->dir);
 
-					if (e->isExist == false)
+					if (!e->isExist)
 					{
 						i = entities.erase(i);
 						delete e;
@@ -1293,7 +1293,7 @@ int main()
 					Entity* e = *i;
 					e->update(time);
 					e->anim.update(time, e->isPlayAnimation, e->dir);
-					if (e->isExist == false)
+					if (!e->isExist)
 					{
 						i = airEntities.erase(i);
 						delete e;
@@ -1332,7 +1332,9 @@ int main()
 			}
 
 			if (mode == SCORING)
+			{
 				app.setView(view);
+			}
 			
 			if (mode == OPTIONS)
 				star->update(1, true, 0);
