@@ -25,6 +25,7 @@ bool isUpd = false;	//.:: for double click protection
 
 enum AppMode { OPTIONS, GAME, SCORING, ENDGAME };
 AppMode mode = OPTIONS;
+bool transition = false; //.:: Game -> Scoring
 
 vector<Entity*> entities;
 vector<Air*> airEntities;
@@ -32,6 +33,15 @@ vector<Player*> team;
 vector<Enemy*> squad;
 
 int getEnemyPositionYOffset(int, int, string*);
+
+template <typename T>
+bool findAliveFrom(vector<T> team)
+{
+	for (auto t : team)
+		if (t->status != DEAD) return true;
+
+	return false;
+}
 
 int main()
 {
@@ -200,6 +210,9 @@ int main()
 	sAirStrikeConfirm.setBuffer(airstrikeConfirmBuf); sAirStrikeConfirm.setLoop(false); sAirStrikeConfirm.setVolume(50.f);
 	sArmor.setBuffer(armorBuf);					sArmor.setLoop(false);
 
+	Music chapter_finale_theme;
+	chapter_finale_theme.openFromFile("source/sounds/music/chapter_finale_theme.flac");
+
 #pragma endregion
 
 #pragma region Animations
@@ -348,6 +361,7 @@ int main()
 	bool isGamePlay = true;
 	int numberOfPlayers = 1;
 	int index = 0;	//.:: for maps vector
+
 	//.:: For start and end battle :::
 	bool isStartGame = true;
 	bool isStartBattle = true;
@@ -1288,6 +1302,33 @@ int main()
 				}
 
 				app.setView(view);
+
+#pragma region Battle is over
+
+				if (!battleIsOver && !transition && (!findAliveFrom(team) || !findAliveFrom(squad)))
+				{
+					chapter_finale_theme.play();
+					lastSecondsOfChapter = gameTime + 7;
+					transition = true;
+				}
+
+				if (!battleIsOver && transition)
+				{
+					if (gameTime >= lastSecondsOfChapter)
+					{
+						transition = false;
+						battleIsOver = true;
+
+						if (index + 1 != maps.size())
+						{
+							view.setCenter(float(sizeX / 2), float(sizeY / 2));
+							mode = SCORING;
+							++index;
+						}
+					}
+				}
+
+#pragma endregion
 			}
 
 			if (mode == SCORING)
@@ -1352,7 +1393,7 @@ int main()
 
 void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation anim[], Animation explosionAnim[], string *map)
 {
-	for (auto j = squad.begin(); j != squad.end();)
+	/*for (auto j = squad.begin(); j != squad.end();)
 	{
 		j = squad.erase(j);
 		j++;
@@ -1361,13 +1402,13 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 	for (auto i = entities.begin(); i != entities.end();)
 	{
 		Entity *enemy = *i;
-		if (static_cast<Entity*>(enemy)->name == "tank" && static_cast<Entity*>(enemy)->army == "enemy")
+		if ((enemy->name == "tank" || enemy->name == "destroyed") && enemy->army == "enemy")
 		{
 			i = entities.erase(i);
 			delete enemy;
 		}
 		else i++;
-	}
+	}*/
 
 	const int eTanks = 72;
 	double enemyPositionX = 70;
