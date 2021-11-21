@@ -267,3 +267,20 @@ void Enemy::destroyPlayersTanks(Tank *p)
 		}
 	}
 }
+
+void Enemy::checkIconCollisionForEnemy(string *map, Sound &sound)
+{
+	for (int i = (anim.getRect(dir).top + 15) / 32; i < (y + anim.getRect(dir).height) / 32; i++)
+		for (int j = (anim.getRect(dir).left + 14) / 32; j < (x + anim.getRect(dir).width) / 32; j++)
+		{
+			if (map[i][j] == 'R')
+			{
+				if (hitPoints < 1 + level)
+				{
+					sound.play();
+					++hitPoints;
+					map[i][j] = ' ';
+				}
+			}
+		}
+}

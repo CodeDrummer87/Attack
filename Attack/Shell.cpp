@@ -131,7 +131,7 @@ void Shell::damageEntity(Tank *t, Sound &armorSound)
 		if (anim.getShellRect(true).intersects(t->anim.getShellRect(false)))
 		{
 			armorSound.play();
-			if (this->name == "shell" && t->name == "tank" && t->army == "enemy")
+			if (this->name == "shell" && t->name == "tank")
 			{
 				if (level >= t->hitPoints && t->hitPoints > 1)
 					t->hitPoints = 1;

@@ -17,7 +17,7 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 	level = level_;
 
 	status = ALIVE;
-	isDestroyed = isTransition = isDrowned = drowning = isSpeedBonusUp = false;
+	isDestroyed = isTransition = isDrowned = drowning = isSpeedBonusUp = isShowSpeedBonusAchiev = false;
 	isShot = true;
 	isSmoking = false;
 	hitPoints = level +1;
@@ -31,7 +31,7 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 	drownedTanks = 3;
 	pusher = NULL;
 	speedBonus = 0.0f;
-	destValue = 5;
+	destValue = army == "player" ? 5 : 4;
 
 	number = ++counter;
 }
@@ -52,7 +52,10 @@ void Tank::update(double time)
 	else
 	{
 		if (status != DEAD && isSpeedBonusUp)
-			speedBonus = army == "player" ?  speedBonus += 0.12f : speedBonus += 0.3f;
+		{
+			isSpeedBonusUp = false;
+			speedBonus = army == "player" ? speedBonus += 0.12f : speedBonus += 0.3f;
+		}
 		
 		if (hitPoints > 1)
 		{
@@ -311,13 +314,17 @@ void Tank::sinkTheTankCarcass(string *map)
 
 	if (map[i][j] == 'W')
 	{
-		if (pusher != NULL)
+		if (pusher != NULL && pusher->destValue != 0)
 		{
 			pusher->drownedTanks++;
-			if (pusher->army == "player" ? pusher->drownedTanks >= pusher->destValue : pusher->drownedTanks >= 4)
+			if (pusher->drownedTanks >= pusher->destValue)
 			{
-				pusher->isSpeedBonusUp = true;
-				pusher->destValue = pusher->destValue < 80 ? pusher->destValue * 2 : 80;
+				pusher->isSpeedBonusUp = pusher->isShowSpeedBonusAchiev = true;
+
+				if (pusher->army == "player")
+					pusher->destValue = pusher->destValue < 80 ? pusher->destValue * 2 : 0;
+				else
+					pusher->drownedTanks = 3;
 			}
 			pusher = NULL;
 		}

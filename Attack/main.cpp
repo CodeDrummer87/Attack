@@ -25,6 +25,7 @@ bool isUpd = false;	//.:: for double click protection
 
 enum AppMode { OPTIONS, GAME, SCORING, ENDGAME };
 AppMode mode = OPTIONS;
+bool transition = false; //.:: Game -> Scoring
 
 vector<Entity*> entities;
 vector<Air*> airEntities;
@@ -32,6 +33,15 @@ vector<Player*> team;
 vector<Enemy*> squad;
 
 int getEnemyPositionYOffset(int, int, string*);
+
+template <typename T>
+bool findAliveFrom(vector<T> team)
+{
+	for (auto t : team)
+		if (t->status != DEAD) return true;
+
+	return false;
+}
 
 int main()
 {
@@ -200,6 +210,9 @@ int main()
 	sAirStrikeConfirm.setBuffer(airstrikeConfirmBuf); sAirStrikeConfirm.setLoop(false); sAirStrikeConfirm.setVolume(50.f);
 	sArmor.setBuffer(armorBuf);					sArmor.setLoop(false);
 
+	Music chapter_finale_theme;
+	chapter_finale_theme.openFromFile("source/sounds/music/chapter_finale_theme.flac");
+
 #pragma endregion
 
 #pragma region Animations
@@ -348,6 +361,7 @@ int main()
 	bool isGamePlay = true;
 	int numberOfPlayers = 1;
 	int index = 0;	//.:: for maps vector
+
 	//.:: For start and end battle :::
 	bool isStartGame = true;
 	bool isStartBattle = true;
@@ -1081,7 +1095,7 @@ int main()
 						}
 
 						//::::::::::::::::::::::::::::::::::::::::::::::::::
-						if (fadeOutTime != 0)
+						if (fadeOutTime != 0 && Tank::camera == Camera::StartGameSetted || Tank::camera == Camera::Commander)
 							p->checkIconCollision(maps[index], sTakingIcon);
 					}
 					else
@@ -1099,6 +1113,7 @@ int main()
 					if (e->status != DEAD)
 					{
 						e->checkMapCollision(maps[index]);
+						e->checkIconCollisionForEnemy(maps[index], sTakingIcon);
 
 						if (!e->round && e->isShot) e->destroyBrickWalls(maps[index]);
 						if (!e->round && e->isShot)
@@ -1108,6 +1123,15 @@ int main()
 						if (e->round && e->isShot)
 							createShot(e, aEnemy1Round, aShell, aShellExp);
 					}
+					else
+						if (Enemy::evilTank.tank == e)
+						{
+							Enemy::evilTank.tank = NULL;
+							if (sLaugh.getStatus() == SoundStream::Playing)
+								sLaugh.stop();
+
+							resetVillainView(sizeX, sizeY, zoomViewX, zoomViewY, index);
+						}
 				}
 
 				//.:: Bomb dropping :::
@@ -1123,12 +1147,13 @@ int main()
 							if (!static_cast<Tank*>(a)->isSmoking)
 								createSmoke((Tank*)a, aSmoke);
 
+					//.:: Map collision :::::::::
 					if (a->name == "shell")
 						static_cast<Shell*>(a)->checkMapCollision(maps[index]);
 
+					//.:: Drowning ::::::::::::::
 					if (a->name == "destroyed" && !static_cast<Tank*>(a)->isDrowned)
 						static_cast<Tank*>(a)->sinkTheTankCarcass(maps[index]);
-
 					if (a->name == "destroyed" && static_cast<Tank*>(a)->isDrowned && !static_cast<Tank*>(a)->drowning)
 					{
 						static_cast<Tank*>(a)->drowning = true;
@@ -1136,7 +1161,7 @@ int main()
 						entities.push_back(drowning);
 					}
 				
-					//.:: Collide entities :::
+					//.:: Collide entities ::::::
 					for (auto b : entities)
 					{
 						if (a->name == "shell" && b->name == "tank")
@@ -1150,10 +1175,10 @@ int main()
 							static_cast<Tank*>(a)->shoveOffTankCarcass((Tank*)b);
 					}
 
-					//.:: Achievements :::
-					if (a->name == "tank" && static_cast<Tank*>(a)->isSpeedBonusUp)
+					//.:: Achievements ::::::::::
+					if (a->name == "tank" && static_cast<Tank*>(a)->isShowSpeedBonusAchiev)
 					{
-						static_cast<Tank*>(a)->isSpeedBonusUp = false;
+						static_cast<Tank*>(a)->isShowSpeedBonusAchiev = false;
 						AchievementModel *achievement = new AchievementModel(aSpeedUp, (Tank*)a, "achievement");
 						airEntities.push_back((Air*)achievement);
 					}
@@ -1254,7 +1279,7 @@ int main()
 					e->update(time);
 					e->anim.update(time, e->isPlayAnimation, e->dir);
 
-					if (e->isExist == false)
+					if (!e->isExist)
 					{
 						i = entities.erase(i);
 						delete e;
@@ -1268,7 +1293,7 @@ int main()
 					Entity* e = *i;
 					e->update(time);
 					e->anim.update(time, e->isPlayAnimation, e->dir);
-					if (e->isExist == false)
+					if (!e->isExist)
 					{
 						i = airEntities.erase(i);
 						delete e;
@@ -1277,10 +1302,39 @@ int main()
 				}
 
 				app.setView(view);
+
+#pragma region Battle is over
+
+				if (!battleIsOver && !transition && (!findAliveFrom(team) || !findAliveFrom(squad)))
+				{
+					chapter_finale_theme.play();
+					lastSecondsOfChapter = gameTime + 7;
+					transition = true;
+				}
+
+				if (!battleIsOver && transition)
+				{
+					if (gameTime >= lastSecondsOfChapter)
+					{
+						transition = false;
+						battleIsOver = true;
+
+						if (index + 1 != maps.size())
+						{
+							view.setCenter(float(sizeX / 2), float(sizeY / 2));
+							mode = SCORING;
+							++index;
+						}
+					}
+				}
+
+#pragma endregion
 			}
 
 			if (mode == SCORING)
+			{
 				app.setView(view);
+			}
 			
 			if (mode == OPTIONS)
 				star->update(1, true, 0);
@@ -1341,7 +1395,7 @@ int main()
 
 void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation anim[], Animation explosionAnim[], string *map)
 {
-	for (auto j = squad.begin(); j != squad.end();)
+	/*for (auto j = squad.begin(); j != squad.end();)
 	{
 		j = squad.erase(j);
 		j++;
@@ -1350,13 +1404,13 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 	for (auto i = entities.begin(); i != entities.end();)
 	{
 		Entity *enemy = *i;
-		if (static_cast<Entity*>(enemy)->name == "tank" && static_cast<Entity*>(enemy)->army == "enemy")
+		if ((enemy->name == "tank" || enemy->name == "destroyed") && enemy->army == "enemy")
 		{
 			i = entities.erase(i);
 			delete enemy;
 		}
 		else i++;
-	}
+	}*/
 
 	const int eTanks = 72;
 	double enemyPositionX = 70;
@@ -1369,47 +1423,25 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 		mX = (int)(ceil(enemyPositionX / 32));
 		mY = (int)(ceil(enemyPositionY / 32));
 
+		addValue = getEnemyPositionYOffset(mX, mY, map);
+
 		Enemy *enemy;
 		if (i <= 9)
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[7], "enemy", 8, false);
-		}
 		else if (i > 9 && i <= 18)
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[6], "enemy", 7, false);
-		}
 		else if (i > 18 && i <= 27)
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[5], "enemy", 6, false);
-		}
 		else if (i > 27 && i <= 36)
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[4], "enemy", 5, false);
-		}
 		else if (i > 36 && i <= 45)
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[3], "enemy", 4, false);
-		}
 		else if (i > 45 && i <= 54)
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[2], "enemy", 3, false);
-		}
 		else if (i > 54 && i <= 63)
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[1], "enemy", 2, false);
-		}
 		else
-		{
-			addValue = getEnemyPositionYOffset(mX, mY, map);
 			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[0], "enemy", 1, false);
-		}
 
 		entities.push_back(enemy);
 		squad.push_back(enemy);
