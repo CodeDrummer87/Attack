@@ -19,6 +19,7 @@
 #include "DrowningModel.h"
 #include "AchievementModel.h"
 
+
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
 //:::::::::::::::::
@@ -1134,24 +1135,39 @@ int main()
 						}
 				}
 
-				//.:: Bomb dropping :::
+				//.:: Bomb dropping :::::::::::::::::::
 				if (Plane::leader.bombStatus == BombStatus::DROPPED)
 					dropBombs(aDroppingBomb, aBombExplosion);
 
+				for (auto a : airEntities)
+				{
+					//.:: Air bomb destruction zone :::
+					if (a->name == "bombExplosion" && !static_cast<Bomb*>(a)->coordsTransmitted)
+					{
+						static_cast<Bomb*>(a)->coordsTransmitted = true;
+
+						double x = a->getCoordX(false);
+						double y = a->getCoordY(false);
+
+						Area *area = new Area(x, y, (float)180, a, "destructionZone");
+						entities.push_back(area);
+					}
+				}
+
 				for (auto a : entities)
 				{
-					//.:: Smoking :::::::::::::::
+					//.:: Smoking :::::::::::::::::::::
 					if (a->name == "tank" || a->name == "destroyed")
 						if (static_cast<Tank*>(a)->status == WOUNDED 
 							|| static_cast<Tank*>(a)->status == DEAD && static_cast<Tank*>(a)->makeSureDestroyed())
 							if (!static_cast<Tank*>(a)->isSmoking)
 								createSmoke((Tank*)a, aSmoke);
 
-					//.:: Map collision :::::::::
+					//.:: Map collision :::::::::::::::
 					if (a->name == "shell")
 						static_cast<Shell*>(a)->checkMapCollision(maps[index]);
 
-					//.:: Drowning ::::::::::::::
+					//.:: Drowning ::::::::::::::::::::
 					if (a->name == "destroyed" && !static_cast<Tank*>(a)->isDrowned)
 						static_cast<Tank*>(a)->sinkTheTankCarcass(maps[index]);
 					if (a->name == "destroyed" && static_cast<Tank*>(a)->isDrowned && !static_cast<Tank*>(a)->drowning)
@@ -1160,8 +1176,9 @@ int main()
 						DrowningModel *drowning = new DrowningModel(aDrowning, (Tank*)a, "drowning");
 						entities.push_back(drowning);
 					}
+
 				
-					//.:: Collide entities ::::::
+					//.:: Collide entities ::::::::::::
 					for (auto b : entities)
 					{
 						if (a->name == "shell" && b->name == "tank")
@@ -1173,9 +1190,12 @@ int main()
 
 						if (a->name == "tank" && b->name == "destroyed" && static_cast<Tank*>(a)->makeSureTankCollision((Tank*)b))
 							static_cast<Tank*>(a)->shoveOffTankCarcass((Tank*)b);
+
+						if (a->name == "tank" && b->name == "destructionZone")
+							static_cast<Tank*>(a)->getDamageByArea((Area*)b, maps[index]);
 					}
 
-					//.:: Achievements ::::::::::
+					//.:: Achievements ::::::::::::::::
 					if (a->name == "tank" && static_cast<Tank*>(a)->isShowSpeedBonusAchiev)
 					{
 						static_cast<Tank*>(a)->isShowSpeedBonusAchiev = false;
@@ -1293,6 +1313,7 @@ int main()
 					Entity* e = *i;
 					e->update(time);
 					e->anim.update(time, e->isPlayAnimation, e->dir);
+
 					if (!e->isExist)
 					{
 						i = airEntities.erase(i);

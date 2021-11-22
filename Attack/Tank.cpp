@@ -357,3 +357,20 @@ bool Tank::makeSureTankCollision(Tank *t)
 
 	return false;
 }
+
+void Tank::getDamageByArea(Area *area, string *map)
+{
+	FloatRect a = this->anim.sprite.getGlobalBounds();
+	FloatRect b = area->area.getGlobalBounds();
+
+	if (a.intersects(b))
+		this->hitPoints = 0;
+
+	for (int i = b.top / 32 - b.height / 1.1 / 32; i < b.top / 32 + b.height / 1.1 / 32; i++)
+		for (int j = b.left / 32 - b.width / 15 / 32; j < b.left / 32 + b.width / 32; j++)
+		{
+			if (i > 0 && j > 0)
+				if (map[i][j] == 'b' || map[i][j] == 'F')
+					map[i][j] = ' ';
+		}
+}

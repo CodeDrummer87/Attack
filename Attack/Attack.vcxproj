@@ -142,6 +142,7 @@
     <ClCompile Include="AchievementModel.cpp" />
     <ClCompile Include="Air.cpp" />
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Area.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="DrowningModel.cpp" />
     <ClCompile Include="Enemy.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="AchievementModel.h" />
     <ClInclude Include="Air.h" />
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Area.h" />
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="DrowningModel.h" />
     <ClInclude Include="Enemy.h" />
