@@ -19,6 +19,7 @@
 #include "DrowningModel.h"
 #include "AchievementModel.h"
 
+
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
 //:::::::::::::::::
@@ -255,7 +256,7 @@ int main()
 	Animation aFighterTrace(tFighterTrace, 0, 0, 120, 165, 0.1, 21);
 	Animation aAirJetsFlame(tAirJetsFlame, 0, 0, 120, 165, 0.1, 21);
 	Animation aDroppingBomb(tAirBomb, bombWhistleBuf, 0, 0, 200, 200, 0.015, 50);
-	Animation aBombExplosion(tBombExplosion, bombExplosionBuf, 0, 0, 150, 150, 0.008, 14);
+	Animation aBombExplosion(tBombExplosion, bombExplosionBuf, 0, 0, 400, 400, 0.012, 19);
 
 	Animation enemy_1(tEnemy_1, 0, 0, 64, 64, 0.016, 2);
 	Animation explosion_enemy_1(tEnemy_1, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
@@ -397,6 +398,17 @@ int main()
 	Clock gameTimeClock;
 	int gameTime = 0;
 	double time = 0.0;
+
+	//.:: Current message for players :::
+	int endDisplayMessage = 0;
+
+	Text report;
+	Color reportColor;
+	report.setFillColor(Color::Cyan);
+	double mX = view.getCenter().x - 200;
+	double mY = view.getCenter().y - 200;
+	report.setPosition(mX, mY);
+	//.::::::::::::::::::::::::::::::::::
 
 #pragma region Functions
 	
@@ -1066,6 +1078,9 @@ int main()
 								airEntities.push_back(targetBomb);
 
 								Tank::camera = Camera::Target;
+
+								reportColor = p->number == 1 ? Color::Red : p->number == 2 ? Color::Yellow :
+									p->number == 3 ? Color::Magenta : p->number == 4 ? Color::Cyan : Color::Green;
 							}
 
 							if (Tank::camera == Camera::Target)
@@ -1134,24 +1149,39 @@ int main()
 						}
 				}
 
-				//.:: Bomb dropping :::
+				//.:: Bomb dropping :::::::::::::::::::
 				if (Plane::leader.bombStatus == BombStatus::DROPPED)
 					dropBombs(aDroppingBomb, aBombExplosion);
 
+				for (auto a : airEntities)
+				{
+					//.:: Air bomb destruction zone :::
+					if (a->name == "bombExplosion" && !static_cast<Bomb*>(a)->coordsTransmitted)
+					{
+						static_cast<Bomb*>(a)->coordsTransmitted = true;
+
+						double x = a->getCoordX(false);
+						double y = a->getCoordY(false);
+
+						Area *area = new Area(x, y, (float)180, a, "destructionZone");
+						entities.push_back(area);
+					}
+				}
+
 				for (auto a : entities)
 				{
-					//.:: Smoking :::::::::::::::
+					//.:: Smoking :::::::::::::::::::::
 					if (a->name == "tank" || a->name == "destroyed")
 						if (static_cast<Tank*>(a)->status == WOUNDED 
 							|| static_cast<Tank*>(a)->status == DEAD && static_cast<Tank*>(a)->makeSureDestroyed())
 							if (!static_cast<Tank*>(a)->isSmoking)
 								createSmoke((Tank*)a, aSmoke);
 
-					//.:: Map collision :::::::::
+					//.:: Map collision :::::::::::::::
 					if (a->name == "shell")
 						static_cast<Shell*>(a)->checkMapCollision(maps[index]);
 
-					//.:: Drowning ::::::::::::::
+					//.:: Drowning ::::::::::::::::::::
 					if (a->name == "destroyed" && !static_cast<Tank*>(a)->isDrowned)
 						static_cast<Tank*>(a)->sinkTheTankCarcass(maps[index]);
 					if (a->name == "destroyed" && static_cast<Tank*>(a)->isDrowned && !static_cast<Tank*>(a)->drowning)
@@ -1160,8 +1190,9 @@ int main()
 						DrowningModel *drowning = new DrowningModel(aDrowning, (Tank*)a, "drowning");
 						entities.push_back(drowning);
 					}
+
 				
-					//.:: Collide entities ::::::
+					//.:: Collide entities ::::::::::::
 					for (auto b : entities)
 					{
 						if (a->name == "shell" && b->name == "tank")
@@ -1173,14 +1204,33 @@ int main()
 
 						if (a->name == "tank" && b->name == "destroyed" && static_cast<Tank*>(a)->makeSureTankCollision((Tank*)b))
 							static_cast<Tank*>(a)->shoveOffTankCarcass((Tank*)b);
+
+						if (a->name == "tank" && b->name == "destructionZone")
+							static_cast<Tank*>(a)->getDamageByArea((Area*)b, maps[index]);
 					}
 
-					//.:: Achievements ::::::::::
+					//.:: Achievements ::::::::::::::::
 					if (a->name == "tank" && static_cast<Tank*>(a)->isShowSpeedBonusAchiev)
 					{
 						static_cast<Tank*>(a)->isShowSpeedBonusAchiev = false;
 						AchievementModel *achievement = new AchievementModel(aSpeedUp, (Tank*)a, "achievement");
 						airEntities.push_back((Air*)achievement);
+					}
+
+					//.:: Report about air strike victims :::::::::::::::::::::
+					if (a->name == "destructionZone" && a->status == WOUNDED)
+					{
+						string message_ = to_string(Area::victims) + " enemy tanks were destroyed";
+						report = Text(message_, font_1, 50);
+						report.setFillColor(reportColor);
+
+						endDisplayMessage = gameTime + 5;
+						
+						if (reportColor == Color::Red) team[0]->nickDown(Area::totalExperience);
+						else if (reportColor == Color::Yellow) team[1]->nickDown(Area::totalExperience);
+						else if (reportColor == Color::Magenta) team[2]->nickDown(Area::totalExperience);
+						else if (reportColor == Color::Cyan) team[3]->nickDown(Area::totalExperience);
+						else if (reportColor == Color::Green) team[4]->nickDown(Area::totalExperience);
 					}
 				}
 
@@ -1293,6 +1343,7 @@ int main()
 					Entity* e = *i;
 					e->update(time);
 					e->anim.update(time, e->isPlayAnimation, e->dir);
+
 					if (!e->isExist)
 					{
 						i = airEntities.erase(i);
@@ -1360,6 +1411,14 @@ int main()
 				for (auto e : airEntities)
 					if (e->name != "zone")
 						e->draw(app);
+
+				if (endDisplayMessage >= gameTime)
+				{
+					mX = view.getCenter().x - 250;
+					mY = view.getCenter().y - 250;
+					report.setPosition(mX, mY);
+					app.draw(report);
+				}
 			}
 
 #pragma endregion
@@ -1395,23 +1454,6 @@ int main()
 
 void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation anim[], Animation explosionAnim[], string *map)
 {
-	/*for (auto j = squad.begin(); j != squad.end();)
-	{
-		j = squad.erase(j);
-		j++;
-	}
-
-	for (auto i = entities.begin(); i != entities.end();)
-	{
-		Entity *enemy = *i;
-		if ((enemy->name == "tank" || enemy->name == "destroyed") && enemy->army == "enemy")
-		{
-			i = entities.erase(i);
-			delete enemy;
-		}
-		else i++;
-	}*/
-
 	const int eTanks = 72;
 	double enemyPositionX = 70;
 	double enemyPositionY = 100;

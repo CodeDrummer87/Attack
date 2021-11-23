@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entity.h"
+#include "Area.h"
 
 enum Camera { NotDefined, StartGame, Commander, MalevolentTank, Target, FirstPlane, StartGameSetted };
 
@@ -66,5 +67,6 @@ public:
 	void shoveOffTankCarcass(Tank*);
 	void sinkTheTankCarcass(string*);
 	bool makeSureTankCollision(Tank*);
+	void getDamageByArea(Area*, string*);
 
 };

@@ -51,8 +51,8 @@ void Bomb::update(double time)
 
 			status = WOUNDED;
 			anim = animSpare;
-			name = "explosion";
-			anim.sprite.setScale(2.2f, 2.2f);
+			name = "bombExplosion";
+			anim.sprite.setScale(1.2f, 1.2f);
 		}
 	}
 
