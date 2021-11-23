@@ -400,13 +400,14 @@ int main()
 	double time = 0.0;
 
 	//.:: Current message for players :::
-	bool isDisplayMessage = false;
+	int endDisplayMessage = 0;
 
-	Text message;
-	message.setFillColor(Color::Cyan);
-	int xP = view.getCenter().x;
-	int yP = view.getCenter().y;
-	message.setPosition(xP, yP);
+	Text report;
+	Color reportColor;
+	report.setFillColor(Color::Cyan);
+	double mX = view.getCenter().x - 200;
+	double mY = view.getCenter().y - 200;
+	report.setPosition(mX, mY);
 	//.::::::::::::::::::::::::::::::::::
 
 #pragma region Functions
@@ -1077,6 +1078,9 @@ int main()
 								airEntities.push_back(targetBomb);
 
 								Tank::camera = Camera::Target;
+
+								reportColor = p->number == 1 ? Color::Red : p->number == 2 ? Color::Yellow :
+									p->number == 3 ? Color::Magenta : p->number == 4 ? Color::Cyan : Color::Green;
 							}
 
 							if (Tank::camera == Camera::Target)
@@ -1213,15 +1217,20 @@ int main()
 						airEntities.push_back((Air*)achievement);
 					}
 
-					//.:: Message :::::::::::::::::::::
+					//.:: Report about air strike victims :::::::::::::::::::::
 					if (a->name == "destructionZone" && a->status == WOUNDED)
 					{
-						message = Text(to_string(static_cast<Area*>(a)->victims) + " enemies have been destroyed", font_1, 45);
-						int xP = view.getCenter().x;
-						int yP = view.getCenter().y;
-						message.setPosition(xP, yP);
-						message.setFillColor(Color::Yellow);
-						isDisplayMessage = true;
+						string message_ = to_string(Area::victims) + " enemy tanks were destroyed";
+						report = Text(message_, font_1, 50);
+						report.setFillColor(reportColor);
+
+						endDisplayMessage = gameTime + 5;
+						
+						if (reportColor == Color::Red) team[0]->nickDown(Area::totalExperience);
+						else if (reportColor == Color::Yellow) team[1]->nickDown(Area::totalExperience);
+						else if (reportColor == Color::Magenta) team[2]->nickDown(Area::totalExperience);
+						else if (reportColor == Color::Cyan) team[3]->nickDown(Area::totalExperience);
+						else if (reportColor == Color::Green) team[4]->nickDown(Area::totalExperience);
 					}
 				}
 
@@ -1403,8 +1412,13 @@ int main()
 					if (e->name != "zone")
 						e->draw(app);
 
-				if (isDisplayMessage)
-					app.draw(message);
+				if (endDisplayMessage >= gameTime)
+				{
+					mX = view.getCenter().x - 250;
+					mY = view.getCenter().y - 250;
+					report.setPosition(mX, mY);
+					app.draw(report);
+				}
 			}
 
 #pragma endregion
@@ -1440,23 +1454,6 @@ int main()
 
 void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation anim[], Animation explosionAnim[], string *map)
 {
-	/*for (auto j = squad.begin(); j != squad.end();)
-	{
-		j = squad.erase(j);
-		j++;
-	}
-
-	for (auto i = entities.begin(); i != entities.end();)
-	{
-		Entity *enemy = *i;
-		if ((enemy->name == "tank" || enemy->name == "destroyed") && enemy->army == "enemy")
-		{
-			i = entities.erase(i);
-			delete enemy;
-		}
-		else i++;
-	}*/
-
 	const int eTanks = 72;
 	double enemyPositionX = 70;
 	double enemyPositionY = 100;

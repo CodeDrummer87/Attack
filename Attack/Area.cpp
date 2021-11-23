@@ -20,6 +20,7 @@ Area::Area(double X, double Y, float radius, Entity *own_, string name_)
 }
 
 short Area::victims = 0;
+int Area::totalExperience = 0;
 
 Area::~Area()
 {}
@@ -27,7 +28,12 @@ Area::~Area()
 void Area::update(double time)
 {
 	if (status == WOUNDED)
+	{
+		totalExperience = 0;
+		victims = 0;
+
 		isExist = false;
+	}
 
 	if (own->status == WOUNDED && !own-isExist)
 		status = WOUNDED;

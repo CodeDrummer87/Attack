@@ -11,6 +11,7 @@ public:
 	CircleShape area;
 	
 	static short victims;
+	static int totalExperience;
 
 
 	//.:: Constructor ::::::::::::::::::::::
