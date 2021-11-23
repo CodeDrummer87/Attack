@@ -15,13 +15,20 @@ Area::Area(double X, double Y, float radius, Entity *own_, string name_)
 	own = own_;
 	army = own->army;
 	isExist = true;
+
+	status = ALIVE;
 }
+
+short Area::victims = 0;
 
 Area::~Area()
 {}
 
 void Area::update(double time)
 {
-	if (own->status == WOUNDED)
+	if (status == WOUNDED)
 		isExist = false;
+
+	if (own->status == WOUNDED && !own-isExist)
+		status = WOUNDED;
 }

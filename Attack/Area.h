@@ -9,6 +9,9 @@ private:
 
 public:
 	CircleShape area;
+	
+	static short victims;
+
 
 	//.:: Constructor ::::::::::::::::::::::
 	Area();

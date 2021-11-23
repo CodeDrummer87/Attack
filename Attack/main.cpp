@@ -256,7 +256,7 @@ int main()
 	Animation aFighterTrace(tFighterTrace, 0, 0, 120, 165, 0.1, 21);
 	Animation aAirJetsFlame(tAirJetsFlame, 0, 0, 120, 165, 0.1, 21);
 	Animation aDroppingBomb(tAirBomb, bombWhistleBuf, 0, 0, 200, 200, 0.015, 50);
-	Animation aBombExplosion(tBombExplosion, bombExplosionBuf, 0, 0, 150, 150, 0.008, 14);
+	Animation aBombExplosion(tBombExplosion, bombExplosionBuf, 0, 0, 400, 400, 0.012, 19);
 
 	Animation enemy_1(tEnemy_1, 0, 0, 64, 64, 0.016, 2);
 	Animation explosion_enemy_1(tEnemy_1, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
@@ -398,6 +398,16 @@ int main()
 	Clock gameTimeClock;
 	int gameTime = 0;
 	double time = 0.0;
+
+	//.:: Current message for players :::
+	bool isDisplayMessage = false;
+
+	Text message;
+	message.setFillColor(Color::Cyan);
+	int xP = view.getCenter().x;
+	int yP = view.getCenter().y;
+	message.setPosition(xP, yP);
+	//.::::::::::::::::::::::::::::::::::
 
 #pragma region Functions
 	
@@ -1202,6 +1212,17 @@ int main()
 						AchievementModel *achievement = new AchievementModel(aSpeedUp, (Tank*)a, "achievement");
 						airEntities.push_back((Air*)achievement);
 					}
+
+					//.:: Message :::::::::::::::::::::
+					if (a->name == "destructionZone" && a->status == WOUNDED)
+					{
+						message = Text(to_string(static_cast<Area*>(a)->victims) + " enemies have been destroyed", font_1, 45);
+						int xP = view.getCenter().x;
+						int yP = view.getCenter().y;
+						message.setPosition(xP, yP);
+						message.setFillColor(Color::Yellow);
+						isDisplayMessage = true;
+					}
 				}
 
 #pragma region Camera settings
@@ -1381,6 +1402,9 @@ int main()
 				for (auto e : airEntities)
 					if (e->name != "zone")
 						e->draw(app);
+
+				if (isDisplayMessage)
+					app.draw(message);
 			}
 
 #pragma endregion
