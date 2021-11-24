@@ -48,6 +48,7 @@ public:
 	bool isDrowned;
 	bool drowning;
 
+	bool isShowRepair;
 	bool isShowSpeedBonusAchiev;
 
 	static Camera camera;

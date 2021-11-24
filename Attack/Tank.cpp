@@ -17,7 +17,8 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 	level = level_;
 
 	status = ALIVE;
-	isDestroyed = isTransition = isDrowned = drowning = isSpeedBonusUp = isShowSpeedBonusAchiev = false;
+	isDestroyed = isTransition = isDrowned = drowning = isSpeedBonusUp = false;
+	isShowSpeedBonusAchiev = isShowRepair = false;
 	isShot = true;
 	isSmoking = false;
 	hitPoints = level +1;
