@@ -109,6 +109,7 @@ void Player::checkIconCollision(string map[], Sound &sound)
 				{
 					sound.play();
 					++hitPoints;
+					isShowRepair = true;
 					map[i][j] = ' ';
 				}
 			}
