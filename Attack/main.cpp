@@ -1228,6 +1228,12 @@ int main()
 						airEntities.push_back((Air*)repairEffect);
 					}
 
+					if (a->name == "tank" && static_cast<Tank*>(a)->isShowSniperAchiev)
+					{
+						static_cast<Tank*>(a)->isShowSniperAchiev = false;
+						//.:: go ahead...
+					}
+
 					//.:: Report about air strike victims :::::::::::::::::::::
 					if (a->name == "destructionZone" && a->status == WOUNDED)
 					{
