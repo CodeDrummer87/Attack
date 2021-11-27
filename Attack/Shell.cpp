@@ -38,29 +38,29 @@ void Shell::update(double time)
 		if (dir == 1)
 		{
 			dx = 0;
-			dy = -0.5 * time - ((double)level / 5);
+			dy = -0.5 * time - ((double)level / 5) - own->shellSpeedBonus;
 			dist -= dy;
 		}
 		if (dir == 2)
 		{
 			dy = 0;
-			dx = 0.5 * time + ((double)level / 5);
+			dx = 0.5 * time + ((double)level / 5) + own->shellSpeedBonus;
 			dist += dx;
 		}
 		if (dir == 3)
 		{
 			dx = 0;
-			dy = 0.5 * time + ((double)level / 5);
+			dy = 0.5 * time + ((double)level / 5) + own->shellSpeedBonus;
 			dist += dy;
 		}
 		if (dir == 4)
 		{
 			dy = 0;
-			dx = -0.5 * time - ((double)level / 5);
+			dx = -0.5 * time - ((double)level / 5) - own->shellSpeedBonus;
 			dist -= dx;
 		}
 
-		if (abs(dist) >= 350 + (float)level * 50)
+		if (abs(dist) >= 350 + (float)level * 30)
 			isExplosion = true;
 
 		if (isExplosion)
@@ -138,17 +138,25 @@ void Shell::damageEntity(Tank *t, Sound &armorSound)
 				else
 					t->hitPoints -= level;
 
-				if (army == "player" && t->hitPoints <= 0)
-					conveyExperience(t->level);
+				if (t->hitPoints <= 0)
+				{
+					if (own->shellSpeedBonus < 7.5f && abs(dist) >= 335 + (float)level * 30) 
+					{
+						own->shellSpeedBonus += 1.5f;
+						own->isShowSniperAchiev = true;
+					}
+
+					if (army == "enemy")
+					{
+						paintOwn();
+						static_cast<Enemy*>(own)->round = false;
+					}
+					else
+						conveyExperience(t->level);
+				}
 
 				if (army == "player" && dir == t->dir)
 					static_cast<Enemy*>(t)->dir = t->dir + 2 <= 4 ? t->dir + 2 : t->dir - 2;
-
-				if (army == "enemy" && t->hitPoints <= 0)
-				{
-					paintOwn();
-					static_cast<Enemy*>(own)->round = false;
-				}
 			}
 			isExist = false;
 			if (name == "shell")

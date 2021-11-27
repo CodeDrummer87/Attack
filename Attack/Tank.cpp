@@ -18,7 +18,7 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 
 	status = ALIVE;
 	isDestroyed = isTransition = isDrowned = drowning = isSpeedBonusUp = false;
-	isShowSpeedBonusAchiev = isShowRepair = false;
+	isShowSpeedBonusAchiev = isShowRepair = isShowSniperAchiev = false;
 	isShot = true;
 	isSmoking = false;
 	hitPoints = level +1;
@@ -33,6 +33,8 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 	pusher = NULL;
 	speedBonus = 0.0f;
 	destValue = army == "player" ? 5 : 4;
+
+	shellSpeedBonus = 0.0f;
 
 	number = ++counter;
 }
@@ -368,8 +370,11 @@ void Tank::getDamageByArea(Area *area, string *map)
 		if (this->hitPoints > 0)
 		{
 			this->hitPoints = 0;
-			area->victims++;
-			area->totalExperience += this->level;
+			if (area->army != army)
+			{
+				area->victims++;
+				area->totalExperience += this->level;
+			}
 		}
 
 	for (int i = b.top / 32 - b.height / 1.1 / 32; i < b.top / 32 + b.height / 1.1 / 32; i++)

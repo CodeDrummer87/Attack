@@ -25,7 +25,7 @@ private:
 	bool isTransition;
 	double toUp, toRight, toDown, toLeft;
 
-	float speedBonus;	//.:: Achievement "Cleaner": Speed boost bonus
+	float speedBonus;	//.:: Achievement "Cleaner": Movement speed boost bonus
 	bool isSpeedBonusUp;
 	short destValue;
 
@@ -50,6 +50,9 @@ public:
 
 	bool isShowRepair;
 	bool isShowSpeedBonusAchiev;
+
+	float shellSpeedBonus;	//.:: Achievement "Sniper": Shell speed boost bonus
+	bool isShowSniperAchiev;
 
 	static Camera camera;
 

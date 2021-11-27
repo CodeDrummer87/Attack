@@ -67,7 +67,8 @@ int main()
 #pragma region Images
 
 	Image iMap, iIcon, iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank, iFighter, iAirBomb, iBombExplosion,
-		iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8, iDrowning, iSpeedUpAchiev, iRepair;
+		iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8, iDrowning, iSpeedUpAchiev, iRepair,
+		iSniper;
 
 	iMap.loadFromFile("source/images/map.png");
 	iMap.createMaskFromColor(Color::White);
@@ -112,6 +113,7 @@ int main()
 	iDrowning.createMaskFromColor(Color::White);
 	iSpeedUpAchiev.loadFromFile("source/images/sprites/other/speed_up_achievement.png");
 	iRepair.loadFromFile("source/images/sprites/other/repair.png");
+	iSniper.loadFromFile("source/images/sprites/other/sniper_achievement.png");
 
 #pragma endregion
 
@@ -120,7 +122,7 @@ int main()
 	Texture tMap, tIcon, bTank, yTank, pTank, cTank, hTank, tTankRound, tShell, tShellExp,
 		tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion,
 		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tEnemy_6, tEnemy_7, tEnemy_8, tDrowning, tSpeedUpAchiev,
-		tRepair;
+		tRepair, tSniper;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -157,6 +159,7 @@ int main()
 	tDrowning.loadFromImage(iDrowning);
 	tSpeedUpAchiev.loadFromImage(iSpeedUpAchiev);
 	tRepair.loadFromImage(iRepair);
+	tSniper.loadFromImage(iSniper);
 
 #pragma endregion
 
@@ -181,7 +184,7 @@ int main()
 
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf,
 		takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
-		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf;
+		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -205,6 +208,7 @@ int main()
 	drowningBuf.loadFromFile("source/sounds/effects/drowning.flac");
 	speedUpBuf.loadFromFile("source/sounds/effects/speed_up.flac");
 	repairBuf.loadFromFile("source/sounds/effects/icons/repair.flac");
+	sniperBuf.loadFromFile("source/sounds/effects/sniper.flac");
 
 	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sLaugh(laughBuf);
 
@@ -285,6 +289,7 @@ int main()
 	Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
 	Animation aSpeedUp(tSpeedUpAchiev, speedUpBuf, 0, 0, 128, 128, 0.009, 24);
 	Animation aRepair(tRepair, repairBuf, 0, 0, 128, 128, 0.009, 21);
+	Animation aSniper(tSniper, sniperBuf, 0, 0, 128, 128, 0.017, 50);
 
 #pragma endregion
 
@@ -1226,6 +1231,13 @@ int main()
 						static_cast<Tank*>(a)->isShowRepair = false;
 						AchievementModel *repairEffect = new AchievementModel(aRepair, (Tank*)a, "effect");
 						airEntities.push_back((Air*)repairEffect);
+					}
+
+					if (a->name == "tank" && static_cast<Tank*>(a)->isShowSniperAchiev)
+					{
+						static_cast<Tank*>(a)->isShowSniperAchiev = false;
+						AchievementModel *achievement = new AchievementModel(aSniper, (Tank*)a, "achievement");
+						airEntities.push_back((Air*)achievement);
 					}
 
 					//.:: Report about air strike victims :::::::::::::::::::::
