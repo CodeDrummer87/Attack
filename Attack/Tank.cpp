@@ -370,8 +370,11 @@ void Tank::getDamageByArea(Area *area, string *map)
 		if (this->hitPoints > 0)
 		{
 			this->hitPoints = 0;
-			area->victims++;
-			area->totalExperience += this->level;
+			if (area->army != army)
+			{
+				area->victims++;
+				area->totalExperience += this->level;
+			}
 		}
 
 	for (int i = b.top / 32 - b.height / 1.1 / 32; i < b.top / 32 + b.height / 1.1 / 32; i++)

@@ -140,9 +140,9 @@ void Shell::damageEntity(Tank *t, Sound &armorSound)
 
 				if (t->hitPoints <= 0)
 				{
-					if (own->shellSpeedBonus < 10.0f && abs(dist) >= 343 + (float)level * 30)
+					if (own->shellSpeedBonus < 7.5f && abs(dist) >= 335 + (float)level * 30) 
 					{
-						own->shellSpeedBonus += 2.0f;
+						own->shellSpeedBonus += 1.5f;
 						own->isShowSniperAchiev = true;
 					}
 
