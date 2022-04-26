@@ -147,6 +147,7 @@
     <ClCompile Include="DrowningModel.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="GroundVehicle.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="DrowningModel.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="GroundVehicle.h" />
     <ClInclude Include="libraries.h" />
     <ClInclude Include="maps.h" />
     <ClInclude Include="Plane.h" />

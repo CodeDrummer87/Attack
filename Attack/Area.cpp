@@ -5,6 +5,8 @@ Area::Area()
 
 Area::Area(double X, double Y, float radius, Entity *own_, string name_)
 {
+	isTerrainDestroyed = false;
+
 	name = name_;
 	x = X;
 	y = Y;

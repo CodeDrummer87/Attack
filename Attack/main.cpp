@@ -67,8 +67,8 @@ int main()
 #pragma region Images
 
 	Image iMap, iIcon, iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank, iFighter, iAirBomb, iBombExplosion,
-		iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8, iDrowning, iSpeedUpAchiev, iRepair,
-		iSniper;
+		iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8, iCommunication_truck, iDrowning,
+		iSpeedUpAchiev, iRepair, iSniper;
 
 	iMap.loadFromFile("source/images/map.png");
 	iMap.createMaskFromColor(Color::White);
@@ -108,6 +108,8 @@ int main()
 	iEnemy_7.createMaskFromColor(Color::White);
 	iEnemy_8.loadFromFile("source/images/sprites/models/tanks/enemies/enemy_8.png");
 	iEnemy_8.createMaskFromColor(Color::White);
+	iCommunication_truck.loadFromFile("source/images/sprites/models/special_transport/communication_truck.png");
+	iCommunication_truck.createMaskFromColor(Color::White);
 
 	iDrowning.loadFromFile("source/images/sprites/other/drowning.png");
 	iDrowning.createMaskFromColor(Color::White);
@@ -121,8 +123,8 @@ int main()
 
 	Texture tMap, tIcon, bTank, yTank, pTank, cTank, hTank, tTankRound, tShell, tShellExp,
 		tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion,
-		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tEnemy_6, tEnemy_7, tEnemy_8, tDrowning, tSpeedUpAchiev,
-		tRepair, tSniper;
+		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tEnemy_6, tEnemy_7, tEnemy_8, tCommunication_truck, tDrowning,
+		tSpeedUpAchiev, tRepair, tSniper;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -155,6 +157,7 @@ int main()
 	tEnemy_6.loadFromImage(iEnemy_6);
 	tEnemy_7.loadFromImage(iEnemy_7);
 	tEnemy_8.loadFromImage(iEnemy_8);
+	tCommunication_truck.loadFromImage(iCommunication_truck);
 
 	tDrowning.loadFromImage(iDrowning);
 	tSpeedUpAchiev.loadFromImage(iSpeedUpAchiev);
@@ -1209,13 +1212,13 @@ int main()
 								static_cast<Shell*>(a)->damageEntity((Tank*)(b), sArmor);
 						
 						if (a->name == "tank" && b->name == "tank" && static_cast<Tank*>(a)->number != static_cast<Tank*>(b)->number)
-							static_cast<Tank*>(a)->checkTanksCollision((Tank*)b);
+							static_cast<Tank*>(a)->checkVehiclesCollision((Tank*)b);
 
-						if (a->name == "tank" && b->name == "destroyed" && static_cast<Tank*>(a)->makeSureTankCollision((Tank*)b))
+						if (a->name == "tank" && b->name == "destroyed" && static_cast<Tank*>(a)->makeSureVehicleCollision((Tank*)b))
 							static_cast<Tank*>(a)->shoveOffTankCarcass((Tank*)b);
 
 						if (a->name == "tank" && b->name == "destructionZone")
-							static_cast<Tank*>(a)->getDamageByArea((Area*)b, maps[index]);
+							static_cast<Tank*>(a)->getAreaDamage((Area*)b, maps[index]);
 					}
 
 					//.:: Achievements and effects ::::::::::::::::
@@ -1243,7 +1246,10 @@ int main()
 					//.:: Report about air strike victims :::::::::::::::::::::
 					if (a->name == "destructionZone" && a->status == WOUNDED)
 					{
-						string message_ = to_string(Area::victims) + " enemy tanks were destroyed";
+						string message_ = (Area::victims == 0) ? "No destroyed enemy tanks"
+							: (Area::victims == 1) ? "1 enemy tank was destroyed"
+							: to_string(Area::victims) + " enemy tanks were destroyed";
+
 						report = Text(message_, font_1, 50);
 						report.setFillColor(reportColor);
 

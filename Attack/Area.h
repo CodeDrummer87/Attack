@@ -9,7 +9,8 @@ private:
 
 public:
 	CircleShape area;
-	
+	bool isTerrainDestroyed;  //.:: for the Destruction Zone
+
 	static short victims;
 	static int totalExperience;
 
