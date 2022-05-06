@@ -16,7 +16,7 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 	status = ALIVE;
 	aVehicleExplosion = aExplosion;
 
-	isDestroyed = isTransition = isSmoking = false;
+	isDestroyed = isTransition = isSmoking = isShowRepair = isPlayerControl = false;
 	hitPoints = level + 1;
 	toUp = toDown = toRight = toLeft = 0;
 
@@ -26,6 +26,9 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 	traffic.left.dir = true;	traffic.left.barId = 0;
 
 	number = ++counter;
+
+	vehicleSpeed = level % 2 == 0 ? 0.1f : 0.08f;
+	updateDestinationDistance();
 }
 
 GroundVehicle::~GroundVehicle()
@@ -95,8 +98,10 @@ void GroundVehicle::update(double time)
 				isSmoking = false;
 			}
 		}
+		//.:: Vehicle control :::
+		if (!isPlayerControl)
+			controlEnemyVehicle(time);
 	}
-
 }
 
 void GroundVehicle::accelerate(int dir_, double acc)
@@ -292,5 +297,181 @@ void GroundVehicle::getAreaDamage(Area *area, string *map)
 					if (map[i][j] == 'b' || map[i][j] == 'F')
 						map[i][j] = ' ';
 			}
+	}
+}
+
+void GroundVehicle::checkMapCollision(string * map)
+{
+	if (isPlayerControl)
+	{
+		if (dy < 0)
+			for (int i = (y - 20) / 32; i <= (y + 20) / 32; i++)
+				for (int j = (x - 2) / 32; j <= (x + 30) / 32; j++)
+					if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+						dy = 0;
+
+		if (dy > 0)
+			for (int i = (y + 20) / 32; i <= (y + 50) / 32; i++)
+				for (int j = (x - 2) / 32; j <= (x + 30) / 32; j++)
+					if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+						dy = 0;
+
+		if (dx < 0)
+			for (int i = (y) / 32; i <= (y + 30) / 32; i++)
+				for (int j = (x - 16) / 32; j <= (x + 20) / 32; j++)
+					if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+						dx = 0;
+
+		if (dx > 0)
+			for (int i = (y) / 32; i <= (y + 30) / 32; i++)
+				for (int j = (x + 42) / 32; j <= (x + 50) / 32; j++)
+					if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+						dx = 0;
+	}
+	else
+	{
+		if (dir == 1)
+			for (int i = (y - 20) / 32; i <= (y + 20) / 32; i++)
+				for (int j = (x - 2) / 32; j <= (x + 30) / 32; j++)
+				{
+					if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+						traffic.up.dir = false;
+
+					if (!traffic.down.dir)
+						traffic.down.dir = true;
+				}
+
+		if (dir == 3)
+			for (int i = (y + 20) / 32; i <= (y + 50) / 32; i++)
+				for (int j = (x - 2) / 32; j <= (x + 30) / 32; j++)
+				{
+					if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+						traffic.down.dir = false;
+
+					if (!traffic.up.dir)
+						traffic.up.dir = true;
+				}
+
+		if (dir == 4)
+			for (int i = (y) / 32; i <= (y + 30) / 32; i++)
+				for (int j = (x - 16) / 32; j <= (x + 20) / 32; j++)
+				{
+					if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+						traffic.left.dir = false;
+
+					if (!traffic.right.dir)
+						traffic.right.dir = true;
+				}
+
+		if (dir == 2)
+			for (int i = (y) / 32; i <= (y + 30) / 32; i++)
+				for (int j = (x + 42) / 32; j <= (x + 50) / 32; j++)
+				{
+					if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+						traffic.right.dir = false;
+
+					if (!traffic.left.dir)
+						traffic.left.dir = true;
+				}
+	}
+}
+
+void GroundVehicle::checkIconCollision(string map[], Sound &sound)
+{
+	for (int i = (anim.getRect(dir).top + 15) / 32; i < (y + anim.getRect(dir).height) / 32; i++)
+		for (int j = (anim.getRect(dir).left + 14) / 32; j < (x + anim.getRect(dir).width) / 32; j++)
+		{
+			if (map[i][j] == 'R')
+			{
+				if (hitPoints < 1 + level)
+				{
+					sound.play();
+					++hitPoints;
+					isShowRepair = true;
+					map[i][j] = ' ';
+				}
+			}
+		}
+}
+
+void GroundVehicle::updateDestinationDistance()
+{
+	reachdDist = 0.0;
+	destinationDist = abs(y - x) + (level + number) * 2;
+	while (destinationDist > 1200)
+		destinationDist /= 2;
+	if (destinationDist < 300)
+		destinationDist += 400;
+}
+
+void GroundVehicle::controlEnemyVehicle(double time)
+{
+	if (name != "destroyed")
+	{
+		switch (dir)
+		{
+		case 1:
+			if (traffic.up.dir)
+				accelerate(1, -vehicleSpeed * time);
+			else
+				changeDir();
+			break;
+		case 2:
+			if (traffic.right.dir)
+				accelerate(2, vehicleSpeed * time);
+			else
+				changeDir();
+			break;
+		case 3:
+			if (traffic.down.dir)
+				accelerate(dir, vehicleSpeed * time);
+			else
+				changeDir();
+			break;
+		case 4:
+			if (traffic.left.dir)
+				accelerate(dir, -vehicleSpeed * time);
+			else
+				changeDir();
+			break;
+		}
+
+		reachdDist += vehicleSpeed * time;
+		if (reachdDist >= destinationDist)
+		{
+			changeDir();
+			updateDestinationDistance();
+		}
+	}
+}
+
+void GroundVehicle::changeDir()
+{
+	srand(time(NULL));
+
+	int k = rand() % 100 + 1;
+	if (k <= 25)
+	{
+		dir++;
+		if (dir > 4)
+			dir = 1;
+	}
+	else if (k > 25 && k <= 50)
+	{
+		dir--;
+		if (dir < 1)
+			dir = 4;
+	}
+	else if (k > 50 && k <= 75)
+	{
+		dir += 2;
+		if (dir > 4)
+			dir -= 4;
+	}
+	else
+	{
+		dir += 3;
+		if (dir > 4)
+			dir -= 4;
 	}
 }

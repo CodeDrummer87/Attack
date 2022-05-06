@@ -28,7 +28,7 @@ public:
 	virtual ~Entity();
 
 	//.:: Methods_of_class  :::::::::::::::::
-	virtual void update(double);
+	virtual void update(double) = 0;
 	virtual void draw(RenderWindow&);
 
 	double getCoordX(bool);

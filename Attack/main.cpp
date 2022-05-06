@@ -185,8 +185,8 @@ int main()
 
 #pragma endregion
 
-	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, shellExpBuf,
-		takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
+	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, autoExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, 
+		shellExpBuf, takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
 		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
@@ -207,6 +207,7 @@ int main()
 	enemy_1Buf.loadFromFile("source/sounds/tank/movement/move_5.flac");
 	enemy_1RoundBuf.loadFromFile("source/sounds/tank/round/enemy1_round.flac");
 	armorBuf.loadFromFile("source/sounds/tank/armor.flac");
+	autoExpBuf.loadFromFile("source/sounds/explosion/auto_explosion.flac");
 	laughBuf.loadFromFile("source/sounds/effects/laugh.flac");
 	drowningBuf.loadFromFile("source/sounds/effects/drowning.flac");
 	speedUpBuf.loadFromFile("source/sounds/effects/speed_up.flac");
@@ -285,9 +286,14 @@ int main()
 	Animation explosion_enemy_7(tEnemy_7, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 	Animation enemy_8(tEnemy_8, 0, 0, 64, 64, 0.016, 2);
 	Animation explosion_enemy_8(tEnemy_8, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
-	Animation enemyAnim_1[] = { enemy_1, enemy_2, enemy_3, enemy_4, enemy_5, enemy_6, enemy_7, enemy_8 };
+
+	Animation communication_truck(tCommunication_truck, 0, 0, 64, 64, 0.016, 1);
+	Animation explosion_communication_truck(tCommunication_truck, autoExpBuf, 0, 64, 64, 64, 0.01, 14);
+
+	Animation enemyAnim_1[] = { enemy_1, enemy_2, enemy_3, enemy_4, enemy_5, enemy_6, enemy_7, enemy_8, communication_truck };
 	Animation explosionEnemyAnim_1[] = { explosion_enemy_1, explosion_enemy_2, explosion_enemy_3, explosion_enemy_4,
-										 explosion_enemy_5, explosion_enemy_6, explosion_enemy_7, explosion_enemy_8 };
+										 explosion_enemy_5, explosion_enemy_6, explosion_enemy_7, explosion_enemy_8,
+										 explosion_communication_truck };
 
 	Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
 	Animation aSpeedUp(tSpeedUpAchiev, speedUpBuf, 0, 0, 128, 128, 0.009, 24);
@@ -1140,7 +1146,7 @@ int main()
 					if (e->status != DEAD)
 					{
 						e->checkMapCollision(maps[index]);
-						e->checkIconCollisionForEnemy(maps[index], sTakingIcon);
+						e->checkIconCollision(maps[index], sTakingIcon);
 
 						if (!e->round && e->isShot) e->destroyBrickWalls(maps[index]);
 						if (!e->round && e->isShot)
@@ -1498,21 +1504,21 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 
 		Enemy *enemy;
 		if (i <= 9)
-			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[7], "enemy", 8, false);
+			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[7], "enemy", 8);
 		else if (i > 9 && i <= 18)
-			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[6], "enemy", 7, false);
+			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[6], "enemy", 7);
 		else if (i > 18 && i <= 27)
-			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[5], "enemy", 6, false);
+			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[5], "enemy", 6);
 		else if (i > 27 && i <= 36)
-			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[4], "enemy", 5, false);
+			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[4], "enemy", 5);
 		else if (i > 36 && i <= 45)
-			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[3], "enemy", 4, false);
+			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[3], "enemy", 4);
 		else if (i > 45 && i <= 54)
-			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[2], "enemy", 3, false);
+			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[2], "enemy", 3);
 		else if (i > 54 && i <= 63)
-			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[1], "enemy", 2, false);
+			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[1], "enemy", 2);
 		else
-			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[0], "enemy", 1, false);
+			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[0], "enemy", 1);
 
 		entities.push_back(enemy);
 		squad.push_back(enemy);

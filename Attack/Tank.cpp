@@ -11,7 +11,7 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 	: GroundVehicle(anim, x_, y_, name_, dir_, isPlayAnimation_, aExplosion, army_, level_)
 {
 	isDrowned = drowning = isSpeedBonusUp = false;
-	isShowSpeedBonusAchiev = isShowRepair = isShowSniperAchiev = false;
+	isShowSpeedBonusAchiev = isShowSniperAchiev = false;
 	isShot = true;
 	pusher = NULL;
 

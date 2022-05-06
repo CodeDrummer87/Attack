@@ -12,12 +12,6 @@ struct EvilTank
 
 class Enemy : public Tank
 {
-private:
-	float reachedDist;
-	float destinationDist;
-
-	bool isDoubleCannon;
-
 public:
 	bool round;
 
@@ -25,19 +19,14 @@ public:
 
 	//.:: Constructor :::::::::::::::::::::::
 	Enemy();
-	Enemy(Animation&, double, double, string, int, bool, Animation&, string, int, bool);
+	Enemy(Animation&, double, double, string, int, bool, Animation&, string, int);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Enemy();
 
 	//.:: Public_method_of_class ::::::::::::
 	void update(double);
-	void changeDir();
-	void checkMapCollision(string *map);
-	void updateDestinationDistance();
 	void destroyBrickWalls(string*);
 	void destroyPlayersTanks(Tank*);
-	void checkIconCollisionForEnemy(string[], Sound&);
 
 };
-

@@ -20,9 +20,6 @@ Entity::Entity(Animation &a, double x_, double y_, string name_, int dir_, bool 
 Entity::~Entity()
 {}
 
-void Entity::update(double time)
-{}
-
 void Entity::draw(RenderWindow &app)
 {
 	anim.sprite.setPosition(x, y);

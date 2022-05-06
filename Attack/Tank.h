@@ -18,7 +18,6 @@ public:
 	bool isDrowned;
 	bool drowning;
 
-	bool isShowRepair;
 	bool isShowSpeedBonusAchiev;
 
 	short destValue;

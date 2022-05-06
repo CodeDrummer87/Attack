@@ -19,9 +19,15 @@ struct Traffic
 
 class GroundVehicle : public Entity
 {
+private:
+	float vehicleSpeed;
+	float reachdDist;
+	float destinationDist;
+
 protected:
-	Animation aVehicleExplosion;
+	bool isPlayerControl;
 	bool isDestroyed;
+	Animation aVehicleExplosion;
 
 	bool isTransition;
 	double toUp, toRight, toDown, toLeft;
@@ -33,6 +39,8 @@ public:
 	int hitPoints;
 	bool isSmoking;
 	Traffic traffic;
+
+	bool isShowRepair;
 
 	//.:: Constructor :::::::::::::::::::::::
 	GroundVehicle();
@@ -48,5 +56,10 @@ public:
 	void checkVehiclesCollision(GroundVehicle*);
 	bool makeSureVehicleCollision(GroundVehicle*);
 	void getAreaDamage(Area*, string*);
+	void checkMapCollision(string*);
+	void checkIconCollision(string[], Sound&);
+	void updateDestinationDistance();
+	void controlEnemyVehicle(double);
+	void changeDir();
 
 };
