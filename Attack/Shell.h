@@ -28,7 +28,7 @@ public:
 	//.:: Public_methods_of_class :::::::::::
 	void update(double);
 	void checkMapCollision(string[]);
-	void damageEntity(Tank*, Sound&);
+	void damageEntity(GroundVehicle*, Sound&);
 
 };
 

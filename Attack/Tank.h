@@ -1,56 +1,19 @@
 #pragma once
 
-#include "Entity.h"
-#include "Area.h"
+#include "GroundVehicle.h"
 
 enum Camera { NotDefined, StartGame, Commander, MalevolentTank, Target, FirstPlane, StartGameSetted };
 
-struct Ban
+class Tank : public GroundVehicle
 {
-	bool dir;	//.:: Direction open / close
-	int barId;	//.:: Barrier ID (if Direction is close)
-};
-
-struct Traffic
-{
-	Ban up;
-	Ban right;
-	Ban down;
-	Ban left;
-};
-
-class Tank : public Entity
-{
-private:
-	bool isTransition;
-	double toUp, toRight, toDown, toLeft;
-
-	float speedBonus;	//.:: Achievement "Cleaner": Movement speed boost bonus
-	bool isSpeedBonusUp;
-	short destValue;
-
-protected:
-	Animation aTankExplosion;
-	bool isDestroyed;
-
-	int drownedTanks;
-	Tank *pusher;
-
-	static int counter;
-
 public:
-	int number;
-	int hitPoints;
-	Traffic traffic;
 	bool isShot;
-	bool isSmoking;
+	int drownedTanks;
 
-	bool isDrowned;
-	bool drowning;
-
-	bool isShowRepair;
+	bool isSpeedBonusUp;
 	bool isShowSpeedBonusAchiev;
 
+	short destValue;
 	float shellSpeedBonus;	//.:: Achievement "Sniper": Shell speed boost bonus
 	bool isShowSniperAchiev;
 
@@ -65,12 +28,6 @@ public:
 
 	//.:: Methods_of_class ::::::::::::::::::
 	void update(double);
-	void accelerate(int, double);
-	bool makeSureDestroyed();
-	void checkTanksCollision(Tank*);
-	void shoveOffTankCarcass(Tank*);
-	void sinkTheTankCarcass(string*);
-	bool makeSureTankCollision(Tank*);
-	void getDamageByArea(Area*, string*);
+	void shoveOffTankCarcass(GroundVehicle*);
 
 };

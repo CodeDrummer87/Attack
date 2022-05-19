@@ -37,10 +37,9 @@ public:
 	void setStartPosition(double, double);
 	void checkIconCollision(string[], Sound&);
 	void improveTank(int);
-	void checkMapCollision(string*);
 	void nickDown(int);
 	
-	static void defineNewCommander(vector<Player*>);
+	static void defineNewCommander(vector<Player*>&);
 	static bool checkTeamForCommander(vector<Player*>);
 
 };

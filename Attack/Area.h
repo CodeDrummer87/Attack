@@ -9,14 +9,15 @@ private:
 
 public:
 	CircleShape area;
-	
+	bool isTerrainDestroyed;  //.:: for the Destruction Zone
+
 	static short victims;
 	static int totalExperience;
 
 
 	//.:: Constructor ::::::::::::::::::::::
 	Area();
-	Area(double, double, float, Entity*, string);
+	Area(double, double, float, Entity*, string, string);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Area();

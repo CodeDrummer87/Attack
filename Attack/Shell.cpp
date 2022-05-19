@@ -125,13 +125,13 @@ void Shell::checkMapCollision(string map[])
 		}
 }
 
-void Shell::damageEntity(Tank *t, Sound &armorSound)
+void Shell::damageEntity(GroundVehicle *t, Sound &armorSound)
 {
 	if (army != t->army)
 		if (anim.getShellRect(true).intersects(t->anim.getShellRect(false)))
 		{
 			armorSound.play();
-			if (this->name == "shell" && t->name == "tank")
+			if (this->name == "shell" && (t->name == "tank" || t->name == "truck"))
 			{
 				if (level >= t->hitPoints && t->hitPoints > 1)
 					t->hitPoints = 1;

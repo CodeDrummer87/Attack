@@ -28,10 +28,12 @@ public:
 	virtual ~Entity();
 
 	//.:: Methods_of_class  :::::::::::::::::
-	virtual void update(double);
+	virtual void update(double) = 0;
 	virtual void draw(RenderWindow&);
 
 	double getCoordX(bool);
 	double getCoordY(bool);
+	void setCoordX(double);
+	void setCoordY(double);
 
 };

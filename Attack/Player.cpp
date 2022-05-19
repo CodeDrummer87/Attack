@@ -8,6 +8,8 @@ Player::Player()
 Player::Player(Animation &anim, double x_, double y_, string name_, int dir_, bool isPlayAnimation_,
 	Animation &aExplosion, string army_, int level_) : Tank(anim, x_, y_, name_, dir_, isPlayAnimation_, aExplosion, army_, level_)
 {
+	isPlayerControl = true;
+
 	totalKills = 0;
 	currentExperience = 0;
 
@@ -153,7 +155,7 @@ void Player::improveTank(int residual)
 		currentExperience = 0;
 }
 
-void Player::defineNewCommander(vector<Player*> team)
+void Player::defineNewCommander(vector<Player*> &team)
 {
 	Player* newCommander = team[0];
 	int lvl = 0;
@@ -182,33 +184,6 @@ bool Player::checkTeamForCommander(vector<Player*> team)
 	}
 
 	return false;
-}
-
-void Player::checkMapCollision(string *map)
-{
-	if (dy < 0)
-		for (int i = (y - 20) / 32; i <= (y + 20) / 32; i++)
-			for (int j = (x - 2) / 32; j <= (x + 30) / 32; j++)
-				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
-					dy = 0;
-
-	if (dy > 0)
-		for (int i = (y + 20) / 32; i <= (y + 50) / 32; i++)
-			for (int j = (x - 2) / 32; j <= (x + 30) / 32; j++)
-				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
-					dy = 0;
-
-	if (dx < 0)
-		for (int i = (y) / 32; i <= (y + 30) / 32; i++)
-			for (int j = (x - 16) / 32; j <= (x + 20) / 32; j++)
-				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
-					dx = 0;
-
-	if (dx > 0)
-		for (int i = (y) / 32; i <= (y + 30) / 32; i++)
-			for (int j = (x + 42) / 32; j <= (x + 50) / 32; j++)
-				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
-					dx = 0;
 }
 
 void Player::nickDown(int exp)

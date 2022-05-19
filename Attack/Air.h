@@ -3,24 +3,26 @@
 #include "Entity.h"
 #include "Player.h"
 
+enum BombStatus { ABOARD, DROPPED, DESCENT };
+
 class Air : public Entity
 {
 private:
 	Animation animSpare;
-	Player * own;
+	Entity *own;
 
 public:
 	int number;
 
 	//.:: Constructor ::::::::::::::::::::::
 	Air();
-	Air(Animation&, Animation&, Player*, string);
+	Air(Animation&, Animation&, Entity*, string);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Air();
 
 	//.:: Methods_of_class :::::::::::::::::
 	void update(double);
-	Player* getOwn();
+	Entity* getOwn();
 
 };

@@ -1,18 +1,18 @@
 #pragma once
 
 #include "Entity.h"
-#include "Tank.h"
+#include "GroundVehicle.h"
 
 class DrowningModel : public Entity
 {
 private:
-	Tank *own;
+	GroundVehicle *own;
 
 public:
 
 	//.:: Constructor :::::::::::::::::::::::
 	DrowningModel();
-	DrowningModel(Animation&, Tank*, string);
+	DrowningModel(Animation&, GroundVehicle*, string);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~DrowningModel();

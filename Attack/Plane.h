@@ -2,8 +2,6 @@
 
 #include "Air.h"
 
-enum BombStatus { ABOARD, DROPPED, DESCENT };
-
 struct Leading
 {
 	bool openPosition;
