@@ -6,24 +6,16 @@ enum Camera { NotDefined, StartGame, Commander, MalevolentTank, Target, FirstPla
 
 class Tank : public GroundVehicle
 {
-private:
-	float speedBonus;	//.:: Achievement "Cleaner": Movement speed boost bonus
-	bool isSpeedBonusUp;
-
-protected:
-	int drownedTanks;
-
 public:
 	bool isShot;
-	bool isDrowned;
-	bool drowning;
+	int drownedTanks;
 
+	bool isSpeedBonusUp;
 	bool isShowSpeedBonusAchiev;
 
 	short destValue;
 	float shellSpeedBonus;	//.:: Achievement "Sniper": Shell speed boost bonus
 	bool isShowSniperAchiev;
-	Tank *pusher;
 
 	static Camera camera;
 
@@ -36,8 +28,6 @@ public:
 
 	//.:: Methods_of_class ::::::::::::::::::
 	void update(double);
-	void accelerate(int, double);
-	void shoveOffTankCarcass(Tank*);
-	void sinkTheTankCarcass(string*);
+	void shoveOffTankCarcass(GroundVehicle*);
 
 };

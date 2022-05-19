@@ -21,10 +21,11 @@ class GroundVehicle : public Entity
 {
 private:
 	float vehicleSpeed;
-	float reachdDist;
+	float reachDist;
 	float destinationDist;
 
 protected:
+	float speedBonus;
 	bool isPlayerControl;
 	bool isDestroyed;
 	Animation aVehicleExplosion;
@@ -37,7 +38,10 @@ protected:
 public:
 	int number;
 	int hitPoints;
+	bool drowning;
 	bool isSmoking;
+	bool isDrowned;
+	GroundVehicle *pusher;	//.:: Only tanks
 	Traffic traffic;
 
 	bool isShowRepair;
@@ -61,5 +65,6 @@ public:
 	void updateDestinationDistance();
 	void controlEnemyVehicle(double);
 	void changeDir();
+	void sinkTankCarcass(string*);
 
 };

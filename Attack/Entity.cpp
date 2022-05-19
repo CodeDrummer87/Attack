@@ -61,3 +61,13 @@ double Entity::getCoordY(bool isShell)
 
 	return yCoordinate;
 }
+
+void Entity::setCoordX(double coord)
+{
+	x = coord;
+}
+
+void Entity::setCoordY(double coord)
+{
+	y = coord;
+}

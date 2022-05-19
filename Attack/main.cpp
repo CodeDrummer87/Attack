@@ -19,6 +19,14 @@
 #include "DrowningModel.h"
 #include "AchievementModel.h"
 
+#include "CommunicationTruck.h"
+#include "RadioAntenna.h"
+
+#include "EnemyPlane.h"
+#include "EnemyBomb.h"
+
+#include "RadioWave.h"
+
 
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
@@ -32,6 +40,7 @@ vector<Entity*> entities;
 vector<Air*> airEntities;
 vector<Player*> team;
 vector<Enemy*> squad;
+vector<CommunicationTruck*> specialTransport;
 
 int getEnemyPositionYOffset(int, int, string*);
 
@@ -42,6 +51,36 @@ bool findAliveFrom(vector<T> team)
 		if (t->status != DEAD) return true;
 
 	return false;
+}
+template <typename T>
+void clearVectorOf(vector<T> &team_)
+{
+	for (auto j = team_.begin(); j != team_.end();)
+	{
+		GroundVehicle *enemy = *j;
+		if (enemy->drowning)
+		{
+			j = team_.erase(j);
+		}
+		else j++;
+	}
+}
+template <typename T>
+void updateEntities(vector<T> &currentVector, double time_)
+{
+	for (auto i = currentVector.begin(); i != currentVector.end();)
+	{
+		Entity* e = *i;
+		e->update(time_);
+		e->anim.update(time_, e->isPlayAnimation, e->dir);
+
+		if (!e->isExist)
+		{
+			i = currentVector.erase(i);
+			delete e;
+		}
+		else i++;
+	}
 }
 
 int main()
@@ -66,9 +105,9 @@ int main()
 
 #pragma region Images
 
-	Image iMap, iIcon, iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank, iFighter, iAirBomb, iBombExplosion,
-		iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8, iCommunication_truck, iDrowning,
-		iSpeedUpAchiev, iRepair, iSniper;
+	Image iMap, iIcon, iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank, iFighter, iEnemyFighter, iAirBomb, 
+		iBombExplosion, iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8, iCommunication_truck,
+		iRadioAntenna, iRadioWaves, iDrowning, iSpeedUpAchiev, iRepair, iSniper;
 
 	iMap.loadFromFile("source/images/map.png");
 	iMap.createMaskFromColor(Color::White);
@@ -87,6 +126,8 @@ int main()
 	iHemoTank.createMaskFromColor(Color::White);
 	iFighter.loadFromFile("source/images/sprites/models/planes/fighter.png");
 	iFighter.createMaskFromColor(Color::White);
+	iEnemyFighter.loadFromFile("source/images/sprites/models/planes/enemy_fighter.png");
+	iEnemyFighter.createMaskFromColor(Color::White);
 	iAirBomb.loadFromFile("source/images/sprites/models/other/air_bomb.png");
 	iAirBomb.createMaskFromColor(Color::White);
 	iBombExplosion.loadFromFile("source/images/sprites/explosions/bomb_explosion.png");
@@ -111,6 +152,11 @@ int main()
 	iCommunication_truck.loadFromFile("source/images/sprites/models/special_transport/communication_truck.png");
 	iCommunication_truck.createMaskFromColor(Color::White);
 
+	iRadioAntenna.loadFromFile("source/images/sprites/models/other/radio_antenna.png");
+	iRadioAntenna.createMaskFromColor(Color::White);
+	iRadioWaves.loadFromFile("source/images/sprites/other/radiowaves.png");
+	iRadioWaves.createMaskFromColor(Color::White);
+
 	iDrowning.loadFromFile("source/images/sprites/other/drowning.png");
 	iDrowning.createMaskFromColor(Color::White);
 	iSpeedUpAchiev.loadFromFile("source/images/sprites/other/speed_up_achievement.png");
@@ -122,9 +168,9 @@ int main()
 #pragma region Textures
 
 	Texture tMap, tIcon, bTank, yTank, pTank, cTank, hTank, tTankRound, tShell, tShellExp,
-		tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion,
-		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tEnemy_6, tEnemy_7, tEnemy_8, tCommunication_truck, tDrowning,
-		tSpeedUpAchiev, tRepair, tSniper;
+		tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion,
+		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tEnemy_6, tEnemy_7, tEnemy_8, tCommunication_truck, tRadioAntenna,
+		tRadioWaves, tDrowning, tSpeedUpAchiev, tRepair, tSniper;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -144,6 +190,7 @@ int main()
 	tTarget.loadFromFile("source/images/sprites/attributes/target.png");
 	tAirStrikeZone.loadFromFile("source/images/sprites/attributes/airstrike_zone.png");
 	tFighter.loadFromImage(iFighter);
+	tEnemyFighter.loadFromImage(iEnemyFighter);
 	tFighterTrace.loadFromFile("source/images/sprites/models/planes/fighterTrace.png");
 	tAirJetsFlame.loadFromFile("source/images/sprites/models/planes/air_jets_flame.png");
 	tAirBomb.loadFromImage(iAirBomb);
@@ -158,6 +205,9 @@ int main()
 	tEnemy_7.loadFromImage(iEnemy_7);
 	tEnemy_8.loadFromImage(iEnemy_8);
 	tCommunication_truck.loadFromImage(iCommunication_truck);
+
+	tRadioAntenna.loadFromImage(iRadioAntenna);
+	tRadioWaves.loadFromImage(iRadioWaves);
 
 	tDrowning.loadFromImage(iDrowning);
 	tSpeedUpAchiev.loadFromImage(iSpeedUpAchiev);
@@ -187,7 +237,7 @@ int main()
 
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, autoExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, 
 		shellExpBuf, takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
-		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf;
+		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -213,14 +263,18 @@ int main()
 	speedUpBuf.loadFromFile("source/sounds/effects/speed_up.flac");
 	repairBuf.loadFromFile("source/sounds/effects/icons/repair.flac");
 	sniperBuf.loadFromFile("source/sounds/effects/sniper.flac");
+	airStrikeAlarmBuf.loadFromFile("source/sounds/effects/airStrikeAlarm.flac");
 
-	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sLaugh(laughBuf);
+	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sLaugh(laughBuf),
+		sAirStrikeAlarm, sFighterFlight;
 
 	enemy_move.setBuffer(enemy_1Buf);			enemy_move.setLoop(true);
 	sTakingIcon.setBuffer(takingIconBuf);		sTakingIcon.setLoop(false);
 	sPreferment.setBuffer(prefermentBuf);		sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
 	sAirStrikeConfirm.setBuffer(airstrikeConfirmBuf); sAirStrikeConfirm.setLoop(false); sAirStrikeConfirm.setVolume(50.f);
 	sArmor.setBuffer(armorBuf);					sArmor.setLoop(false);
+	sAirStrikeAlarm.setBuffer(airStrikeAlarmBuf);				sAirStrikeAlarm.setLoop(false);
+	sFighterFlight.setBuffer(fighterFlightBuf);	sFighterFlight.setLoop(false);	sFighterFlight.setVolume(100.f);
 
 	Music chapter_finale_theme;
 	chapter_finale_theme.openFromFile("source/sounds/music/chapter_finale_theme.flac");
@@ -260,10 +314,13 @@ int main()
 	Animation aShellExp(tShellExp, shellExpBuf, 0, 0, 64, 64, 0.017, 7);
 	Animation aSmoke(tSmoke, 0, 0, 64, 64, 0.008, 5);
 	Animation aRank(tRank, 0, 0, 200, 200, 1, 18);
+	Animation aRadioAntenna(tRadioAntenna, 0, 0, 14, 14, 1, 1);
+	Animation aRadioWaves(tRadioWaves, 0, 0, 128, 128, 0.027, 55);
 
 	Animation aTarget(tTarget, 0, 0, 400, 400, 0.007, 6);
 	Animation aAirStrikeZone(tAirStrikeZone, 0, 0, 400, 400, 0.005, 4);
-	Animation aFighter(tFighter, fighterFlightBuf, 0, 0, 120, 165, 0.01, 1);
+	Animation aFighter(tFighter, 0, 0, 120, 165, 1, 1);
+	Animation aEnemyFighter(tEnemyFighter, 0, 0, 120, 161, 1, 1);
 	Animation aFighterTrace(tFighterTrace, 0, 0, 120, 165, 0.1, 21);
 	Animation aAirJetsFlame(tAirJetsFlame, 0, 0, 120, 165, 0.1, 21);
 	Animation aDroppingBomb(tAirBomb, bombWhistleBuf, 0, 0, 200, 200, 0.015, 50);
@@ -287,13 +344,12 @@ int main()
 	Animation enemy_8(tEnemy_8, 0, 0, 64, 64, 0.016, 2);
 	Animation explosion_enemy_8(tEnemy_8, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 
-	Animation communication_truck(tCommunication_truck, 0, 0, 64, 64, 0.016, 1);
-	Animation explosion_communication_truck(tCommunication_truck, autoExpBuf, 0, 64, 64, 64, 0.01, 14);
+	Animation communication_truck(tCommunication_truck, 0, 0, 64, 64, 0.1, 1);
+	Animation explosion_communication_truck(tCommunication_truck, autoExpBuf, 0, 64, 64, 64, 0.0095, 14);
 
-	Animation enemyAnim_1[] = { enemy_1, enemy_2, enemy_3, enemy_4, enemy_5, enemy_6, enemy_7, enemy_8, communication_truck };
+	Animation enemyAnim_1[] = { enemy_1, enemy_2, enemy_3, enemy_4, enemy_5, enemy_6, enemy_7, enemy_8 };
 	Animation explosionEnemyAnim_1[] = { explosion_enemy_1, explosion_enemy_2, explosion_enemy_3, explosion_enemy_4,
-										 explosion_enemy_5, explosion_enemy_6, explosion_enemy_7, explosion_enemy_8,
-										 explosion_communication_truck };
+										 explosion_enemy_5, explosion_enemy_6, explosion_enemy_7, explosion_enemy_8 };
 
 	Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
 	Animation aSpeedUp(tSpeedUpAchiev, speedUpBuf, 0, 0, 128, 128, 0.009, 24);
@@ -431,10 +487,12 @@ int main()
 #pragma region Functions
 	
 	void createEnemies(vector<Entity*>&, vector<Enemy*>&, Animation[], Animation[], string*);
-	void createSmoke(Tank*, Animation&);
+	void createEnemyCommunicationTrucks(vector<CommunicationTruck*>&, Animation&, Animation&, int, Animation&);
+	void createSmoke(GroundVehicle*, Animation&);
 	void createShot(Tank*, Animation&, Animation&, Animation&);
 	void createBomberLink(Player*, Sound&, Sound&, int, Animation&, Animation&, Animation&);
-	void dropBombs(Animation&, Animation&);
+	void dropBombs(Animation&, Animation&, Sound&);
+	void dropEnemyBombs(Animation&, Animation&, EnemyPlane*, Sound&);
 
 #pragma endregion
 
@@ -587,6 +645,8 @@ int main()
 							isStartGame = false;
 							choice->play();
 							createEnemies(entities, squad, enemyAnim_1, explosionEnemyAnim_1, maps[index]);
+							createEnemyCommunicationTrucks(specialTransport, communication_truck, explosion_communication_truck, 
+								gameTime, aRadioAntenna);
 						}
 
 						if (Keyboard::isKeyPressed(Keyboard::Down))
@@ -1145,10 +1205,11 @@ int main()
 				{
 					if (e->status != DEAD)
 					{
-						e->checkMapCollision(maps[index]);
-						e->checkIconCollision(maps[index], sTakingIcon);
+						static_cast<GroundVehicle*>(e)->checkMapCollision(maps[index]);
+						static_cast<GroundVehicle*>(e)->checkIconCollision(maps[index], sTakingIcon);
 
-						if (!e->round && e->isShot) e->destroyBrickWalls(maps[index]);
+						if (!e->round && e->isShot) 
+							e->destroyBrickWalls(maps[index]);
 						if (!e->round && e->isShot)
 							for (auto p : team)
 								e->destroyPlayersTanks(p);
@@ -1167,9 +1228,45 @@ int main()
 						}
 				}
 
+				for (auto t : specialTransport)
+				{
+					t->checkMapCollision(maps[index]);
+
+					if (t->status != DEAD && t->nextRequestTime == gameTime)
+					{
+						t->isAirstrikeRequest = true;
+						t->nextRequestTime = gameTime + 90;
+
+						for (auto p : team)
+							if (p->status != DEAD && p != EnemyPlane::target)
+							{
+								EnemyPlane::target = p;
+								break;
+							}
+
+						int x = 0, y = 0;
+						for (int i = 0; i < 3; i++)
+						{
+							x = i == 0 ? EnemyPlane::target->getCoordX(false) : i == 1 ?
+								EnemyPlane::target->getCoordX(false) - 150 : EnemyPlane::target->getCoordX(false) + 150;
+							y = i == 0 ? -300 : -400;
+
+							EnemyPlane *fighter = new EnemyPlane(aEnemyFighter, aFighterTrace, aAirJetsFlame, x, y, "enemyFighter",
+								EnemyPlane::target->getCoordY(false) - 100, mapsHeight[index]);
+							airEntities.push_back(fighter);
+						}
+
+						sAirStrikeAlarm.play();
+
+						//.:: Create radiowaves :::
+						RadioWave *radioWave = new RadioWave(aRadioWaves, t, "radioWave");
+						airEntities.push_back(radioWave);
+					}
+				}
+
 				//.:: Bomb dropping :::::::::::::::::::
 				if (Plane::leader.bombStatus == BombStatus::DROPPED)
-					dropBombs(aDroppingBomb, aBombExplosion);
+					dropBombs(aDroppingBomb, aBombExplosion, sFighterFlight);
 
 				for (auto a : airEntities)
 				{
@@ -1181,31 +1278,35 @@ int main()
 						double x = a->getCoordX(false);
 						double y = a->getCoordY(false);
 
-						Area *area = new Area(x, y, (float)180, a, "destructionZone");
+						Area *area = new Area(x, y, (float)180, a, "destructionZone", a->army);
 						entities.push_back(area);
 					}
+
+					//.:: Enemy bomb dropping :::::::::
+					if (a->name == "enemyFighter" && static_cast<EnemyPlane*>(a)->bombStatus == BombStatus::DROPPED)
+						dropEnemyBombs(aDroppingBomb, aBombExplosion, (EnemyPlane*)a, sFighterFlight);
 				}
 
 				for (auto a : entities)
 				{
 					//.:: Smoking :::::::::::::::::::::
-					if (a->name == "tank" || a->name == "destroyed")
-						if (static_cast<Tank*>(a)->status == WOUNDED 
-							|| static_cast<Tank*>(a)->status == DEAD && static_cast<Tank*>(a)->makeSureDestroyed())
-							if (!static_cast<Tank*>(a)->isSmoking)
-								createSmoke((Tank*)a, aSmoke);
+					if (a->name == "tank" || a->name == "truck" || a->name == "destroyed")
+						if (static_cast<GroundVehicle*>(a)->status == WOUNDED 
+							|| (static_cast<GroundVehicle*>(a)->status == DEAD && static_cast<GroundVehicle*>(a)->makeSureDestroyed()))
+							if (!static_cast<GroundVehicle*>(a)->isSmoking)
+								createSmoke((GroundVehicle*)a, aSmoke);
 
 					//.:: Map collision :::::::::::::::
 					if (a->name == "shell")
 						static_cast<Shell*>(a)->checkMapCollision(maps[index]);
 
 					//.:: Drowning ::::::::::::::::::::
-					if (a->name == "destroyed" && !static_cast<Tank*>(a)->isDrowned)
-						static_cast<Tank*>(a)->sinkTheTankCarcass(maps[index]);
-					if (a->name == "destroyed" && static_cast<Tank*>(a)->isDrowned && !static_cast<Tank*>(a)->drowning)
+					if (a->name == "destroyed" && !static_cast<GroundVehicle*>(a)->isDrowned)
+						static_cast<GroundVehicle*>(a)->sinkTankCarcass(maps[index]);
+					if (a->name == "destroyed" && static_cast<GroundVehicle*>(a)->isDrowned && !static_cast<GroundVehicle*>(a)->drowning)
 					{
-						static_cast<Tank*>(a)->drowning = true;
-						DrowningModel *drowning = new DrowningModel(aDrowning, (Tank*)a, "drowning");
+						static_cast<GroundVehicle*>(a)->drowning = true;
+						DrowningModel *drowning = new DrowningModel(aDrowning, (GroundVehicle*)a, "drowning");
 						entities.push_back(drowning);
 					}
 
@@ -1213,18 +1314,21 @@ int main()
 					//.:: Collide entities ::::::::::::
 					for (auto b : entities)
 					{
-						if (a->name == "shell" && b->name == "tank")
-							if (static_cast<Shell*>(a)->number != static_cast<Tank*>(b)->number)
-								static_cast<Shell*>(a)->damageEntity((Tank*)(b), sArmor);
+						if (a->name == "shell" && (b->name == "tank" || b->name == "truck"))
+							if (static_cast<Shell*>(a)->number != static_cast<GroundVehicle*>(b)->number)
+								static_cast<Shell*>(a)->damageEntity((GroundVehicle*)(b), sArmor);
 						
-						if (a->name == "tank" && b->name == "tank" && static_cast<Tank*>(a)->number != static_cast<Tank*>(b)->number)
-							static_cast<Tank*>(a)->checkVehiclesCollision((Tank*)b);
+						if (((a->name == "tank" || a->name == "truck") && (b->name == "tank" || b->name == "truck"))
+							|| (a->name == "truck" && b->name == "destroyed")
+							&& static_cast<GroundVehicle*>(a)->number != static_cast<GroundVehicle*>(b)->number)
+							static_cast<GroundVehicle*>(a)->checkVehiclesCollision((GroundVehicle*)b);
 
-						if (a->name == "tank" && b->name == "destroyed" && static_cast<Tank*>(a)->makeSureVehicleCollision((Tank*)b))
-							static_cast<Tank*>(a)->shoveOffTankCarcass((Tank*)b);
+						if (a->name == "tank" && b->name == "destroyed" 
+							&& static_cast<GroundVehicle*>(a)->makeSureVehicleCollision((GroundVehicle*)b))
+							static_cast<Tank*>(a)->shoveOffTankCarcass((GroundVehicle*)b);
 
-						if (a->name == "tank" && b->name == "destructionZone")
-							static_cast<Tank*>(a)->getAreaDamage((Area*)b, maps[index]);
+						if ((a->name == "tank" || a->name == "truck") && b->name == "destructionZone")
+							static_cast<GroundVehicle*>(a)->getAreaDamage((Area*)b, maps[index]);
 					}
 
 					//.:: Achievements and effects ::::::::::::::::
@@ -1250,7 +1354,7 @@ int main()
 					}
 
 					//.:: Report about air strike victims :::::::::::::::::::::
-					if (a->name == "destructionZone" && a->status == WOUNDED)
+					if (a->name == "destructionZone" && a->army == "player" && a->status == WOUNDED)
 					{
 						string message_ = (Area::victims == 0) ? "No destroyed enemy tanks"
 							: (Area::victims == 1) ? "1 enemy tank was destroyed"
@@ -1347,51 +1451,18 @@ int main()
 #pragma endregion
 
 				//.:: Clearing the list of enemies
-				for (auto j = squad.begin(); j != squad.end();)
-				{
-					Entity *enemy = *j;
-					if (static_cast<Enemy*>(enemy)->drowning)
-					{
-						j = squad.erase(j);
-					}
-					else j++;
-				}
+				clearVectorOf(squad);
+				clearVectorOf(specialTransport);
 
 				//.:: update entities :::
-				for (auto i = entities.begin(); i != entities.end();)
-				{
-					Entity* e = *i;
-					e->update(time);
-					e->anim.update(time, e->isPlayAnimation, e->dir);
-
-					if (!e->isExist)
-					{
-						i = entities.erase(i);
-						delete e;
-					}
-					else i++;
-				}
-
-				//.:: update air entities :::
-				for (auto i = airEntities.begin(); i != airEntities.end();)
-				{
-					Entity* e = *i;
-					e->update(time);
-					e->anim.update(time, e->isPlayAnimation, e->dir);
-
-					if (!e->isExist)
-					{
-						i = airEntities.erase(i);
-						delete e;
-					}
-					else i++;
-				}
+				updateEntities(entities, time);
+				updateEntities(airEntities, time);
 
 				app.setView(view);
 
 #pragma region Battle is over
 
-				if (!battleIsOver && !transition && (!findAliveFrom(team) || !findAliveFrom(squad)))
+				if (!battleIsOver && !transition && (!findAliveFrom(team) || (!findAliveFrom(squad) && !findAliveFrom(specialTransport))))
 				{
 					chapter_finale_theme.play();
 					lastSecondsOfChapter = gameTime + 7;
@@ -1532,6 +1603,18 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 	}
 }
 
+void createEnemyCommunicationTrucks(vector<CommunicationTruck*> &specialTransport, Animation &truck, Animation &exp, int currentGameTime,
+	Animation &antenna_)
+{
+	CommunicationTruck *enemyTruck = new CommunicationTruck(truck, 1000, 300, "truck", 4, false, exp, "enemy", 1, currentGameTime);
+	RadioAntenna *antenna = new RadioAntenna(antenna_, "antenna", false, enemyTruck, 1.8f);
+
+	entities.push_back(enemyTruck);
+	entities.push_back(antenna);
+
+	specialTransport.push_back(enemyTruck);
+}
+
 int getEnemyPositionYOffset(int x, int y, string *map)
 {
 	int value = 0;
@@ -1540,7 +1623,7 @@ int getEnemyPositionYOffset(int x, int y, string *map)
 	{
 		if (map[y][x] == ' ' || map[y][x] == 'F')
 		{
-			if (value > 0 || value == 0 && map[y-1][x] == 'B' || value == 0 && map[y-1][x] == 'b' || value == 0 && map[y-1][x] == 'W')
+			if (value > 0 || value == 0 && map[y - 1][x] == 'B' || value == 0 && map[y - 1][x] == 'b' || value == 0 && map[y - 1][x] == 'W')
 				value += 32;
 			break;
 		}
@@ -1592,8 +1675,10 @@ void createShot(Tank *tank, Animation &a, Animation &b, Animation &c)
 	entities.push_back(shell);
 }
 
-void dropBombs(Animation &a, Animation &b)
+void dropBombs(Animation &a, Animation &b, Sound &sound)
 {
+	sound.play();
+
 	Plane::leader.bombStatus = BombStatus::DESCENT;
 	Entity *e = Plane::leader.plane;
 
@@ -1608,9 +1693,18 @@ void dropBombs(Animation &a, Animation &b)
 	}
 }
 
-void createSmoke(Tank * p, Animation &a)
+void createSmoke(GroundVehicle *p, Animation &a)
 {
 	p->isSmoking = true;
 	Smoke *smoke = new Smoke(a, p, "smoke");
 	airEntities.push_back((Air*)smoke);
+}
+
+void dropEnemyBombs(Animation &a, Animation &b, EnemyPlane *e, Sound &sound)
+{
+	sound.play();
+	e->bombStatus = BombStatus::DESCENT;
+
+	EnemyBomb *bomb = new EnemyBomb(a, b, e->getCoordX(false), e->getCoordY(false), "bomb");
+	airEntities.push_back(bomb);
 }

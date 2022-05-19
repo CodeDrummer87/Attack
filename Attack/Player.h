@@ -39,7 +39,7 @@ public:
 	void improveTank(int);
 	void nickDown(int);
 	
-	static void defineNewCommander(vector<Player*>);
+	static void defineNewCommander(vector<Player*>&);
 	static bool checkTeamForCommander(vector<Player*>);
 
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GroundVehicle.h"
+#include "Tank.h"
 
 extern View view;
 
@@ -16,9 +17,12 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 	status = ALIVE;
 	aVehicleExplosion = aExplosion;
 
-	isDestroyed = isTransition = isSmoking = isShowRepair = isPlayerControl = false;
+	speedBonus = 0.0f;
+	isDestroyed = isTransition = drowning = isSmoking = isDrowned = isShowRepair = isPlayerControl = false;
 	hitPoints = level + 1;
 	toUp = toDown = toRight = toLeft = 0;
+
+	pusher = NULL;
 
 	traffic.up.dir = true;		traffic.up.barId = 0;
 	traffic.right.dir = true;	traffic.right.barId = 0;
@@ -27,8 +31,8 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 
 	number = ++counter;
 
+	reachDist = 0.0;
 	vehicleSpeed = level % 2 == 0 ? 0.1f : 0.08f;
-	updateDestinationDistance();
 }
 
 GroundVehicle::~GroundVehicle()
@@ -106,6 +110,8 @@ void GroundVehicle::update(double time)
 
 void GroundVehicle::accelerate(int dir_, double acc)
 {
+	acc = (acc > 0) ? acc + speedBonus : acc - speedBonus;
+
 	isPlayAnimation = true;
 	dir = dir_;
 
@@ -396,7 +402,7 @@ void GroundVehicle::checkIconCollision(string map[], Sound &sound)
 
 void GroundVehicle::updateDestinationDistance()
 {
-	reachdDist = 0.0;
+	reachDist = 0.0;
 	destinationDist = abs(y - x) + (level + number) * 2;
 	while (destinationDist > 1200)
 		destinationDist /= 2;
@@ -436,8 +442,8 @@ void GroundVehicle::controlEnemyVehicle(double time)
 			break;
 		}
 
-		reachdDist += vehicleSpeed * time;
-		if (reachdDist >= destinationDist)
+		reachDist += vehicleSpeed * time;
+		if (reachDist >= destinationDist)
 		{
 			changeDir();
 			updateDestinationDistance();
@@ -473,5 +479,39 @@ void GroundVehicle::changeDir()
 		dir += 3;
 		if (dir > 4)
 			dir -= 4;
+	}
+}
+
+void GroundVehicle::sinkTankCarcass(string *map)
+{
+	int i = y / 32;
+	int j = x / 32;
+
+	switch (dir)
+	{
+	case 1: i++; break;
+	case 4: j++; break;
+	}
+
+	if (map[i][j] == 'W')
+	{
+		if (pusher != NULL && static_cast<Tank*>(pusher)->destValue != 0)
+		{
+			static_cast<Tank*>(pusher)->drownedTanks++;
+			if (static_cast<Tank*>(pusher)->drownedTanks >= static_cast<Tank*>(pusher)->destValue)
+			{
+				static_cast<Tank*>(pusher)->isSpeedBonusUp = static_cast<Tank*>(pusher)->isShowSpeedBonusAchiev = true;
+
+				if (static_cast<Tank*>(pusher)->army == "player")
+					static_cast<Tank*>(pusher)->destValue = static_cast<Tank*>(pusher)->destValue < 80 ?
+					static_cast<Tank*>(pusher)->destValue * 2 : 0;
+				else
+					static_cast<Tank*>(pusher)->drownedTanks = 3;
+			}
+			pusher = NULL;
+		}
+
+		anim.sprite.setColor(Color::Transparent);
+		this->isDrowned = true;
 	}
 }

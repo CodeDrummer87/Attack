@@ -5,7 +5,7 @@
 Air::Air()
 {}
 
-Air::Air(Animation &a, Animation &b, Player *airSpotter, string name_)
+Air::Air(Animation &a, Animation &b, Entity *airSpotter, string name_)
 {
 	isExist = true;
 	status = ALIVE;
@@ -15,7 +15,7 @@ Air::Air(Animation &a, Animation &b, Player *airSpotter, string name_)
 	anim.sprite.setPosition(own->getCoordX(false), own->getCoordY(false));
 	anim.sprite.setScale(1.5f, 1.5f);
 	animSpare = b;
-	number = airSpotter->number;
+	number = static_cast<Player*>(airSpotter)->number;
 	isPlayAnimation = true;
 }
 
@@ -50,7 +50,7 @@ void Air::update(double time)
 	}
 }
 
-Player* Air::getOwn()
+Entity* Air::getOwn()
 {
 	return own;
 }

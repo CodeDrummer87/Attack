@@ -1,0 +1,25 @@
+#pragma once
+
+#include "CommunicationTruck.h"
+
+CommunicationTruck::CommunicationTruck()
+{}
+
+CommunicationTruck::CommunicationTruck(Animation &a, double x_, double y_, string name_, int dir_, bool isPlayAnimation_, Animation &b,
+	string army_, int lvl, int currentGameTime) : GroundVehicle(a, x_, y_, name_, dir, isPlayAnimation, b, army_, lvl)
+{
+	isPlayerControl = isAirstrikeRequest =  false;
+	nextRequestTime = currentGameTime + 120;
+	speedBonus = 0.4f;
+}
+
+CommunicationTruck::~CommunicationTruck()
+{}
+
+void CommunicationTruck::update(double time)
+{
+	if (isAirstrikeRequest)
+		isAirstrikeRequest = false;
+
+	GroundVehicle::update(time);
+}

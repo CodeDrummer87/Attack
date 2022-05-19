@@ -17,11 +17,6 @@ Enemy::~Enemy()
 
 EvilTank Enemy::evilTank = { false, NULL, 0 };
 
-void Enemy::update(double time)
-{
-	Tank::update(time);
-}
-
 void Enemy::destroyBrickWalls(string *map)
 {
 	int tX = x / 32;

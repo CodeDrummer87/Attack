@@ -17,7 +17,7 @@ public:
 
 	//.:: Constructor ::::::::::::::::::::::
 	Area();
-	Area(double, double, float, Entity*, string);
+	Area(double, double, float, Entity*, string, string);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Area();

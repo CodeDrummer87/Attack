@@ -3,7 +3,7 @@
 DrowningModel::DrowningModel()
 {}
 
-DrowningModel::DrowningModel(Animation &a, Tank *own_, string name_)
+DrowningModel::DrowningModel(Animation &a, GroundVehicle *own_, string name_)
 {
 	anim = a;
 	level = 0;

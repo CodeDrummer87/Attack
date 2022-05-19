@@ -33,5 +33,7 @@ public:
 
 	double getCoordX(bool);
 	double getCoordY(bool);
+	void setCoordX(double);
+	void setCoordY(double);
 
 };

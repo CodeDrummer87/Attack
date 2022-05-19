@@ -3,11 +3,12 @@
 Area::Area()
 {}
 
-Area::Area(double X, double Y, float radius, Entity *own_, string name_)
+Area::Area(double X, double Y, float radius, Entity *own_, string name_, string army_)
 {
 	isTerrainDestroyed = false;
 
 	name = name_;
+	army = army_;
 	x = X;
 	y = Y;
 	area = CircleShape(radius);

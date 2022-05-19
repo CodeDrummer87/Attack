@@ -155,7 +155,7 @@ void Player::improveTank(int residual)
 		currentExperience = 0;
 }
 
-void Player::defineNewCommander(vector<Player*> team)
+void Player::defineNewCommander(vector<Player*> &team)
 {
 	Player* newCommander = team[0];
 	int lvl = 0;

@@ -25,7 +25,6 @@ public:
 	virtual ~Enemy();
 
 	//.:: Public_method_of_class ::::::::::::
-	void update(double);
 	void destroyBrickWalls(string*);
 	void destroyPlayersTanks(Tank*);
 

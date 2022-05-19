@@ -39,7 +39,7 @@ void Rank::update(double time)
 			anim.frame = 17;
 		x = own->getCoordX(false) + 32;
 		y = own->getCoordY(false) - 32;
-		if (own->status == DEAD)
+		if (own->name == "destroyed")
 			isExist = false;
 	}
 }

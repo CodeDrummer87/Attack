@@ -1,16 +1,16 @@
 #pragma once
 
 #include "Entity.h"
-#include "Tank.h"
+#include "GroundVehicle.h"
 
 class Smoke : public Entity
 {
 public:
-	Tank *own;
+	GroundVehicle *own;
 
 	//.:: Constructor :::::::::::::::::::::::
 	Smoke();
-	Smoke(Animation&, Tank*, string);
+	Smoke(Animation&, GroundVehicle*, string);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Smoke();
