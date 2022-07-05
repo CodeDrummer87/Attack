@@ -26,6 +26,7 @@
 #include "EnemyBomb.h"
 
 #include "RadioWave.h"
+#include "Boss.h"
 
 
 //.:: temp code :::
@@ -107,7 +108,7 @@ int main()
 
 	Image iMap, iIcon, iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank, iFighter, iEnemyFighter, iAirBomb, 
 		iBombExplosion, iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8, iCommunication_truck,
-		iRadioAntenna, iRadioWaves, iDrowning, iSpeedUpAchiev, iRepair, iSniper;
+		iRadioAntenna, iRadioWaves, iDrowning, iSpeedUpAchiev, iRepair, iSniper, iFirstStage_boss_tankBody, iFirstStage_boss_tankTower;
 
 	iMap.loadFromFile("source/images/map.png");
 	iMap.createMaskFromColor(Color::White);
@@ -163,6 +164,12 @@ int main()
 	iRepair.loadFromFile("source/images/sprites/other/repair.png");
 	iSniper.loadFromFile("source/images/sprites/other/sniper_achievement.png");
 
+	//.:: Bosses
+	iFirstStage_boss_tankBody.loadFromFile("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_body.png");
+	iFirstStage_boss_tankBody.createMaskFromColor(Color::White);
+	iFirstStage_boss_tankTower.loadFromFile("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_tower.png");
+	iFirstStage_boss_tankTower.createMaskFromColor(Color::White);
+
 #pragma endregion
 
 #pragma region Textures
@@ -170,7 +177,7 @@ int main()
 	Texture tMap, tIcon, bTank, yTank, pTank, cTank, hTank, tTankRound, tShell, tShellExp,
 		tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion,
 		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tEnemy_6, tEnemy_7, tEnemy_8, tCommunication_truck, tRadioAntenna,
-		tRadioWaves, tDrowning, tSpeedUpAchiev, tRepair, tSniper;
+		tRadioWaves, tDrowning, tSpeedUpAchiev, tRepair, tSniper, tFirstStageBossBody, tFirstStageBossTower;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -214,6 +221,9 @@ int main()
 	tRepair.loadFromImage(iRepair);
 	tSniper.loadFromImage(iSniper);
 
+	tFirstStageBossBody.loadFromImage(iFirstStage_boss_tankBody);
+	tFirstStageBossTower.loadFromImage(iFirstStage_boss_tankTower);
+
 #pragma endregion
 
 #pragma region Sounds & Music
@@ -237,7 +247,9 @@ int main()
 
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, autoExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, 
 		shellExpBuf, takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
-		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf;
+		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
+		firstStageBossMoveBuf, firstStageBossExpBuf, firstStageBossRoundBuf, firstStageBossMortarBuf, firstStageBossTowerBuf,
+		firstStageBossTowerCrashBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -264,6 +276,13 @@ int main()
 	repairBuf.loadFromFile("source/sounds/effects/icons/repair.flac");
 	sniperBuf.loadFromFile("source/sounds/effects/sniper.flac");
 	airStrikeAlarmBuf.loadFromFile("source/sounds/effects/airStrikeAlarm.flac");
+
+	firstStageBossMoveBuf.loadFromFile("source/sounds/tank/movement/first_stage_boss_move.flac");
+	firstStageBossExpBuf.loadFromFile("source/sounds/explosion/boss_explosion.flac");
+	firstStageBossRoundBuf.loadFromFile("source/sounds/tank/round/first_stage_boss_round.flac");
+	firstStageBossMortarBuf.loadFromFile("source/sounds/tank/round/first_stage_boss_mortar.flac");
+	firstStageBossTowerBuf.loadFromFile("source/sounds/tank/tanks_tower_turn.flac");
+	firstStageBossTowerCrashBuf.loadFromFile("source/sounds/effects/boss_tank_tower_crash.flac");
 
 	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sLaugh(laughBuf),
 		sAirStrikeAlarm, sFighterFlight;
@@ -355,6 +374,22 @@ int main()
 	Animation aSpeedUp(tSpeedUpAchiev, speedUpBuf, 0, 0, 128, 128, 0.009, 24);
 	Animation aRepair(tRepair, repairBuf, 0, 0, 128, 128, 0.009, 21);
 	Animation aSniper(tSniper, sniperBuf, 0, 0, 128, 128, 0.017, 50);
+
+	//.:: Bosses :::
+#pragma region First stage boss
+
+	Animation aFirstStageBossBody(tFirstStageBossBody, firstStageBossMoveBuf, 0, 0, 128, 128, 0.016, 2);
+	Animation aFirstStageBossBodyExp(tFirstStageBossBody, firstStageBossExpBuf, 0, 128, 128, 128, 0.01, 17);
+	Animation aFirstStageBossTower(tFirstStageBossTower, firstStageBossTowerBuf, 0, 0, 128, 128, 1, 1);
+	Animation aFirstStageBossTowerCrash(tFirstStageBossTower, firstStageBossTowerCrashBuf, 0, 128, 128, 128, 0.01, 12);
+
+	BossArgs firstStageBossArgs = 
+	{
+		//.:: moveAnim, x, y, name, dir, isPlayAnim, aExplosion, level, animTower, animTowerCrash
+		aFirstStageBossBody, 810, mapsHeight[0] * 32 - 300, "boss", 3, true, aFirstStageBossBodyExp, 10, aFirstStageBossTower, aFirstStageBossTowerCrash
+	};
+
+#pragma endregion
 
 #pragma endregion
 
@@ -647,6 +682,9 @@ int main()
 							createEnemies(entities, squad, enemyAnim_1, explosionEnemyAnim_1, maps[index]);
 							createEnemyCommunicationTrucks(specialTransport, communication_truck, explosion_communication_truck, 
 								gameTime, aRadioAntenna);
+							Boss *firstStageBoss = new Boss(firstStageBossArgs);
+							squad.push_back(firstStageBoss);
+							entities.push_back(firstStageBoss);
 						}
 
 						if (Keyboard::isKeyPressed(Keyboard::Down))
@@ -1290,7 +1328,7 @@ int main()
 				for (auto a : entities)
 				{
 					//.:: Smoking :::::::::::::::::::::
-					if (a->name == "tank" || a->name == "truck" || a->name == "destroyed")
+					if (a->name == "tank" || a->name == "truck" || a->name == "boss" || a->name == "destroyed")
 						if (static_cast<GroundVehicle*>(a)->status == WOUNDED 
 							|| (static_cast<GroundVehicle*>(a)->status == DEAD && static_cast<GroundVehicle*>(a)->makeSureDestroyed()))
 							if (!static_cast<GroundVehicle*>(a)->isSmoking)
@@ -1314,7 +1352,7 @@ int main()
 					//.:: Collide entities ::::::::::::
 					for (auto b : entities)
 					{
-						if (a->name == "shell" && (b->name == "tank" || b->name == "truck"))
+						if (a->name == "shell" && (b->name == "tank" || b->name == "truck" || b->name == "boss"))
 							if (static_cast<Shell*>(a)->number != static_cast<GroundVehicle*>(b)->number)
 								static_cast<Shell*>(a)->damageEntity((GroundVehicle*)(b), sArmor);
 						

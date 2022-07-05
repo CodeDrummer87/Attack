@@ -19,7 +19,7 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 
 	speedBonus = 0.0f;
 	isDestroyed = isTransition = drowning = isSmoking = isDrowned = isShowRepair = isPlayerControl = false;
-	hitPoints = level + 1;
+	hitPoints = name_ == "tank" ? level + 1 : 100 + level * 10; //.:: true = tank : false = boss
 	toUp = toDown = toRight = toLeft = 0;
 
 	pusher = NULL;

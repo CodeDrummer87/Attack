@@ -144,6 +144,7 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Area.cpp" />
     <ClCompile Include="Bomb.cpp" />
+    <ClCompile Include="Boss.cpp" />
     <ClCompile Include="CommunicationTruck.cpp" />
     <ClCompile Include="DrowningModel.cpp" />
     <ClCompile Include="Enemy.cpp" />
@@ -167,6 +168,7 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Area.h" />
     <ClInclude Include="Bomb.h" />
+    <ClInclude Include="Boss.h" />
     <ClInclude Include="CommunicationTruck.h" />
     <ClInclude Include="DrowningModel.h" />
     <ClInclude Include="Enemy.h" />

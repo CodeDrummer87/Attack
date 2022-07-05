@@ -131,7 +131,7 @@ void Shell::damageEntity(GroundVehicle *t, Sound &armorSound)
 		if (anim.getShellRect(true).intersects(t->anim.getShellRect(false)))
 		{
 			armorSound.play();
-			if (this->name == "shell" && (t->name == "tank" || t->name == "truck"))
+			if (this->name == "shell" && (t->name == "tank" || t->name == "truck" || t->name == "boss"))
 			{
 				if (level >= t->hitPoints && t->hitPoints > 1)
 					t->hitPoints = 1;
@@ -148,7 +148,8 @@ void Shell::damageEntity(GroundVehicle *t, Sound &armorSound)
 
 					if (army == "enemy")
 					{
-						paintOwn();
+						if (name == "tank")
+							paintOwn();
 						static_cast<Enemy*>(own)->round = false;
 					}
 					else
