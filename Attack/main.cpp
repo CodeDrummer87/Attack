@@ -386,7 +386,7 @@ int main()
 	BossArgs firstStageBossArgs = 
 	{
 		//.:: moveAnim, x, y, name, dir, isPlayAnim, aExplosion, level, animTower, animTowerCrash
-		aFirstStageBossBody, 810, mapsHeight[0] * 32 - 300, "boss", 3, true, aFirstStageBossBodyExp, 10, aFirstStageBossTower, aFirstStageBossTowerCrash
+		aFirstStageBossBody, 180, mapsHeight[0] * 32 - 570, "boss", 3, true, aFirstStageBossBodyExp, 10, aFirstStageBossTower, aFirstStageBossTowerCrash
 	};
 
 #pragma endregion
@@ -682,6 +682,8 @@ int main()
 							createEnemies(entities, squad, enemyAnim_1, explosionEnemyAnim_1, maps[index]);
 							createEnemyCommunicationTrucks(specialTransport, communication_truck, explosion_communication_truck, 
 								gameTime, aRadioAntenna);
+
+							firstStageBossArgs.numberOfPlayers = numberOfPlayers;
 							Boss *firstStageBoss = new Boss(firstStageBossArgs);
 							squad.push_back(firstStageBoss);
 							entities.push_back(firstStageBoss);

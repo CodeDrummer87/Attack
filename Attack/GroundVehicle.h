@@ -54,13 +54,14 @@ public:
 	virtual ~GroundVehicle();
 
 	//.:: Methods_of_class ::::::::::::::::::
+	virtual void checkMapCollision(string*);
+	
 	void update(double);
 	void accelerate(int, double);
 	bool makeSureDestroyed();
 	void checkVehiclesCollision(GroundVehicle*);
 	bool makeSureVehicleCollision(GroundVehicle*);
 	void getAreaDamage(Area*, string*);
-	void checkMapCollision(string*);
 	void checkIconCollision(string[], Sound&);
 	void updateDestinationDistance();
 	void controlEnemyVehicle(double);

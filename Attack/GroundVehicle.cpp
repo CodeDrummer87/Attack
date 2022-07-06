@@ -19,7 +19,7 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 
 	speedBonus = 0.0f;
 	isDestroyed = isTransition = drowning = isSmoking = isDrowned = isShowRepair = isPlayerControl = false;
-	hitPoints = name_ == "tank" ? level + 1 : 100 + level * 10; //.:: true = tank : false = boss
+	hitPoints = level + 1;
 	toUp = toDown = toRight = toLeft = 0;
 
 	pusher = NULL;
@@ -49,7 +49,7 @@ void GroundVehicle::update(double time)
 	}
 	else
 	{
-		if (hitPoints > 1)
+		if ((name != "boss" && hitPoints > 1) || (name == "boss" && hitPoints > 100))
 		{
 			if (status != ALIVE)
 			{
@@ -57,7 +57,7 @@ void GroundVehicle::update(double time)
 				anim.sound.setPitch(0.9f);
 			}
 		}
-		else if (hitPoints == 1)
+		else if ((name != "boss" && hitPoints == 1) || (name == "boss" && hitPoints <= 100))
 		{
 			if (status != WOUNDED)
 			{
@@ -306,7 +306,7 @@ void GroundVehicle::getAreaDamage(Area *area, string *map)
 	}
 }
 
-void GroundVehicle::checkMapCollision(string * map)
+void GroundVehicle::checkMapCollision(string *map)
 {
 	if (isPlayerControl)
 	{

@@ -14,6 +14,7 @@ struct BossArgs
 	int level;
 	Animation &aTower;
 	Animation &aTowerCrash;
+	int numberOfPlayers;
 };
 
 class Boss : public Enemy
@@ -34,5 +35,6 @@ public:
 	//.:: Methods_of_class ::::::::::::::::::
 	void update(double);
 	void draw(RenderWindow&);
+	void checkMapCollision(string*);
 
 };
