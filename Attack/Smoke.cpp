@@ -7,6 +7,8 @@ Smoke::Smoke()
 
 Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_)
 {
+	z_index = (short)3;
+
 	anim = a;
 	name = name_;
 	level = 0;
@@ -34,6 +36,10 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_)
 
 	if (name == "smoke")
 	{
+		z_index = vehicle->name == "boss" ? (short)5 : (short)3;
+		if (z_index == (short)5)
+			anim.sprite.setScale(1.7f, 1.7f);
+
 		dir = 1;
 		x = vehicle->getCoordX(false) + 2.f;
 		y = vehicle->getCoordY(false) + 2.f;

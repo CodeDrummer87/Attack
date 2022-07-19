@@ -4,13 +4,17 @@ Boss::Boss()
 {}
 
 Boss::Boss(BossArgs &args)
-	: Enemy(args.anim, args.x, args.y, args.name, args.dir, args.isPlayAnimation, args.aExplosion, "enemy", args.level)
+	: Enemy(args.anim, args.x, args.y, "boss", args.dir, args.isPlayAnimation, args.aExplosion, "enemy", args.level)
 {
+	z_index = 4;
+
 	aTower = args.aTower;
 	aTower.sprite.setPosition(x, y);
 	aTowerCrash = args.aTowerCrash;
 
 	hitPoints = 100 + args.numberOfPlayers * 25;
+	nextOilSpillageTime = 0;
+	isOilSpillage = false;
 
 	rot = 0;
 }
@@ -20,10 +24,84 @@ Boss::~Boss()
 
 void Boss::update(double time)
 {
-	rot++;
-	aTower.sprite.setRotation(rot);
+	if (status != DEAD)
+	{
+		rot++;
+		aTower.sprite.setRotation(rot);
+	}
 
-	GroundVehicle::update(time);
+	if (isDestroyed)
+	{
+		if (isPlayAnimation)
+			isPlayAnimation = false;
+	}
+	else
+	{
+		if (hitPoints > 100)
+		{
+			if (status != ALIVE)
+			{
+				status = ALIVE;
+				anim.sound.setPitch(0.9f);
+			}
+		}
+		else if (hitPoints <= 100 && hitPoints > 0)
+		{
+			if (status != WOUNDED)
+			{
+				status = WOUNDED;
+				anim.sound.setPitch(0.5f);
+			}
+		}
+		else
+			status = DEAD;
+		//::::::::::::::::::::::::
+		if (status == ALIVE)
+		{
+			if (x + dx > 0 && x + dx < 61 * 32)
+				x += dx;
+			if (y + dy > 0 && y + dy < 119 * 32)
+				y += dy;
+			dx = dy = 0;
+		}
+		else if (status == WOUNDED)
+		{
+			x += dx / 1.5;
+			y += dy / 1.5;
+			dx = dy = 0;
+		}
+		else
+		{
+			if (isTransition)
+			{
+				if (anim.isEnd(time))
+				{
+					anim.frames[0] = IntRect(0, 256, 128, 128);	//.:: Tank skeleton texture coordinates
+					anim.sound.stop();
+					isDestroyed = true;
+				}
+
+				if (aTower.isEnd(time))
+				{
+					aTower.frames[0] = IntRect(0, 256, 128, 128);
+				}
+			}
+			else
+			{
+				name = "destroyed";
+				isPlayAnimation = true;
+				anim = aVehicleExplosion;
+				isTransition = true;
+				isSmoking = false;
+
+				aTower = aTowerCrash;
+				aTower.sprite.setRotation(rot);
+			}
+		}
+		//.:: Vehicle control :::
+		if (!isPlayerControl)
+			controlEnemyVehicle(time);
+	}
 }
 
 void Boss::draw(RenderWindow &app)

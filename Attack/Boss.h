@@ -7,7 +7,6 @@ struct BossArgs
 	Animation &anim;
 	double x;
 	double y;
-	string name;
 	int dir;
 	bool isPlayAnimation;
 	Animation &aExplosion;
@@ -22,9 +21,13 @@ class Boss : public Enemy
 private:
 	Animation aTower;
 	Animation aTowerCrash;
+	
 	int rot;
 
 public:
+	bool isOilSpillage;
+	int nextOilSpillageTime;
+
 	//.:: Constructor :::::::::::::::::::::::
 	Boss();
 	Boss(BossArgs&);

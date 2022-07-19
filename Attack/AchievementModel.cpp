@@ -1,3 +1,5 @@
+#pragma once
+
 #include "AchievementModel.h"
 
 AchievementModel::AchievementModel()
@@ -5,6 +7,8 @@ AchievementModel::AchievementModel()
 
 AchievementModel::AchievementModel(Animation &a, Tank* own_, string name_)
 {
+	z_index = (short)6;
+
 	anim = a;
 	level = 0;
 	dir = 1;

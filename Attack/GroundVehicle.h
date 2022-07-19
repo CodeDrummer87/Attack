@@ -24,6 +24,12 @@ private:
 	float reachDist;
 	float destinationDist;
 
+	bool isSkidding;
+	int puddleId;
+	
+	//.:: Methods_of_class ::::::::::::::::::
+	void resetSkidding(bool, int);
+
 protected:
 	float speedBonus;
 	bool isPlayerControl;
@@ -36,7 +42,6 @@ protected:
 	static int counter;
 
 public:
-	int number;
 	int hitPoints;
 	bool drowning;
 	bool isSmoking;
@@ -67,5 +72,6 @@ public:
 	void controlEnemyVehicle(double);
 	void changeDir();
 	void sinkTankCarcass(string*);
+	void checkPuddlesCollision(Entity*);
 
 };

@@ -11,6 +11,8 @@ Shell::Shell()
 
 Shell::Shell(Animation &a, Animation &b, Tank *tank)
 {
+	z_index = 1;
+
 	dist = 0.0f;
 	name = "shell";
 	army = tank->army;

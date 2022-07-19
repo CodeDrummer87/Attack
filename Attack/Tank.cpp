@@ -9,6 +9,8 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 	Animation &aExplosion, string army_, int level_)
 	: GroundVehicle(anim, x_, y_, name_, dir_, isPlayAnimation_, aExplosion, army_, level_)
 {
+	z_index = 1;
+
 	isSpeedBonusUp = isShowSpeedBonusAchiev = false;
 	isShowSniperAchiev = false;
 	isShot = true;

@@ -28,6 +28,8 @@
 #include "RadioWave.h"
 #include "Boss.h"
 
+#include "OilPuddle.h"
+
 
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
@@ -38,7 +40,6 @@ AppMode mode = OPTIONS;
 bool transition = false; //.:: Game -> Scoring
 
 vector<Entity*> entities;
-vector<Air*> airEntities;
 vector<Player*> team;
 vector<Enemy*> squad;
 vector<CommunicationTruck*> specialTransport;
@@ -66,8 +67,8 @@ void clearVectorOf(vector<T> &team_)
 		else j++;
 	}
 }
-template <typename T>
-void updateEntities(vector<T> &currentVector, double time_)
+
+void updateEntities(vector<Entity*> &currentVector, double time_)
 {
 	for (auto i = currentVector.begin(); i != currentVector.end();)
 	{
@@ -108,7 +109,8 @@ int main()
 
 	Image iMap, iIcon, iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank, iFighter, iEnemyFighter, iAirBomb, 
 		iBombExplosion, iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8, iCommunication_truck,
-		iRadioAntenna, iRadioWaves, iDrowning, iSpeedUpAchiev, iRepair, iSniper, iFirstStage_boss_tankBody, iFirstStage_boss_tankTower;
+		iRadioAntenna, iRadioWaves, iDrowning, iSpeedUpAchiev, iRepair, iSniper, iFirstStage_boss_tankBody, iFirstStage_boss_tankTower,
+		iOilPuddle;
 
 	iMap.loadFromFile("source/images/map.png");
 	iMap.createMaskFromColor(Color::White);
@@ -163,6 +165,8 @@ int main()
 	iSpeedUpAchiev.loadFromFile("source/images/sprites/other/speed_up_achievement.png");
 	iRepair.loadFromFile("source/images/sprites/other/repair.png");
 	iSniper.loadFromFile("source/images/sprites/other/sniper_achievement.png");
+	iOilPuddle.loadFromFile("source/images/sprites/other/oil_puddle.png");
+	iOilPuddle.createMaskFromColor(Color::White);
 
 	//.:: Bosses
 	iFirstStage_boss_tankBody.loadFromFile("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_body.png");
@@ -177,7 +181,7 @@ int main()
 	Texture tMap, tIcon, bTank, yTank, pTank, cTank, hTank, tTankRound, tShell, tShellExp,
 		tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion,
 		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tEnemy_6, tEnemy_7, tEnemy_8, tCommunication_truck, tRadioAntenna,
-		tRadioWaves, tDrowning, tSpeedUpAchiev, tRepair, tSniper, tFirstStageBossBody, tFirstStageBossTower;
+		tRadioWaves, tDrowning, tSpeedUpAchiev, tRepair, tSniper, tFirstStageBossBody, tFirstStageBossTower, tOilPuddle;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -220,6 +224,7 @@ int main()
 	tSpeedUpAchiev.loadFromImage(iSpeedUpAchiev);
 	tRepair.loadFromImage(iRepair);
 	tSniper.loadFromImage(iSniper);
+	tOilPuddle.loadFromImage(iOilPuddle);
 
 	tFirstStageBossBody.loadFromImage(iFirstStage_boss_tankBody);
 	tFirstStageBossTower.loadFromImage(iFirstStage_boss_tankTower);
@@ -249,7 +254,7 @@ int main()
 		shellExpBuf, takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
 		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
 		firstStageBossMoveBuf, firstStageBossExpBuf, firstStageBossRoundBuf, firstStageBossMortarBuf, firstStageBossTowerBuf,
-		firstStageBossTowerCrashBuf;
+		firstStageBossTowerCrashBuf, oilPuddleBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -276,6 +281,7 @@ int main()
 	repairBuf.loadFromFile("source/sounds/effects/icons/repair.flac");
 	sniperBuf.loadFromFile("source/sounds/effects/sniper.flac");
 	airStrikeAlarmBuf.loadFromFile("source/sounds/effects/airStrikeAlarm.flac");
+	oilPuddleBuf.loadFromFile("source/sounds/effects/oil_puddle.flac");
 
 	firstStageBossMoveBuf.loadFromFile("source/sounds/tank/movement/first_stage_boss_move.flac");
 	firstStageBossExpBuf.loadFromFile("source/sounds/explosion/boss_explosion.flac");
@@ -374,6 +380,7 @@ int main()
 	Animation aSpeedUp(tSpeedUpAchiev, speedUpBuf, 0, 0, 128, 128, 0.009, 24);
 	Animation aRepair(tRepair, repairBuf, 0, 0, 128, 128, 0.009, 21);
 	Animation aSniper(tSniper, sniperBuf, 0, 0, 128, 128, 0.017, 50);
+	Animation aOilPuddle(tOilPuddle, oilPuddleBuf, 0, 0, 64, 64, 0.02, 7);
 
 	//.:: Bosses :::
 #pragma region First stage boss
@@ -386,7 +393,7 @@ int main()
 	BossArgs firstStageBossArgs = 
 	{
 		//.:: moveAnim, x, y, name, dir, isPlayAnim, aExplosion, level, animTower, animTowerCrash
-		aFirstStageBossBody, 180, mapsHeight[0] * 32 - 570, "boss", 3, true, aFirstStageBossBodyExp, 10, aFirstStageBossTower, aFirstStageBossTowerCrash
+		aFirstStageBossBody, 180, mapsHeight[0] * 32 - 570, 3, true, aFirstStageBossBodyExp, 10, aFirstStageBossTower, aFirstStageBossTowerCrash
 	};
 
 #pragma endregion
@@ -1193,7 +1200,7 @@ int main()
 								sAirStrikeQuery.play();
 
 								Air *targetBomb = new Air(aTarget, aAirStrikeZone, p, "target");
-								airEntities.push_back(targetBomb);
+								entities.push_back(targetBomb);
 
 								Tank::camera = Camera::Target;
 
@@ -1216,7 +1223,7 @@ int main()
 								if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
 									sAirStrikeQuery.stop();
 
-								for (auto a : airEntities)
+								for (auto a : entities)
 								{
 									if (a->name == "target" && static_cast<Air*>(a)->getOwn() == p)
 									{
@@ -1256,6 +1263,24 @@ int main()
 
 						if (e->round && e->isShot)
 							createShot(e, aEnemy1Round, aShell, aShellExp);
+
+						//.:: Boss coding :::
+						if (e->name == "boss" && e->status == WOUNDED && static_cast<Boss*>(e)->isOilSpillage)
+						{
+							static_cast<Boss*>(e)->isOilSpillage = false;
+							if (static_cast<Boss*>(e)->nextOilSpillageTime != 0)
+							{
+								static_cast<Boss*>(e)->nextOilSpillageTime = gameTime + 15;
+								OilPuddle *puddle = new OilPuddle(aOilPuddle, e->getCoordX(false), e->getCoordY(false), e->dir, true, gameTime);
+								entities.push_back(puddle);
+							}
+							else
+								static_cast<Boss*>(e)->nextOilSpillageTime = gameTime + 7;
+						}
+
+						if (e->name == "boss" && e->status == WOUNDED
+							&& (static_cast<Boss*>(e)->nextOilSpillageTime == gameTime || static_cast<Boss*>(e)->nextOilSpillageTime == 0))
+							static_cast<Boss*>(e)->isOilSpillage = true;
 					}
 					else
 						if (Enemy::evilTank.tank == e)
@@ -1293,39 +1318,20 @@ int main()
 
 							EnemyPlane *fighter = new EnemyPlane(aEnemyFighter, aFighterTrace, aAirJetsFlame, x, y, "enemyFighter",
 								EnemyPlane::target->getCoordY(false) - 100, mapsHeight[index]);
-							airEntities.push_back(fighter);
+							entities.push_back(fighter);
 						}
 
 						sAirStrikeAlarm.play();
 
 						//.:: Create radiowaves :::
 						RadioWave *radioWave = new RadioWave(aRadioWaves, t, "radioWave");
-						airEntities.push_back(radioWave);
+						entities.push_back(radioWave);
 					}
 				}
 
 				//.:: Bomb dropping :::::::::::::::::::
 				if (Plane::leader.bombStatus == BombStatus::DROPPED)
 					dropBombs(aDroppingBomb, aBombExplosion, sFighterFlight);
-
-				for (auto a : airEntities)
-				{
-					//.:: Air bomb destruction zone :::
-					if (a->name == "bombExplosion" && !static_cast<Bomb*>(a)->coordsTransmitted)
-					{
-						static_cast<Bomb*>(a)->coordsTransmitted = true;
-
-						double x = a->getCoordX(false);
-						double y = a->getCoordY(false);
-
-						Area *area = new Area(x, y, (float)180, a, "destructionZone", a->army);
-						entities.push_back(area);
-					}
-
-					//.:: Enemy bomb dropping :::::::::
-					if (a->name == "enemyFighter" && static_cast<EnemyPlane*>(a)->bombStatus == BombStatus::DROPPED)
-						dropEnemyBombs(aDroppingBomb, aBombExplosion, (EnemyPlane*)a, sFighterFlight);
-				}
 
 				for (auto a : entities)
 				{
@@ -1349,7 +1355,6 @@ int main()
 						DrowningModel *drowning = new DrowningModel(aDrowning, (GroundVehicle*)a, "drowning");
 						entities.push_back(drowning);
 					}
-
 				
 					//.:: Collide entities ::::::::::::
 					for (auto b : entities)
@@ -1369,28 +1374,47 @@ int main()
 
 						if ((a->name == "tank" || a->name == "truck") && b->name == "destructionZone")
 							static_cast<GroundVehicle*>(a)->getAreaDamage((Area*)b, maps[index]);
+						 
+						if ((a->name == "tank" || a->name == "truck") && b->name == "puddle")
+							static_cast<GroundVehicle*>(a)->checkPuddlesCollision(b);
 					}
+
+					//.:: Air bomb destruction zone :::
+					if (a->name == "bombExplosion" && !static_cast<Bomb*>(a)->coordsTransmitted)
+					{
+						static_cast<Bomb*>(a)->coordsTransmitted = true;
+
+						double x = a->getCoordX(false);
+						double y = a->getCoordY(false);
+
+						Area *area = new Area(x, y, (float)180, a, "destructionZone", a->army);
+						entities.push_back(area);
+					}
+
+					//.:: Enemy bomb dropping :::::::::
+					if (a->name == "enemyFighter" && static_cast<EnemyPlane*>(a)->bombStatus == BombStatus::DROPPED)
+						dropEnemyBombs(aDroppingBomb, aBombExplosion, (EnemyPlane*)a, sFighterFlight);
 
 					//.:: Achievements and effects ::::::::::::::::
 					if (a->name == "tank" && static_cast<Tank*>(a)->isShowSpeedBonusAchiev)
 					{
 						static_cast<Tank*>(a)->isShowSpeedBonusAchiev = false;
 						AchievementModel *achievement = new AchievementModel(aSpeedUp, (Tank*)a, "achievement");
-						airEntities.push_back((Air*)achievement);
+						entities.push_back(achievement);
 					}
 
 					if (a->name == "tank" && static_cast<Tank*>(a)->isShowRepair)
 					{
 						static_cast<Tank*>(a)->isShowRepair = false;
 						AchievementModel *repairEffect = new AchievementModel(aRepair, (Tank*)a, "effect");
-						airEntities.push_back((Air*)repairEffect);
+						entities.push_back(repairEffect);
 					}
 
 					if (a->name == "tank" && static_cast<Tank*>(a)->isShowSniperAchiev)
 					{
 						static_cast<Tank*>(a)->isShowSniperAchiev = false;
 						AchievementModel *achievement = new AchievementModel(aSniper, (Tank*)a, "achievement");
-						airEntities.push_back((Air*)achievement);
+						entities.push_back(achievement);
 					}
 
 					//.:: Report about air strike victims :::::::::::::::::::::
@@ -1411,6 +1435,11 @@ int main()
 						else if (reportColor == Color::Cyan) team[3]->nickDown(Area::totalExperience);
 						else if (reportColor == Color::Green) team[4]->nickDown(Area::totalExperience);
 					}
+
+					//.:: Puddle absorption time starts ::::::::::::::::::::::::
+					if (a->name == "puddle" && !static_cast<OilPuddle*>(a)->isAdsorption
+						&& static_cast<OilPuddle*>(a)->adsorptionTime == gameTime)
+						static_cast<OilPuddle*>(a)->isAdsorption = true;
 				}
 
 #pragma region Camera settings
@@ -1496,7 +1525,6 @@ int main()
 
 				//.:: update entities :::
 				updateEntities(entities, time);
-				updateEntities(airEntities, time);
 
 				app.setView(view);
 
@@ -1541,22 +1569,21 @@ int main()
 
 			if (mode == GAME)
 			{
-				//.:: display zones :::
-				for (auto e : airEntities)
-					if (e->name == "zone")
-						e->draw(app);
+#pragma region Objects drawing
 
-				//.:: map rendering :::
-				renderMap(maps[index], app, map, time, index);
-				//.:: display entities :::
-				for (auto e : entities)
-					e->draw(app);
-				drawForestAndIcons(maps[index], app, map, icons, time, index);
+				for (int i = 0; i < 7; i++)
+				{
+					for (auto e : entities)
+						if (e->z_index == (short)i)
+							e->draw(app);
+					if (i == 0)
+						renderMap(maps[index], app, map, time, index);
+						
+					if (i == 1)
+						drawForestAndIcons(maps[index], app, map, icons, time, index);
+				}
 
-				//.:: display all air entities except zones :::
-				for (auto e : airEntities)
-					if (e->name != "zone")
-						e->draw(app);
+#pragma endregion
 
 				if (endDisplayMessage >= gameTime)
 				{
@@ -1679,7 +1706,7 @@ int getEnemyPositionYOffset(int x, int y, string *map)
 
 void createBomberLink(Player *player, Sound &sQuery, Sound &sConfirm, int index, Animation &a, Animation &b, Animation &c)
 {
-	for (auto e : airEntities)
+	for (auto e : entities)
 	{
 		if (e->name == "target" && e->number == player->number)
 		{
@@ -1695,7 +1722,7 @@ void createBomberLink(Player *player, Sound &sQuery, Sound &sConfirm, int index,
 				y = i == 0 ? mapsHeight[index] * 32 + 800 : mapsHeight[index] * 32 + 900;
 
 				Plane *fighter = new Plane(a, b, c, x, y, "fighter", e);
-				airEntities.push_back(fighter);
+				entities.push_back(fighter);
 			}
 
 			Tank::camera = Camera::FirstPlane;
@@ -1729,7 +1756,7 @@ void dropBombs(Animation &a, Animation &b, Sound &sound)
 		y = i == 0 ? e->getCoordY(false) : e->getCoordY(false) + 70;
 
 		Bomb *bomb = new Bomb(a, b, x, y, "bomb");
-		airEntities.push_back(bomb);
+		entities.push_back(bomb);
 	}
 }
 
@@ -1737,7 +1764,7 @@ void createSmoke(GroundVehicle *p, Animation &a)
 {
 	p->isSmoking = true;
 	Smoke *smoke = new Smoke(a, p, "smoke");
-	airEntities.push_back((Air*)smoke);
+	entities.push_back((Air*)smoke);
 }
 
 void dropEnemyBombs(Animation &a, Animation &b, EnemyPlane *e, Sound &sound)
@@ -1746,5 +1773,5 @@ void dropEnemyBombs(Animation &a, Animation &b, EnemyPlane *e, Sound &sound)
 	e->bombStatus = BombStatus::DESCENT;
 
 	EnemyBomb *bomb = new EnemyBomb(a, b, e->getCoordX(false), e->getCoordY(false), "bomb");
-	airEntities.push_back(bomb);
+	entities.push_back(bomb);
 }

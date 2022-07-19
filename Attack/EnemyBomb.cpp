@@ -7,6 +7,8 @@ EnemyBomb::EnemyBomb()
 
 EnemyBomb::EnemyBomb(Animation &a, Animation &b, double X, double Y, string name_)
 {
+	z_index = (short)5;
+
 	dir = 3;
 	name = name_;
 	anim = a;

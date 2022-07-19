@@ -10,6 +10,19 @@ protected:
 	double x, y, dx, dy;
 
 public:
+	/*
+	  z_index:
+	  0 - puddle, zone
+	  1 - enemy's tank, player's tank
+	  2 - smoke
+	  3 - boss tank
+	  4 - smoke for the boss
+	  5 - air objects below the aircraft (for example a bomb), target
+	  6 - aircraft
+	*/
+	short z_index;
+
+	int number;
 	int level;
 	string name;
 	string army;

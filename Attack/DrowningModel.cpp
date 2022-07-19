@@ -5,6 +5,8 @@ DrowningModel::DrowningModel()
 
 DrowningModel::DrowningModel(Animation &a, GroundVehicle *own_, string name_)
 {
+	z_index = 3;
+
 	anim = a;
 	level = 0;
 	dir = own_->dir;

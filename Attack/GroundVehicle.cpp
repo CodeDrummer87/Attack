@@ -18,7 +18,8 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 	aVehicleExplosion = aExplosion;
 
 	speedBonus = 0.0f;
-	isDestroyed = isTransition = drowning = isSmoking = isDrowned = isShowRepair = isPlayerControl = false;
+	isDestroyed = isTransition = drowning = isSmoking = false;
+	isDrowned = isShowRepair = isPlayerControl = isSkidding = false;
 	hitPoints = level + 1;
 	toUp = toDown = toRight = toLeft = 0;
 
@@ -30,6 +31,7 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 	traffic.left.dir = true;	traffic.left.barId = 0;
 
 	number = ++counter;
+	puddleId = 0;
 
 	reachDist = 0.0;
 	vehicleSpeed = level % 2 == 0 ? 0.1f : 0.08f;
@@ -49,7 +51,7 @@ void GroundVehicle::update(double time)
 	}
 	else
 	{
-		if ((name != "boss" && hitPoints > 1) || (name == "boss" && hitPoints > 100))
+		if (hitPoints > 1)
 		{
 			if (status != ALIVE)
 			{
@@ -57,7 +59,7 @@ void GroundVehicle::update(double time)
 				anim.sound.setPitch(0.9f);
 			}
 		}
-		else if ((name != "boss" && hitPoints == 1) || (name == "boss" && hitPoints <= 100))
+		else if (hitPoints == 1)
 		{
 			if (status != WOUNDED)
 			{
@@ -71,15 +73,16 @@ void GroundVehicle::update(double time)
 		if (status == ALIVE)
 		{
 			if (x + dx > 0 && x + dx < 61 * 32)
-				x += dx;
+				x += isSkidding? dx / 2.5 : dx;
 			if (y + dy > 0 && y + dy < 119 * 32)
-				y += dy;
+				y += isSkidding? dy / 2.5 : dy;
+			
 			dx = dy = 0;
 		}
 		else if (status == WOUNDED)
 		{
-			x += dx / 1.5;
-			y += dy / 1.5;
+			x += isSkidding? dx / 4 : dx / 1.5;
+			y += isSkidding? dy / 4 : dy / 1.5;
 			dx = dy = 0;
 		}
 		else
@@ -387,15 +390,12 @@ void GroundVehicle::checkIconCollision(string map[], Sound &sound)
 	for (int i = (anim.getRect(dir).top + 15) / 32; i < (y + anim.getRect(dir).height) / 32; i++)
 		for (int j = (anim.getRect(dir).left + 14) / 32; j < (x + anim.getRect(dir).width) / 32; j++)
 		{
-			if (map[i][j] == 'R')
+			if (map[i][j] == 'R' && (hitPoints < 1 + level))
 			{
-				if (hitPoints < 1 + level)
-				{
-					sound.play();
-					++hitPoints;
-					isShowRepair = true;
-					map[i][j] = ' ';
-				}
+				sound.play();
+				++hitPoints;
+				isShowRepair = true;
+				map[i][j] = ' ';
 			}
 		}
 }
@@ -513,5 +513,45 @@ void GroundVehicle::sinkTankCarcass(string *map)
 
 		anim.sprite.setColor(Color::Transparent);
 		this->isDrowned = true;
+	}
+}
+
+void GroundVehicle::checkPuddlesCollision(Entity *p)
+{
+	if (puddleId == 0 || puddleId == p->number)
+	{
+		FloatRect tank = (dir == 1 || dir == 3) ? FloatRect(x, y, 40, 52) : FloatRect(x, y, 52, 40);
+		FloatRect puddle = FloatRect(p->getCoordX(false) + 10, p->getCoordY(false) + 12, 30, 30);
+
+		if (tank.intersects(puddle))
+		{
+			if (!isSkidding && puddleId == 0 && p->level == 1)
+				resetSkidding(false, p->number);
+
+			if (!isSkidding && puddleId == p->number && p->level == 2)
+				resetSkidding(true, p->number);
+		}
+		else
+			if (isSkidding)
+				resetSkidding(true, p->number);
+
+		if (p->level == 2 && isSkidding)
+			resetSkidding(true, p->number);
+	}
+}
+
+void GroundVehicle::resetSkidding(bool isApply, int puddleId_)
+{
+	if (isApply)
+	{
+		isSkidding = false;
+		puddleId = 0;
+		anim.sound.setPitch(status == ALIVE && army == "player" ? 0.9f : 0.5f);
+	}
+	else
+	{
+		isSkidding = true;
+		puddleId = puddleId_;
+		anim.sound.setPitch(army == "player" ? 2.5f : 0.9f);
 	}
 }

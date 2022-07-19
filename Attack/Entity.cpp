@@ -15,6 +15,7 @@ Entity::Entity(Animation &a, double x_, double y_, string name_, int dir_, bool 
 	isPlayAnimation = isPlayAnimation_;
 
 	isExist = true;
+	z_index = 4;
 }
 
 Entity::~Entity()

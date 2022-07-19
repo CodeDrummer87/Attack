@@ -10,6 +10,8 @@ RadioAntenna::~RadioAntenna()
 
 RadioAntenna::RadioAntenna(Animation &a, string name_, bool isPlayAnimation_, GroundVehicle *truck, float size_)
 {
+	z_index = 1;
+
 	anim = a;
 	own = truck;
 	name = name_;

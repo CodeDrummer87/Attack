@@ -12,6 +12,18 @@
     <Filter Include="Файлы заголовков\maps">
       <UniqueIdentifier>{d5f24cdf-22b0-4596-90ae-76cdb5b59829}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\Transport">
+      <UniqueIdentifier>{9e6eed4a-339c-4ad4-b901-b7592a369259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Transport\Ground">
+      <UniqueIdentifier>{5ee3a455-bfa9-441b-bf11-12427c993029}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Transport\Ground\Boss">
+      <UniqueIdentifier>{427f8432-8f1e-4421-8bc8-3ff9fdd27119}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Transport\Air">
+      <UniqueIdentifier>{c4c5bf28-34e5-4dfa-bb8e-d45ffba8fa12}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -23,12 +35,6 @@
     <ClCompile Include="Entity.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Tank.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Shell.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -38,47 +44,56 @@
     <ClCompile Include="Rank.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Air.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Plane.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Bomb.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="DrowningModel.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="AchievementModel.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Area.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="GroundVehicle.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="CommunicationTruck.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="RadioAntenna.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyPlane.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyBomb.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="RadioWave.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Boss.cpp">
+    <ClCompile Include="OilPuddle.cpp">
       <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Bomb.cpp">
+      <Filter>Исходные файлы\Transport\Air</Filter>
+    </ClCompile>
+    <ClCompile Include="Boss.cpp">
+      <Filter>Исходные файлы\Transport\Ground\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="CommunicationTruck.cpp">
+      <Filter>Исходные файлы\Transport\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyBomb.cpp">
+      <Filter>Исходные файлы\Transport\Air</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyPlane.cpp">
+      <Filter>Исходные файлы\Transport\Air</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Исходные файлы\Transport\Air</Filter>
+    </ClCompile>
+    <ClCompile Include="Tank.cpp">
+      <Filter>Исходные файлы\Transport\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="Area.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Air.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="GroundVehicle.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Исходные файлы\Transport\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Исходные файлы\Transport\Ground</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +227,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Boss.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="OilPuddle.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
