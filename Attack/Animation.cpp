@@ -9,8 +9,7 @@ Animation::Animation(Texture& t, int x, int y, int width, int height, double ani
 	frame = 0;
 	speed = animSpeed;
 
-	for (int i = 0; i < count; i++)
-		frames.push_back(IntRect(x + i * width, y, width, height));
+	setFrames(x, y, width, height, count, speed);
 
 	sprite.setTexture(t);
 	sprite.setOrigin(width / 2, height / 2);
@@ -22,7 +21,7 @@ Animation::Animation(Texture& t, SoundBuffer& b, int x, int y, int width, int he
 	frame = 0;
 	speed = animSpeed;
 
-	setFrames(x, y, width, height, count);
+	setFrames(x, y, width, height, count, speed);
 
 	sprite.setTexture(t);
 	sprite.setOrigin(width / 2, height / 2);
@@ -105,14 +104,18 @@ FloatRect Animation::getShellRect(bool isShell)
 		return FloatRect(rect.left, rect.top, 27, 27);
 }
 
-void Animation::setFrames(int x, int y, int width, int height, int count)
+void Animation::setFrames(int x, int y, int width, int height, int count, double speed_)
 {
-	//if (frames.size() > 0) frames.clear();
+	if (frames.size() > 0)
+	{
+		frames.clear();
+		frame = 0;
+	}
 
 	for (int i = 0; i < count; i++)
-	{
 		frames.push_back(IntRect((x + i * width), y, width, height));
-	}
+
+	speed = speed_;
 }
 
 bool Animation::getPenultimateFrame(double time)

@@ -1,22 +1,18 @@
+#pragma once
+
 #include "Boss.h"
 
 Boss::Boss()
 {}
 
 Boss::Boss(BossArgs &args)
-	: Enemy(args.anim, args.x, args.y, "boss", args.dir, args.isPlayAnimation, args.aExplosion, "enemy", args.level)
+	: Enemy(args.anim, args.x, args.y, "boss", args.dir, args.isPlayAnimation, args.sExplosion, args.expFrameCount, "enemy", args.level)
 {
-	z_index = 4;
+	z_index = 3;
 
-	aTower = args.aTower;
-	aTower.sprite.setPosition(x, y);
-	aTowerCrash = args.aTowerCrash;
-
-	hitPoints = 100 + args.numberOfPlayers * 25;
+	hitPoints = 4;//100 + args.numberOfPlayers * 50;
 	nextOilSpillageTime = 0;
 	isOilSpillage = false;
-
-	rot = 0;
 }
 
 Boss::~Boss()
@@ -24,12 +20,6 @@ Boss::~Boss()
 
 void Boss::update(double time)
 {
-	if (status != DEAD)
-	{
-		rot++;
-		aTower.sprite.setRotation(rot);
-	}
-
 	if (isDestroyed)
 	{
 		if (isPlayAnimation)
@@ -50,6 +40,7 @@ void Boss::update(double time)
 			if (status != WOUNDED)
 			{
 				status = WOUNDED;
+				anim.setFrames(0, 128, 128, 128, 2, anim.speed);
 				anim.sound.setPitch(0.5f);
 			}
 		}
@@ -76,41 +67,26 @@ void Boss::update(double time)
 			{
 				if (anim.isEnd(time))
 				{
-					anim.frames[0] = IntRect(0, 256, 128, 128);	//.:: Tank skeleton texture coordinates
+					anim.frames[0] = IntRect(0, 384, 128, 128);	//.:: Tank skeleton texture coordinates
 					anim.sound.stop();
 					isDestroyed = true;
-				}
-
-				if (aTower.isEnd(time))
-				{
-					aTower.frames[0] = IntRect(0, 256, 128, 128);
 				}
 			}
 			else
 			{
 				name = "destroyed";
 				isPlayAnimation = true;
-				anim = aVehicleExplosion;
+				anim.setFrames(0, 256, 128, 128, explosionFrameCount, 0.01);
+				anim.sound.setBuffer(sExplosion);
+				anim.sound.setVolume(100.f);
 				isTransition = true;
 				isSmoking = false;
-
-				aTower = aTowerCrash;
-				aTower.sprite.setRotation(rot);
 			}
 		}
 		//.:: Vehicle control :::
 		if (!isPlayerControl)
 			controlEnemyVehicle(time);
 	}
-}
-
-void Boss::draw(RenderWindow &app)
-{
-	anim.sprite.setPosition(x, y);
-	app.draw(anim.sprite);
-
-	aTower.sprite.setPosition(x, y);
-	app.draw(aTower.sprite);
 }
 
 void Boss::checkMapCollision(string *map)

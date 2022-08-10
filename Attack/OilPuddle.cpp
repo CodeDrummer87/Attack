@@ -44,15 +44,15 @@ void OilPuddle::update(double time)
 		{
 			status = WOUNDED;
 			isPlayAnimation = false;
-			anim.frames[0] = IntRect(0, 64, 64, 64);
+			anim.setFrames(0, 64, 64, 64, 1, anim.speed);
 			anim.sound.setVolume(0.f);
 		}
 		else if (status == WOUNDED && isAdsorption)
 		{
 			status = DEAD;
 			isPlayAnimation = true;
-			anim.setFrames(0, 128, 64, 64, 7);
 			anim.speed = 0.001;
+			anim.setFrames(0, 128, 64, 64, 7, anim.speed);
 		}
 		else if (status == DEAD)
 		{

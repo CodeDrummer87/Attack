@@ -34,7 +34,8 @@ protected:
 	float speedBonus;
 	bool isPlayerControl;
 	bool isDestroyed;
-	Animation aVehicleExplosion;
+	SoundBuffer sExplosion;
+	int explosionFrameCount;
 
 	bool isTransition;
 	double toUp, toRight, toDown, toLeft;
@@ -53,7 +54,7 @@ public:
 
 	//.:: Constructor :::::::::::::::::::::::
 	GroundVehicle();
-	GroundVehicle(Animation&, double, double, string, int, bool, Animation&, string, int);
+	GroundVehicle(Animation&, double, double, string, int, bool, SoundBuffer&, int, string, int);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~GroundVehicle();

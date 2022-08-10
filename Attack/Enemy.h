@@ -19,7 +19,7 @@ public:
 
 	//.:: Constructor :::::::::::::::::::::::
 	Enemy();
-	Enemy(Animation&, double, double, string, int, bool, Animation&, string, int);
+	Enemy(Animation&, double, double, string, int, bool, SoundBuffer&, int, string, int);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Enemy();

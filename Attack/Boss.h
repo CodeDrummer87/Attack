@@ -9,21 +9,15 @@ struct BossArgs
 	double y;
 	int dir;
 	bool isPlayAnimation;
-	Animation &aExplosion;
 	int level;
-	Animation &aTower;
-	Animation &aTowerCrash;
 	int numberOfPlayers;
+
+	SoundBuffer &sExplosion;
+	int expFrameCount;
 };
 
 class Boss : public Enemy
 {
-private:
-	Animation aTower;
-	Animation aTowerCrash;
-	
-	int rot;
-
 public:
 	bool isOilSpillage;
 	int nextOilSpillageTime;
@@ -37,7 +31,6 @@ public:
 
 	//.:: Methods_of_class ::::::::::::::::::
 	void update(double);
-	void draw(RenderWindow&);
 	void checkMapCollision(string*);
 
 };

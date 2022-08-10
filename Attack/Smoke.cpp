@@ -36,8 +36,8 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_)
 
 	if (name == "smoke")
 	{
-		z_index = vehicle->name == "boss" ? (short)5 : (short)3;
-		if (z_index == (short)5)
+		z_index = vehicle->z_index == (short)3 ? (short)4 : (short)2;
+		if (z_index == (short)4)
 			anim.sprite.setScale(1.7f, 1.7f);
 
 		dir = 1;

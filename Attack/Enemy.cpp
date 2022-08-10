@@ -5,8 +5,8 @@
 Enemy::Enemy()
 {}
 
-Enemy::Enemy(Animation &a, double x_, double y_, string name_, int dir_, bool isPlayAnimation_, Animation &b,
-	string army_, int lvl) : Tank(a, x_, y_, name_, dir_, isPlayAnimation_, b, army_, lvl)
+Enemy::Enemy(Animation &a, double x_, double y_, string name_, int dir_, bool isPlayAnimation_, SoundBuffer &sExplosion_, int expFrameCount,
+	string army_, int lvl) : Tank(a, x_, y_, name_, dir_, isPlayAnimation_, sExplosion_, expFrameCount, army_, lvl)
 {
 	isPlayerControl = false;
 	round = false;

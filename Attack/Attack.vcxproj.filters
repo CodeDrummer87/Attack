@@ -95,6 +95,9 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>Исходные файлы\Transport\Ground</Filter>
     </ClCompile>
+    <ClCompile Include="TankTower.cpp">
+      <Filter>Исходные файлы\Transport\Ground\Boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h">
@@ -230,6 +233,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="OilPuddle.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="TankTower.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

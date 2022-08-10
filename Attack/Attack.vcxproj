@@ -162,6 +162,7 @@
     <ClCompile Include="Shell.cpp" />
     <ClCompile Include="Smoke.cpp" />
     <ClCompile Include="Tank.cpp" />
+    <ClCompile Include="TankTower.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AchievementModel.h" />
@@ -208,6 +209,7 @@
     <ClInclude Include="stage_19.h" />
     <ClInclude Include="stage_20.h" />
     <ClInclude Include="Tank.h" />
+    <ClInclude Include="TankTower.h" />
     <ClInclude Include="View.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

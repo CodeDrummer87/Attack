@@ -29,6 +29,7 @@
 #include "Boss.h"
 
 #include "OilPuddle.h"
+#include "TankTower.h"
 
 
 //.:: temp code :::
@@ -169,9 +170,9 @@ int main()
 	iOilPuddle.createMaskFromColor(Color::White);
 
 	//.:: Bosses
-	iFirstStage_boss_tankBody.loadFromFile("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_body.png");
+	iFirstStage_boss_tankBody.loadFromFile("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_body.jpg");
 	iFirstStage_boss_tankBody.createMaskFromColor(Color::White);
-	iFirstStage_boss_tankTower.loadFromFile("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_tower.png");
+	iFirstStage_boss_tankTower.loadFromFile("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_tower.jpg");
 	iFirstStage_boss_tankTower.createMaskFromColor(Color::White);
 
 #pragma endregion
@@ -317,19 +318,10 @@ int main()
 	Animation icons[] = { iconRepair, iconPreferment, iconCamera, iconAirStrike };
 
 	Animation aBurgTank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation aExpBurgTank(bTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
-	
 	Animation aYellowTank(yTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation aExpYellowTank(yTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
-
 	Animation aPurpTank(pTank, pTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation aExpPurpTank(pTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
-
 	Animation aCyanTank(cTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation aExpCyanTank(cTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
-
 	Animation aHemoTank(hTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation aExpHemoTank(hTank, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 
 	Animation aBurgTankRound(tTankRound, burgTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
 	Animation aYelTankRound(tTankRound, yelTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
@@ -352,29 +344,18 @@ int main()
 	Animation aBombExplosion(tBombExplosion, bombExplosionBuf, 0, 0, 400, 400, 0.012, 19);
 
 	Animation enemy_1(tEnemy_1, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_enemy_1(tEnemy_1, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
-	Animation aEnemy1Round(tTankRound, enemy_1RoundBuf, 0, 0, 40, 36, 0.015, 8);
 	Animation enemy_2(tEnemy_2, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_enemy_2(tEnemy_2, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 	Animation enemy_3(tEnemy_3, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_enemy_3(tEnemy_3, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 	Animation enemy_4(tEnemy_4, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_enemy_4(tEnemy_4, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 	Animation enemy_5(tEnemy_5, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_enemy_5(tEnemy_5, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 	Animation enemy_6(tEnemy_6, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_enemy_6(tEnemy_6, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 	Animation enemy_7(tEnemy_7, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_enemy_7(tEnemy_7, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
 	Animation enemy_8(tEnemy_8, 0, 0, 64, 64, 0.016, 2);
-	Animation explosion_enemy_8(tEnemy_8, tankExpBuf, 0, 64, 64, 64, 0.01, 12);
+	Animation aEnemy1Round(tTankRound, enemy_1RoundBuf, 0, 0, 40, 36, 0.015, 8);
 
-	Animation communication_truck(tCommunication_truck, 0, 0, 64, 64, 0.1, 1);
-	Animation explosion_communication_truck(tCommunication_truck, autoExpBuf, 0, 64, 64, 64, 0.0095, 14);
+	Animation communication_truck(tCommunication_truck, 0, 0, 64, 64, 0.1, 1); // ExplosionAnimationSpeed = 0.0095
 
 	Animation enemyAnim_1[] = { enemy_1, enemy_2, enemy_3, enemy_4, enemy_5, enemy_6, enemy_7, enemy_8 };
-	Animation explosionEnemyAnim_1[] = { explosion_enemy_1, explosion_enemy_2, explosion_enemy_3, explosion_enemy_4,
-										 explosion_enemy_5, explosion_enemy_6, explosion_enemy_7, explosion_enemy_8 };
 
 	Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
 	Animation aSpeedUp(tSpeedUpAchiev, speedUpBuf, 0, 0, 128, 128, 0.009, 24);
@@ -386,14 +367,13 @@ int main()
 #pragma region First stage boss
 
 	Animation aFirstStageBossBody(tFirstStageBossBody, firstStageBossMoveBuf, 0, 0, 128, 128, 0.016, 2);
-	Animation aFirstStageBossBodyExp(tFirstStageBossBody, firstStageBossExpBuf, 0, 128, 128, 128, 0.01, 17);
 	Animation aFirstStageBossTower(tFirstStageBossTower, firstStageBossTowerBuf, 0, 0, 128, 128, 1, 1);
-	Animation aFirstStageBossTowerCrash(tFirstStageBossTower, firstStageBossTowerCrashBuf, 0, 128, 128, 128, 0.01, 12);
+	//Animation aFirstStageBossTowerCrash(tFirstStageBossTower, firstStageBossTowerCrashBuf, 0, 256, 128, 128, 0.01, 11);
 
 	BossArgs firstStageBossArgs = 
 	{
-		//.:: moveAnim, x, y, name, dir, isPlayAnim, aExplosion, level, animTower, animTowerCrash
-		aFirstStageBossBody, 180, mapsHeight[0] * 32 - 570, 3, true, aFirstStageBossBodyExp, 10, aFirstStageBossTower, aFirstStageBossTowerCrash
+		//.:: moveAnim, x, y, dir, isPlayAnim, level, numberOfPlayers, explosionSound, explosionFrameCount
+		aFirstStageBossBody, 180, mapsHeight[0] * 32 - 570, 3, true, 10, 1, firstStageBossExpBuf, 16
 	};
 
 #pragma endregion
@@ -528,8 +508,8 @@ int main()
 
 #pragma region Functions
 	
-	void createEnemies(vector<Entity*>&, vector<Enemy*>&, Animation[], Animation[], string*);
-	void createEnemyCommunicationTrucks(vector<CommunicationTruck*>&, Animation&, Animation&, int, Animation&);
+	void createEnemies(vector<Entity*>&, vector<Enemy*>&, Animation[], SoundBuffer&, string*);
+	void createEnemyCommunicationTrucks(vector<CommunicationTruck*>&, Animation&, SoundBuffer&, int, Animation&);
 	void createSmoke(GroundVehicle*, Animation&);
 	void createShot(Tank*, Animation&, Animation&, Animation&);
 	void createBomberLink(Player*, Sound&, Sound&, int, Animation&, Animation&, Animation&);
@@ -669,11 +649,11 @@ int main()
 									Player *player;
 									switch (i)
 									{
-									case 0: player = new Player(aBurgTank, a1, a2, "tank", 1, true, aExpBurgTank, "player", 1); break;
-									case 1: player = new Player(aYellowTank, b1, b2, "tank", 1, true, aExpYellowTank, "player", 1); break;
-									case 2: player = new Player(aPurpTank, c1, c2, "tank", 1, true, aExpPurpTank, "player", 1); break;
-									case 3: player = new Player(aCyanTank, d1, d2, "tank", 1, true, aExpCyanTank, "player", 1); break;
-									case 4: player = new Player(aHemoTank, e1, e2, "tank", 1, true, aExpHemoTank, "player", 1); break;
+									case 0: player = new Player(aBurgTank, a1, a2, "tank", 1, true, tankExpBuf, 12, "player", 1); break;
+									case 1: player = new Player(aYellowTank, b1, b2, "tank", 1, true, tankExpBuf, 12, "player", 1); break;
+									case 2: player = new Player(aPurpTank, c1, c2, "tank", 1, true, tankExpBuf, 12, "player", 1); break;
+									case 3: player = new Player(aCyanTank, d1, d2, "tank", 1, true, tankExpBuf, 12, "player", 1); break;
+									case 4: player = new Player(aHemoTank, e1, e2, "tank", 1, true, tankExpBuf, 12, "player", 1); break;
 									}
 
 									team.push_back(player);
@@ -686,14 +666,17 @@ int main()
 
 							isStartGame = false;
 							choice->play();
-							createEnemies(entities, squad, enemyAnim_1, explosionEnemyAnim_1, maps[index]);
-							createEnemyCommunicationTrucks(specialTransport, communication_truck, explosion_communication_truck, 
-								gameTime, aRadioAntenna);
+							createEnemies(entities, squad, enemyAnim_1, tankExpBuf, maps[index]);
+							createEnemyCommunicationTrucks(specialTransport, communication_truck, autoExpBuf, gameTime, aRadioAntenna);
 
 							firstStageBossArgs.numberOfPlayers = numberOfPlayers;
-							Boss *firstStageBoss = new Boss(firstStageBossArgs);
-							squad.push_back(firstStageBoss);
-							entities.push_back(firstStageBoss);
+							Boss *firstStBoss = new Boss(firstStageBossArgs);
+							squad.push_back(firstStBoss);
+							entities.push_back(firstStBoss);
+
+							TankTower *turret = new TankTower(aFirstStageBossTower, firstStBoss->getCoordX(false),
+								firstStBoss->getCoordY(false), firstStBoss->dir, firstStageBossTowerCrashBuf, 11, firstStBoss);
+							entities.push_back(turret);
 						}
 
 						if (Keyboard::isKeyPressed(Keyboard::Down))
@@ -1625,7 +1608,7 @@ int main()
 	return 0;
 }
 
-void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation anim[], Animation explosionAnim[], string *map)
+void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation anim[], SoundBuffer &sExplosion, string *map)
 {
 	const int eTanks = 72;
 	double enemyPositionX = 70;
@@ -1642,21 +1625,21 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 
 		Enemy *enemy;
 		if (i <= 9)
-			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[7], "enemy", 8);
+			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 8);
 		else if (i > 9 && i <= 18)
-			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[6], "enemy", 7);
+			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 7);
 		else if (i > 18 && i <= 27)
-			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[5], "enemy", 6);
+			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 6);
 		else if (i > 27 && i <= 36)
-			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[4], "enemy", 5);
+			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 5);
 		else if (i > 36 && i <= 45)
-			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[3], "enemy", 4);
+			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 4);
 		else if (i > 45 && i <= 54)
-			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[2], "enemy", 3);
+			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 3);
 		else if (i > 54 && i <= 63)
-			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[1], "enemy", 2);
+			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 2);
 		else
-			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, explosionAnim[0], "enemy", 1);
+			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 1);
 
 		entities.push_back(enemy);
 		squad.push_back(enemy);
@@ -1670,10 +1653,10 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 	}
 }
 
-void createEnemyCommunicationTrucks(vector<CommunicationTruck*> &specialTransport, Animation &truck, Animation &exp, int currentGameTime,
+void createEnemyCommunicationTrucks(vector<CommunicationTruck*> &specialTransport, Animation &truck, SoundBuffer &sExplosion, int currentGameTime,
 	Animation &antenna_)
 {
-	CommunicationTruck *enemyTruck = new CommunicationTruck(truck, 1000, 300, "truck", 4, false, exp, "enemy", 1, currentGameTime);
+	CommunicationTruck *enemyTruck = new CommunicationTruck(truck, 1000, 300, "truck", 4, false, sExplosion, 14, "enemy", 1, currentGameTime);
 	RadioAntenna *antenna = new RadioAntenna(antenna_, "antenna", false, enemyTruck, 1.8f);
 
 	entities.push_back(enemyTruck);

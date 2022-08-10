@@ -9,13 +9,14 @@ GroundVehicle::GroundVehicle()
 {}
 
 GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_, int dir_, bool isPlayAnimation_,
-	Animation &aExplosion, string army_, int level_)
+	SoundBuffer &sExplosion_, int expFrameCount, string army_, int level_)
 	: Entity(anim, x_, y_, name_, dir_, isPlayAnimation_)
 {
 	army = army_;
 	level = level_;
 	status = ALIVE;
-	aVehicleExplosion = aExplosion;
+	sExplosion = sExplosion_;
+	explosionFrameCount = expFrameCount;
 
 	speedBonus = 0.0f;
 	isDestroyed = isTransition = drowning = isSmoking = false;
@@ -100,7 +101,8 @@ void GroundVehicle::update(double time)
 			{
 				name = "destroyed";
 				isPlayAnimation = true;
-				anim = aVehicleExplosion;
+				anim.setFrames(0, 64, 64, 64, explosionFrameCount, 0.01);
+				anim.sound.setBuffer(sExplosion);
 				isTransition = true;
 				isSmoking = false;
 			}
