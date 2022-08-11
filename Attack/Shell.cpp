@@ -127,10 +127,17 @@ void Shell::checkMapCollision(string map[])
 		}
 }
 
-void Shell::damageEntity(GroundVehicle *t, Sound &armorSound)
+void Shell::damageVehicle(GroundVehicle *t, Sound &armorSound)
 {
 	if (army != t->army)
-		if (anim.getShellRect(true).intersects(t->anim.getShellRect(false)))
+	{
+		double tX = (t->dir == 1 || t->dir == 3) ? t->getCoordX(false) - 19 : t->getCoordX(false) - 25;
+		double tY = (t->dir == 1 || t->dir == 3) ? t->getCoordY(false) - 25 : t->getCoordY(false) - 19;
+		
+		FloatRect vehicle = (t->dir == 1 || t->dir == 3) ? FloatRect(tX, tY, 37, 49) : FloatRect(tX, tY, 49, 37);
+		FloatRect shell = (dir == 1 || dir == 3) ? FloatRect(x - 2, y - 4, 3, 7) : FloatRect(x - 4, y - 2, 7, 3);
+
+		if (shell.intersects(vehicle))
 		{
 			armorSound.play();
 			if (this->name == "shell" && (t->name == "tank" || t->name == "truck" || t->name == "boss"))
@@ -142,7 +149,7 @@ void Shell::damageEntity(GroundVehicle *t, Sound &armorSound)
 
 				if (t->hitPoints <= 0)
 				{
-					if (own->shellSpeedBonus < 7.5f && abs(dist) >= 335 + (float)level * 30) 
+					if (own->shellSpeedBonus < 7.5f && abs(dist) >= 335 + (float)level * 30)
 					{
 						own->shellSpeedBonus += 1.5f;
 						own->isShowSniperAchiev = true;
@@ -165,6 +172,7 @@ void Shell::damageEntity(GroundVehicle *t, Sound &armorSound)
 			if (name == "shell")
 				own->isShot = true;
 		}
+	}
 }
 
 void Shell::conveyExperience(int experience)
@@ -182,3 +190,53 @@ void Shell::paintOwn()
 		Tank::camera = MalevolentTank;
 	}
 } 
+
+void Shell::damageBoss(GroundVehicle *boss_, Sound &armorSound, Sound &armorResistSound)
+{
+	if (army != boss_->army)
+	{
+		double tX = (boss_->dir == 1 || boss_->dir == 3) ? boss_->getCoordX(false) - 42 : boss_->getCoordX(false) - 51;
+		double tY = (boss_->dir == 1 || boss_->dir == 3) ? boss_->getCoordY(false) - 51 : boss_->getCoordY(false) - 42;
+
+		FloatRect boss = (boss_->dir == 1 || boss_->dir == 3) ? FloatRect(tX, tY, 83, 101) : FloatRect(tX, tY, 101, 83);
+		FloatRect shell = (dir == 1 || dir == 3) ? FloatRect(x - 2, y - 4, 3, 7) : FloatRect(x - 4, y - 2, 7, 3);
+
+		if (shell.intersects(boss))
+		{
+			if (dir == getCounterDirection(boss_->dir))
+			{
+				armorResistSound.play();
+			}
+			else
+			{
+				armorSound.play();
+				if (level >= boss_->hitPoints && boss_->hitPoints > 1)
+					boss_->hitPoints = 1;
+				else
+					boss_->hitPoints -= level;
+
+				if (boss_->hitPoints <= 0)
+				{
+					if (own->shellSpeedBonus < 7.5f && abs(dist) >= 335 + (float)level * 30)
+					{
+						own->shellSpeedBonus += 1.5f;
+						own->isShowSniperAchiev = true;
+					}
+
+					conveyExperience(boss_->level);
+				}
+
+				if (army == "player" && dir == boss_->dir)
+					static_cast<Enemy*>(boss_)->dir = getCounterDirection(static_cast<Enemy*>(boss_)->dir);
+			}
+			isExist = false;
+			if (name == "shell")
+				own->isShot = true;
+		}
+	}
+}
+
+int Shell::getCounterDirection(int dir_)
+{
+	return dir_ + 2 <= 4 ? dir_ + 2 : dir_ - 2;
+}

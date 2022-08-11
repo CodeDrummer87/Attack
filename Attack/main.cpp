@@ -253,7 +253,7 @@ int main()
 
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, autoExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf, 
 		shellExpBuf, takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
-		enemy_1Buf, enemy_1RoundBuf, armorBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
+		enemy_1Buf, enemy_1RoundBuf, armorBuf, armorResistBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
 		firstStageBossMoveBuf, firstStageBossExpBuf, firstStageBossRoundBuf, firstStageBossMortarBuf, firstStageBossTowerBuf,
 		firstStageBossTowerCrashBuf, oilPuddleBuf;
 
@@ -275,6 +275,7 @@ int main()
 	enemy_1Buf.loadFromFile("source/sounds/tank/movement/move_5.flac");
 	enemy_1RoundBuf.loadFromFile("source/sounds/tank/round/enemy1_round.flac");
 	armorBuf.loadFromFile("source/sounds/tank/armor.flac");
+	armorResistBuf.loadFromFile("source/sounds/tank/armor_resist.flac");
 	autoExpBuf.loadFromFile("source/sounds/explosion/auto_explosion.flac");
 	laughBuf.loadFromFile("source/sounds/effects/laugh.flac");
 	drowningBuf.loadFromFile("source/sounds/effects/drowning.flac");
@@ -291,14 +292,15 @@ int main()
 	firstStageBossTowerBuf.loadFromFile("source/sounds/tank/tanks_tower_turn.flac");
 	firstStageBossTowerCrashBuf.loadFromFile("source/sounds/effects/boss_tank_tower_crash.flac");
 
-	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sLaugh(laughBuf),
-		sAirStrikeAlarm, sFighterFlight;
+	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sArmorResist,
+		sLaugh(laughBuf), sAirStrikeAlarm, sFighterFlight;
 
 	enemy_move.setBuffer(enemy_1Buf);			enemy_move.setLoop(true);
 	sTakingIcon.setBuffer(takingIconBuf);		sTakingIcon.setLoop(false);
 	sPreferment.setBuffer(prefermentBuf);		sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
 	sAirStrikeConfirm.setBuffer(airstrikeConfirmBuf); sAirStrikeConfirm.setLoop(false); sAirStrikeConfirm.setVolume(50.f);
 	sArmor.setBuffer(armorBuf);					sArmor.setLoop(false);
+	sArmorResist.setBuffer(armorResistBuf);		sArmorResist.setLoop(false);
 	sAirStrikeAlarm.setBuffer(airStrikeAlarmBuf);				sAirStrikeAlarm.setLoop(false);
 	sFighterFlight.setBuffer(fighterFlightBuf);	sFighterFlight.setLoop(false);	sFighterFlight.setVolume(100.f);
 
@@ -1342,9 +1344,13 @@ int main()
 					//.:: Collide entities ::::::::::::
 					for (auto b : entities)
 					{
-						if (a->name == "shell" && (b->name == "tank" || b->name == "truck" || b->name == "boss"))
+						if (a->name == "shell" && (b->name == "tank" || b->name == "truck"))
 							if (static_cast<Shell*>(a)->number != static_cast<GroundVehicle*>(b)->number)
-								static_cast<Shell*>(a)->damageEntity((GroundVehicle*)(b), sArmor);
+								static_cast<Shell*>(a)->damageVehicle((GroundVehicle*)(b), sArmor);
+
+						if (a->name == "shell" && a->army == "player" && b->name == "boss")
+							if (static_cast<Shell*>(a)->number != static_cast<GroundVehicle*>(b)->number)
+								static_cast<Shell*>(a)->damageBoss((GroundVehicle*)(b), sArmor, sArmorResist);
 						
 						if (((a->name == "tank" || a->name == "truck") && (b->name == "tank" || b->name == "truck"))
 							|| (a->name == "truck" && b->name == "destroyed")

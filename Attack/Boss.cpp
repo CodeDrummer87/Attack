@@ -10,7 +10,7 @@ Boss::Boss(BossArgs &args)
 {
 	z_index = 3;
 
-	hitPoints = 4;//100 + args.numberOfPlayers * 50;
+	hitPoints = 100 + args.numberOfPlayers * 75;
 	nextOilSpillageTime = 0;
 	isOilSpillage = false;
 }

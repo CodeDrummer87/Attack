@@ -14,8 +14,6 @@ private:
 	void paintOwn();
 
 public:
-	int number;
-	string army;
 	bool isExplosion;
 
 	//.:: Constructor :::::::::::::::::::::::
@@ -28,7 +26,9 @@ public:
 	//.:: Public_methods_of_class :::::::::::
 	void update(double);
 	void checkMapCollision(string[]);
-	void damageEntity(GroundVehicle*, Sound&);
+	void damageVehicle(GroundVehicle*, Sound&);
+	void damageBoss(GroundVehicle*, Sound&, Sound&);
+	int getCounterDirection(int);
 
 };
 
