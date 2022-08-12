@@ -255,7 +255,7 @@ int main()
 		shellExpBuf, takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
 		enemy_1Buf, enemy_1RoundBuf, armorBuf, armorResistBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
 		firstStageBossMoveBuf, firstStageBossExpBuf, firstStageBossRoundBuf, firstStageBossMortarBuf, firstStageBossTowerBuf,
-		firstStageBossTowerCrashBuf, oilPuddleBuf;
+		firstStageBossTowerCrashBuf, oilPuddleBuf, firstStBossLaugh;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -284,6 +284,7 @@ int main()
 	sniperBuf.loadFromFile("source/sounds/effects/sniper.flac");
 	airStrikeAlarmBuf.loadFromFile("source/sounds/effects/airStrikeAlarm.flac");
 	oilPuddleBuf.loadFromFile("source/sounds/effects/oil_puddle.flac");
+	firstStBossLaugh.loadFromFile("source/sounds/effects/first_stage_boss_laugh.flac");
 
 	firstStageBossMoveBuf.loadFromFile("source/sounds/tank/movement/first_stage_boss_move.flac");
 	firstStageBossExpBuf.loadFromFile("source/sounds/explosion/boss_explosion.flac");
@@ -293,7 +294,7 @@ int main()
 	firstStageBossTowerCrashBuf.loadFromFile("source/sounds/effects/boss_tank_tower_crash.flac");
 
 	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sArmorResist,
-		sLaugh(laughBuf), sAirStrikeAlarm, sFighterFlight;
+		sLaugh(laughBuf), sAirStrikeAlarm, sFighterFlight, sFirstStageBossLaugh;
 
 	enemy_move.setBuffer(enemy_1Buf);			enemy_move.setLoop(true);
 	sTakingIcon.setBuffer(takingIconBuf);		sTakingIcon.setLoop(false);
@@ -303,6 +304,7 @@ int main()
 	sArmorResist.setBuffer(armorResistBuf);		sArmorResist.setLoop(false);
 	sAirStrikeAlarm.setBuffer(airStrikeAlarmBuf);				sAirStrikeAlarm.setLoop(false);
 	sFighterFlight.setBuffer(fighterFlightBuf);	sFighterFlight.setLoop(false);	sFighterFlight.setVolume(100.f);
+	sFirstStageBossLaugh.setBuffer(firstStBossLaugh);	sFirstStageBossLaugh.setLoop(false);
 
 	Music chapter_finale_theme;
 	chapter_finale_theme.openFromFile("source/sounds/music/chapter_finale_theme.flac");
@@ -547,7 +549,8 @@ int main()
 						fadeOutTime = gameTime + 7;
 
 					if (gameTime >= fadeOutTime)
-						main_theme->stop();				}
+						main_theme->stop();				
+				}
 			}
 
 #pragma endregion
@@ -1366,6 +1369,9 @@ int main()
 						 
 						if ((a->name == "tank" || a->name == "truck") && b->name == "puddle")
 							static_cast<GroundVehicle*>(a)->checkPuddlesCollision(b);
+
+						if (a->name == "tank" && a->army == "player" && b->name == "boss")
+							static_cast<GroundVehicle*>(a)->checkBossCollision((GroundVehicle*)b, sFirstStageBossLaugh);
 					}
 
 					//.:: Air bomb destruction zone :::

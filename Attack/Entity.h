@@ -48,5 +48,6 @@ public:
 	double getCoordY(bool);
 	void setCoordX(double);
 	void setCoordY(double);
+	int getCounterDirection(int);
 
 };

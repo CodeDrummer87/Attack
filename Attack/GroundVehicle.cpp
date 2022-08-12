@@ -30,6 +30,7 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 	traffic.right.dir = true;	traffic.right.barId = 0;
 	traffic.down.dir = true;	traffic.down.barId = 0;
 	traffic.left.dir = true;	traffic.left.barId = 0;
+	traffic.areDirectionsOpen = true;
 
 	number = ++counter;
 	puddleId = 0;
@@ -555,5 +556,37 @@ void GroundVehicle::resetSkidding(bool isApply, int puddleId_)
 		isSkidding = true;
 		puddleId = puddleId_;
 		anim.sound.setPitch(army == "player" ? 2.5f : 0.9f);
+	}
+}
+
+void GroundVehicle::checkBossCollision(GroundVehicle *boss_, Sound &sBossLaugh)
+{
+	double bX = (boss_->dir == 1 || boss_->dir == 3) ? boss_->getCoordX(false) - 43 : boss_->getCoordX(false) - 52;
+	double bY = (boss_->dir == 1 || boss_->dir == 3) ? boss_->getCoordY(false) - 52 : boss_->getCoordY(false) - 43;
+	FloatRect boss = (boss_->dir == 1 || boss_->dir == 3) ? FloatRect(bX, bY, 86, 104) : FloatRect(bX, bY, 104, 86);
+
+	double bpX = (boss_->dir == 1 || boss_->dir == 3) ? boss_->getCoordX(false) - 38 : boss_->getCoordX(false) - 47;
+	double bpY = (boss_->dir == 1 || boss_->dir == 3) ? boss_->getCoordY(false) - 47 : boss_->getCoordY(false) - 38;
+	FloatRect bossPressingPart = (boss_->dir == 1 || boss_->dir == 3) ? FloatRect(bpX, bpY, 76, 94) : FloatRect(bpX, bpY, 94, 76);
+
+	double tX = (dir == 1 || dir == 3) ? x - 25 : x - 19;
+	double tY = (dir == 1 || dir == 3) ? y - 19 : y - 25;
+	FloatRect tank = (dir == 1 || dir == 3) ? FloatRect(tX, tY, 37, 49) : FloatRect(tX, tY, 49, 37);
+
+	if (tank.intersects(boss))
+	{
+		if (tank.intersects(bossPressingPart))
+		{
+			if (hitPoints > 0)
+			{
+				hitPoints = 0;
+				sBossLaugh.play();
+			}
+		}
+		else
+		{
+			dx = dir == 2 || dir == 4 ? 0 : dx;
+			dy = dir == 1 || dir == 3 ? 0 : dy;
+		}
 	}
 }

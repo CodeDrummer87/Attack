@@ -28,7 +28,5 @@ public:
 	void checkMapCollision(string[]);
 	void damageVehicle(GroundVehicle*, Sound&);
 	void damageBoss(GroundVehicle*, Sound&, Sound&);
-	int getCounterDirection(int);
 
 };
-

@@ -235,8 +235,3 @@ void Shell::damageBoss(GroundVehicle *boss_, Sound &armorSound, Sound &armorResi
 		}
 	}
 }
-
-int Shell::getCounterDirection(int dir_)
-{
-	return dir_ + 2 <= 4 ? dir_ + 2 : dir_ - 2;
-}

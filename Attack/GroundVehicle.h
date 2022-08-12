@@ -15,6 +15,7 @@ struct Traffic
 	Ban right;
 	Ban down;
 	Ban left;
+	bool areDirectionsOpen;
 };
 
 class GroundVehicle : public Entity
@@ -74,5 +75,6 @@ public:
 	void changeDir();
 	void sinkTankCarcass(string*);
 	void checkPuddlesCollision(Entity*);
+	void checkBossCollision(GroundVehicle*, Sound&);
 
 };

@@ -72,3 +72,8 @@ void Entity::setCoordY(double coord)
 {
 	y = coord;
 }
+
+int Entity::getCounterDirection(int dir_)
+{
+	return dir_ + 2 <= 4 ? dir_ + 2 : dir_ - 2;
+}
