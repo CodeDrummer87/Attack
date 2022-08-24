@@ -44,37 +44,37 @@ void Tank::shoveOffTankCarcass(GroundVehicle *d)
 
 	switch (dir)
 	{
-	case 1:
+	case 0:
 		if (y <= d->getCoordY(false) + 52 && x > d->getCoordX(false) - 32 && x < d->getCoordX(false) + 32 && y > d->getCoordY(false))
 		{
-			d->dir = 1;
+			d->dir = 0;
 			dy = army == "player" ? dy / 1.4 : dy;
 			d->setCoordY(y - 52);
 		}
 		break;
 
-	case 2:
+	case 90:
 		if (x + 52 >= d->getCoordX(false) && y > d->getCoordY(false) - 32 && y < d->getCoordY(false) + 32 && x < d->getCoordX(false))
 		{
-			d->dir = 2;
+			d->dir = 90;
 			dx = army == "player" ? dx / 1.4 : dx;
 			d->setCoordX(x + 52);
 		}
 		break;
 
-	case 3:
+	case 180:
 		if (y + 52 >= d->getCoordY(false) && x > d->getCoordX(false) - 32 && x < d->getCoordX(false) + 32 && y < d->getCoordY(false))
 		{
-			d->dir = 3;
+			d->dir = 180;
 			dy = army == "player" ? dy / 1.4 : dy;
 			d->setCoordY(y + 52);
 		}
 		break;
 
-	case 4:
+	case 270:
 		if (x < d->getCoordX(false) + 52 && y > d->getCoordY(false) - 32 && y < d->getCoordY(false) + 32 && x > d->getCoordX(false))
 		{
-			d->dir = 4;
+			d->dir = 270;
 			dx = army == "player" ? dx / 1.4 : dx;
 			d->setCoordX(x - 52);
 		}

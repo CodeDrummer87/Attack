@@ -34,22 +34,22 @@ void RadioAntenna::update(double time)
 	{
 		switch (own->dir)
 		{
-		case 1:
+		case 0:
 			x = own->getCoordX(false);
 			y = own->getCoordY(false) + 12.0;
 			break;
 
-		case 2:
+		case 90:
 			x = own->getCoordX(false) - 10.0;
 			y = own->getCoordY(false);
 			break;
 
-		case 3:
+		case 180:
 			x = own->getCoordX(false);
 			y = own->getCoordY(false) - 12.0;
 			break;
 
-		case 4:
+		case 270:
 			x = own->getCoordX(false) + 10.0;
 			y = own->getCoordY(false);
 			break;
@@ -57,8 +57,7 @@ void RadioAntenna::update(double time)
 
 		//.:: Antenna Rotation :::
 		dir++;
-		if (dir >= 10000)
-			dir = 0;
+		resetDegrees(dir);
 	}
 	else
 	{

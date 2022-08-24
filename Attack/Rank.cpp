@@ -10,7 +10,7 @@ Rank::Rank(Animation &a, Tank *tank, string name_)
 	anim = a;
 	level = 0;
 
-	dir = 1;
+	dir = 0;
 	x = tank->getCoordX(false) + 32;
 	y = tank->getCoordY(false) - 32;
 	isPlayAnimation = false;

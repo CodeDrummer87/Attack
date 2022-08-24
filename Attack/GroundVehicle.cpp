@@ -30,7 +30,6 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 	traffic.right.dir = true;	traffic.right.barId = 0;
 	traffic.down.dir = true;	traffic.down.barId = 0;
 	traffic.left.dir = true;	traffic.left.barId = 0;
-	traffic.areDirectionsOpen = true;
 
 	number = ++counter;
 	puddleId = 0;
@@ -123,7 +122,7 @@ void GroundVehicle::accelerate(int dir_, double acc)
 
 	switch (dir)
 	{
-	case 1:
+	case 0:
 		toLeft = toRight = 0;
 		if (traffic.up.dir)
 			toUp = acc - ((double)level / 100);
@@ -131,7 +130,7 @@ void GroundVehicle::accelerate(int dir_, double acc)
 			toUp = 0;
 		break;
 
-	case 2:
+	case 90:
 		toUp = toDown = 0;
 		if (traffic.right.dir)
 			toRight = acc + ((double)level / 100);
@@ -139,7 +138,7 @@ void GroundVehicle::accelerate(int dir_, double acc)
 			toRight = 0;
 		break;
 
-	case 3:
+	case 180:
 		toLeft = toRight = 0;
 		if (traffic.down.dir)
 			toDown = acc + ((double)level / 100);
@@ -147,7 +146,7 @@ void GroundVehicle::accelerate(int dir_, double acc)
 			toDown = 0;
 		break;
 
-	case 4:
+	case 270:
 		toUp = toDown = 0;
 		if (traffic.left.dir)
 			toLeft = acc - ((double)level / 100);
@@ -181,7 +180,7 @@ void GroundVehicle::checkVehiclesCollision(GroundVehicle *t)
 {
 	switch (dir)
 	{
-	case 1:
+	case 0:
 		if (y <= t->y + 52 && x > t->x - 32 && x < t->x + 32 && y > t->y)
 		{
 			if (army == "enemy")
@@ -200,7 +199,7 @@ void GroundVehicle::checkVehiclesCollision(GroundVehicle *t)
 			}
 		break;
 
-	case 2:
+	case 90:
 		if (x + 52 >= t->x && y > t->y - 32 && y < t->y + 32 && x < t->x)
 		{
 			if (army == "enemy")
@@ -219,7 +218,7 @@ void GroundVehicle::checkVehiclesCollision(GroundVehicle *t)
 			}
 		break;
 
-	case 3:
+	case 180:
 		if (y + 52 >= t->y && x > t->x - 32 && x < t->x + 32 && y < t->y)
 		{
 			if (army == "enemy")
@@ -238,7 +237,7 @@ void GroundVehicle::checkVehiclesCollision(GroundVehicle *t)
 			}
 		break;
 
-	case 4:
+	case 270:
 		if (x <= t->x + 52 && y > t->y - 32 && y < t->y + 32 && x > t->x)
 		{
 			if (army == "enemy")
@@ -263,19 +262,19 @@ bool GroundVehicle::makeSureVehicleCollision(GroundVehicle *t)
 {
 	switch (dir)
 	{
-	case 1:
+	case 0:
 		if (y <= t->y + 52 && x > t->x - 32 && x < t->x + 32 && y > t->y)
 			return true;
 
-	case 2:
+	case 90:
 		if (x + 52 >= t->x && y > t->y - 32 && y < t->y + 32 && x < t->x)
 			return true;
 
-	case 3:
+	case 180:
 		if (y + 52 >= t->y && x > t->x - 32 && x < t->x + 32 && y < t->y)
 			return true;
 
-	case 4:
+	case 270:
 		if (x <= t->x + 52 && y > t->y - 32 && y < t->y + 32 && x > t->x)
 			return true;
 	}
@@ -342,7 +341,7 @@ void GroundVehicle::checkMapCollision(string *map)
 	}
 	else
 	{
-		if (dir == 1)
+		if (dir == 0)
 			for (int i = (y - 20) / 32; i <= (y + 20) / 32; i++)
 				for (int j = (x - 2) / 32; j <= (x + 30) / 32; j++)
 				{
@@ -353,7 +352,7 @@ void GroundVehicle::checkMapCollision(string *map)
 						traffic.down.dir = true;
 				}
 
-		if (dir == 3)
+		if (dir == 180)
 			for (int i = (y + 20) / 32; i <= (y + 50) / 32; i++)
 				for (int j = (x - 2) / 32; j <= (x + 30) / 32; j++)
 				{
@@ -364,7 +363,7 @@ void GroundVehicle::checkMapCollision(string *map)
 						traffic.up.dir = true;
 				}
 
-		if (dir == 4)
+		if (dir == 270)
 			for (int i = (y) / 32; i <= (y + 30) / 32; i++)
 				for (int j = (x - 16) / 32; j <= (x + 20) / 32; j++)
 				{
@@ -375,7 +374,7 @@ void GroundVehicle::checkMapCollision(string *map)
 						traffic.right.dir = true;
 				}
 
-		if (dir == 2)
+		if (dir == 90)
 			for (int i = (y) / 32; i <= (y + 30) / 32; i++)
 				for (int j = (x + 42) / 32; j <= (x + 50) / 32; j++)
 				{
@@ -419,25 +418,25 @@ void GroundVehicle::controlEnemyVehicle(double time)
 	{
 		switch (dir)
 		{
-		case 1:
+		case 0:
 			if (traffic.up.dir)
-				accelerate(1, -vehicleSpeed * time);
+				accelerate(dir, -vehicleSpeed * time);
 			else
 				changeDir();
 			break;
-		case 2:
+		case 90:
 			if (traffic.right.dir)
-				accelerate(2, vehicleSpeed * time);
+				accelerate(dir, vehicleSpeed * time);
 			else
 				changeDir();
 			break;
-		case 3:
+		case 180:
 			if (traffic.down.dir)
 				accelerate(dir, vehicleSpeed * time);
 			else
 				changeDir();
 			break;
-		case 4:
+		case 270:
 			if (traffic.left.dir)
 				accelerate(dir, -vehicleSpeed * time);
 			else
@@ -457,32 +456,12 @@ void GroundVehicle::controlEnemyVehicle(double time)
 void GroundVehicle::changeDir()
 {
 	srand(time(NULL));
-
 	int k = rand() % 100 + 1;
-	if (k <= 25)
-	{
-		dir++;
-		if (dir > 4)
-			dir = 1;
-	}
-	else if (k > 25 && k <= 50)
-	{
-		dir--;
-		if (dir < 1)
-			dir = 4;
-	}
-	else if (k > 50 && k <= 75)
-	{
-		dir += 2;
-		if (dir > 4)
-			dir -= 4;
-	}
-	else
-	{
-		dir += 3;
-		if (dir > 4)
-			dir -= 4;
-	}
+	
+	dir = (k <= 25) ? dir += 90 : (k > 25 && k <= 50) ? dir -= 90
+		: (k > 50 && k <= 75) ? dir += 180 : dir += 270;
+
+	resetDegrees(dir);
 }
 
 void GroundVehicle::sinkTankCarcass(string *map)
@@ -492,8 +471,8 @@ void GroundVehicle::sinkTankCarcass(string *map)
 
 	switch (dir)
 	{
-	case 1: i++; break;
-	case 4: j++; break;
+	case 0:		i++; break;
+	case 270:	j++; break;
 	}
 
 	if (map[i][j] == 'W')
@@ -523,7 +502,7 @@ void GroundVehicle::checkPuddlesCollision(Entity *p)
 {
 	if (puddleId == 0 || puddleId == p->number)
 	{
-		FloatRect tank = (dir == 1 || dir == 3) ? FloatRect(x, y, 40, 52) : FloatRect(x, y, 52, 40);
+		FloatRect tank = (dir == 0 || dir == 180) ? FloatRect(x, y, 40, 52) : FloatRect(x, y, 52, 40);
 		FloatRect puddle = FloatRect(p->getCoordX(false) + 10, p->getCoordY(false) + 12, 30, 30);
 
 		if (tank.intersects(puddle))
@@ -561,17 +540,17 @@ void GroundVehicle::resetSkidding(bool isApply, int puddleId_)
 
 void GroundVehicle::checkBossCollision(GroundVehicle *boss_, Sound &sBossLaugh)
 {
-	double bX = (boss_->dir == 1 || boss_->dir == 3) ? boss_->getCoordX(false) - 43 : boss_->getCoordX(false) - 52;
-	double bY = (boss_->dir == 1 || boss_->dir == 3) ? boss_->getCoordY(false) - 52 : boss_->getCoordY(false) - 43;
-	FloatRect boss = (boss_->dir == 1 || boss_->dir == 3) ? FloatRect(bX, bY, 86, 104) : FloatRect(bX, bY, 104, 86);
+	double bX = (boss_->dir == 0 || boss_->dir == 180) ? boss_->getCoordX(false) - 43 : boss_->getCoordX(false) - 52;
+	double bY = (boss_->dir == 0 || boss_->dir == 180) ? boss_->getCoordY(false) - 52 : boss_->getCoordY(false) - 43;
+	FloatRect boss = (boss_->dir == 0 || boss_->dir == 180) ? FloatRect(bX, bY, 86, 104) : FloatRect(bX, bY, 104, 86);
 
-	double bpX = (boss_->dir == 1 || boss_->dir == 3) ? boss_->getCoordX(false) - 38 : boss_->getCoordX(false) - 47;
-	double bpY = (boss_->dir == 1 || boss_->dir == 3) ? boss_->getCoordY(false) - 47 : boss_->getCoordY(false) - 38;
-	FloatRect bossPressingPart = (boss_->dir == 1 || boss_->dir == 3) ? FloatRect(bpX, bpY, 76, 94) : FloatRect(bpX, bpY, 94, 76);
+	double bpX = (boss_->dir == 0 || boss_->dir == 180) ? boss_->getCoordX(false) - 38 : boss_->getCoordX(false) - 47;
+	double bpY = (boss_->dir == 0 || boss_->dir == 180) ? boss_->getCoordY(false) - 47 : boss_->getCoordY(false) - 38;
+	FloatRect bossPressingPart = (boss_->dir == 0 || boss_->dir == 180) ? FloatRect(bpX, bpY, 76, 94) : FloatRect(bpX, bpY, 94, 76);
 
-	double tX = (dir == 1 || dir == 3) ? x - 25 : x - 19;
-	double tY = (dir == 1 || dir == 3) ? y - 19 : y - 25;
-	FloatRect tank = (dir == 1 || dir == 3) ? FloatRect(tX, tY, 37, 49) : FloatRect(tX, tY, 49, 37);
+	double tX = (dir == 0 || dir == 180) ? x - 25 : x - 19;
+	double tY = (dir == 0 || dir == 180) ? y - 19 : y - 25;
+	FloatRect tank = (dir == 0 || dir == 180) ? FloatRect(tX, tY, 37, 49) : FloatRect(tX, tY, 49, 37);
 
 	if (tank.intersects(boss))
 	{
@@ -585,8 +564,8 @@ void GroundVehicle::checkBossCollision(GroundVehicle *boss_, Sound &sBossLaugh)
 		}
 		else
 		{
-			dx = dir == 2 || dir == 4 ? 0 : dx;
-			dy = dir == 1 || dir == 3 ? 0 : dy;
+			dx = dir == 90 || dir == 270 ? 0 : dx;
+			dy = dir == 0 || dir == 180 ? 0 : dy;
 		}
 	}
 }

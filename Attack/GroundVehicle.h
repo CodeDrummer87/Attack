@@ -15,7 +15,6 @@ struct Traffic
 	Ban right;
 	Ban down;
 	Ban left;
-	bool areDirectionsOpen;
 };
 
 class GroundVehicle : public Entity

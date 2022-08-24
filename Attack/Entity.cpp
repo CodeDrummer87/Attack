@@ -35,10 +35,10 @@ double Entity::getCoordX(bool isShell)
 	{
 		switch (dir)
 		{
-		case 1: xCoordinate; break;
-		case 2: xCoordinate += 42; break;
-		case 3: xCoordinate; break;
-		case 4: xCoordinate -= 42; break;
+		case 0: xCoordinate; break;
+		case 90: xCoordinate += 42; break;
+		case 180: xCoordinate; break;
+		case 270: xCoordinate -= 42; break;
 		}
 	}
 
@@ -53,10 +53,10 @@ double Entity::getCoordY(bool isShell)
 	{
 		switch (dir)
 		{
-		case 1: yCoordinate -= 42; break;
-		case 2: yCoordinate; break;
-		case 3: yCoordinate += 42; break;
-		case 4: yCoordinate; break;
+		case 0: yCoordinate -= 42; break;
+		case 90: yCoordinate; break;
+		case 180: yCoordinate += 42; break;
+		case 270: yCoordinate; break;
 		}
 	}
 
@@ -75,5 +75,10 @@ void Entity::setCoordY(double coord)
 
 int Entity::getCounterDirection(int dir_)
 {
-	return dir_ + 2 <= 4 ? dir_ + 2 : dir_ - 2;
+	return dir_ + 180 <= 360 ? dir_ + 180 : dir_ - 180;
+}
+
+void Entity::resetDegrees(int &d)
+{
+	d = d >= 360 ? d -= 360 : d <= -1 ? d += 360 : d;
 }

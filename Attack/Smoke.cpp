@@ -40,7 +40,7 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_)
 		if (z_index == (short)4)
 			anim.sprite.setScale(1.7f, 1.7f);
 
-		dir = 1;
+		dir = 0;
 		x = vehicle->getCoordX(false) + 2.f;
 		y = vehicle->getCoordY(false) + 2.f;
 		if (vehicle->status == DEAD) level = 1;

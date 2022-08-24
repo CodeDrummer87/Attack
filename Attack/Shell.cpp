@@ -37,25 +37,25 @@ void Shell::update(double time)
 {
 	if (status == ALIVE)
 	{
-		if (dir == 1)
+		if (dir == 0)
 		{
 			dx = 0;
 			dy = -0.5 * time - ((double)level / 5) - own->shellSpeedBonus;
 			dist -= dy;
 		}
-		if (dir == 2)
+		if (dir == 90)
 		{
 			dy = 0;
 			dx = 0.5 * time + ((double)level / 5) + own->shellSpeedBonus;
 			dist += dx;
 		}
-		if (dir == 3)
+		if (dir == 180)
 		{
 			dx = 0;
 			dy = 0.5 * time + ((double)level / 5) + own->shellSpeedBonus;
 			dist += dy;
 		}
-		if (dir == 4)
+		if (dir == 270)
 		{
 			dy = 0;
 			dx = -0.5 * time - ((double)level / 5) - own->shellSpeedBonus;
@@ -131,11 +131,11 @@ void Shell::damageVehicle(GroundVehicle *t, Sound &armorSound)
 {
 	if (army != t->army)
 	{
-		double tX = (t->dir == 1 || t->dir == 3) ? t->getCoordX(false) - 19 : t->getCoordX(false) - 25;
-		double tY = (t->dir == 1 || t->dir == 3) ? t->getCoordY(false) - 25 : t->getCoordY(false) - 19;
+		double tX = (t->dir == 0 || t->dir == 180) ? t->getCoordX(false) - 19 : t->getCoordX(false) - 25;
+		double tY = (t->dir == 0 || t->dir == 180) ? t->getCoordY(false) - 25 : t->getCoordY(false) - 19;
 		
-		FloatRect vehicle = (t->dir == 1 || t->dir == 3) ? FloatRect(tX, tY, 37, 49) : FloatRect(tX, tY, 49, 37);
-		FloatRect shell = (dir == 1 || dir == 3) ? FloatRect(x - 2, y - 4, 3, 7) : FloatRect(x - 4, y - 2, 7, 3);
+		FloatRect vehicle = (t->dir == 0 || t->dir == 180) ? FloatRect(tX, tY, 37, 49) : FloatRect(tX, tY, 49, 37);
+		FloatRect shell = (dir == 0 || dir == 180) ? FloatRect(x - 2, y - 4, 3, 7) : FloatRect(x - 4, y - 2, 7, 3);
 
 		if (shell.intersects(vehicle))
 		{
@@ -155,10 +155,9 @@ void Shell::damageVehicle(GroundVehicle *t, Sound &armorSound)
 						own->isShowSniperAchiev = true;
 					}
 
-					if (army == "enemy")
+					if (army == "enemy" && own->name == "tank")
 					{
-						if (name == "tank")
-							paintOwn();
+						this->paintOwn();
 						static_cast<Enemy*>(own)->round = false;
 					}
 					else
@@ -166,7 +165,8 @@ void Shell::damageVehicle(GroundVehicle *t, Sound &armorSound)
 				}
 
 				if (army == "player" && dir == t->dir)
-					static_cast<Enemy*>(t)->dir = t->dir + 2 <= 4 ? t->dir + 2 : t->dir - 2;
+					static_cast<Enemy*>(t)->dir = getCounterDirection(dir);
+
 			}
 			isExist = false;
 			if (name == "shell")
@@ -195,11 +195,11 @@ void Shell::damageBoss(GroundVehicle *boss_, Sound &armorSound, Sound &armorResi
 {
 	if (army != boss_->army)
 	{
-		double tX = (boss_->dir == 1 || boss_->dir == 3) ? boss_->getCoordX(false) - 42 : boss_->getCoordX(false) - 51;
-		double tY = (boss_->dir == 1 || boss_->dir == 3) ? boss_->getCoordY(false) - 51 : boss_->getCoordY(false) - 42;
+		double tX = (boss_->dir == 0 || boss_->dir == 180) ? boss_->getCoordX(false) - 42 : boss_->getCoordX(false) - 51;
+		double tY = (boss_->dir == 0 || boss_->dir == 180) ? boss_->getCoordY(false) - 51 : boss_->getCoordY(false) - 42;
 
-		FloatRect boss = (boss_->dir == 1 || boss_->dir == 3) ? FloatRect(tX, tY, 83, 101) : FloatRect(tX, tY, 101, 83);
-		FloatRect shell = (dir == 1 || dir == 3) ? FloatRect(x - 2, y - 4, 3, 7) : FloatRect(x - 4, y - 2, 7, 3);
+		FloatRect boss = (boss_->dir == 0 || boss_->dir == 180) ? FloatRect(tX, tY, 83, 101) : FloatRect(tX, tY, 101, 83);
+		FloatRect shell = (dir == 0 || dir == 180) ? FloatRect(x - 2, y - 4, 3, 7) : FloatRect(x - 4, y - 2, 7, 3);
 
 		if (shell.intersects(boss))
 		{
@@ -227,7 +227,7 @@ void Shell::damageBoss(GroundVehicle *boss_, Sound &armorSound, Sound &armorResi
 				}
 
 				if (army == "player" && dir == boss_->dir)
-					static_cast<Enemy*>(boss_)->dir = getCounterDirection(static_cast<Enemy*>(boss_)->dir);
+					static_cast<Enemy*>(boss_)->dir = getCounterDirection(boss_->dir);
 			}
 			isExist = false;
 			if (name == "shell")

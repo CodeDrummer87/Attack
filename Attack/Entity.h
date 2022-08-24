@@ -49,5 +49,6 @@ public:
 	void setCoordX(double);
 	void setCoordY(double);
 	int getCounterDirection(int);
+	void resetDegrees(int&);
 
 };

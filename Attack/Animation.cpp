@@ -37,31 +37,8 @@ Animation::~Animation() {}
 
 void Animation::update(double time, bool on, int dir)
 {
-	int frameCount;
-
-	switch (dir)
-	{
-	case 1:
-		sprite.setRotation(0);
-		break;
-
-	case 2:
-		sprite.setRotation(90);
-		break;
-
-	case 3:
-		sprite.setRotation(180);
-		break;
-
-	case 4:
-		sprite.setRotation(270);
-		break;
-
-	default:
-		sprite.setRotation(dir);
-	}
-
-	frameCount = frames.size();
+	sprite.setRotation(dir);
+	int frameCount = frames.size();
 
 	sound.pause();
 
@@ -86,10 +63,10 @@ FloatRect Animation::getRect(int dir)
 	FloatRect rect = sprite.getGlobalBounds();
 	switch (dir)
 	{
-	case 1: return FloatRect(rect.left, rect.top, 39, 52);
-	case 2: return FloatRect(rect.left, rect.top, 52, 39);
-	case 3: return FloatRect(rect.left, rect.top, 39, 52);
-	case 4: return FloatRect(rect.left, rect.top, 52, 39);
+	case 0: return FloatRect(rect.left, rect.top, 39, 52);
+	case 90: return FloatRect(rect.left, rect.top, 52, 39);
+	case 180: return FloatRect(rect.left, rect.top, 39, 52);
+	case 270: return FloatRect(rect.left, rect.top, 52, 39);
 	default: return rect;
 	}
 }

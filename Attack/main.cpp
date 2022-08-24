@@ -255,7 +255,7 @@ int main()
 		shellExpBuf, takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
 		enemy_1Buf, enemy_1RoundBuf, armorBuf, armorResistBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
 		firstStageBossMoveBuf, firstStageBossExpBuf, firstStageBossRoundBuf, firstStageBossMortarBuf, firstStageBossTowerBuf,
-		firstStageBossTowerCrashBuf, oilPuddleBuf, firstStBossLaugh;
+		firstStageBossTowerCrashBuf, oilPuddleBuf, firstStBossLaugh, firstStBossRoundBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -292,6 +292,7 @@ int main()
 	firstStageBossMortarBuf.loadFromFile("source/sounds/tank/round/first_stage_boss_mortar.flac");
 	firstStageBossTowerBuf.loadFromFile("source/sounds/tank/tanks_tower_turn.flac");
 	firstStageBossTowerCrashBuf.loadFromFile("source/sounds/effects/boss_tank_tower_crash.flac");
+	firstStBossRoundBuf.loadFromFile("source/sounds/tank/round/boss1_round.flac");
 
 	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sArmorResist,
 		sLaugh(laughBuf), sAirStrikeAlarm, sFighterFlight, sFirstStageBossLaugh;
@@ -371,13 +372,13 @@ int main()
 #pragma region First stage boss
 
 	Animation aFirstStageBossBody(tFirstStageBossBody, firstStageBossMoveBuf, 0, 0, 128, 128, 0.016, 2);
-	Animation aFirstStageBossTower(tFirstStageBossTower, firstStageBossTowerBuf, 0, 0, 128, 128, 1, 1);
-	//Animation aFirstStageBossTowerCrash(tFirstStageBossTower, firstStageBossTowerCrashBuf, 0, 256, 128, 128, 0.01, 11);
+	Animation aFirstStageBossTower(tFirstStageBossTower, 0, 0, 128, 128, 0.016, 1);
+	Animation aFirstStageBossRound(tTankRound, firstStBossRoundBuf, 0, 0, 40, 36, 0.015, 8);
 
 	BossArgs firstStageBossArgs = 
 	{
 		//.:: moveAnim, x, y, dir, isPlayAnim, level, numberOfPlayers, explosionSound, explosionFrameCount
-		aFirstStageBossBody, 180, mapsHeight[0] * 32 - 570, 3, true, 10, 1, firstStageBossExpBuf, 16
+		aFirstStageBossBody, 180, mapsHeight[0] * 32 - 570, 180, true, 10, 1, firstStageBossExpBuf, 16
 	};
 
 #pragma endregion
@@ -654,11 +655,11 @@ int main()
 									Player *player;
 									switch (i)
 									{
-									case 0: player = new Player(aBurgTank, a1, a2, "tank", 1, true, tankExpBuf, 12, "player", 1); break;
-									case 1: player = new Player(aYellowTank, b1, b2, "tank", 1, true, tankExpBuf, 12, "player", 1); break;
-									case 2: player = new Player(aPurpTank, c1, c2, "tank", 1, true, tankExpBuf, 12, "player", 1); break;
-									case 3: player = new Player(aCyanTank, d1, d2, "tank", 1, true, tankExpBuf, 12, "player", 1); break;
-									case 4: player = new Player(aHemoTank, e1, e2, "tank", 1, true, tankExpBuf, 12, "player", 1); break;
+									case 0: player = new Player(aBurgTank, a1, a2, "tank", 0, true, tankExpBuf, 12, "player", 1); break;
+									case 1: player = new Player(aYellowTank, b1, b2, "tank", 0, true, tankExpBuf, 12, "player", 1); break;
+									case 2: player = new Player(aPurpTank, c1, c2, "tank", 0, true, tankExpBuf, 12, "player", 1); break;
+									case 3: player = new Player(aCyanTank, d1, d2, "tank", 0, true, tankExpBuf, 12, "player", 1); break;
+									case 4: player = new Player(aHemoTank, e1, e2, "tank", 0, true, tankExpBuf, 12, "player", 1); break;
 									}
 
 									team.push_back(player);
@@ -679,8 +680,9 @@ int main()
 							squad.push_back(firstStBoss);
 							entities.push_back(firstStBoss);
 
-							TankTower *turret = new TankTower(aFirstStageBossTower, firstStBoss->getCoordX(false),
-								firstStBoss->getCoordY(false), firstStBoss->dir, firstStageBossTowerCrashBuf, 11, firstStBoss);
+							TankTower *turret = new TankTower(aFirstStageBossTower, firstStBoss->getCoordX(false), firstStBoss->getCoordY(false),
+								firstStBoss->dir, firstStageBossTowerBuf, firstStageBossTowerCrashBuf, 11, firstStBoss);
+							squad.push_back(turret);
 							entities.push_back(turret);
 						}
 
@@ -843,19 +845,19 @@ int main()
 							double y = Joystick::getAxisPosition(0, Joystick::Y);
 							if (x == -100)
 							{
-								team[0]->accelerate(4, -0.09 * time);
+								team[0]->accelerate(270, -0.09 * time);
 							}
 							else if (x == 100)
 							{
-								team[0]->accelerate(2, 0.09 * time);
+								team[0]->accelerate(90, 0.09 * time);
 							}
 							else if (y == -100)
 							{
-								team[0]->accelerate(1, -0.09 * time);
+								team[0]->accelerate(0, -0.09 * time);
 							}
 							else if (y == 100)
 							{
-								team[0]->accelerate(3, 0.09 * time);
+								team[0]->accelerate(180, 0.09 * time);
 							}
 							else
 								team[0]->isPlayAnimation = false;
@@ -877,19 +879,19 @@ int main()
 						{
 							if (Keyboard::isKeyPressed(Keyboard::W))
 							{
-								team[0]->accelerate(1, -0.09 * time);
+								team[0]->accelerate(0, -0.09 * time);
 							}
 							else if (Keyboard::isKeyPressed(Keyboard::D))
 							{
-								team[0]->accelerate(2, 0.09 * time);
+								team[0]->accelerate(90, 0.09 * time);
 							}
 							else if (Keyboard::isKeyPressed(Keyboard::S))
 							{
-								team[0]->accelerate(3, 0.09 * time);
+								team[0]->accelerate(180, 0.09 * time);
 							}
 							else if (Keyboard::isKeyPressed(Keyboard::A))
 							{
-								team[0]->accelerate(4, -0.09 * time);
+								team[0]->accelerate(270, -0.09 * time);
 							}
 							else team[0]->isPlayAnimation = false;
 						}
@@ -909,19 +911,19 @@ int main()
 								double y = Joystick::getAxisPosition(1, Joystick::Y);
 								if (x == -100)
 								{
-									team[1]->accelerate(4, -0.09 * time);
+									team[1]->accelerate(270, -0.09 * time);
 								}
 								else if (x == 100)
 								{
-									team[1]->accelerate(2, 0.09 * time);
+									team[1]->accelerate(90, 0.09 * time);
 								}
 								else if (y == -100)
 								{
-									team[1]->accelerate(1, -0.09 * time);
+									team[1]->accelerate(0, -0.09 * time);
 								}
 								else if (y == 100)
 								{
-									team[1]->accelerate(3, 0.09 * time);
+									team[1]->accelerate(180, 0.09 * time);
 								}
 								else
 									team[1]->isPlayAnimation = false;
@@ -939,19 +941,19 @@ int main()
 							{
 								if (Keyboard::isKeyPressed(Keyboard::T))
 								{
-									team[1]->accelerate(1, -0.09 * time);
+									team[1]->accelerate(0, -0.09 * time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::H))
 								{
-									team[1]->accelerate(2, 0.09 * time);
+									team[1]->accelerate(90, 0.09 * time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::G))
 								{
-									team[1]->accelerate(3, 0.09 * time);
+									team[1]->accelerate(180, 0.09 * time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::F))
 								{
-									team[1]->accelerate(4, -0.09 * time);
+									team[1]->accelerate(270, -0.09 * time);
 								}
 								else team[1]->isPlayAnimation = false;
 							}
@@ -972,19 +974,19 @@ int main()
 								double y = Joystick::getAxisPosition(2, Joystick::Y);
 								if (x == -100)
 								{
-									team[2]->accelerate(4, -0.09 * time);
+									team[2]->accelerate(270, -0.09 * time);
 								}
 								else if (x == 100)
 								{
-									team[2]->accelerate(2, 0.09 * time);
+									team[2]->accelerate(90, 0.09 * time);
 								}
 								else if (y == -100)
 								{
-									team[2]->accelerate(1, -0.09 * time);
+									team[2]->accelerate(0, -0.09 * time);
 								}
 								else if (y == 100)
 								{
-									team[2]->accelerate(3, 0.09 * time);
+									team[2]->accelerate(180, 0.09 * time);
 								}
 								else
 									team[2]->isPlayAnimation = false;
@@ -1002,19 +1004,19 @@ int main()
 							{
 								if (Keyboard::isKeyPressed(Keyboard::I))
 								{
-									team[2]->accelerate(1, -0.09 * time);
+									team[2]->accelerate(0, -0.09 * time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::L))
 								{
-									team[2]->accelerate(2, 0.09 * time);
+									team[2]->accelerate(90, 0.09 * time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::K))
 								{
-									team[2]->accelerate(3, 0.09 * time);
+									team[2]->accelerate(180, 0.09 * time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::J))
 								{
-									team[2]->accelerate(4, -0.09 * time);
+									team[2]->accelerate(270, -0.09 * time);
 								}
 								else team[2]->isPlayAnimation = false;
 							}
@@ -1035,19 +1037,19 @@ int main()
 								double y = Joystick::getAxisPosition(3, Joystick::Y);
 								if (x == -100)
 								{
-									team[3]->accelerate(4, -0.09 * time);
+									team[3]->accelerate(270, -0.09 * time);
 								}
 								else if (x == 100)
 								{
-									team[3]->accelerate(2, 0.09 * time);
+									team[3]->accelerate(90, 0.09 * time);
 								}
 								else if (y == -100)
 								{
-									team[3]->accelerate(1, -0.09 * time);
+									team[3]->accelerate(0, -0.09 * time);
 								}
 								else if (y == 100)
 								{
-									team[3]->accelerate(3, 0.09 * time);
+									team[3]->accelerate(180, 0.09 * time);
 								}
 								else
 									team[3]->isPlayAnimation = false;
@@ -1065,19 +1067,19 @@ int main()
 							{
 								if (Keyboard::isKeyPressed(Keyboard::Up))
 								{
-									team[3]->accelerate(1, -0.09 * time);
+									team[3]->accelerate(0, -0.09 * time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::Right))
 								{
-									team[3]->accelerate(2, 0.09 * time);
+									team[3]->accelerate(90, 0.09 * time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::Down))
 								{
-									team[3]->accelerate(3, 0.09 * time);
+									team[3]->accelerate(180, 0.09 * time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::Left))
 								{
-									team[3]->accelerate(4, -0.09 * time);
+									team[3]->accelerate(270, -0.09 * time);
 								}
 								else team[3]->isPlayAnimation = false;
 							}
@@ -1098,19 +1100,19 @@ int main()
 								double y = Joystick::getAxisPosition(4, Joystick::Y);
 								if (x == -100)
 								{
-									team[4]->accelerate(4, -0.09 * time);
+									team[4]->accelerate(270, -0.09 * time);
 								}
 								else if (x == 100)
 								{
-									team[4]->accelerate(2, 0.09 * time);
+									team[4]->accelerate(90, 0.09 * time);
 								}
 								else if (y == -100)
 								{
-									team[4]->accelerate(1, -0.09 * time);
+									team[4]->accelerate(0, -0.09 * time);
 								}
 								else if (y == 100)
 								{
-									team[4]->accelerate(3, 0.09 * time);
+									team[4]->accelerate(180, 0.09 * time);
 								}
 								else
 									team[4]->isPlayAnimation = false;
@@ -1128,19 +1130,19 @@ int main()
 							{
 								if (Keyboard::isKeyPressed(Keyboard::Numpad8))
 								{
-									team[4]->accelerate(1, -0.09 * time);
+									team[4]->accelerate(0, -0.09 * time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::Numpad6))
 								{
-									team[4]->accelerate(2, 0.09 * time);
+									team[4]->accelerate(90, 0.09 * time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::Numpad5))
 								{
-									team[4]->accelerate(3, 0.09 * time);
+									team[4]->accelerate(180, 0.09 * time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::Numpad4))
 								{
-									team[4]->accelerate(4, -0.09 * time);
+									team[4]->accelerate(270, -0.09 * time);
 								}
 								else team[4]->isPlayAnimation = false;
 							}
@@ -1160,79 +1162,79 @@ int main()
 				{
 					if (p->status != DEAD)
 					{
-						p->checkMapCollision(maps[index]);
+					p->checkMapCollision(maps[index]);
 
-						//.:: Get Rank :::::::::::::::
-						if (p->isPreferment)
+					//.:: Get Rank :::::::::::::::
+					if (p->isPreferment)
+					{
+						p->isPreferment = false;
+						sPreferment.play();
+						if (!p->hasRank)
 						{
-							p->isPreferment = false;
-							sPreferment.play();
-							if (!p->hasRank)
-							{
-								p->hasRank = true;
-								Rank *rank = new Rank(aRank, p, "rank");
-								entities.push_back(rank);
-							}
+							p->hasRank = true;
+							Rank *rank = new Rank(aRank, p, "rank");
+							entities.push_back(rank);
+						}
+					}
+
+					//.:: Appoint a Commander :::
+					if (p->isCommander && Tank::camera == Camera::Commander)
+						setViewCoordinates(sizeX, sizeY, p->getCoordX(false), p->getCoordY(false), index);
+
+					//.:: Air spotter mode :::
+					if (Player::airSpotter.isAirSpotter && Player::airSpotter.currentPlayer == p)
+					{
+						if (Player::airSpotter.isTargetCreated)
+						{
+							Player::airSpotter.isTargetCreated = false;
+							sAirStrikeQuery.play();
+
+							Air *targetBomb = new Air(aTarget, aAirStrikeZone, p, "target");
+							entities.push_back(targetBomb);
+
+							Tank::camera = Camera::Target;
+
+							reportColor = p->number == 1 ? Color::Red : p->number == 2 ? Color::Yellow :
+								p->number == 3 ? Color::Magenta : p->number == 4 ? Color::Cyan : Color::Green;
 						}
 
-						//.:: Appoint a Commander :::
-						if (p->isCommander && Tank::camera == Camera::Commander)
-							setViewCoordinates(sizeX, sizeY, p->getCoordX(false), p->getCoordY(false), index);
+						if (Tank::camera == Camera::Target)
+							setViewCoordinates(sizeX, sizeY, Player::airSpotter.xTargetPosition, Player::airSpotter.yTargetPosition, index);
 
-						//.:: Air spotter mode :::
-						if (Player::airSpotter.isAirSpotter && Player::airSpotter.currentPlayer == p)
+						//.:: A death in spotter mode :::
+						if (p->hitPoints <= 0)
 						{
-							if (Player::airSpotter.isTargetCreated)
+							Player::airSpotter.isAirSpotter = false;
+							Player::airSpotter.currentPlayer = NULL;
+							Player::airSpotter.xTargetPosition = 0.0;
+							Player::airSpotter.yTargetPosition = 0.0;
+
+							Tank::camera = Camera::NotDefined;
+							if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
+								sAirStrikeQuery.stop();
+
+							for (auto a : entities)
 							{
-								Player::airSpotter.isTargetCreated = false;
-								sAirStrikeQuery.play();
-
-								Air *targetBomb = new Air(aTarget, aAirStrikeZone, p, "target");
-								entities.push_back(targetBomb);
-
-								Tank::camera = Camera::Target;
-
-								reportColor = p->number == 1 ? Color::Red : p->number == 2 ? Color::Yellow :
-									p->number == 3 ? Color::Magenta : p->number == 4 ? Color::Cyan : Color::Green;
-							}
-
-							if (Tank::camera == Camera::Target)
-								setViewCoordinates(sizeX, sizeY, Player::airSpotter.xTargetPosition, Player::airSpotter.yTargetPosition, index);
-							
-							//.:: A death in spotter mode :::
-							if (p->hitPoints <= 0)
-							{
-								Player::airSpotter.isAirSpotter = false;
-								Player::airSpotter.currentPlayer = NULL;
-								Player::airSpotter.xTargetPosition = 0.0;
-								Player::airSpotter.yTargetPosition = 0.0;
-
-								Tank::camera = Camera::NotDefined;
-								if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
-									sAirStrikeQuery.stop();
-
-								for (auto a : entities)
+								if (a->name == "target" && static_cast<Air*>(a)->getOwn() == p)
 								{
-									if (a->name == "target" && static_cast<Air*>(a)->getOwn() == p)
-									{
-										a->isExist = false;
-										break;
-									}
+									a->isExist = false;
+									break;
 								}
 							}
 						}
+					}
 
-						//::::::::::::::::::::::::::::::::::::::::::::::::::
-						if (fadeOutTime != 0 && Tank::camera == Camera::StartGameSetted || Tank::camera == Camera::Commander)
-							p->checkIconCollision(maps[index], sTakingIcon);
+					//::::::::::::::::::::::::::::::::::::::::::::::::::
+					if (fadeOutTime != 0 && Tank::camera == Camera::StartGameSetted || Tank::camera == Camera::Commander)
+						p->checkIconCollision(maps[index], sTakingIcon);
 					}
 					else
 					{
-						if (p->isCommander)
-						{
-							p->isCommander = false;
-							Player::defineNewCommander(team);
-						}
+					if (p->isCommander)
+					{
+						p->isCommander = false;
+						Player::defineNewCommander(team);
+					}
 					}
 				}
 
@@ -1241,18 +1243,27 @@ int main()
 					if (e->status != DEAD)
 					{
 						static_cast<GroundVehicle*>(e)->checkMapCollision(maps[index]);
-						static_cast<GroundVehicle*>(e)->checkIconCollision(maps[index], sTakingIcon);
 
-						if (!e->round && e->isShot) 
-							e->destroyBrickWalls(maps[index]);
-						if (!e->round && e->isShot)
-							for (auto p : team)
-								e->destroyPlayersTanks(p);
+						if (e->name != "boss" && e->name != "turret")
+						{
+							static_cast<GroundVehicle*>(e)->checkIconCollision(maps[index], sTakingIcon);
 
-						if (e->round && e->isShot)
-							createShot(e, aEnemy1Round, aShell, aShellExp);
+							if (!e->round && e->isShot)
+								e->destroyBrickWalls(maps[index]);
+							if (!e->round && e->isShot)
+								for (auto p : team)
+									e->destroyPlayersTanks(p);
+
+							if (e->round && e->isShot)
+								createShot(e, aEnemy1Round, aShell, aShellExp);
+						}
 
 						//.:: Boss coding :::
+						if (e->name == "turret" && static_cast<TankTower*>(e)->isTargetSearch)
+						{
+							static_cast<TankTower*>(e)->detectTarget(team);
+						}
+
 						if (e->name == "boss" && e->status == WOUNDED && static_cast<Boss*>(e)->isOilSpillage)
 						{
 							static_cast<Boss*>(e)->isOilSpillage = false;
@@ -1637,21 +1648,21 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 
 		Enemy *enemy;
 		if (i <= 9)
-			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 8);
+			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 8);
 		else if (i > 9 && i <= 18)
-			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 7);
+			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 7);
 		else if (i > 18 && i <= 27)
-			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 6);
+			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 6);
 		else if (i > 27 && i <= 36)
-			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 5);
+			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 5);
 		else if (i > 36 && i <= 45)
-			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 4);
+			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 4);
 		else if (i > 45 && i <= 54)
-			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 3);
+			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 3);
 		else if (i > 54 && i <= 63)
-			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 2);
+			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 2);
 		else
-			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, "tank", 3, true, sExplosion, 12, "enemy", 1);
+			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 1);
 
 		entities.push_back(enemy);
 		squad.push_back(enemy);
@@ -1668,7 +1679,7 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 void createEnemyCommunicationTrucks(vector<CommunicationTruck*> &specialTransport, Animation &truck, SoundBuffer &sExplosion, int currentGameTime,
 	Animation &antenna_)
 {
-	CommunicationTruck *enemyTruck = new CommunicationTruck(truck, 1000, 300, "truck", 4, false, sExplosion, 14, "enemy", 1, currentGameTime);
+	CommunicationTruck *enemyTruck = new CommunicationTruck(truck, 1000, 300, "truck", 270, false, sExplosion, 14, "enemy", 1, currentGameTime);
 	RadioAntenna *antenna = new RadioAntenna(antenna_, "antenna", false, enemyTruck, 1.8f);
 
 	entities.push_back(enemyTruck);

@@ -91,7 +91,7 @@ void Boss::update(double time)
 
 void Boss::checkMapCollision(string *map)
 {
-	if (dir == 1)
+	if (dir == 0)
 		for (int i = (y - 30) / 32; i <= (y + 40) / 32; i++)
 			for (int j = (x - 2) / 32; j <= (x + 60) / 32; j++)
 			{
@@ -102,7 +102,7 @@ void Boss::checkMapCollision(string *map)
 					traffic.down.dir = true;
 			}
 
-	if (dir == 3)
+	if (dir == 180)
 		for (int i = (y + 20) / 32; i <= (y + 60) / 32; i++)
 			for (int j = (x - 4) / 32; j <= (x + 60) / 32; j++)
 			{
@@ -113,7 +113,7 @@ void Boss::checkMapCollision(string *map)
 					traffic.up.dir = true;
 			}
 
-	if (dir == 4)
+	if (dir == 270)
 		for (int i = (y) / 32; i <= (y + 40) / 32; i++)
 			for (int j = (x - 30) / 32; j <= (x + 20) / 32; j++)
 			{
@@ -124,7 +124,7 @@ void Boss::checkMapCollision(string *map)
 					traffic.right.dir = true;
 			}
 
-	if (dir == 2)
+	if (dir == 90)
 		for (int i = (y-10) / 32; i <= (y + 40) / 32; i++)
 			for (int j = (x + 52) / 32; j <= (x + 64) / 32; j++)// 42  50
 			{
