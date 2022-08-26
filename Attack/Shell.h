@@ -8,6 +8,7 @@ private:
 	float dist;
 	Animation aExplosion;
 	Tank *own;
+	short numberOfCannon;
 
 	//.:: Private_methods_of_class ::::::::::
 	void conveyExperience(int);
@@ -19,6 +20,7 @@ public:
 	//.:: Constructor :::::::::::::::::::::::
 	Shell();
 	Shell(Animation&, Animation&, Tank*);
+	Shell(Animation&, Animation&, Tank*, short);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Shell();

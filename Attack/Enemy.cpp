@@ -95,7 +95,7 @@ void Enemy::destroyBrickWalls(string *map)
 	}
 }
 
-void Enemy::destroyPlayersTanks(Tank *p)
+void Enemy::destroyPlayerTanks(Tank *p)
 {
 	if (p->name != "destroyed")
 	{

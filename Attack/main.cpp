@@ -378,7 +378,7 @@ int main()
 	BossArgs firstStageBossArgs = 
 	{
 		//.:: moveAnim, x, y, dir, isPlayAnim, level, numberOfPlayers, explosionSound, explosionFrameCount
-		aFirstStageBossBody, 180, mapsHeight[0] * 32 - 570, 180, true, 10, 1, firstStageBossExpBuf, 16
+		aFirstStageBossBody, 200, mapsHeight[0] * 32 - 520, 270, true, 10, 1, firstStageBossExpBuf, 16
 	};
 
 #pragma endregion
@@ -520,6 +520,7 @@ int main()
 	void createBomberLink(Player*, Sound&, Sound&, int, Animation&, Animation&, Animation&);
 	void dropBombs(Animation&, Animation&, Sound&);
 	void dropEnemyBombs(Animation&, Animation&, EnemyPlane*, Sound&);
+	void createBossShots(TankTower*, bool, int, Animation&, Animation&, Animation&);
 
 #pragma endregion
 
@@ -1252,16 +1253,27 @@ int main()
 								e->destroyBrickWalls(maps[index]);
 							if (!e->round && e->isShot)
 								for (auto p : team)
-									e->destroyPlayersTanks(p);
+									e->destroyPlayerTanks(p);
 
 							if (e->round && e->isShot)
 								createShot(e, aEnemy1Round, aShell, aShellExp);
 						}
 
 						//.:: Boss coding :::
-						if (e->name == "turret" && static_cast<TankTower*>(e)->isTargetSearch)
+						if (e->name == "turret") 
 						{
-							static_cast<TankTower*>(e)->detectTarget(team);
+							if (static_cast<TankTower*>(e)->isTargetSearch)
+							{
+								static_cast<TankTower*>(e)->detectTarget(team);
+							}
+							else
+								static_cast<TankTower*>(e)->destroyPlayerWithCannons();
+
+							if (static_cast<TankTower*>(e)->roundFirst && static_cast<TankTower*>(e)->isFirstShot)
+								createBossShots((TankTower*)e, true, gameTime, aFirstStageBossRound, aShell, aShellExp);
+									
+							if (static_cast<TankTower*>(e)->roundSecond && static_cast<TankTower*>(e)->isSecondShot)
+								createBossShots((TankTower*)e, false, gameTime, aFirstStageBossRound, aShell, aShellExp);
 						}
 
 						if (e->name == "boss" && e->status == WOUNDED && static_cast<Boss*>(e)->isOilSpillage)
@@ -1780,4 +1792,23 @@ void dropEnemyBombs(Animation &a, Animation &b, EnemyPlane *e, Sound &sound)
 
 	EnemyBomb *bomb = new EnemyBomb(a, b, e->getCoordX(false), e->getCoordY(false), "bomb");
 	entities.push_back(bomb);
+}
+
+void createBossShots(TankTower *boss, bool isFirstGun, int gameTime, Animation &a, Animation &b, Animation &c)
+{
+	if (isFirstGun)
+	{
+		boss->isFirstShot = false;
+		boss->roundFirst = false;
+	}
+	else
+	{
+		boss->isSecondShot = false;
+		boss->roundSecond = false;
+	}
+
+	Smoke *round = new Smoke(a, boss, "explosion", isFirstGun ? (short)1 : (short)2);
+	Shell *shell = new Shell(b, c, boss, isFirstGun ? (short)1 : (short)2);
+	entities.push_back(round);
+	entities.push_back(shell);
 }

@@ -26,6 +26,6 @@ public:
 
 	//.:: Public_method_of_class ::::::::::::
 	void destroyBrickWalls(string*);
-	void destroyPlayersTanks(Tank*);
+	void destroyPlayerTanks(Tank*);
 
 };

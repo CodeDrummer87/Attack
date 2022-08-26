@@ -32,6 +32,7 @@ public:
 	void update(double);
 	void detectTarget(vector<Player*>&);
 	void getRotationDirection(int&, int&);
+	void destroyPlayerWithCannons();
 
 	Color getCurrentColor()
 	{

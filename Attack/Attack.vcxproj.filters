@@ -24,15 +24,12 @@
     <Filter Include="Исходные файлы\Transport\Air">
       <UniqueIdentifier>{c4c5bf28-34e5-4dfa-bb8e-d45ffba8fa12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\BasicClasses">
+      <UniqueIdentifier>{72b7e5c8-7bde-40b5-9745-074c911b12a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Entity.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Shell.cpp">
@@ -83,12 +80,6 @@
     <ClCompile Include="Area.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Air.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="GroundVehicle.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Исходные файлы\Transport\Ground</Filter>
     </ClCompile>
@@ -97,6 +88,18 @@
     </ClCompile>
     <ClCompile Include="TankTower.cpp">
       <Filter>Исходные файлы\Transport\Ground\Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Исходные файлы\BasicClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="GroundVehicle.cpp">
+      <Filter>Исходные файлы\BasicClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Исходные файлы\BasicClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Air.cpp">
+      <Filter>Исходные файлы\BasicClasses</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

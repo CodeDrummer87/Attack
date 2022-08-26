@@ -22,16 +22,7 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_)
 
 		//.:: Explosion volume depends on the distance to the camera :::::::
 		if (army == "enemy")
-		{
-			if (y > view.getCenter().y - 20 * 32 && y < view.getCenter().y + 20 * 32)
-				anim.sound.setVolume(50.f);
-			else if (y > view.getCenter().y - 30 * 32 && y < view.getCenter().y - 20 * 32 ||
-				y < view.getCenter().y + 30 * 32 && y > view.getCenter().y + 20 * 32)
-				anim.sound.setVolume(15.f);
-			else
-				anim.sound.setVolume(0.f);
-		}
-		//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+			setExplosionVolume();
 	}
 
 	if (name == "smoke")
@@ -51,6 +42,39 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_)
 	anim.sprite.setPosition(x, y);
 	isExist = true;
 	status = ALIVE;
+}
+
+Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_, short numberOfCannon_)
+{
+	z_index = (short)3;
+
+	anim = a;
+	name = name_;
+	level = 0;
+	army = vehicle->army;
+	isPlayAnimation = true;
+	own = vehicle;
+	dir = vehicle->dir;
+	anim.sprite.setPosition(x, y);
+	isExist = true;
+	status = ALIVE;
+	numberOfCannon = numberOfCannon_;
+
+	double X = own->getCoordX(true);
+	double Y = own->getCoordY(true);
+
+	if (numberOfCannon == (short)1)
+	{
+		x = dir == 0 ? X -= 8 : dir == 90 ? X += 32 : dir == 180 ? X -= 7 : X -= 30;
+		y = dir == 0 ? Y -= 32 : dir == 90 ? Y -= 8 : dir == 180 ? Y += 32 : Y -= 8;
+	}
+	else
+	{
+		x = dir == 0 ? X += 8 : dir == 90 ? X += 32 : dir == 180 ? X += 8 : X -= 30;
+		y = dir == 0 ? Y -= 32 : dir == 90 ? Y += 7 : dir == 180 ? Y += 32 : Y += 7;
+	}
+
+	setExplosionVolume();
 }
 
 Smoke::~Smoke()
@@ -82,4 +106,15 @@ void Smoke::update(double time)
 				isExist = false;
 		}
 	}
+}
+
+void Smoke::setExplosionVolume()
+{
+	if (y > view.getCenter().y - 20 * 32 && y < view.getCenter().y + 20 * 32)
+		anim.sound.setVolume(50.f);
+	else if (y > view.getCenter().y - 30 * 32 && y < view.getCenter().y - 20 * 32 ||
+		y < view.getCenter().y + 30 * 32 && y > view.getCenter().y + 20 * 32)
+		anim.sound.setVolume(15.f);
+	else
+		anim.sound.setVolume(0.f);
 }

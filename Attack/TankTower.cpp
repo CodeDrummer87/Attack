@@ -17,6 +17,8 @@ TankTower::TankTower(Animation &a, double x_, double y_, int dir_, SoundBuffer &
 
 	isFirstShot = isSecondShot = true;
 	roundFirst = roundSecond = false;
+
+	dir = 90;
 }
 
 TankTower::~TankTower()
@@ -45,16 +47,17 @@ void TankTower::update(double time)
 					if (dir != angle)
 						getRotationDirection(dir, angle);
 
-					if (currentTarget != NULL && currentTarget->status == DEAD)
-					{
-						currentTarget->anim.sprite.setColor(Color::White);
-						currentTarget = NULL;
-						isTargetSearch = true;
-					}
+					
 				}
 				else
 				{
 					dir = own->dir;
+				}
+
+				if (currentTarget != NULL && currentTarget->status == DEAD)
+				{
+					currentTarget = NULL;
+					isTargetSearch = true;
 				}
 			}
 
@@ -122,13 +125,6 @@ void TankTower::detectTarget(vector<Player*> &players)
 			}
 		}
 	}
-
-	//.:: Temporary code :::
-	if (currentTarget != NULL)
-	{
-		//anim.sound.play();
-		currentTarget->anim.sprite.setColor(Color::Red);
-	}
 }
 
 int TankTower::takeAim(GroundVehicle *player)
@@ -152,4 +148,13 @@ void TankTower::getRotationDirection(int &d, int &a) //.:: d - dir, a - angle
 
 	(d > a && value < 180) ? d-- : (d > a && value > 180) ? d++ : d < a && value < 180 ? d++ : d--;
 	resetDegrees(d);
+}
+
+void TankTower::destroyPlayerWithCannons()
+{
+	if (dir == 0 || dir == 90 || dir == 180 || dir == 270)
+	{
+		isFirstShot ? roundFirst = true : roundFirst = false;
+		isSecondShot ? roundSecond = true : roundSecond = false;
+	}
 }

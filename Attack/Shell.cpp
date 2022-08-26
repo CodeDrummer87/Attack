@@ -3,6 +3,7 @@
 #include "Shell.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "TankTower.h"
 
 extern View view;
 
@@ -23,6 +24,41 @@ Shell::Shell(Animation &a, Animation &b, Tank *tank)
 	number = own->number;
 	x = tank->getCoordX(true);
 	y = tank->getCoordY(true);
+	anim.sprite.setPosition(x, y);
+	isExist = isPlayAnimation = true;
+	level = tank->level;
+	isExplosion = false;
+	status = ALIVE;
+}
+
+Shell::Shell(Animation &a, Animation &b, Tank *tank, short numberOfCannon_)
+{
+	z_index = 1;
+
+	dist = 0.0f;
+	name = "shell";
+	army = tank->army;
+	anim = a;
+	aExplosion = b;
+	dir = tank->dir;
+	own = tank;
+	number = own->number;
+	numberOfCannon = numberOfCannon_;
+	
+	double X = tank->getCoordX(true);
+	double Y = tank->getCoordY(true);
+	
+	if (numberOfCannon == (short)1)
+	{
+		x = dir == 0 ? X -= 8 : dir == 90 ? X += 27 : dir == 180 ? X -= 7 : X -= 27;
+		y = dir == 0 ? Y -= 27 : dir == 90 ? Y -= 8 : dir == 180 ? Y += 27 : Y -= 8;
+	}
+	else
+	{
+		x = dir == 0 ? X += 8 : dir == 90 ? X += 27 : dir == 180 ? X += 8 : X -= 27;
+		y = dir == 0 ? Y -= 27 : dir == 90 ? Y += 7 : dir == 180 ? Y += 27 : Y += 7;
+	}
+	
 	anim.sprite.setPosition(x, y);
 	isExist = isPlayAnimation = true;
 	level = tank->level;
@@ -93,7 +129,9 @@ void Shell::update(double time)
 		if (anim.isEnd(time))
 		{
 			isExist = false;
-			own->isShot = true;
+			own->name == "turret" && numberOfCannon == (short)1 ? static_cast<TankTower*>(own)->isFirstShot = true
+				: own->name == "turret" && numberOfCannon == (short)2 ? static_cast<TankTower*>(own)->isSecondShot = true
+				: own->isShot = true;
 		}
 }
 
@@ -155,10 +193,12 @@ void Shell::damageVehicle(GroundVehicle *t, Sound &armorSound)
 						own->isShowSniperAchiev = true;
 					}
 
-					if (army == "enemy" && own->name == "tank")
+					if (army == "enemy" && own->name == "tank" || own->name == "turret")
 					{
-						this->paintOwn();
-						static_cast<Enemy*>(own)->round = false;
+						if (name == "tank") this->paintOwn();
+						own->name == "turret" && numberOfCannon == (short)1 ? static_cast<TankTower*>(own)->roundFirst = false
+							: own->name == "turret" && numberOfCannon == (short)2 ? static_cast<TankTower*>(own)->roundSecond = false
+							: static_cast<Enemy*>(own)->round = false;
 					}
 					else
 						conveyExperience(t->level);
@@ -170,7 +210,9 @@ void Shell::damageVehicle(GroundVehicle *t, Sound &armorSound)
 			}
 			isExist = false;
 			if (name == "shell")
-				own->isShot = true;
+				own->name == "turret" && numberOfCannon == (short)1 ? static_cast<TankTower*>(own)->isFirstShot = true
+				: own->name == "turret" && numberOfCannon == (short)2 ? static_cast<TankTower*>(own)->isSecondShot = true
+				: own->isShot = true;
 		}
 	}
 }
