@@ -6,7 +6,6 @@ class Shell : public Entity
 {
 private:
 	float dist;
-	Animation aExplosion;
 	Tank *own;
 	short numberOfCannon;
 
@@ -15,6 +14,7 @@ private:
 	void paintOwn();
 
 public:
+	Animation aExplosion;
 	bool isExplosion;
 
 	//.:: Constructor :::::::::::::::::::::::

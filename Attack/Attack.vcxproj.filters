@@ -5,13 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Файлы заголовков">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Файлы заголовков\maps">
-      <UniqueIdentifier>{d5f24cdf-22b0-4596-90ae-76cdb5b59829}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходные файлы\Transport">
       <UniqueIdentifier>{9e6eed4a-339c-4ad4-b901-b7592a369259}</UniqueIdentifier>
     </Filter>
@@ -27,12 +20,19 @@
     <Filter Include="Исходные файлы\BasicClasses">
       <UniqueIdentifier>{72b7e5c8-7bde-40b5-9745-074c911b12a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\Shells">
+      <UniqueIdentifier>{181ef0db-56f3-413e-968c-a0480842a753}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков\maps">
+      <UniqueIdentifier>{d5f24cdf-22b0-4596-90ae-76cdb5b59829}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Shell.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Smoke.cpp">
@@ -100,6 +100,12 @@
     </ClCompile>
     <ClCompile Include="Air.cpp">
       <Filter>Исходные файлы\BasicClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Shell.cpp">
+      <Filter>Исходные файлы\Shells</Filter>
+    </ClCompile>
+    <ClCompile Include="MortarShell.cpp">
+      <Filter>Исходные файлы\Shells</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -239,6 +245,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="TankTower.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="MortarShell.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

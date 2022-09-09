@@ -15,6 +15,7 @@ public:
 	Smoke();
 	Smoke(Animation&, GroundVehicle*, string);
 	Smoke(Animation&, GroundVehicle*, string, short);
+	Smoke(Animation&, double, double, string);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Smoke();

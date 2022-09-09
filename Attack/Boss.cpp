@@ -10,9 +10,11 @@ Boss::Boss(BossArgs &args)
 {
 	z_index = 3;
 
+	dir = 180;
 	hitPoints = 100 + args.numberOfPlayers * 75;
 	nextOilSpillageTime = 0;
-	isOilSpillage = false;
+	isOilSpillage = isAiming = wasDustClap = false;
+	aimingTime = -1;
 }
 
 Boss::~Boss()
@@ -39,6 +41,7 @@ void Boss::update(double time)
 		{
 			if (status != WOUNDED)
 			{
+				anim.speed = anim.speed == 0.000 ? 0.016 : 0.016;
 				status = WOUNDED;
 				anim.setFrames(0, 128, 128, 128, 2, anim.speed);
 				anim.sound.setPitch(0.5f);
@@ -46,6 +49,9 @@ void Boss::update(double time)
 		}
 		else
 			status = DEAD;
+
+		anim.speed = status != DEAD && isAiming ? 0.000 : 0.016;
+
 		//::::::::::::::::::::::::
 		if (status == ALIVE)
 		{
@@ -83,8 +89,8 @@ void Boss::update(double time)
 				isSmoking = false;
 			}
 		}
-		//.:: Vehicle control :::
-		if (!isPlayerControl)
+
+		if (!isPlayerControl && !isAiming)
 			controlEnemyVehicle(time);
 	}
 }
@@ -98,6 +104,9 @@ void Boss::checkMapCollision(string *map)
 				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
 					traffic.up.dir = false;
 
+				if (map[i][j] == 'F')
+					map[i][j] = ' ';
+
 				if (!traffic.down.dir)
 					traffic.down.dir = true;
 			}
@@ -108,6 +117,9 @@ void Boss::checkMapCollision(string *map)
 			{
 				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
 					traffic.down.dir = false;
+
+				if (map[i][j] == 'F')
+					map[i][j] = ' ';
 
 				if (!traffic.up.dir)
 					traffic.up.dir = true;
@@ -120,16 +132,22 @@ void Boss::checkMapCollision(string *map)
 				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
 					traffic.left.dir = false;
 
+				if (map[i][j] == 'F')
+					map[i][j] = ' ';
+
 				if (!traffic.right.dir)
 					traffic.right.dir = true;
 			}
 
 	if (dir == 90)
-		for (int i = (y-10) / 32; i <= (y + 40) / 32; i++)
-			for (int j = (x + 52) / 32; j <= (x + 64) / 32; j++)// 42  50
+		for (int i = (y - 10) / 32; i <= (y + 40) / 32; i++)
+			for (int j = (x + 52) / 32; j <= (x + 64) / 32; j++)
 			{
 				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
 					traffic.right.dir = false;
+
+				if (map[i][j] == 'F')
+					map[i][j] = ' ';
 
 				if (!traffic.left.dir)
 					traffic.left.dir = true;

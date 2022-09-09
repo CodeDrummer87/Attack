@@ -14,11 +14,17 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_)
 	level = 0;
 	army = vehicle->army;
 
-	if (name == "explosion")
+	if (name == "explosion" || name == "dustClap")
 	{
 		dir = vehicle->dir;
 		x = vehicle->getCoordX(true);
 		y = vehicle->getCoordY(true);
+
+		if (name == "dustClap")
+		{
+			z_index = 3;
+			anim.sprite.setScale(1.4f, 1.4f);
+		}
 
 		//.:: Explosion volume depends on the distance to the camera :::::::
 		if (army == "enemy")
@@ -77,6 +83,23 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_, short numberOfC
 	setExplosionVolume();
 }
 
+Smoke::Smoke(Animation &a, double X, double Y, string name_)
+{
+	z_index = 4;
+
+	anim = a;
+	x = X;
+	y = Y;
+	name = name_;
+	level = 0;
+	army = "";
+	isPlayAnimation = true;
+	own = NULL;
+	anim.sprite.setPosition(x, y);
+	isExist = true;
+	status = ALIVE;
+}
+
 Smoke::~Smoke()
 {}
 
@@ -84,7 +107,7 @@ void Smoke::update(double time)
 {
 	if (isExist)
 	{
-		if (name == "explosion")
+		if (name == "explosion" || name == "dustClap")
 			if (anim.isEnd(time))
 				isExist = false;
 
@@ -104,6 +127,12 @@ void Smoke::update(double time)
 
 			if (own->isDrowned)
 				isExist = false;
+		}
+
+		if (name == "dustClap")
+		{
+			x = own->getCoordX(false);
+			y = own->getCoordY(false);
 		}
 	}
 }

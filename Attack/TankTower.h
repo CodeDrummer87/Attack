@@ -7,19 +7,17 @@ class TankTower : public Enemy
 private:
 	GroundVehicle *own;
 
-	bool isActive;
-	GroundVehicle *currentTarget;
-
-	//.:: Methods_of_class ::::::::::::::::::
-	int takeAim(GroundVehicle*);
-
 public:
+	GroundVehicle *currentTarget;
 	bool isTargetSearch;
 
 	bool roundFirst;
 	bool roundSecond;
 	bool isFirstShot;
 	bool isSecondShot;
+
+	bool isMortarShootTime;
+	int mortarShootTime;
 
 	//.:: Constructor :::::::::::::::::::::::
 	TankTower();
@@ -30,14 +28,11 @@ public:
 
 	//.:: Methods_of_class ::::::::::::::::::
 	void update(double);
-	void detectTarget(vector<Player*>&);
+	void detectTarget(vector<Player*>&, int);
 	void getRotationDirection(int&, int&);
 	void destroyPlayerWithCannons();
-
-	Color getCurrentColor()
-	{
-		return currentTarget->number == 1 ? Color::Red : currentTarget->number == 2 ? Color::Yellow : currentTarget->number == 3 ?
-			Color::Magenta : currentTarget->number == 4 ? Color::Cyan : Color::Green;
-	}
+	void setNextAimingTime(int);
+	Tank* getTargetForMortar(vector<Player*>);
+	int takeAim(GroundVehicle*);
 
 };

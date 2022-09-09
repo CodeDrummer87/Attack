@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TankTower.h"
+#include "Boss.h"
 
 TankTower::TankTower()
 {}
@@ -11,14 +12,14 @@ TankTower::TankTower(Animation &a, double x_, double y_, int dir_, SoundBuffer &
 	z_index = 3;
 	own = own_;
 
-	isActive = true;//false;
 	currentTarget = NULL;
 	isTargetSearch = true;
 
 	isFirstShot = isSecondShot = true;
-	roundFirst = roundSecond = false;
+	roundFirst = roundSecond = isMortarShootTime = false;
+	mortarShootTime = 0;
 
-	dir = 90;
+	dir = 180;
 }
 
 TankTower::~TankTower()
@@ -26,86 +27,83 @@ TankTower::~TankTower()
 
 void TankTower::update(double time)
 {
-	if (isActive)
+	if (isDestroyed)
 	{
-		if (isDestroyed)
+		if (isPlayAnimation)
+			isPlayAnimation = false;
+	}
+	else
+	{
+		if (status != DEAD && !static_cast<Boss*>(own)->isAiming)
 		{
-			if (isPlayAnimation)
-				isPlayAnimation = false;
+			x = own->getCoordX(false);
+			y = own->getCoordY(false);
+
+			if (!isTargetSearch && (currentTarget != NULL || currentTarget->status != DEAD))
+			{
+				int angle = takeAim(currentTarget);
+				if (dir != angle)
+					getRotationDirection(dir, angle);			
+			}
+			else
+				dir = own->dir;
+
+			if (currentTarget != NULL && currentTarget->status == DEAD)
+			{
+				currentTarget = NULL;
+				isTargetSearch = true;
+				static_cast<Boss*>(own)->isAiming = false;
+				static_cast<Boss*>(own)->aimingTime = 0;
+			}
 		}
-		else
+
+		if (!own->isExist)
+			isExist = false;
+
+		if (own->status == WOUNDED && status != WOUNDED)
 		{
-			if (status != DEAD)
+			status = WOUNDED;
+			anim.setFrames(0, 128, 128, 128, 1, 1);
+			anim.sound.setPitch(0.5f);
+		}
+
+		if (own->status == DEAD && status != DEAD)
+			status = DEAD;
+
+		if (status == DEAD)
+		{
+			if (isTransition)
 			{
-				x = own->getCoordX(false);
-				y = own->getCoordY(false);
-
-				if (!isTargetSearch)
+				if (anim.isEnd(time))
 				{
-					int angle = takeAim(currentTarget);
-
-					if (dir != angle)
-						getRotationDirection(dir, angle);
-
-					
+					anim.frames[0] = IntRect(0, 384, 128, 128);
+					anim.sound.stop();
+					isDestroyed = true;
 				}
 				else
 				{
-					dir = own->dir;
-				}
-
-				if (currentTarget != NULL && currentTarget->status == DEAD)
-				{
-					currentTarget = NULL;
-					isTargetSearch = true;
+					dir++;
+					x += 0.4;
+					y -= 0.4;
 				}
 			}
-
-			if (!own->isExist)
-				isExist = false;
-
-			if (own->status == WOUNDED && status != WOUNDED)
+			else
 			{
-				status = WOUNDED;
-				anim.setFrames(0, 128, 128, 128, 1, 1);
-				anim.sound.setPitch(0.5f);
-			}
-
-			if (own->status == DEAD && status != DEAD)
-				status = DEAD;
-
-			if (status == DEAD)
-			{
-				if (isTransition)
-				{
-					if (anim.isEnd(time))
-					{
-						anim.frames[0] = IntRect(0, 384, 128, 128);
-						anim.sound.stop();
-						isDestroyed = true;
-					}
-					else
-					{
-						dir++;
-						x += 0.4;
-						y -= 0.4;
-					}
-				}
-				else
-				{
-					name = "destroyed";
-					isPlayAnimation = true;
-					anim.setFrames(0, 256, 128, 128, 11, 0.008);
-					isTransition = true;
-				}
+				name = "destroyed";
+				isPlayAnimation = true;
+				anim.setFrames(0, 256, 128, 128, 11, 0.008);
+				isTransition = true;
 			}
 		}
 	}
 }
 
-void TankTower::detectTarget(vector<Player*> &players)
+void TankTower::detectTarget(vector<Player*> &players, int currentTime)
 {
-	FloatRect bossAura = FloatRect(x, y, 550, 450);
+	CircleShape aura = CircleShape(550.f);
+	aura.setOrigin(aura.getGlobalBounds().width / 2, aura.getGlobalBounds().height / 2);
+	aura.setPosition(x, y);
+	FloatRect bossAura = aura.getGlobalBounds();
 
 	for (int i = 0; i < players.size(); i++)
 	{
@@ -121,6 +119,9 @@ void TankTower::detectTarget(vector<Player*> &players)
 			{
 				currentTarget = players[i];
 				isTargetSearch = false;
+
+				static_cast<Boss*>(own)->aimingTime = currentTime + 12;
+				mortarShootTime = currentTime + 16;
 				break;
 			}
 		}
@@ -141,7 +142,7 @@ int TankTower::takeAim(GroundVehicle *player)
 
 	return angle;
 }
-
+ 
 void TankTower::getRotationDirection(int &d, int &a) //.:: d - dir, a - angle
 {
 	int value = d > a ? d - a : a - d;
@@ -156,5 +157,29 @@ void TankTower::destroyPlayerWithCannons()
 	{
 		isFirstShot ? roundFirst = true : roundFirst = false;
 		isSecondShot ? roundSecond = true : roundSecond = false;
+	}
+}
+
+void TankTower::setNextAimingTime(int currentTime)
+{
+	static_cast<Boss*>(own)->isAiming = false;
+	static_cast<Boss*>(own)->aimingTime = currentTime + 12;
+	
+	isMortarShootTime = false;
+	mortarShootTime = currentTime + 16;
+}
+
+Tank* TankTower::getTargetForMortar(vector<Player*> players)
+{
+	int index;
+	int counter = 0;
+	while (true)
+	{
+		++counter;
+		if (counter == 50) return NULL;
+
+		index = rand() % players.size();
+		if (players[index]->status != Status::DEAD)
+			return players[index];
 	}
 }

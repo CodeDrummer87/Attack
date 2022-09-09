@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "TankTower.h"
+#include "Boss.h"
 
 extern View view;
 
@@ -137,32 +138,31 @@ void Shell::update(double time)
 
 void Shell::checkMapCollision(string map[])
 {
-	static int neighborCoordX;
-	static int neighborCoordY;
+	int w = dir == 90 || dir == 270 ? 4 : 2;
+	int h = dir == 90 || dir == 270 ? 2 : 4;
+	int X = (x - w) / 32;
+	int Y = (y - h) / 32;
 
-	for (int i = y / 32; i < (y + anim.getShellRect(dir).height) / 32; i++)
-		for (int j = x / 32; j < (x + anim.getShellRect(dir).width) / 32; j++)
-		{
-			neighborCoordX = j;
-			neighborCoordY = i;
-			if (dir % 2 == 0)
-				neighborCoordY = (i * 32 + 32) / 32;
-			else
-				neighborCoordX = (j * 32 + 32) / 32;
+	bool isNearbyBarrier = false;
+	dir == 0 && map[Y + 1][X] == 'b' ? map[Y + 1][X] = ' ', (map[Y + 1][X + 1] == 'b' ? map[Y + 1][X + 1] = ' ' : false), isExplosion = isNearbyBarrier = true
+		: dir == 90 && map[Y][X - 1] == 'b' ? map[Y][X - 1] = ' ', isExplosion = isNearbyBarrier = true
+		: dir == 180 && map[Y - 1][X] == 'b' ? map[Y - 1][X] = ' ', isExplosion = isNearbyBarrier = true
+		: dir == 270 && map[Y][X + 1] == 'b' ? map[Y][X + 1] = ' ', (map[Y + 1][X + 1] == 'b' ? map[Y + 1][X + 1] = ' ' : false), isExplosion = isNearbyBarrier = true : false;
+	
+	(dir == 0 && map[Y + 1][X] == 'B') || (dir == 90 && map[Y][X - 1] == 'B')
+		|| (dir == 180 && map[Y - 1][X] == 'B') || (dir == 270 && map[Y][X + 1] == 'B') ? isExplosion = true : false;
+	
+	if (isNearbyBarrier) return;
 
-			if (map[i][j] == 'b' || map[i][j] == 'B')
-			{
-				static_cast<Shell*>(this)->isExplosion = true;
-				if (map[i][j] == 'b')
-					map[i][j] = ' ';
-			}
+	if (map[Y][X] == 'b' || map[Y][X] == 'B')
+	{
+		isExplosion = true;
+		if (map[Y][X] == 'b')
+			map[Y][X] = ' ';
+	}
 
-			if (map[neighborCoordY][neighborCoordX] == 'b')
-			{
-				static_cast<Shell*>(this)->isExplosion = true;
-				map[neighborCoordY][neighborCoordX] = ' ';
-			}
-		}
+	(dir == 90 || dir == 270) && map[Y + 1][X] == 'b' ? map[Y + 1][X] = ' ', isExplosion = true
+		: (dir == 0 || dir == 180) && map[Y][X + 1] == 'b' ? map[Y][X + 1] = ' ', isExplosion = true : false;
 }
 
 void Shell::damageVehicle(GroundVehicle *t, Sound &armorSound)
@@ -193,9 +193,9 @@ void Shell::damageVehicle(GroundVehicle *t, Sound &armorSound)
 						own->isShowSniperAchiev = true;
 					}
 
-					if (army == "enemy" && own->name == "tank" || own->name == "turret")
+					if (army == "enemy" && (own->name == "tank" || own->name == "turret"))
 					{
-						if (name == "tank") this->paintOwn();
+						if (own->name == "tank") this->paintOwn();
 						own->name == "turret" && numberOfCannon == (short)1 ? static_cast<TankTower*>(own)->roundFirst = false
 							: own->name == "turret" && numberOfCannon == (short)2 ? static_cast<TankTower*>(own)->roundSecond = false
 							: static_cast<Enemy*>(own)->round = false;
@@ -205,7 +205,7 @@ void Shell::damageVehicle(GroundVehicle *t, Sound &armorSound)
 				}
 
 				if (army == "player" && dir == t->dir)
-					static_cast<Enemy*>(t)->dir = getCounterDirection(dir);
+					t->dir = getCounterDirection(dir);
 
 			}
 			isExist = false;
@@ -268,8 +268,8 @@ void Shell::damageBoss(GroundVehicle *boss_, Sound &armorSound, Sound &armorResi
 					conveyExperience(boss_->level);
 				}
 
-				if (army == "player" && dir == boss_->dir)
-					static_cast<Enemy*>(boss_)->dir = getCounterDirection(boss_->dir);
+				if (army == "player" && dir == boss_->dir && !static_cast<Boss*>(boss_)->isAiming)
+					boss_->dir = getCounterDirection(boss_->dir);
 			}
 			isExist = false;
 			if (name == "shell")

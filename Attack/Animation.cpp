@@ -95,6 +95,16 @@ void Animation::setFrames(int x, int y, int width, int height, int count, double
 	speed = speed_;
 }
 
+void Animation::setFramesDynamic(int x, int y, int width, int height)
+{
+	int count = frames.size();
+	if (frames.size() > 0)
+		frames.clear();
+
+	for (int i = 0; i < count; i++)
+		frames.push_back(IntRect((x + i * width), y, width, height));
+}
+
 bool Animation::getPenultimateFrame(double time)
 {
 	return frame + speed * time == frames.size() - 2;

@@ -7,16 +7,17 @@ OilPuddle::OilPuddle()
 
 OilPuddle::OilPuddle(Animation &anim_, double X, double Y, int ownDir, bool isPlayAnimation_, int currentTime)
 {
+	z_index = 0;
+
 	anim = anim_;
 	isExist = true;
-	z_index = 0;
 
 	switch (ownDir)
 	{
-	case 1: x = X; y = Y + 35; break;
-	case 2: x = X - 35; y = Y; break;
-	case 3: x = X; y = Y - 35; break;
-	case 4: x = X + 35; y = Y; break;
+	case 0: x = X; y = Y + 35; break;
+	case 90: x = X - 35; y = Y; break;
+	case 180: x = X; y = Y - 35; break;
+	case 270: x = X + 35; y = Y; break;
 	}
 
 	number = ++puddleCounter;

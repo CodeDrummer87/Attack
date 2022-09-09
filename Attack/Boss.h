@@ -22,6 +22,11 @@ public:
 	bool isOilSpillage;
 	int nextOilSpillageTime;
 
+	bool isAiming;
+	int aimingTime;
+
+	bool wasDustClap;
+
 	//.:: Constructor :::::::::::::::::::::::
 	Boss();
 	Boss(BossArgs&);

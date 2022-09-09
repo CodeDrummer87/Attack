@@ -153,6 +153,7 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="GroundVehicle.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MortarShell.cpp" />
     <ClCompile Include="OilPuddle.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="GroundVehicle.h" />
     <ClInclude Include="libraries.h" />
     <ClInclude Include="maps.h" />
+    <ClInclude Include="MortarShell.h" />
     <ClInclude Include="OilPuddle.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Player.h" />
