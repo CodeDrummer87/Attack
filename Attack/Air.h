@@ -12,8 +12,6 @@ private:
 	Entity *own;
 
 public:
-	int number;
-
 	//.:: Constructor ::::::::::::::::::::::
 	Air();
 	Air(Animation&, Animation&, Entity*, string);

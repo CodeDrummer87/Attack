@@ -7,6 +7,8 @@ EnemyPlane::EnemyPlane()
 
 EnemyPlane::EnemyPlane(Animation &a, Animation &b, Animation &c, double X, double Y, string name_, double dropPoint_, int mapHeight_)
 {
+	z_index = (short)6;
+
 	name = name_;
 	mapHeight = mapHeight_ * 32;
 	dropPoint = dropPoint_;
@@ -44,8 +46,8 @@ void EnemyPlane::update(double time)
 	if (y >= mapHeight + 200)
 		isExist = false;
 
-	aTrace.update(time, true, 3);
-	aJetFlame.update(time, true, 3);
+	aTrace.update(time, true, 180);
+	aJetFlame.update(time, true, 180);
 }
 
 void EnemyPlane::draw(RenderWindow &app)

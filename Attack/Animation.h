@@ -25,5 +25,8 @@ public:
 	bool isEnd(double);
 	FloatRect getRect(int);
 	FloatRect getShellRect(bool);
+	void setFrames(int, int, int, int, int, double);
+	void setFramesDynamic(int, int, int, int);
+	bool getPenultimateFrame(double);
 
 };

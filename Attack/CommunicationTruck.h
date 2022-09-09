@@ -10,7 +10,7 @@ public:
 
 	//.:: Constructor :::::::::::::::::::::::
 	CommunicationTruck();
-	CommunicationTruck(Animation&, double, double, string, int, bool, Animation&, string, int, int);
+	CommunicationTruck(Animation&, double, double, string, int, bool, SoundBuffer&, int, string, int, int);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~CommunicationTruck();

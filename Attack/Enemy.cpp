@@ -5,8 +5,8 @@
 Enemy::Enemy()
 {}
 
-Enemy::Enemy(Animation &a, double x_, double y_, string name_, int dir_, bool isPlayAnimation_, Animation &b,
-	string army_, int lvl) : Tank(a, x_, y_, name_, dir_, isPlayAnimation_, b, army_, lvl)
+Enemy::Enemy(Animation &a, double x_, double y_, string name_, int dir_, bool isPlayAnimation_, SoundBuffer &sExplosion_, int expFrameCount,
+	string army_, int lvl) : Tank(a, x_, y_, name_, dir_, isPlayAnimation_, sExplosion_, expFrameCount, army_, lvl)
 {
 	isPlayerControl = false;
 	round = false;
@@ -25,7 +25,7 @@ void Enemy::destroyBrickWalls(string *map)
 
 	switch (dir)
 	{
-	case 1:
+	case 0:
 		dist = tY - 3;
 		while (tY > dist)
 		{
@@ -42,7 +42,7 @@ void Enemy::destroyBrickWalls(string *map)
 
 		return;
 
-	case 2:
+	case 90:
 		dist = tX + 3;
 		while (tX < dist)
 		{
@@ -59,7 +59,7 @@ void Enemy::destroyBrickWalls(string *map)
 
 		return;
 
-	case 3:
+	case 180:
 		dist = tY + 3;
 		while (tY < dist)
 		{
@@ -76,7 +76,7 @@ void Enemy::destroyBrickWalls(string *map)
 
 		return;
 
-	case 4:
+	case 270:
 		dist = tX - 3;
 		while (tX > dist)
 		{
@@ -95,34 +95,34 @@ void Enemy::destroyBrickWalls(string *map)
 	}
 }
 
-void Enemy::destroyPlayersTanks(Tank *p)
+void Enemy::destroyPlayerTanks(Tank *p)
 {
 	if (p->name != "destroyed")
 	{
 		switch (dir)
 		{
-		case 1:
+		case 0:
 			if (y - p->getCoordY(false) <= 350 + (float)level * 50 && x > p->getCoordX(false) - 32 && x < p->getCoordX(false) + 32)
 			{
 				round = y > p->getCoordY(false) ? true : false;
 				return;
 			}
 
-		case 2:
+		case 90:
 			if (p->getCoordX(false) - x <= 350 + (float)level * 50 && y > p->getCoordY(false) - 32 && y < p->getCoordY(false) + 32)
 			{
 				round = x < p->getCoordX(false) ? true : false;
 				return;
 			}
 
-		case 3:
+		case 180:
 			if (p->getCoordY(false) - y <= 350 + (float)level * 50 && x > p->getCoordX(false) - 32 && x < p->getCoordX(false) + 32)
 			{
 				round = y < p->getCoordY(false) ? true : false;
 				return;
 			}
 
-		case 4:
+		case 270:
 			if (x - p->getCoordX(false) <= 350 + (float)level * 50 &&
 				y > p->getCoordY(false) - 32 && y < p->getCoordY(false) + 32)
 			{

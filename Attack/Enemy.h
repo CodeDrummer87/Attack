@@ -19,13 +19,13 @@ public:
 
 	//.:: Constructor :::::::::::::::::::::::
 	Enemy();
-	Enemy(Animation&, double, double, string, int, bool, Animation&, string, int);
+	Enemy(Animation&, double, double, string, int, bool, SoundBuffer&, int, string, int);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Enemy();
 
 	//.:: Public_method_of_class ::::::::::::
 	void destroyBrickWalls(string*);
-	void destroyPlayersTanks(Tank*);
+	void destroyPlayerTanks(Tank*);
 
 };

@@ -5,8 +5,9 @@
 Player::Player()
 {}
 
-Player::Player(Animation &anim, double x_, double y_, string name_, int dir_, bool isPlayAnimation_,
-	Animation &aExplosion, string army_, int level_) : Tank(anim, x_, y_, name_, dir_, isPlayAnimation_, aExplosion, army_, level_)
+Player::Player(Animation &anim, double x_, double y_, string name_, int dir_, bool isPlayAnimation_, SoundBuffer &sExplosion_,
+	int expFrameCount, string army_, int level_)
+	: Tank(anim, x_, y_, name_, dir_, isPlayAnimation_, sExplosion_, expFrameCount, army_, level_)
 {
 	isPlayerControl = true;
 
@@ -49,13 +50,13 @@ void Player::update(double time)
 
 		switch (dir)
 		{
-		case 1: dy = -0.09 * time - ((double)level / 100);
+		case 0: dy = -0.09 * time - ((double)level / 100);
 			break;
-		case 2: dx = 0.09 * time + ((double)level / 100);
+		case 90: dx = 0.09 * time + ((double)level / 100);
 			break;
-		case 3: dy = 0.09 * time + ((double)level / 100);
+		case 180: dy = 0.09 * time + ((double)level / 100);
 			break;
-		case 4: dx = -0.09 * time - ((double)level / 100);
+		case 270: dx = -0.09 * time - ((double)level / 100);
 			break;
 		}
 
@@ -90,7 +91,7 @@ void Player::setStartPosition(double x_, double y_)
 {
 	this->x = x_;
 	this->y = y_;
-	this->dir = 1;
+	this->dir = 0;
 }
 
 void Player::checkIconCollision(string map[], Sound &sound)
