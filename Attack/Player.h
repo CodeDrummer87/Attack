@@ -18,12 +18,21 @@ private:
 	int currentExperience;
 	int requiredExperience;
 
+	//.:: Methods_of_class :::::::::::::::::
+	bool checkTowingDirectionBan(char);
+
 public:
 	bool hasRank;
 	bool isPreferment;
 	bool isCommander;
 
 	static AirSpotter airSpotter;
+
+	bool isTowingBack;
+	bool isKeyPressed;
+	char combo[4];
+	string currentCipher;
+	GroundVehicle * destroyedVehicle;
 
 	//.:: Constructor ::::::::::::::::::::::
 	Player();
@@ -41,5 +50,11 @@ public:
 	
 	static void defineNewCommander(vector<Player*>&);
 	static bool checkTeamForCommander(vector<Player*>);
+	void insertCodeSymbol(char);
+	bool checkCollisionWithDestroyedTank(GroundVehicle*);
+	void setTow(GroundVehicle*, string);
+	void towBack(double);
+	void checkMapCollisionWhenTow(string *);
+	void controlOfTank(char, double, double);
 
 };

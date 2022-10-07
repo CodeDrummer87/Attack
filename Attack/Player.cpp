@@ -19,7 +19,11 @@ Player::Player(Animation &anim, double x_, double y_, string name_, int dir_, bo
 	else
 		requiredExperience = 2;
 
-	hasRank = isPreferment = isCommander = false;
+	hasRank = isPreferment = isCommander = isTowingBack = false;
+
+	combo[3] = '\0';
+	isKeyPressed = false;
+	destroyedVehicle = NULL;
 }
 
 Player::~Player()
@@ -83,6 +87,11 @@ void Player::update(double time)
 	}
 	else
 	{
+		if (isTowingBack)
+		{
+			towBack(time);
+		}
+
 		Tank::update(time);
 	}
 }
@@ -191,4 +200,144 @@ void Player::nickDown(int exp)
 {
 	++totalKills;
 	currentExperience += exp;
+}
+
+void Player::insertCodeSymbol(char ch)
+{
+	if (isKeyPressed)
+		isKeyPressed = combo[0] == ch ? true : false;
+
+	if (!isKeyPressed)
+	{
+		isKeyPressed = true;
+
+		combo[2] = combo[1];
+		combo[1] = combo[0];
+		combo[0] = ch;
+	}
+}
+
+bool Player::checkCollisionWithDestroyedTank(GroundVehicle *d)
+{
+	double dX = (d->dir == 0 || d->dir == 180) ? d->getCoordX(false) - 34 : d->getCoordX(false) - 40;
+	double dY = (d->dir == 0 || d->dir == 180) ? d->getCoordY(false) - 40 : d->getCoordY(false) - 34;
+	FloatRect destroyed = (d->dir == 0 || d->dir == 180) ? FloatRect(dX, dY, 68, 80) : FloatRect(dX, dY, 80, 68);
+
+	double tX = (dir == 0 || dir == 180) ? x - 25 : x - 19;
+	double tY = (dir == 0 || dir == 180) ? y - 19 : y - 25;
+	FloatRect tank = (dir == 0 || dir == 180) ? FloatRect(tX, tY, 37, 49) : FloatRect(tX, tY, 49, 37);
+
+	return tank.intersects(destroyed);
+}
+
+void Player::setTow(GroundVehicle *d, string cipher)
+{
+	isTowingBack = true;
+	destroyedVehicle = d;
+	currentCipher = cipher;
+}
+
+void Player::towBack(double time)
+{
+	if (currentCipher == "311")
+	{
+		accelerate(0, 0.045 * time);
+		destroyedVehicle->setCoordY(y - 52);
+	}
+
+	if (currentCipher == "133")
+	{
+		accelerate(180, -0.045 * time);
+		destroyedVehicle->setCoordY(y + 52);
+	}
+
+	if (currentCipher == "422")
+	{
+		accelerate(90, -0.045 * time);
+		destroyedVehicle->setCoordX(x + 52);
+	}
+
+	if (currentCipher == "244")
+	{
+		accelerate(270, 0.045 * time);
+		destroyedVehicle->setCoordX(x - 52);
+	}
+}
+
+void Player::checkMapCollisionWhenTow(string *map)
+{
+	if (dir == 0)
+		for (int i = (y + 30) / 32; i <= (y + 43) / 32; i++)
+			for (int j = (x - 2) / 32; j <= (x + 30) / 32; j++)
+			{
+				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+					traffic.up.dir = false;
+
+				if (!traffic.down.dir)
+					traffic.down.dir = true;
+			}
+
+	if (dir == 90)
+		for (int i = (y) / 32; i <= (y + 30) / 32; i++)
+			for (int j = (x - 8) / 32; j <= (x + 20) / 32; j++)
+			{
+				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+					traffic.right.dir = false;
+
+				if (!traffic.left.dir)
+					traffic.left.dir = true;
+			}
+
+	if (dir == 180)
+		for (int i = (y - 8) / 32; i <= (y - 20) / 32; i++)
+			for (int j = (x - 2) / 32; j <= (x + 30) / 32; j++)
+			{
+				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+					traffic.down.dir = false;
+
+				if (!traffic.up.dir)
+					traffic.up.dir = true;
+			}
+
+	if (dir == 270)
+		for (int i = (y) / 32; i <= (y + 30) / 32; i++)
+			for (int j = (x + 26) / 32; j <= (x + 40) / 32; j++)
+			{
+				if (map[i][j] == 'b' || map[i][j] == 'B' || map[i][j] == 'W')
+					traffic.left.dir = false;
+
+				if (!traffic.right.dir)
+					traffic.right.dir = true;
+			}
+}
+
+void Player::controlOfTank(char dirCh, double acc, double time)
+{
+	if (!isTowingBack || (isTowingBack && checkTowingDirectionBan(dirCh)))
+	{
+		isTowingBack = false;
+		destroyedVehicle = NULL;
+		if (currentCipher == "311") traffic.up.dir = true;
+		else if (currentCipher == "133") traffic.down.dir = true;
+		else if (currentCipher == "422") traffic.right.dir = true;
+		else if (currentCipher == "244") traffic.left.dir = true;
+		currentCipher = { ' ', ' ', ' ' };
+
+		insertCodeSymbol(dirCh);
+
+		accelerate(
+			(dirCh == '1' ? 0 : dirCh == '2' ? 90 : dirCh == '3' ? 180 : 270),
+			acc * time);
+	}
+}
+
+bool Player::checkTowingDirectionBan(char dirCh)
+{
+	switch (dirCh)
+	{
+	case '1': return currentCipher == "133" ? false : true;
+	case '2': return currentCipher == "244" ? false : true;
+	case '3': return currentCipher == "311" ? false : true;
+	case '4': return currentCipher == "422" ? false : true;
+	}
 }

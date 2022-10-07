@@ -304,7 +304,7 @@ int main()
 
 	Music chapter_finale_theme, boss_theme;
 	chapter_finale_theme.openFromFile("source/sounds/music/chapter_finale_theme.flac");
-	boss_theme.openFromFile("source/sounds/music/boss_theme.flac");	boss_theme.setVolume(40.f);
+	boss_theme.openFromFile("source/sounds/music/boss_theme.flac");	boss_theme.setVolume(40.f); boss_theme.setLoop(true);
 
 #pragma endregion
 
@@ -469,6 +469,7 @@ int main()
 	bool isStartGame = true;
 	bool isStartBattle = true;
 	bool battleIsOver = false;
+	bool isBossTime = false;
 	int lastSecondsOfChapter = 0;
 	//::::::::::::::::::::::
 
@@ -834,24 +835,27 @@ int main()
 						{
 							double x = Joystick::getAxisPosition(0, Joystick::X);
 							double y = Joystick::getAxisPosition(0, Joystick::Y);
-							if (x == -100)
+							if (y == -100)
 							{
-								team[0]->accelerate(270, -0.09 * time);
+								team[0]->controlOfTank('1', -0.09, time);
 							}
 							else if (x == 100)
 							{
-								team[0]->accelerate(90, 0.09 * time);
-							}
-							else if (y == -100)
-							{
-								team[0]->accelerate(0, -0.09 * time);
+								team[0]->controlOfTank('2', 0.09, time);
 							}
 							else if (y == 100)
 							{
-								team[0]->accelerate(180, 0.09 * time);
+								team[0]->controlOfTank('3', 0.09, time);
+							}
+							else if (x == -100)
+							{
+								team[0]->controlOfTank('4', -0.09, time);
 							}
 							else
+							{
+								team[0]->isKeyPressed = false;
 								team[0]->isPlayAnimation = false;
+							}
 
 							if (Joystick::isButtonPressed(0, 0) || Joystick::isButtonPressed(0, 3))
 							{
@@ -870,21 +874,25 @@ int main()
 						{
 							if (Keyboard::isKeyPressed(Keyboard::W))
 							{
-								team[0]->accelerate(0, -0.09 * time);
+								team[0]->controlOfTank('1', -0.09, time);
 							}
 							else if (Keyboard::isKeyPressed(Keyboard::D))
 							{
-								team[0]->accelerate(90, 0.09 * time);
+								team[0]->controlOfTank('2', 0.09, time);
 							}
 							else if (Keyboard::isKeyPressed(Keyboard::S))
 							{
-								team[0]->accelerate(180, 0.09 * time);
+								team[0]->controlOfTank('3', 0.09, time);
 							}
 							else if (Keyboard::isKeyPressed(Keyboard::A))
 							{
-								team[0]->accelerate(270, -0.09 * time);
+								team[0]->controlOfTank('4', -0.09, time);
 							}
-							else team[0]->isPlayAnimation = false;
+							else
+							{
+								team[0]->isKeyPressed = false;
+								team[0]->isPlayAnimation = false;
+							}
 						}
 					}
 
@@ -900,53 +908,64 @@ int main()
 							{
 								double x = Joystick::getAxisPosition(1, Joystick::X);
 								double y = Joystick::getAxisPosition(1, Joystick::Y);
-								if (x == -100)
+								if (y == -100)
 								{
-									team[1]->accelerate(270, -0.09 * time);
+									team[1]->controlOfTank('1', -0.09, time);
 								}
 								else if (x == 100)
 								{
-									team[1]->accelerate(90, 0.09 * time);
-								}
-								else if (y == -100)
-								{
-									team[1]->accelerate(0, -0.09 * time);
+									team[1]->controlOfTank('2', 0.09, time);
 								}
 								else if (y == 100)
 								{
-									team[1]->accelerate(180, 0.09 * time);
+									team[1]->controlOfTank('3', 0.09, time);
+								}
+								else if (x == -100)
+								{
+									team[1]->controlOfTank('4', -0.09, time);
 								}
 								else
+								{
+									team[1]->isKeyPressed = false;
 									team[1]->isPlayAnimation = false;
+								}
 
 								if (Joystick::isButtonPressed(1, 0) || Joystick::isButtonPressed(1, 3))
 								{
 									if (team[1]->status != DEAD)
-										createBomberLink(team[1], sAirStrikeQuery, sAirStrikeConfirm, index, aFighter, aFighterTrace, aAirJetsFlame);
-									else
-										if (team[1]->isShot)
-											createShot(team[1], aYelTankRound, aShell, aShellExp);
+									{
+										//.:: Air Spotter mode :::
+										if (Player::airSpotter.isAirSpotter && Player::airSpotter.currentPlayer == team[1])
+											createBomberLink(team[1], sAirStrikeQuery, sAirStrikeConfirm, index, aFighter, aFighterTrace, aAirJetsFlame);
+										else
+											if (team[1]->isShot)
+												createShot(team[1], aYelTankRound, aShell, aShellExp);
+									}
 								}
 							}
 							else
 							{
 								if (Keyboard::isKeyPressed(Keyboard::T))
-								{
-									team[1]->accelerate(0, -0.09 * time);
+								{			
+									team[1]->controlOfTank('1', -0.09, time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::H))
 								{
-									team[1]->accelerate(90, 0.09 * time);
+									team[1]->controlOfTank('2', 0.09, time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::G))
 								{
-									team[1]->accelerate(180, 0.09 * time);
+									team[1]->controlOfTank('3', 0.09, time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::F))
 								{
-									team[1]->accelerate(270, -0.09 * time);
+									team[1]->controlOfTank('4', -0.09, time);
 								}
-								else team[1]->isPlayAnimation = false;
+								else
+								{
+									team[1]->isKeyPressed = false;
+									team[1]->isPlayAnimation = false;
+								}
 							}
 						}
 					}
@@ -963,53 +982,64 @@ int main()
 							{
 								double x = Joystick::getAxisPosition(2, Joystick::X);
 								double y = Joystick::getAxisPosition(2, Joystick::Y);
-								if (x == -100)
+								if (y == -100)
 								{
-									team[2]->accelerate(270, -0.09 * time);
+									team[2]->controlOfTank('1', -0.09, time);
 								}
 								else if (x == 100)
 								{
-									team[2]->accelerate(90, 0.09 * time);
-								}
-								else if (y == -100)
-								{
-									team[2]->accelerate(0, -0.09 * time);
+									team[2]->controlOfTank('2', 0.09, time);
 								}
 								else if (y == 100)
 								{
-									team[2]->accelerate(180, 0.09 * time);
+									team[2]->controlOfTank('3', 0.09, time);
+								}
+								else if (x == -100)
+								{
+									team[2]->controlOfTank('4', -0.09, time);
 								}
 								else
+								{
+									team[2]->isKeyPressed = false;
 									team[2]->isPlayAnimation = false;
+								}
 
 								if (Joystick::isButtonPressed(2, 0) || Joystick::isButtonPressed(2, 3))
 								{
 									if (team[2]->status != DEAD)
-										createBomberLink(team[2], sAirStrikeQuery, sAirStrikeConfirm, index, aFighter, aFighterTrace, aAirJetsFlame);
-									else
-										if (team[2]->isShot)
-											createShot(team[2], aPurpTankRound, aShell, aShellExp);
+									{
+										//.:: Air Spotter mode :::
+										if (Player::airSpotter.isAirSpotter && Player::airSpotter.currentPlayer == team[2])
+											createBomberLink(team[2], sAirStrikeQuery, sAirStrikeConfirm, index, aFighter, aFighterTrace, aAirJetsFlame);
+										else
+											if (team[2]->isShot)
+												createShot(team[2], aPurpTankRound, aShell, aShellExp);
+									}
 								}
 							}
 							else
 							{
 								if (Keyboard::isKeyPressed(Keyboard::I))
 								{
-									team[2]->accelerate(0, -0.09 * time);
+									team[2]->controlOfTank('1', -0.09, time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::L))
 								{
-									team[2]->accelerate(90, 0.09 * time);
+									team[2]->controlOfTank('2', 0.09, time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::K))
 								{
-									team[2]->accelerate(180, 0.09 * time);
+									team[2]->controlOfTank('3', 0.09, time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::J))
 								{
-									team[2]->accelerate(270, -0.09 * time);
+									team[2]->controlOfTank('4', -0.09, time);
 								}
-								else team[2]->isPlayAnimation = false;
+								else
+								{
+									team[2]->isKeyPressed = false;
+									team[2]->isPlayAnimation = false;
+								}
 							}
 						}
 					}
@@ -1026,53 +1056,64 @@ int main()
 							{
 								double x = Joystick::getAxisPosition(3, Joystick::X);
 								double y = Joystick::getAxisPosition(3, Joystick::Y);
-								if (x == -100)
+								if (y == -100)
 								{
-									team[3]->accelerate(270, -0.09 * time);
+									team[3]->controlOfTank('1', -0.09, time);
 								}
 								else if (x == 100)
 								{
-									team[3]->accelerate(90, 0.09 * time);
-								}
-								else if (y == -100)
-								{
-									team[3]->accelerate(0, -0.09 * time);
+									team[3]->controlOfTank('2', 0.09, time);
 								}
 								else if (y == 100)
 								{
-									team[3]->accelerate(180, 0.09 * time);
+									team[3]->controlOfTank('3', 0.09, time);
+								}
+								else if (x == -100)
+								{
+									team[3]->controlOfTank('4', -0.09, time);
 								}
 								else
+								{
+									team[3]->isKeyPressed = false;
 									team[3]->isPlayAnimation = false;
+								}
 
 								if (Joystick::isButtonPressed(3, 0) || Joystick::isButtonPressed(3, 3))
 								{
 									if (team[3]->status != DEAD)
-										createBomberLink(team[3], sAirStrikeQuery, sAirStrikeConfirm, index, aFighter, aFighterTrace, aAirJetsFlame);
-									else
-										if (team[3]->isShot)
-											createShot(team[3], aYelTankRound, aShell, aShellExp);
+									{
+										//.:: Air Spotter mode :::
+										if (Player::airSpotter.isAirSpotter && Player::airSpotter.currentPlayer == team[3])
+											createBomberLink(team[3], sAirStrikeQuery, sAirStrikeConfirm, index, aFighter, aFighterTrace, aAirJetsFlame);
+										else
+											if (team[3]->isShot)
+												createShot(team[3], aYelTankRound, aShell, aShellExp);
+									}
 								}
 							}
 							else
 							{
 								if (Keyboard::isKeyPressed(Keyboard::Up))
 								{
-									team[3]->accelerate(0, -0.09 * time);
+									team[3]->controlOfTank('1', -0.09, time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::Right))
 								{
-									team[3]->accelerate(90, 0.09 * time);
+									team[3]->controlOfTank('2', 0.09, time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::Down))
 								{
-									team[3]->accelerate(180, 0.09 * time);
+									team[3]->controlOfTank('3', 0.09, time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::Left))
 								{
-									team[3]->accelerate(270, -0.09 * time);
+									team[3]->controlOfTank('4', -0.09, time);
 								}
-								else team[3]->isPlayAnimation = false;
+								else
+								{
+									team[3]->isKeyPressed = false;
+									team[3]->isPlayAnimation = false;
+								}
 							}
 						}
 					}
@@ -1089,53 +1130,64 @@ int main()
 							{
 								double x = Joystick::getAxisPosition(4, Joystick::X);
 								double y = Joystick::getAxisPosition(4, Joystick::Y);
-								if (x == -100)
+								if (y == -100)
 								{
-									team[4]->accelerate(270, -0.09 * time);
+									team[4]->controlOfTank('1', -0.09, time);
 								}
 								else if (x == 100)
 								{
-									team[4]->accelerate(90, 0.09 * time);
-								}
-								else if (y == -100)
-								{
-									team[4]->accelerate(0, -0.09 * time);
+									team[4]->controlOfTank('2', 0.09, time);
 								}
 								else if (y == 100)
 								{
-									team[4]->accelerate(180, 0.09 * time);
+									team[4]->controlOfTank('3', 0.09, time);
+								}
+								else if (x == -100)
+								{
+									team[4]->controlOfTank('4', -0.09, time);
 								}
 								else
+								{
+									team[4]->isKeyPressed = false;
 									team[4]->isPlayAnimation = false;
+								}
 
 								if (Joystick::isButtonPressed(4, 0) || Joystick::isButtonPressed(4, 3))
 								{
 									if (team[4]->status != DEAD)
-										createBomberLink(team[4], sAirStrikeQuery, sAirStrikeConfirm, index, aFighter, aFighterTrace, aAirJetsFlame);
-									else
-										if (team[4]->isShot)
-											createShot(team[4], aBurgTankRound, aShell, aShellExp);
+									{
+										//.:: Air Spotter mode :::
+										if (Player::airSpotter.isAirSpotter && Player::airSpotter.currentPlayer == team[4])
+											createBomberLink(team[4], sAirStrikeQuery, sAirStrikeConfirm, index, aFighter, aFighterTrace, aAirJetsFlame);
+										else
+											if (team[4]->isShot)
+												createShot(team[4], aBurgTankRound, aShell, aShellExp);
+									}
 								}
 							}
 							else
 							{
 								if (Keyboard::isKeyPressed(Keyboard::Numpad8))
 								{
-									team[4]->accelerate(0, -0.09 * time);
+									team[4]->controlOfTank('1', -0.09, time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::Numpad6))
 								{
-									team[4]->accelerate(90, 0.09 * time);
+									team[4]->controlOfTank('2', 0.09, time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::Numpad5))
 								{
-									team[4]->accelerate(180, 0.09 * time);
+									team[4]->controlOfTank('3', 0.09, time);
 								}
 								else if (Keyboard::isKeyPressed(Keyboard::Numpad4))
 								{
-									team[4]->accelerate(270, -0.09 * time);
+									team[4]->controlOfTank('4', -0.09, time);
 								}
-								else team[4]->isPlayAnimation = false;
+								else
+								{
+									team[4]->isKeyPressed = false;
+									team[4]->isPlayAnimation = false;
+								}
 							}
 						}
 					}
@@ -1153,7 +1205,12 @@ int main()
 				{
 					if (p->status != DEAD)
 					{
-						p->checkMapCollision(maps[index]);
+						if (p->isTowingBack)
+						{
+							p->checkMapCollisionWhenTow(maps[index]);
+						}
+						else
+							p->checkMapCollision(maps[index]);
 
 						//.:: Get Rank :::::::::::::::
 						if (p->isPreferment)
@@ -1216,7 +1273,7 @@ int main()
 						}
 
 						//::::::::::::::::::::::::::::::::::::::::::::::::::
-						if (fadeOutTime != 0 && Tank::camera == Camera::StartGameSetted || Tank::camera == Camera::Commander)
+						if (Tank::camera == Camera::StartGameSetted || Tank::camera == Camera::Commander)//+ fadeOutTime != 0 
 							p->checkIconCollision(maps[index], sTakingIcon);
 					}
 					else
@@ -1418,6 +1475,50 @@ int main()
 
 						if (a->name == "mortarMineExplosion" && !static_cast<MortarShell*>(a)->isAreaExplosionDamaged && b->name == "tank")
 							static_cast<MortarShell*>(a)->destroyTarget((Tank*)b);
+
+//////////////////////////////////////////////// - K E Y B O A R D   S H O R T C U T S - /////////////////////////////////////////
+#pragma region Towings back keyboard shortcuts
+						if (a->name == "tank" && a->army == "player" && strcmp(static_cast<Player*>(a)->combo, "311") == 0
+							&& !static_cast<Player*>(a)->isTowingBack && b->name == "destroyed" 
+							&& static_cast<Player*>(a)->checkCollisionWithDestroyedTank((GroundVehicle*)b)
+							&& (a->getCoordY(false) > b->getCoordY(false) + 50 
+								&& (b->getCoordX(false) - 20 < a->getCoordX(false) && b->getCoordX(false) + 60 > a->getCoordX(false) + 40)))
+						{
+							static_cast<Player*>(a)->setTow((GroundVehicle*)b, "311");
+							//.:: Тут должна быть зарегана анимация эффекта...
+						}
+
+						if (a->name == "tank" && a->army == "player" && strcmp(static_cast<Player*>(a)->combo, "133") == 0
+							&& !static_cast<Player*>(a)->isTowingBack && b->name == "destroyed"
+							&& static_cast<Player*>(a)->checkCollisionWithDestroyedTank((GroundVehicle*)b)
+							&& (a->getCoordY(false) < b->getCoordY(false) - 50
+								&& (b->getCoordX(false) - 20 < a->getCoordX(false) && b->getCoordX(false) + 60 > a->getCoordX(false) + 40)))
+						{
+							static_cast<Player*>(a)->setTow((GroundVehicle*)b, "133");
+							//.:: Тут должна быть зарегана анимация эффекта...
+						}
+
+						if (a->name == "tank" && a->army == "player" && strcmp(static_cast<Player*>(a)->combo, "422") == 0
+							&& !static_cast<Player*>(a)->isTowingBack && b->name == "destroyed"
+							&& static_cast<Player*>(a)->checkCollisionWithDestroyedTank((GroundVehicle*)b)
+							&& (a->getCoordX(false) < b->getCoordX(false) - 50
+								&& (b->getCoordY(false) - 20 < a->getCoordY(false) && b->getCoordY(false) + 60 > a->getCoordY(false) + 40)))
+						{
+							static_cast<Player*>(a)->setTow((GroundVehicle*)b, "422");
+							//.:: Тут должна быть зарегана анимация эффекта...
+						}
+
+						if (a->name == "tank" && a->army == "player" && strcmp(static_cast<Player*>(a)->combo, "244") == 0
+							&& !static_cast<Player*>(a)->isTowingBack && b->name == "destroyed"
+							&& static_cast<Player*>(a)->checkCollisionWithDestroyedTank((GroundVehicle*)b)
+							&& (a->getCoordX(false) > b->getCoordX(false) + 50
+								&& (b->getCoordY(false) - 20 < a->getCoordY(false) && b->getCoordY(false) + 60 > a->getCoordY(false) + 40)))
+						{
+							static_cast<Player*>(a)->setTow((GroundVehicle*)b, "244");
+							//.:: Тут должна быть зарегана анимация эффекта...
+						}
+#pragma endregion
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 					}
 
 					//.:: Air bomb destruction zone :::
@@ -1571,8 +1672,9 @@ int main()
 
 #pragma region Battle is over
 
-				if (!battleIsOver && !transition && !findAliveFrom(specialTransport) && !findAliveFrom(squad))
+				if (!battleIsOver && !transition && !findAliveFrom(specialTransport) && !findAliveFrom(squad) && !isBossTime)
 				{
+					isBossTime = true;
 					firstStageBossArgs.numberOfPlayers = numberOfPlayers;
 					Boss *firstStBoss = new Boss(firstStageBossArgs);
 					squad.push_back(firstStBoss);
