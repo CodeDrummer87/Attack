@@ -7,6 +7,9 @@ class AchievementModel : public Entity
 {
 private:
 	Tank *own;
+	int constDir;
+
+	void setCoordinates();
 
 public:
 
