@@ -115,7 +115,7 @@ int main()
 	Image iMap, iIcon, iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank, iFighter, iEnemyFighter, iAirBomb, 
 		iBombExplosion, iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8, iCommunication_truck,
 		iRadioAntenna, iRadioWaves, iDrowning, iSpeedUpAchiev, iRepair, iSniper, iFirstStage_boss_tankBody, iFirstStage_boss_tankTower,
-		iOilPuddle, iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap;
+		iOilPuddle, iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect;
 
 	iMap = getImage("source/images/map.png");
 	iIcon = getImage("source/images/sprites/attributes/icons/icons.png");
@@ -153,6 +153,7 @@ int main()
 	iTrail = getImage("source/images/sprites/other/trail.png");
 	iMineExplosion = getImage("source/images/sprites/explosions/mine_explosion.png");
 	iDustClap = getImage("source/images/sprites/other/dust_clap.png");
+	iTowEffect = getImage("source/images/sprites/other/tow_effect.png");
 
 	//.:: Bosses
 	iFirstStage_boss_tankBody = getImage("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_body.png");
@@ -166,7 +167,7 @@ int main()
 		tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion,
 		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tEnemy_6, tEnemy_7, tEnemy_8, tCommunication_truck, tRadioAntenna,
 		tRadioWaves, tDrowning, tSpeedUpAchiev, tRepair, tSniper, tFirstStageBossBody, tFirstStageBossTower, tOilPuddle, tMortarShell,
-		tMortarClap, tTrail, tMineExplosion, tDustClap;
+		tMortarClap, tTrail, tMineExplosion, tDustClap, tTowEffect;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -215,6 +216,7 @@ int main()
 	tTrail.loadFromImage(iTrail);
 	tMineExplosion.loadFromImage(iMineExplosion);
 	tDustClap.loadFromImage(iDustClap);
+	tTowEffect.loadFromImage(iTowEffect);
 
 	tFirstStageBossBody.loadFromImage(iFirstStage_boss_tankBody);
 	tFirstStageBossTower.loadFromImage(iFirstStage_boss_tankTower);
@@ -245,7 +247,7 @@ int main()
 		enemy_1Buf, enemy_1RoundBuf, armorBuf, armorResistBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
 		firstStageBossMoveBuf, firstStageBossExpBuf, firstStageBossRoundBuf, firstStageBossMortarBuf, firstStageBossTowerBuf,
 		firstStageBossTowerCrashBuf, oilPuddleBuf, firstStBossLaugh, firstStBossRoundBuf, bossMortarShootBuf, stopMortarShootBuf,
-		mineExplosionBuf, dustClapBuf;
+		mineExplosionBuf, dustClapBuf, hookEngagementBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -287,6 +289,7 @@ int main()
 	stopMortarShootBuf.loadFromFile("source/sounds/effects/stop_mortar_shoot.flac");
 	mineExplosionBuf.loadFromFile("source/sounds/explosion/mine_explosion.flac");
 	dustClapBuf.loadFromFile("source/sounds/effects/dust_clap.flac");
+	hookEngagementBuf.loadFromFile("source/sounds/effects/hook_engagement.flac");
 
 	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sArmorResist,
 		sLaugh(laughBuf), sAirStrikeAlarm, sFighterFlight, sFirstStageBossLaugh, sBossMortarShoot(bossMortarShootBuf),
@@ -368,6 +371,7 @@ int main()
 	Animation aTrail(tTrail, 0, 0, 26, 120, 0.03, 14);
 	Animation aMineExplosion(tMineExplosion, mineExplosionBuf, 0, 0, 64, 64, 0.018, 14);
 	Animation aDustClap(tDustClap, 0, 0, 128, 128, 0.01, 8);
+	Animation aTowEffect(tTowEffect, hookEngagementBuf, 0, 0, 128, 128, 0.015, 19);
 
 	//.:: Bosses :::
 #pragma region First stage boss
@@ -1485,7 +1489,8 @@ int main()
 								&& (b->getCoordX(false) - 20 < a->getCoordX(false) && b->getCoordX(false) + 60 > a->getCoordX(false) + 40)))
 						{
 							static_cast<Player*>(a)->setTow((GroundVehicle*)b, "311");
-							//.:: Тут должна быть зарегана анимация эффекта...
+							AchievementModel *effect = new AchievementModel(aTowEffect, (Tank*)a, "effect");
+							entities.push_back(effect);
 						}
 
 						if (a->name == "tank" && a->army == "player" && strcmp(static_cast<Player*>(a)->combo, "133") == 0
@@ -1495,7 +1500,8 @@ int main()
 								&& (b->getCoordX(false) - 20 < a->getCoordX(false) && b->getCoordX(false) + 60 > a->getCoordX(false) + 40)))
 						{
 							static_cast<Player*>(a)->setTow((GroundVehicle*)b, "133");
-							//.:: Тут должна быть зарегана анимация эффекта...
+							AchievementModel *effect = new AchievementModel(aTowEffect, (Tank*)a, "effect");
+							entities.push_back(effect);
 						}
 
 						if (a->name == "tank" && a->army == "player" && strcmp(static_cast<Player*>(a)->combo, "422") == 0
@@ -1505,7 +1511,8 @@ int main()
 								&& (b->getCoordY(false) - 20 < a->getCoordY(false) && b->getCoordY(false) + 60 > a->getCoordY(false) + 40)))
 						{
 							static_cast<Player*>(a)->setTow((GroundVehicle*)b, "422");
-							//.:: Тут должна быть зарегана анимация эффекта...
+							AchievementModel *effect = new AchievementModel(aTowEffect, (Tank*)a, "effect");
+							entities.push_back(effect);
 						}
 
 						if (a->name == "tank" && a->army == "player" && strcmp(static_cast<Player*>(a)->combo, "244") == 0
@@ -1515,7 +1522,8 @@ int main()
 								&& (b->getCoordY(false) - 20 < a->getCoordY(false) && b->getCoordY(false) + 60 > a->getCoordY(false) + 40)))
 						{
 							static_cast<Player*>(a)->setTow((GroundVehicle*)b, "244");
-							//.:: Тут должна быть зарегана анимация эффекта...
+							AchievementModel *effect = new AchievementModel(aTowEffect, (Tank*)a, "effect");
+							entities.push_back(effect);
 						}
 #pragma endregion
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -75,7 +75,7 @@ void Entity::setCoordY(double coord)
 
 int Entity::getCounterDirection(int dir_)
 {
-	return dir_ + 180 <= 360 ? dir_ + 180 : dir_ - 180;
+	return dir_ + 180 < 360 ? dir_ + 180 : dir_ - 180;
 }
 
 void Entity::resetDegrees(int &d)
