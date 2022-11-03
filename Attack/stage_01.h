@@ -19,7 +19,7 @@ string FirstStage[] =
 	"BFF                                                       FFB",
 	"BFF      B          BBBBWWWWWWWWWWWWBBBB           B      FFB",
 	"BFF      B          WWWWWWWWWWWWWWWWWWWW           B      FFB",
-	"BFF      B         WWWWWWWWWWWWWWWWWWWWWW          B      FFB",
+	"BFF      B          WWWWWWWWWWWWWWWWWWWW           B      FFB",
 	"BFF      B          WWWWWWWWWWWWWWWWWWWW           B      FFB",
 	"BFF      B          BBBBWWWWWWWWWWWWBBBB           B      FFB",
 	"BFF                                                       FFB",

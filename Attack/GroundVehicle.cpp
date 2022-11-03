@@ -282,7 +282,7 @@ bool GroundVehicle::makeSureVehicleCollision(GroundVehicle *t)
 	return false;
 }
 
-void GroundVehicle::getAreaDamage(Area *area, string *map)
+void GroundVehicle::getAreaDamage(Area *area, string *map, int index)
 {
 	FloatRect a = this->anim.sprite.getGlobalBounds();
 	FloatRect b = area->area.getGlobalBounds();
@@ -306,7 +306,7 @@ void GroundVehicle::getAreaDamage(Area *area, string *map)
 			{
 				if (i > 0 && j > 0)
 					if (map[i][j] == 'b' || map[i][j] == 'F')
-						map[i][j] = ' ';
+						map[i][j] = index == 0 ? ' ' : 'S';
 			}
 	}
 }

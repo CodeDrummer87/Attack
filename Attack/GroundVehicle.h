@@ -67,7 +67,7 @@ public:
 	bool makeSureDestroyed();
 	void checkVehiclesCollision(GroundVehicle*);
 	bool makeSureVehicleCollision(GroundVehicle*);
-	void getAreaDamage(Area*, string*);
+	void getAreaDamage(Area*, string*, int);
 	void checkIconCollision(string[], Sound&);
 	void updateDestinationDistance();
 	void controlEnemyVehicle(double);

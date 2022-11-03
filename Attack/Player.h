@@ -44,7 +44,7 @@ public:
 	//.:: Methods_of_class :::::::::::::::::
 	void update(double);
 	void setStartPosition(double, double);
-	void checkIconCollision(string[], Sound&);
+	void checkIconCollision(string[], int, Sound&);
 	void improveTank(int);
 	void nickDown(int);
 	

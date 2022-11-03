@@ -51,6 +51,12 @@ void renderMap(string* map, RenderWindow &app, Animation &a, double time, int in
 				a.sprite.setTextureRect(IntRect(0, 32, 32, 32));
 			else if (map[i][j] == 'b')
 				a.sprite.setTextureRect(IntRect(96, 32, 32, 32));
+			else if (map[i][j] == 'I')
+				a.sprite.setTextureRect(IntRect(64, 0, 32, 32));
+			else if (map[i][j] == 'S')
+				a.sprite.setTextureRect(IntRect(0, 0, 32, 32));
+			else if (map[i][j] == 's')
+				a.sprite.setTextureRect(IntRect(32, 0, 32, 32));
 			else
 				continue;
 
