@@ -103,7 +103,7 @@ void Player::setStartPosition(double x_, double y_)
 	this->dir = 0;
 }
 
-void Player::checkIconCollision(string map[], Sound &sound)
+void Player::checkIconCollision(string map[], int index, Sound &sound)
 {
 	for (int i = (anim.getRect(dir).top + 15) / 32; i < (y + anim.getRect(dir).height) / 32; i++)
 		for (int j = (anim.getRect(dir).left + 14) / 32; j < (x + anim.getRect(dir).width) / 32; j++)
@@ -133,7 +133,7 @@ void Player::checkIconCollision(string map[], Sound &sound)
 					sound.play();
 					this->isCommander = true;
 					Tank::camera = Camera::Commander;
-					map[i][j] = ' ';
+					map[i][j] = index == 0 ? ' ' : 'S';
 				}
 			}
 
@@ -142,7 +142,7 @@ void Player::checkIconCollision(string map[], Sound &sound)
 				if (!airSpotter.isAirSpotter && airSpotter.currentPlayer == NULL && airSpotter.yTargetPosition == 0.0)
 				{
 					sound.play();
-					map[i][j] = ' ';
+					map[i][j] = index == 0 ? ' ' : 'S';
 
 					airSpotter.isAirSpotter = true;
 					airSpotter.currentPlayer = this;

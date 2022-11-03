@@ -1278,7 +1278,7 @@ int main()
 
 						//::::::::::::::::::::::::::::::::::::::::::::::::::
 						if (Tank::camera == Camera::StartGameSetted || Tank::camera == Camera::Commander)//+ fadeOutTime != 0 
-							p->checkIconCollision(maps[index], sTakingIcon);
+							p->checkIconCollision(maps[index], index, sTakingIcon);
 					}
 					else
 					{
@@ -1469,7 +1469,7 @@ int main()
 							static_cast<Tank*>(a)->shoveOffTankCarcass((GroundVehicle*)b);
 
 						if ((a->name == "tank" || a->name == "truck") && b->name == "destructionZone")
-							static_cast<GroundVehicle*>(a)->getAreaDamage((Area*)b, maps[index]);
+							static_cast<GroundVehicle*>(a)->getAreaDamage((Area*)b, maps[index], index);
 						 
 						if ((a->name == "tank" || a->name == "truck") && b->name == "puddle")
 							static_cast<GroundVehicle*>(a)->checkPuddlesCollision(b);
@@ -1483,7 +1483,7 @@ int main()
 //////////////////////////////////////////////// - K E Y B O A R D   S H O R T C U T S - /////////////////////////////////////////
 #pragma region Towings back keyboard shortcuts
 						if (a->name == "tank" && a->army == "player" && strcmp(static_cast<Player*>(a)->combo, "311") == 0
-							&& !static_cast<Player*>(a)->isTowingBack && b->name == "destroyed" 
+							&& !static_cast<Player*>(a)->isTowingBack && b->name == "destroyed" && !static_cast<GroundVehicle*>(b)->isDrowned
 							&& static_cast<Player*>(a)->checkCollisionWithDestroyedTank((GroundVehicle*)b)
 							&& (a->getCoordY(false) > b->getCoordY(false) + 50 
 								&& (b->getCoordX(false) - 20 < a->getCoordX(false) && b->getCoordX(false) + 60 > a->getCoordX(false) + 40)))
@@ -1494,7 +1494,7 @@ int main()
 						}
 
 						if (a->name == "tank" && a->army == "player" && strcmp(static_cast<Player*>(a)->combo, "133") == 0
-							&& !static_cast<Player*>(a)->isTowingBack && b->name == "destroyed"
+							&& !static_cast<Player*>(a)->isTowingBack && b->name == "destroyed" && !static_cast<GroundVehicle*>(b)->isDrowned
 							&& static_cast<Player*>(a)->checkCollisionWithDestroyedTank((GroundVehicle*)b)
 							&& (a->getCoordY(false) < b->getCoordY(false) - 50
 								&& (b->getCoordX(false) - 20 < a->getCoordX(false) && b->getCoordX(false) + 60 > a->getCoordX(false) + 40)))
@@ -1505,7 +1505,7 @@ int main()
 						}
 
 						if (a->name == "tank" && a->army == "player" && strcmp(static_cast<Player*>(a)->combo, "422") == 0
-							&& !static_cast<Player*>(a)->isTowingBack && b->name == "destroyed"
+							&& !static_cast<Player*>(a)->isTowingBack && b->name == "destroyed" && !static_cast<GroundVehicle*>(b)->isDrowned
 							&& static_cast<Player*>(a)->checkCollisionWithDestroyedTank((GroundVehicle*)b)
 							&& (a->getCoordX(false) < b->getCoordX(false) - 50
 								&& (b->getCoordY(false) - 20 < a->getCoordY(false) && b->getCoordY(false) + 60 > a->getCoordY(false) + 40)))
@@ -1516,7 +1516,7 @@ int main()
 						}
 
 						if (a->name == "tank" && a->army == "player" && strcmp(static_cast<Player*>(a)->combo, "244") == 0
-							&& !static_cast<Player*>(a)->isTowingBack && b->name == "destroyed"
+							&& !static_cast<Player*>(a)->isTowingBack && b->name == "destroyed" && !static_cast<GroundVehicle*>(b)->isDrowned
 							&& static_cast<Player*>(a)->checkCollisionWithDestroyedTank((GroundVehicle*)b)
 							&& (a->getCoordX(false) > b->getCoordX(false) + 50
 								&& (b->getCoordY(false) - 20 < a->getCoordY(false) && b->getCoordY(false) + 60 > a->getCoordY(false) + 40)))
