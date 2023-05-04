@@ -152,6 +152,7 @@
     <ClCompile Include="EnemyPlane.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="GroundVehicle.cpp" />
+    <ClCompile Include="Icon.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MortarShell.cpp" />
     <ClCompile Include="OilPuddle.cpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="EnemyPlane.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="GroundVehicle.h" />
+    <ClInclude Include="Icon.h" />
     <ClInclude Include="libraries.h" />
     <ClInclude Include="maps.h" />
     <ClInclude Include="MortarShell.h" />

@@ -82,9 +82,9 @@ void drawForestAndIcons(string* map, RenderWindow &app, Animation &a, Animation 
 
 			if (map[i][j] == 'R')
 			{
-				icons[0].sprite.setTextureRect(icons[0].frames[(int)icons[0].frame]);
-				icons[0].sprite.setPosition(float(j * 32), float(i * 32));
-				app.draw(icons[0].sprite);
+				icons[2].sprite.setTextureRect(icons[2].frames[(int)icons[2].frame]);
+				icons[2].sprite.setPosition(float(j * 32), float(i * 32));
+				app.draw(icons[2].sprite);
 			}
 
 			if (map[i][j] == 'U')
@@ -96,9 +96,9 @@ void drawForestAndIcons(string* map, RenderWindow &app, Animation &a, Animation 
 
 			if (map[i][j] == 'C')
 			{
-				icons[2].sprite.setTextureRect(icons[2].frames[(int)icons[2].frame]);
-				icons[2].sprite.setPosition(float(j * 32), float(i * 32));
-				app.draw(icons[2].sprite);
+				icons[0].sprite.setTextureRect(icons[0].frames[(int)icons[0].frame]);
+				icons[0].sprite.setPosition(float(j * 32), float(i * 32));
+				app.draw(icons[0].sprite);
 			}
 
 			if (map[i][j] == 'A')

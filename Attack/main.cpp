@@ -32,6 +32,7 @@
 #include "TankTower.h"
 
 #include "MortarShell.h"
+#include "Icon.h"
 
 
 //.:: temp code :::
@@ -319,7 +320,7 @@ int main()
 	Animation iconCamera(tIcon, 0, 64, 32, 32, 0.015, 22);
 	Animation iconAirStrike(tIcon, 0, 96, 32, 32, 0.015, 22);
 
-	Animation icons[] = { iconRepair, iconPreferment, iconCamera, iconAirStrike };
+	Animation icons[] = { iconCamera, iconPreferment, iconRepair, iconAirStrike };
 
 	Animation aBurgTank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
 	Animation aYellowTank(yTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
@@ -480,7 +481,7 @@ int main()
 	main_theme->setVolume(70.f);
 	main_theme->play();
 
-	int fadeOutTime = 0;	//.:: For foregroundTheme music
+	int fadeOutTime = 0;	//.:: For the foregroundTheme music
 	float mainThemeVolume = 70.f;
 
 	RenderWindow app(VideoMode(sizeX, sizeY), "Attack", Style::Fullscreen);
@@ -506,7 +507,7 @@ int main()
 	int gameTime = 0;
 	double time = 0.0;
 
-	//.:: Current message for players :::
+	//.:: Current message for the players :::
 	int endDisplayMessage = 0;
 
 	Text report;
@@ -1591,6 +1592,10 @@ int main()
 						&& static_cast<OilPuddle*>(a)->adsorptionTime == gameTime)
 						static_cast<OilPuddle*>(a)->isAdsorption = true;
 				}
+
+				//.:: Icons appearance ::::::::::::::::
+				if (Icon::spawnTimer == gameTime)
+					entities.push_back(new Icon(icons, aMortarClap, team[0], gameTime + 45));
 
 #pragma region Camera settings
 
