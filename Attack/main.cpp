@@ -320,7 +320,7 @@ int main()
 	Animation iconCamera(tIcon, 0, 64, 32, 32, 0.015, 22);
 	Animation iconAirStrike(tIcon, 0, 96, 32, 32, 0.015, 22);
 
-	Animation icons[] = { iconCamera, iconPreferment, iconRepair, iconAirStrike };
+	IconAnim iconList[] = { {iconCamera, 'C'}, {iconPreferment, 'U'}, {iconRepair, 'R'}, {iconAirStrike, 'A'} };
 
 	Animation aBurgTank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
 	Animation aYellowTank(yTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
@@ -681,6 +681,7 @@ int main()
 							choice->play();
 							createEnemies(entities, squad, enemyAnim_1, tankExpBuf, maps[index]);
 							createEnemyCommunicationTrucks(specialTransport, communication_truck, autoExpBuf, gameTime, aRadioAntenna);
+							Icon::spawnTimer = gameTime + 7;
 						}
 
 						if (Keyboard::isKeyPressed(Keyboard::Down))
@@ -1276,10 +1277,6 @@ int main()
 								}
 							}
 						}
-
-						//::::::::::::::::::::::::::::::::::::::::::::::::::
-						if (Tank::camera == Camera::StartGameSetted || Tank::camera == Camera::Commander)//+ fadeOutTime != 0 
-							p->checkIconCollision(maps[index], index, sTakingIcon);
 					}
 					else
 					{
@@ -1481,6 +1478,10 @@ int main()
 						if (a->name == "mortarMineExplosion" && !static_cast<MortarShell*>(a)->isAreaExplosionDamaged && b->name == "tank")
 							static_cast<MortarShell*>(a)->destroyTarget((Tank*)b);
 
+						if (a->name == "tank" && a->army == "player" && b->name == "icon")
+							if (Tank::camera == Camera::StartGameSet || Tank::camera == Camera::Commander)
+								static_cast<Player*>(a)->checkIconCollision(b, sTakingIcon);
+
 //////////////////////////////////////////////// - K E Y B O A R D   S H O R T C U T S - /////////////////////////////////////////
 #pragma region Towings back keyboard shortcuts
 						if (a->name == "tank" && a->army == "player" && strcmp(static_cast<Player*>(a)->combo, "311") == 0
@@ -1595,7 +1596,7 @@ int main()
 
 				//.:: Icons appearance ::::::::::::::::
 				if (Icon::spawnTimer == gameTime)
-					entities.push_back(new Icon(icons, aMortarClap, team[0], gameTime + 45));
+					entities.push_back(new Icon(iconList, aMortarClap, team[0], gameTime + 45));
 
 #pragma region Camera settings
 
@@ -1609,7 +1610,7 @@ int main()
 
 				if (Tank::camera == Camera::StartGame)
 				{
-					Tank::camera = Camera::StartGameSetted;
+					Tank::camera = Camera::StartGameSet;
 					setViewCoordinates(sizeX, sizeY, viewPosX, viewPosY, index);
 				}
 
@@ -1752,7 +1753,7 @@ int main()
 						renderMap(maps[index], app, map, time, index);
 						
 					if (i == 1)
-						drawForestAndIcons(maps[index], app, map, icons, time, index);
+						drawForest(maps[index], app, map, index);
 				}
 
 #pragma endregion

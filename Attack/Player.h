@@ -17,6 +17,7 @@ private:
 	int totalKills;
 	int currentExperience;
 	int requiredExperience;
+	bool isIconTaken;
 
 	//.:: Methods_of_class :::::::::::::::::
 	bool checkTowingDirectionBan(char);
@@ -44,7 +45,7 @@ public:
 	//.:: Methods_of_class :::::::::::::::::
 	void update(double);
 	void setStartPosition(double, double);
-	void checkIconCollision(string[], int, Sound&);
+	void checkIconCollision(Entity*, Sound&);
 	void improveTank(int);
 	void nickDown(int);
 	

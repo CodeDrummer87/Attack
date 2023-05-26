@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Player.h"
+#include "Icon.h"
 
 Player::Player()
 {}
@@ -19,7 +20,7 @@ Player::Player(Animation &anim, double x_, double y_, string name_, int dir_, bo
 	else
 		requiredExperience = 2;
 
-	hasRank = isPreferment = isCommander = isTowingBack = false;
+	hasRank = isPreferment = isCommander = isTowingBack = isIconTaken = false;
 
 	combo[3] = '\0';
 	isKeyPressed = false;
@@ -103,53 +104,57 @@ void Player::setStartPosition(double x_, double y_)
 	this->dir = 0;
 }
 
-void Player::checkIconCollision(string map[], int index, Sound &sound)
+void Player::checkIconCollision(Entity *eIcon, Sound &sound)
 {
-	for (int i = (anim.getRect(dir).top + 15) / 32; i < (y + anim.getRect(dir).height) / 32; i++)
-		for (int j = (anim.getRect(dir).left + 14) / 32; j < (x + anim.getRect(dir).width) / 32; j++)
+	FloatRect player = this->anim.sprite.getGlobalBounds();
+	FloatRect icon = eIcon->anim.sprite.getGlobalBounds();
+
+	if (player.intersects(icon))
+	{
+		char iconType = static_cast<Icon*>(eIcon)->iconType;
+		switch (iconType)
 		{
-			if (map[i][j] == 'U')
-			{
-				sound.play();
+		case 'U':
 				this->isPreferment = true;
-				map[i][j] = ' ';
-			}
+				isIconTaken = true;
+			break;
 
-			if (map[i][j] == 'R')
+		case 'R':
+			if (hitPoints < 1 + level)
 			{
-				if (hitPoints < 1 + level)
-				{
-					sound.play();
-					++hitPoints;
-					isShowRepair = true;
-					map[i][j] = ' ';
-				}
+				++hitPoints;
+				isShowRepair = true;
+				isIconTaken = true;
 			}
+			break;
 
-			if (map[i][j] == 'C')
+		case 'C':
+			if (Tank::camera != Camera::Target && Tank::camera != Camera::FirstPlane)
 			{
-				if (Tank::camera != Camera::Target && Tank::camera != Camera::FirstPlane)
-				{
-					sound.play();
-					this->isCommander = true;
-					Tank::camera = Camera::Commander;
-					map[i][j] = index == 0 ? ' ' : 'S';
-				}
+				this->isCommander = true;
+				Tank::camera = Camera::Commander;
+				isIconTaken = true;
 			}
+			break;
 
-			if (map[i][j] == 'A')
+		case 'A':
+			if (!airSpotter.isAirSpotter && airSpotter.currentPlayer == NULL && airSpotter.yTargetPosition == 0.0)
 			{
-				if (!airSpotter.isAirSpotter && airSpotter.currentPlayer == NULL && airSpotter.yTargetPosition == 0.0)
-				{
-					sound.play();
-					map[i][j] = index == 0 ? ' ' : 'S';
-
-					airSpotter.isAirSpotter = true;
-					airSpotter.currentPlayer = this;
-					airSpotter.isTargetCreated = true;
-				}
+				airSpotter.isAirSpotter = true;
+				airSpotter.currentPlayer = this;
+				airSpotter.isTargetCreated = true;
+				isIconTaken = true;
 			}
+			break;
 		}
+
+		if (isIconTaken)
+		{
+			isIconTaken = false;
+			eIcon->status = Status::DEAD;
+			sound.play();
+		}
+	}
 }
 
 void Player::improveTank(int residual)

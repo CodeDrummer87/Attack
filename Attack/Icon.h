@@ -1,6 +1,12 @@
 #pragma once
 #include "Entity.h"
 
+struct IconAnim
+{
+	Animation &anim;
+	char iconType;
+};
+
 class Icon : public Entity
 {
 private:
@@ -10,10 +16,12 @@ private:
 public:
 
 	static int spawnTimer;
+	static bool isFirstIcon;
+	char iconType;
 
 	//.:: Constructor ::::::::::::::::::::::
 	Icon();
-	Icon(Animation[], Animation&, Entity*, int);
+	Icon(IconAnim[], Animation&, Entity*, int);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Icon();

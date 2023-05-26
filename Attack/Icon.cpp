@@ -5,19 +5,28 @@
 Icon::Icon()
 {}
 
-Icon::Icon(Animation icons[], Animation &b, Entity *player_, int appearanceTime)
+Icon::Icon(IconAnim icons[], Animation &b, Entity *player_, int appearanceTime)
 {
 	z_index = 4;
 	player = player_;
 
-	if (spawnTimer == 7)
-		anim = icons[0];
+	srand(std::time(NULL));
+
+	int index;
+	if (isFirstIcon)
+	{
+		index = 0;
+		isFirstIcon = false;
+	}
 	else
-		anim = icons[rand() % 3 + 1];
+		index = rand() % (sizeof(icons) - 1) + 1;
+
+	anim = icons[index].anim;
+	iconType = icons[index].iconType;
 
 	//.:: Testing :::::::::::::::::::::
 	x = player->getCoordX(false);
-	y = player->getCoordY(false) - 35;
+	y = player->getCoordY(false) - 80;
 	//:::::::::::::::::::::::::::::::::
 	
 	isExist = true;
@@ -29,13 +38,14 @@ Icon::Icon(Animation icons[], Animation &b, Entity *player_, int appearanceTime)
 	level = 1;
 	status = Status::ALIVE;
 
-	spawnTimer = appearanceTime; //.:: Think about logic
+	spawnTimer = appearanceTime; //.:: Think about logic of limit
 }
 
 Icon::~Icon()
 {}
 
-int Icon::spawnTimer = 7;
+int Icon::spawnTimer = 0;
+bool Icon::isFirstIcon = true;
 
 void Icon::update(double time)
 {

@@ -65,11 +65,8 @@ void renderMap(string* map, RenderWindow &app, Animation &a, double time, int in
 		}
 }
 
-void drawForestAndIcons(string* map, RenderWindow &app, Animation &a, Animation icons[], double time, int index)
+void drawForest(string* map, RenderWindow &app, Animation &a, int index)
 {
-	for (int i = 0; i < sizeof(icons); i++)
-		icons[i].update(time, true, 1);
-
 	for (int i = 0; i < mapsHeight[index]; i++)
 		for (int j = 0; j < mapsWidth[index]; j++)
 		{
@@ -78,34 +75,6 @@ void drawForestAndIcons(string* map, RenderWindow &app, Animation &a, Animation 
 				a.sprite.setTextureRect(IntRect(32, 32, 32, 32));
 				a.sprite.setPosition(float(j * 32), float(i * 32));
 				app.draw(a.sprite);
-			}
-
-			if (map[i][j] == 'R')
-			{
-				icons[2].sprite.setTextureRect(icons[2].frames[(int)icons[2].frame]);
-				icons[2].sprite.setPosition(float(j * 32), float(i * 32));
-				app.draw(icons[2].sprite);
-			}
-
-			if (map[i][j] == 'U')
-			{
-				icons[1].sprite.setTextureRect(icons[1].frames[(int)icons[1].frame]);
-				icons[1].sprite.setPosition(float(j * 32), float(i * 32));
-				app.draw(icons[1].sprite);
-			}
-
-			if (map[i][j] == 'C')
-			{
-				icons[0].sprite.setTextureRect(icons[0].frames[(int)icons[0].frame]);
-				icons[0].sprite.setPosition(float(j * 32), float(i * 32));
-				app.draw(icons[0].sprite);
-			}
-
-			if (map[i][j] == 'A')
-			{
-				icons[3].sprite.setTextureRect(icons[3].frames[(int)icons[3].frame]);
-				icons[3].sprite.setPosition(float(j * 32), float(i * 32));
-				app.draw(icons[3].sprite);
 			}
 		}
 }
