@@ -9,19 +9,16 @@ struct IconAnim
 
 class Icon : public Entity
 {
-private:
-	Animation appearAnim;
-	Entity *player;
-
 public:
+	char iconType;
 
 	static int spawnTimer;
 	static bool isFirstIcon;
-	char iconType;
+	static int iconCounter;
 
 	//.:: Constructor ::::::::::::::::::::::
 	Icon();
-	Icon(IconAnim[], Animation&, Entity*, int);
+	Icon(IconAnim[], double, double, int);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Icon();

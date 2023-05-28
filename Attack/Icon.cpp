@@ -5,10 +5,10 @@
 Icon::Icon()
 {}
 
-Icon::Icon(IconAnim icons[], Animation &b, Entity *player_, int appearanceTime)
+Icon::Icon(IconAnim icons[], double X, double Y, int appearanceTime)
 {
 	z_index = 4;
-	player = player_;
+	++iconCounter;
 
 	srand(std::time(NULL));
 
@@ -21,16 +21,11 @@ Icon::Icon(IconAnim icons[], Animation &b, Entity *player_, int appearanceTime)
 	else
 		index = rand() % (sizeof(icons) - 1) + 1;
 
+	x = X;
+	y = Y;
 	anim = icons[index].anim;
 	iconType = icons[index].iconType;
-
-	//.:: Testing :::::::::::::::::::::
-	x = player->getCoordX(false);
-	y = player->getCoordY(false) - 80;
-	//:::::::::::::::::::::::::::::::::
-	
 	isExist = true;
-	appearAnim = b;
 
 	name = "icon";
 	dir = 1;
@@ -46,12 +41,16 @@ Icon::~Icon()
 
 int Icon::spawnTimer = 0;
 bool Icon::isFirstIcon = true;
+int Icon::iconCounter = 0;
 
 void Icon::update(double time)
 {
 	if (isExist)
 	{
 		if (status == Status::DEAD)
+		{
+			--iconCounter;
 			isExist = false;
+		}
 	}
 }

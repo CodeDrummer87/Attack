@@ -247,8 +247,8 @@ int main()
 		shellExpBuf, takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
 		enemy_1Buf, enemy_1RoundBuf, armorBuf, armorResistBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
 		firstStageBossMoveBuf, firstStageBossExpBuf, firstStageBossRoundBuf, firstStageBossMortarBuf, firstStageBossTowerBuf,
-		firstStageBossTowerCrashBuf, oilPuddleBuf, firstStBossLaugh, firstStBossRoundBuf, bossMortarShootBuf, stopMortarShootBuf,
-		mineExplosionBuf, dustClapBuf, hookEngagementBuf;
+		firstStageBossTowerCrashBuf, oilPuddleBuf, badgeAppearanceBuf, firstStBossLaugh, firstStBossRoundBuf, bossMortarShootBuf,
+		stopMortarShootBuf, mineExplosionBuf, dustClapBuf, hookEngagementBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -277,6 +277,7 @@ int main()
 	sniperBuf.loadFromFile("source/sounds/effects/sniper.flac");
 	airStrikeAlarmBuf.loadFromFile("source/sounds/effects/airStrikeAlarm.flac");
 	oilPuddleBuf.loadFromFile("source/sounds/effects/oil_puddle.flac");
+	badgeAppearanceBuf.loadFromFile("source/sounds/effects/icons/badge_appearance.flac");
 
 	firstStBossLaugh.loadFromFile("source/sounds/effects/first_stage_boss_laugh.flac");
 	firstStageBossMoveBuf.loadFromFile("source/sounds/tank/movement/first_stage_boss_move.flac");
@@ -373,6 +374,7 @@ int main()
 	Animation aMineExplosion(tMineExplosion, mineExplosionBuf, 0, 0, 64, 64, 0.018, 14);
 	Animation aDustClap(tDustClap, 0, 0, 128, 128, 0.01, 8);
 	Animation aTowEffect(tTowEffect, hookEngagementBuf, 0, 0, 128, 128, 0.015, 19);
+	Animation aBadgeAppearance(tMortarClap, badgeAppearanceBuf, 0, 0, 32, 32, 0.01, 8);
 
 	//.:: Bosses :::
 #pragma region First stage boss
@@ -529,6 +531,7 @@ int main()
 	void dropEnemyBombs(Animation&, Animation&, EnemyPlane*, Sound&);
 	void createBossShots(TankTower*, bool, int, Animation&, Animation&, Animation&);
 	void createBossMortarShot(TankTower*, int, Animation&, Animation&, Animation&, Animation&, Sound&, Sound&);
+	void getCoordinatesForNewIcon(double&, double&, string*);
 
 #pragma endregion
 
@@ -1596,7 +1599,21 @@ int main()
 
 				//.:: Icons appearance ::::::::::::::::
 				if (Icon::spawnTimer == gameTime)
-					entities.push_back(new Icon(iconList, aMortarClap, team[0], gameTime + 45));
+				{
+					if (Icon::iconCounter < 3)
+					{
+						double X = 928.0;
+						double Y = 3288.0;
+						
+						if (!Icon::isFirstIcon && (Tank::camera == Camera::Commander || Tank::camera == Camera::StartGameSet))
+							getCoordinatesForNewIcon(X, Y, maps[index]);
+						else
+							Icon::spawnTimer += 10;
+						entities.push_back(new Icon(iconList, X, Y, gameTime + 10));
+						entities.push_back(new Smoke(aBadgeAppearance, X, Y, "explosion"));
+					}
+					else Icon::spawnTimer = gameTime + 30;
+				}
 
 #pragma region Camera settings
 
@@ -1797,6 +1814,8 @@ int main()
 
 	return 0;
 }
+
+#pragma region Functions definition
 
 Image getImage(string path)
 {
@@ -2015,3 +2034,30 @@ void createBossMortarShot(TankTower *t, int gameTime, Animation &aMortarClap, An
 	}
 	else t->isTargetSearch = true;
 }
+
+void getCoordinatesForNewIcon(double &X, double &Y, string *map)
+{
+	struct tuple
+	{
+		int y;
+		int x;
+	};
+
+	int viewY = (int)view.getCenter().y / 32;
+	vector<tuple> selected;
+	for (int i = viewY - 15; i < viewY + 15; i++)
+	{
+		for (int j = 1; j < 60; j++)
+		{
+			if (map[i][j] == ' ' || map[i][j] == 'S')
+				selected.push_back({i * 32, j * 32});
+		}
+	}
+
+	srand(std::time(NULL));
+	int index = rand() % selected.size();
+	X = selected[index].x;
+	Y = selected[index].y;
+}
+
+#pragma endregion
