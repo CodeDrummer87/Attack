@@ -5,18 +5,18 @@
 Icon::Icon()
 {}
 
-Icon::Icon(IconAnim icons[], double X, double Y, int appearanceTime)
+Icon::Icon(IconAnim icons[], double X, double Y, int currentGameTime)
 {
 	z_index = 4;
-	++iconCounter;
 
 	srand(std::time(NULL));
-
+	removalTime = currentGameTime + 40;
 	int index;
 	if (isFirstIcon)
 	{
 		index = 0;
 		isFirstIcon = false;
+		removalTime = 0;
 	}
 	else
 		index = rand() % (sizeof(icons) - 1) + 1;
@@ -33,7 +33,7 @@ Icon::Icon(IconAnim icons[], double X, double Y, int appearanceTime)
 	level = 1;
 	status = Status::ALIVE;
 
-	spawnTimer = appearanceTime; //.:: Think about logic of limit
+	spawnTimer = currentGameTime + 30;
 }
 
 Icon::~Icon()
@@ -41,16 +41,12 @@ Icon::~Icon()
 
 int Icon::spawnTimer = 0;
 bool Icon::isFirstIcon = true;
-int Icon::iconCounter = 0;
 
 void Icon::update(double time)
 {
 	if (isExist)
 	{
 		if (status == Status::DEAD)
-		{
-			--iconCounter;
 			isExist = false;
-		}
 	}
 }

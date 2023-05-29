@@ -247,8 +247,8 @@ int main()
 		shellExpBuf, takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
 		enemy_1Buf, enemy_1RoundBuf, armorBuf, armorResistBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
 		firstStageBossMoveBuf, firstStageBossExpBuf, firstStageBossRoundBuf, firstStageBossMortarBuf, firstStageBossTowerBuf,
-		firstStageBossTowerCrashBuf, oilPuddleBuf, badgeAppearanceBuf, firstStBossLaugh, firstStBossRoundBuf, bossMortarShootBuf,
-		stopMortarShootBuf, mineExplosionBuf, dustClapBuf, hookEngagementBuf;
+		firstStageBossTowerCrashBuf, oilPuddleBuf, badgeAppearanceBuf, badgeDisappearanceBuf, firstStBossLaugh, firstStBossRoundBuf,
+		bossMortarShootBuf, stopMortarShootBuf, mineExplosionBuf, dustClapBuf, hookEngagementBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -278,6 +278,7 @@ int main()
 	airStrikeAlarmBuf.loadFromFile("source/sounds/effects/airStrikeAlarm.flac");
 	oilPuddleBuf.loadFromFile("source/sounds/effects/oil_puddle.flac");
 	badgeAppearanceBuf.loadFromFile("source/sounds/effects/icons/badge_appearance.flac");
+	badgeDisappearanceBuf.loadFromFile("source/sounds/effects/icons/badge_disappearance.flac");
 
 	firstStBossLaugh.loadFromFile("source/sounds/effects/first_stage_boss_laugh.flac");
 	firstStageBossMoveBuf.loadFromFile("source/sounds/tank/movement/first_stage_boss_move.flac");
@@ -295,7 +296,7 @@ int main()
 
 	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sArmorResist,
 		sLaugh(laughBuf), sAirStrikeAlarm, sFighterFlight, sFirstStageBossLaugh, sBossMortarShoot(bossMortarShootBuf),
-		sStopMortarShoot(stopMortarShootBuf), sDustClap(dustClapBuf);
+		sStopMortarShoot(stopMortarShootBuf), sDustClap(dustClapBuf), sBadgeDisappear(badgeDisappearanceBuf);
 
 	enemy_move.setBuffer(enemy_1Buf);			enemy_move.setLoop(true);
 	sTakingIcon.setBuffer(takingIconBuf);		sTakingIcon.setLoop(false);
@@ -1595,24 +1596,29 @@ int main()
 					if (a->name == "puddle" && !static_cast<OilPuddle*>(a)->isAdsorption
 						&& static_cast<OilPuddle*>(a)->adsorptionTime == gameTime)
 						static_cast<OilPuddle*>(a)->isAdsorption = true;
+
+					if (a->name == "icon" && static_cast<Icon*>(a)->removalTime == gameTime)
+					{
+						a->status = Status::DEAD;
+						sBadgeDisappear.play();
+					}
 				}
 
 				//.:: Icons appearance ::::::::::::::::
 				if (Icon::spawnTimer == gameTime)
 				{
-					if (Icon::iconCounter < 3)
+					if (Tank::camera == Camera::Commander || Tank::camera == Camera::StartGameSet)
 					{
 						double X = 928.0;
 						double Y = 3288.0;
-						
-						if (!Icon::isFirstIcon && (Tank::camera == Camera::Commander || Tank::camera == Camera::StartGameSet))
+
+						if (!Icon::isFirstIcon)
 							getCoordinatesForNewIcon(X, Y, maps[index]);
-						else
-							Icon::spawnTimer += 10;
-						entities.push_back(new Icon(iconList, X, Y, gameTime + 10));
+
+						entities.push_back(new Icon(iconList, X, Y, gameTime));
 						entities.push_back(new Smoke(aBadgeAppearance, X, Y, "explosion"));
 					}
-					else Icon::spawnTimer = gameTime + 30;
+					else Icon::spawnTimer += 12;
 				}
 
 #pragma region Camera settings

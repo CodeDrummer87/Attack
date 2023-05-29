@@ -11,10 +11,10 @@ class Icon : public Entity
 {
 public:
 	char iconType;
+	int removalTime;
 
 	static int spawnTimer;
 	static bool isFirstIcon;
-	static int iconCounter;
 
 	//.:: Constructor ::::::::::::::::::::::
 	Icon();
