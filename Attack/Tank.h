@@ -2,7 +2,7 @@
 
 #include "GroundVehicle.h"
 
-enum Camera { NotDefined, StartGame, Commander, MalevolentTank, Target, FirstPlane, StartGameSetted };
+enum Camera { NotDefined, StartGame, Commander, MalevolentTank, Target, FirstPlane, StartGameSet };
 
 class Tank : public GroundVehicle
 {

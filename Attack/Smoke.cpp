@@ -140,10 +140,10 @@ void Smoke::update(double time)
 void Smoke::setExplosionVolume()
 {
 	if (y > view.getCenter().y - 20 * 32 && y < view.getCenter().y + 20 * 32)
-		anim.sound.setVolume(50.f);
+		anim.sound.setVolume(20.f);
 	else if (y > view.getCenter().y - 30 * 32 && y < view.getCenter().y - 20 * 32 ||
 		y < view.getCenter().y + 30 * 32 && y > view.getCenter().y + 20 * 32)
-		anim.sound.setVolume(15.f);
+		anim.sound.setVolume(10.f);
 	else
 		anim.sound.setVolume(0.f);
 }
