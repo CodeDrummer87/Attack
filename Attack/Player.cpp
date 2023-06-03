@@ -6,9 +6,9 @@
 Player::Player()
 {}
 
-Player::Player(Animation &anim, double x_, double y_, string name_, int dir_, bool isPlayAnimation_, SoundBuffer &sExplosion_,
-	int expFrameCount, string army_, int level_)
-	: Tank(anim, x_, y_, name_, dir_, isPlayAnimation_, sExplosion_, expFrameCount, army_, level_)
+Player::Player(Animation &anim, double x_, double y_, int dir_, bool isPlayAnimation_, SoundBuffer &sExplosion_,
+	int expFrameCount, int level_)
+	: Tank(anim, x_, y_, "tank", dir_, isPlayAnimation_, sExplosion_, expFrameCount, "player", level_)
 {
 	isPlayerControl = true;
 
