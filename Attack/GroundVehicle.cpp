@@ -455,7 +455,7 @@ void GroundVehicle::controlEnemyVehicle(double time)
 
 void GroundVehicle::changeDir()
 {
-	srand(time(NULL));
+	srand(std::time(NULL));
 	int k = rand() % 100 + 1;
 	
 	dir = (k <= 25) ? dir += 90 : (k > 25 && k <= 50) ? dir -= 90

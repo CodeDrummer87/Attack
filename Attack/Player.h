@@ -37,7 +37,7 @@ public:
 
 	//.:: Constructor ::::::::::::::::::::::
 	Player();
-	Player(Animation&, double, double, string, int, bool, SoundBuffer&, int, string, int);
+	Player(Animation&, double, double, int, bool, SoundBuffer&, int, int);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Player();

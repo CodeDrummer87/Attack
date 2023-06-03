@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Animation.h"
 #include "maps.h"
 
@@ -34,14 +36,33 @@
 #include "MortarShell.h"
 #include "Icon.h"
 
+//.:: Structures :::
+struct Tuple
+{
+	double x;
+	double y;
+};
+
+struct PlayersPositions
+{
+	Tuple first{ 0, 0 };
+	Tuple second{ 0, 0 };
+	Tuple third{ 0, 0 };
+	Tuple fourth{ 0, 0 };
+	Tuple fifth{ 0, 0 };
+};
+//::::::::::::::::::
 
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
 //:::::::::::::::::
 
-enum AppMode { OPTIONS, GAME, SCORING, ENDGAME };
+enum AppMode { OPTIONS, GAME, SCORING };
 AppMode mode = OPTIONS;
-bool transition = false; //.:: Game -> Scoring
+bool transition = true;
+bool isStartGame = true;
+bool isBossCreated = false;
+int lastSecondsOfChapter = 0;
 
 vector<Entity*> entities;
 vector<Player*> team;
@@ -473,14 +494,6 @@ int main()
 	int numberOfPlayers = 1;
 	int index = 0;	//.:: for maps vector
 
-	//.:: For start and end battle :::
-	bool isStartGame = true;
-	bool isStartBattle = true;
-	bool battleIsOver = false;
-	bool isBossTime = false;
-	int lastSecondsOfChapter = 0;
-	//::::::::::::::::::::::
-
 	main_theme->setVolume(70.f);
 	main_theme->play();
 
@@ -533,12 +546,12 @@ int main()
 	void createBossShots(TankTower*, bool, int, Animation&, Animation&, Animation&);
 	void createBossMortarShot(TankTower*, int, Animation&, Animation&, Animation&, Animation&, Sound&, Sound&);
 	void getCoordinatesForNewIcon(double&, double&, string*);
+	void deletePreviousEntities();
+	PlayersPositions DeterminePlayerPosition(int);
 
 #pragma endregion
 
-	if (isGamePlay)
-	{
-		while (app.isOpen())
+	while (app.isOpen())
 		{
 			time = clock.getElapsedTime().asMicroseconds();
 			clock.restart();
@@ -569,63 +582,11 @@ int main()
 
 #pragma endregion
 
-#pragma region Set players start position before battle
-
-			if (mode == SCORING && index > 0 && isStartBattle)
-			{
-				isStartBattle = false;
-				switch (numberOfPlayers)
-				{
-				case 1: a1 = 950; a2 = mapsHeight[index] * 32 - 126;
-					team[0]->setStartPosition(a1, a2);
-					break;
-				case 2: a1 = 870; a2 = mapsHeight[index] * 32 - 126;
-					b1 = 1030; b2 = mapsHeight[index] * 32 - 126;
-					team[0]->setStartPosition(a1, a2);
-					team[1]->setStartPosition(b1, b2);
-					break;
-				case 3: a1 = 870; a2 = mapsHeight[index] * 32 - 126;
-					b1 = 950; b2 = mapsHeight[index] * 32 - 176;
-					c1 = 1030; c2 = mapsHeight[index] * 32 - 126;
-					team[0]->setStartPosition(a1, a2);
-					team[1]->setStartPosition(b1, b2);
-					team[2]->setStartPosition(c1, c2);
-					break;
-				case 4: a1 = 810; a2 = mapsHeight[index] * 32 - 126;
-					b1 = 890; b2 = mapsHeight[index] * 32 - 176;
-					c1 = 1010; c2 = mapsHeight[index] * 32 - 176;
-					d1 = 1090; d2 = mapsHeight[index] * 32 - 126;
-					team[0]->setStartPosition(a1, a2);
-					team[1]->setStartPosition(b1, b2);
-					team[2]->setStartPosition(c1, c2);
-					team[3]->setStartPosition(d1, d2);
-					break;
-				case 5: a1 = 790; a2 = mapsHeight[index] * 32 - 76;		
-					b1 = 870; b2 = mapsHeight[index] * 32 - 126;		
-					c1 = 950; c2 = mapsHeight[index] * 32 - 176;
-					d1 = 1030; d2 = mapsHeight[index] * 32 - 126;
-					e1 = 1110; e2 = mapsHeight[index] * 32 - 76;
-					team[0]->setStartPosition(a1, a2);
-					team[1]->setStartPosition(b1, b2);
-					team[2]->setStartPosition(c1, c2);
-					team[3]->setStartPosition(d1, d2);
-					team[4]->setStartPosition(e1, e2);
-					break;
-				}
-			}
-
-#pragma endregion
-
 			Event event;
 			while (app.pollEvent(event))
 			{
 				if (event.key.code == Keyboard::Escape)
-				{
-					isGamePlay = false;
-					mode = ENDGAME;
 					app.close();
-					delete choice, star, scream;
-				}
 
 #pragma region OPTIONS mode
 
@@ -637,55 +598,26 @@ int main()
 						{
 							if (numberOfPlayers >= 1)
 							{
-								switch (numberOfPlayers)
-								{
-								case 1: a1 = 950; a2 = mapsHeight[0] * 32 - 126;
-									break;
-								case 2: a1 = 870; a2 = mapsHeight[0] * 32 - 126;
-									b1 = 1030; b2 = mapsHeight[0] * 32 - 126;
-									break;
-								case 3: a1 = 870; a2 = mapsHeight[0] * 32 - 126;
-									b1 = 950; b2 = mapsHeight[0] * 32 - 176;
-									c1 = 1030; c2 = mapsHeight[0] * 32 - 126;
-									break;
-								case 4: a1 = 810; a2 = mapsHeight[0] * 32 - 126;
-									b1 = 890; b2 = mapsHeight[0] * 32 - 176;
-									c1 = 1010; c2 = mapsHeight[0] * 32 - 176;
-									d1 = 1090; d2 = mapsHeight[0] * 32 - 126;
-									break;
-								case 5: a1 = 790; a2 = mapsHeight[0] * 32 - 76;
-									b1 = 870; b2 = mapsHeight[0] * 32 - 126;
-									c1 = 950; c2 = mapsHeight[0] * 32 - 176;
-									d1 = 1030; d2 = mapsHeight[0] * 32 - 126;
-									e1 = 1110; e2 = mapsHeight[0] * 32 - 76;
-									break;
-								}
-
 								for (int i = 0; i < numberOfPlayers; i++)
 								{
 									Player *player;
 									switch (i)
 									{
-									case 0: player = new Player(aBurgTank, a1, a2, "tank", 0, true, tankExpBuf, 12, "player", 1); break;
-									case 1: player = new Player(aYellowTank, b1, b2, "tank", 0, true, tankExpBuf, 12, "player", 1); break;
-									case 2: player = new Player(aPurpTank, c1, c2, "tank", 0, true, tankExpBuf, 12, "player", 1); break;
-									case 3: player = new Player(aCyanTank, d1, d2, "tank", 0, true, tankExpBuf, 12, "player", 1); break;
-									case 4: player = new Player(aHemoTank, e1, e2, "tank", 0, true, tankExpBuf, 12, "player", 1); break;
+									case 0: player = new Player(aBurgTank, 0.0, 0.0, 0, true, tankExpBuf, 12, 1); break;
+									case 1: player = new Player(aYellowTank, 0.0, 0.0, 0, true, tankExpBuf, 12, 1); break;
+									case 2: player = new Player(aPurpTank, 0.0, 0.0, 0, true, tankExpBuf, 12, 1); break;
+									case 3: player = new Player(aCyanTank, 0.0, 0.0, 0, true, tankExpBuf, 12, 1); break;
+									case 4: player = new Player(aHemoTank, 0.0, 0.0, 0, true, tankExpBuf, 12, 1); break;
 									}
 
 									team.push_back(player);
 									entities.push_back(player);
 								}
-
-								mode = GAME;
-								start.play();
 							}
-
 							isStartGame = false;
 							choice->play();
-							createEnemies(entities, squad, enemyAnim_1, tankExpBuf, maps[index]);
-							createEnemyCommunicationTrucks(specialTransport, communication_truck, autoExpBuf, gameTime, aRadioAntenna);
-							Icon::spawnTimer = gameTime + 7;
+							transition = true;
+							start.play();
 						}
 
 						if (Keyboard::isKeyPressed(Keyboard::Down))
@@ -734,6 +666,53 @@ int main()
 							}
 						}
 					}
+
+					if (transition && !isStartGame)
+					{
+						PlayersPositions pos = DeterminePlayerPosition(numberOfPlayers);
+						switch (numberOfPlayers)
+						{
+						case 1:
+							team[0]->setStartPosition(pos.first.x, pos.first.y);
+							break;
+
+						case 2:
+							team[0]->setStartPosition(pos.first.x, pos.first.y);
+							team[1]->setStartPosition(pos.second.x, pos.second.y);
+							break;
+
+						case 3:
+							team[0]->setStartPosition(pos.first.x, pos.first.y);
+							team[1]->setStartPosition(pos.second.x, pos.second.y);
+							team[2]->setStartPosition(pos.third.x, pos.third.y);
+							break;
+
+						case 4:
+							team[0]->setStartPosition(pos.first.x, pos.first.y);
+							team[1]->setStartPosition(pos.second.x, pos.second.y);
+							team[2]->setStartPosition(pos.third.x, pos.third.y);
+							team[3]->setStartPosition(pos.fourth.x, pos.fourth.y);
+							break;
+
+						default:
+							team[0]->setStartPosition(pos.first.x, pos.first.y);
+							team[1]->setStartPosition(pos.second.x, pos.second.y);
+							team[2]->setStartPosition(pos.third.x, pos.third.y);
+							team[3]->setStartPosition(pos.fourth.x, pos.fourth.y);
+							team[4]->setStartPosition(pos.fifth.x, pos.fifth.y);
+						}
+
+						createEnemies(entities, squad, enemyAnim_1, tankExpBuf, maps[index]);
+						createEnemyCommunicationTrucks(specialTransport, communication_truck, autoExpBuf, gameTime, aRadioAntenna);
+						Icon::spawnTimer = gameTime + 7;
+						transition = false;
+					}
+					if (!transition && !isStartGame)
+					{
+						//.:: some briefing...
+						mode = GAME;
+						transition = true;
+					}
 				}
 
 #pragma endregion
@@ -742,13 +721,13 @@ int main()
 
 				if (mode == GAME)
 				{
-					if (enemy_move.getStatus() == SoundStream::Stopped && !battleIsOver)
+					if (enemy_move.getStatus() == SoundStream::Stopped && transition)
 						enemy_move.play();
-					else if (enemy_move.getStatus() == SoundStream::Playing && battleIsOver)
+					else if (enemy_move.getStatus() == SoundStream::Playing && !transition)
 						enemy_move.stop();
 
 					//.:: temporary code :::
-					if (Keyboard::isKeyPressed(Keyboard::N))
+					if (Keyboard::isKeyPressed(Keyboard::N) && (Tank::camera == Camera::StartGameSet || Tank::camera == Camera::Commander))
 					{
 						if (!isUpd)
 						{
@@ -757,7 +736,6 @@ int main()
 							{
 								view.setCenter(float(sizeX / 2), float(sizeY / 2));
 								mode = SCORING;
-								isStartBattle = true;
 								++index;
 								enemy_move.stop();
 							}
@@ -766,7 +744,7 @@ int main()
 
 #pragma region Tank rounds
 		
-					if (event.type == Event::KeyPressed && !battleIsOver)
+					if (event.type == Event::KeyPressed)
 					{
 						Player *currentPlayer = NULL;
 						Animation roundAnimation;
@@ -817,13 +795,23 @@ int main()
 
 				if (mode == SCORING)
 				{
-					if (Keyboard::isKeyPressed(Keyboard::Space))
+					if (transition)
 					{
+						transition = false;
+						deletePreviousEntities();
+					}
+					else
+					{
+						mode = OPTIONS;
+						transition = true;
+						Tank::camera = Camera::StartGame;
+						Icon::isFirstIcon = true;
+						chapter_finale_theme.stop();
+						//.:: ???
 						isUpd = false;
 						viewPosX = sizeX / 2;
-						viewPosY = mapsHeight[0] * 32 - sizeY / 2;
-						mode = GAME;
-						Tank::camera = Camera::StartGame;
+						viewPosY = mapsHeight[index] * 32 - sizeY / 2;
+
 					}
 				}
 
@@ -835,8 +823,6 @@ int main()
 			{
 #pragma region Players control
 
-				if (!battleIsOver)
-				{
 #pragma region First Player control
 
 					if (team[0]->status != DEAD)
@@ -1203,11 +1189,6 @@ int main()
 					}
 
 #pragma endregion
-				}
-				else
-					for (auto p : team)
-						if (p->isPlayAnimation)
-							p->isPlayAnimation = false;
 
 #pragma endregion
 
@@ -1267,7 +1248,6 @@ int main()
 								Player::airSpotter.xTargetPosition = 0.0;
 								Player::airSpotter.yTargetPosition = 0.0;
 
-								Tank::camera = Camera::NotDefined;
 								if (sAirStrikeQuery.getStatus() == SoundStream::Playing)
 									sAirStrikeQuery.stop();
 
@@ -1605,7 +1585,7 @@ int main()
 				}
 
 				//.:: Icons appearance ::::::::::::::::
-				if (Icon::spawnTimer == gameTime)
+				if (!isBossCreated && Icon::spawnTimer == gameTime)
 				{
 					if (Tank::camera == Camera::Commander || Tank::camera == Camera::StartGameSet)
 					{
@@ -1709,9 +1689,10 @@ int main()
 
 #pragma region Battle is over
 
-				if (!battleIsOver && !transition && !findAliveFrom(specialTransport) && !findAliveFrom(squad) && !isBossTime)
+				if (transition && !findAliveFrom(specialTransport) && !findAliveFrom(squad) && !isBossCreated)
 				{
-					isBossTime = true;
+					isBossCreated = true;
+
 					firstStageBossArgs.numberOfPlayers = numberOfPlayers;
 					Boss *firstStBoss = new Boss(firstStageBossArgs);
 					squad.push_back(firstStBoss);
@@ -1725,27 +1706,22 @@ int main()
 					boss_theme.play();
 				}
 
-				if (!battleIsOver && !transition && (!findAliveFrom(team) || (!findAliveFrom(squad) && !findAliveFrom(specialTransport))))
+				if (transition && (!findAliveFrom(team) || (!findAliveFrom(squad) && !findAliveFrom(specialTransport))))
 				{
+					transition = false;
 					boss_theme.stop();
 					chapter_finale_theme.play();
 					lastSecondsOfChapter = gameTime + 7;
-					transition = true;
 				}
 
-				if (!battleIsOver && transition)
+				if (!transition && gameTime >= lastSecondsOfChapter)
 				{
-					if (gameTime >= lastSecondsOfChapter)
+					if (index + 1 != maps.size())
 					{
-						transition = false;
-						battleIsOver = true;
-
-						if (index + 1 != maps.size())
-						{
-							view.setCenter(float(sizeX / 2), float(sizeY / 2));
-							mode = SCORING;
-							++index;
-						}
+						view.setCenter(float(sizeX / 2), float(sizeY / 2));
+						mode = SCORING;
+						transition = true;
+						++index;
 					}
 				}
 
@@ -1757,7 +1733,7 @@ int main()
 				app.setView(view);
 			}
 			
-			if (mode == OPTIONS)
+			if (mode == OPTIONS && isStartGame)
 				star->update(1, true, 0);
 
 			app.clear();
@@ -1796,10 +1772,13 @@ int main()
 
 			if (mode == OPTIONS)
 			{
-				for (auto t : optionsTextList)
-					app.draw(*t);
-				if (isVisibleStar)
-					app.draw(star->sprite);
+				if (isStartGame)
+				{
+					for (auto t : optionsTextList)
+						app.draw(*t);
+					if (isVisibleStar)
+						app.draw(star->sprite);
+				}
 			}
 
 #pragma endregion
@@ -1815,7 +1794,6 @@ int main()
 #pragma endregion
 
 			app.display();
-		}
 	}
 
 	return 0;
@@ -2043,20 +2021,14 @@ void createBossMortarShot(TankTower *t, int gameTime, Animation &aMortarClap, An
 
 void getCoordinatesForNewIcon(double &X, double &Y, string *map)
 {
-	struct tuple
-	{
-		int y;
-		int x;
-	};
-
 	int viewY = (int)view.getCenter().y / 32;
-	vector<tuple> selected;
+	vector<Tuple> selected;
 	for (int i = viewY - 15; i < viewY + 15; i++)
 	{
 		for (int j = 1; j < 60; j++)
 		{
 			if (map[i][j] == ' ' || map[i][j] == 'S')
-				selected.push_back({i * 32, j * 32});
+				selected.push_back({double(j * 32), (double)(i * 32)});
 		}
 	}
 
@@ -2064,6 +2036,74 @@ void getCoordinatesForNewIcon(double &X, double &Y, string *map)
 	int index = rand() % selected.size();
 	X = selected[index].x;
 	Y = selected[index].y;
+}
+
+void deletePreviousEntities()
+{
+	for (auto i = entities.begin(); i != entities.end();)
+	{
+		Entity* e = *i;
+		if ((e->name == "tank" || e->name == "destroyed") && e->army == "player")
+		{
+			i++;
+			if (e->name == "tank")
+				static_cast<Tank*>(e)->isShot = true;
+		}
+		else
+		{
+			i = entities.erase(i);
+			delete e;
+		}
+	}
+	squad.clear();
+	squad.shrink_to_fit();
+
+	specialTransport.clear();
+	specialTransport.shrink_to_fit();
+}
+
+PlayersPositions DeterminePlayerPosition(int numberOfPlayers)
+{
+	PlayersPositions positions;
+
+	switch (numberOfPlayers)
+	{
+	case 1:
+		positions = { {958.0, (double)(119 * 32 - 126)} };
+		break;
+	case 2:
+		positions = {
+			{870.0, (double)(119 * 32 - 126)},
+			{1030.0, (double)(119 * 32 - 126)}
+		};
+		break;
+	case 3:
+		positions = {
+			{870.0, (double)(119 * 32 - 126)},
+			{950.0, (double)(119 * 32 - 176)},
+			{1030.0, (double)(119 * 32 - 126)}
+		};
+		break;
+	case 4:
+		positions = {
+			{810.0, (double)(119 * 32 - 126)},
+			{890.0, (double)(119 * 32 - 176)},
+			{1010.0, (double)(119 * 32 - 176)},
+			{1090.0, (double)(119 * 32 - 126)}
+		};
+		break;
+	case 5:
+		positions = {
+			{790.0, (double)(119 * 32 - 76)},
+			{870.0, (double)(119 * 32 - 126)},
+			{950.0, (double)(119 * 32 - 176)},
+			{1030.0, (double)(119 * 32 - 126)},
+			{1110.0, (double)(119 * 32 - 76)}
+		};
+		break;
+	}
+
+	return positions;
 }
 
 #pragma endregion
