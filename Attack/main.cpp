@@ -134,32 +134,23 @@ int main()
 
 #pragma region Images
 
-	Image iMap, iIcon, iBurgundyTank, iYellowTank, iPurpleTank, iCyanTank, iHemoTank, iFighter, iEnemyFighter, iAirBomb, 
-		iBombExplosion, iEnemy_1, iEnemy_2, iEnemy_3, iEnemy_4, iEnemy_5, iEnemy_6, iEnemy_7, iEnemy_8, iCommunication_truck,
-		iRadioAntenna, iRadioWaves, iDrowning, iSpeedUpAchiev, iRepair, iSniper, iFirstStage_boss_tankBody, iFirstStage_boss_tankTower,
-		iOilPuddle, iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect;
+	Image iMap, iIcon, iFighter, iEnemyFighter, iAirBomb, iBombExplosion, iCommunication_truck, iRadioAntenna, iRadioWaves,
+		iDrowning, iSpeedUpAchiev, iRepair, iSniper, iFirstStage_boss_tankBody, iFirstStage_boss_tankTower,iOilPuddle,
+		iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect, iEnemies[8];
 
 	iMap = getImage("source/images/map.png");
 	iIcon = getImage("source/images/sprites/attributes/icons/icons.png");
 
-	iBurgundyTank = getImage("source/images/sprites/models/tanks/players/burgundyTank.png");
-	iYellowTank = getImage("source/images/sprites/models/tanks/players/yellowTank.png");
-	iPurpleTank = getImage("source/images/sprites/models/tanks/players/purpleTank.png");
-	iCyanTank = getImage("source/images/sprites/models/tanks/players/lightBlueTank.png");
-	iHemoTank = getImage("source/images/sprites/models/tanks/players/hemoTank.png");
+	Image iPlayers[5];
+	string playerSourthPath = "source/images/sprites/models/tanks/players/player_";
+	for (int i = 0; i < 5; i++)
+		iPlayers[i] = getImage(playerSourthPath + to_string(i + 1) + ".png");
+
 	iFighter = getImage("source/images/sprites/models/planes/fighter.png");
 	iEnemyFighter = getImage("source/images/sprites/models/planes/enemy_fighter.png");
 	iAirBomb = getImage("source/images/sprites/models/other/air_bomb.png");
 	iBombExplosion = getImage("source/images/sprites/explosions/bomb_explosion.png");
 
-	iEnemy_1 = getImage("source/images/sprites/models/tanks/enemies/enemy_1.png");
-	iEnemy_2 = getImage("source/images/sprites/models/tanks/enemies/enemy_2.png");
-	iEnemy_3 = getImage("source/images/sprites/models/tanks/enemies/enemy_3.png");
-	iEnemy_4 = getImage("source/images/sprites/models/tanks/enemies/enemy_4.png");
-	iEnemy_5 = getImage("source/images/sprites/models/tanks/enemies/enemy_5.png");
-	iEnemy_6 = getImage("source/images/sprites/models/tanks/enemies/enemy_6.png");
-	iEnemy_7 = getImage("source/images/sprites/models/tanks/enemies/enemy_7.png");
-	iEnemy_8 = getImage("source/images/sprites/models/tanks/enemies/enemy_8.png");
 	iCommunication_truck = getImage("source/images/sprites/models/special_transport/communication_truck.png");
 
 	iRadioAntenna = getImage("source/images/sprites/models/other/radio_antenna.png");
@@ -185,20 +176,17 @@ int main()
 
 #pragma region Textures
 
-	Texture tMap, tIcon, bTank, yTank, pTank, cTank, hTank, tTankRound, tShell, tShellExp,
-		tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter, tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion,
-		tEnemy_1, tEnemy_2, tEnemy_3, tEnemy_4, tEnemy_5, tEnemy_6, tEnemy_7, tEnemy_8, tCommunication_truck, tRadioAntenna,
-		tRadioWaves, tDrowning, tSpeedUpAchiev, tRepair, tSniper, tFirstStageBossBody, tFirstStageBossTower, tOilPuddle, tMortarShell,
-		tMortarClap, tTrail, tMineExplosion, tDustClap, tTowEffect;
+	Texture tMap, tIcon, tTankRound, tShell, tShellExp, tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter,
+		tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion, tCommunication_truck, tRadioAntenna, tRadioWaves, tDrowning,
+		tSpeedUpAchiev, tRepair, tSniper, tFirstStageBossBody, tFirstStageBossTower, tOilPuddle, tMortarShell, tMortarClap,
+		tTrail, tMineExplosion, tDustClap, tTowEffect, tEnemies[8];
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
 
-	bTank.loadFromImage(iBurgundyTank);
-	yTank.loadFromImage(iYellowTank);
-	pTank.loadFromImage(iPurpleTank);
-	cTank.loadFromImage(iCyanTank);
-	hTank.loadFromImage(iHemoTank);
+	Texture tPlayers[5];
+	for (int i = 0; i < 5; i++)
+		tPlayers[i].loadFromImage(iPlayers[i]);
 
 	tTankRound.loadFromFile("source/images/sprites/explosions/round.png");
 	tShell.loadFromFile("source/images/sprites/models/other/shell.png");
@@ -215,14 +203,6 @@ int main()
 	tAirBomb.loadFromImage(iAirBomb);
 	tBombExplosion.loadFromImage(iBombExplosion);
 
-	tEnemy_1.loadFromImage(iEnemy_1);
-	tEnemy_2.loadFromImage(iEnemy_2);
-	tEnemy_3.loadFromImage(iEnemy_3);
-	tEnemy_4.loadFromImage(iEnemy_4);
-	tEnemy_5.loadFromImage(iEnemy_5);
-	tEnemy_6.loadFromImage(iEnemy_6);
-	tEnemy_7.loadFromImage(iEnemy_7);
-	tEnemy_8.loadFromImage(iEnemy_8);
 	tCommunication_truck.loadFromImage(iCommunication_truck);
 
 	tRadioAntenna.loadFromImage(iRadioAntenna);
@@ -266,7 +246,7 @@ int main()
 
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, autoExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf,
 		shellExpBuf, takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
-		enemy_1Buf, enemy_1RoundBuf, armorBuf, armorResistBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
+		enemy_moveBuf, enemyRoundBuf, armorBuf, armorResistBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
 		firstStageBossMoveBuf, firstStageBossExpBuf, firstStageBossRoundBuf, firstStageBossMortarBuf, firstStageBossTowerBuf,
 		firstStageBossTowerCrashBuf, oilPuddleBuf, badgeAppearanceBuf, badgeDisappearanceBuf, firstStBossLaugh, firstStBossRoundBuf,
 		bossMortarShootBuf, stopMortarShootBuf, mineExplosionBuf, dustClapBuf, hookEngagementBuf;
@@ -286,8 +266,6 @@ int main()
 	fighterFlightBuf.loadFromFile("source/sounds/effects/fighterFlight.flac");
 	bombWhistleBuf.loadFromFile("source/sounds/effects/bombWhistle.flac");
 	bombExplosionBuf.loadFromFile("source/sounds/explosion/bomb_explosion.flac");
-	enemy_1Buf.loadFromFile("source/sounds/tank/movement/move_5.flac");
-	enemy_1RoundBuf.loadFromFile("source/sounds/tank/round/enemy1_round.flac");
 	armorBuf.loadFromFile("source/sounds/tank/armor.flac");
 	armorResistBuf.loadFromFile("source/sounds/tank/armor_resist.flac");
 	autoExpBuf.loadFromFile("source/sounds/explosion/auto_explosion.flac");
@@ -315,11 +293,11 @@ int main()
 	dustClapBuf.loadFromFile("source/sounds/effects/dust_clap.flac");
 	hookEngagementBuf.loadFromFile("source/sounds/effects/hook_engagement.flac");
 
-	Sound enemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sArmorResist,
+	Sound sEnemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sArmorResist,
 		sLaugh(laughBuf), sAirStrikeAlarm, sFighterFlight, sFirstStageBossLaugh, sBossMortarShoot(bossMortarShootBuf),
 		sStopMortarShoot(stopMortarShootBuf), sDustClap(dustClapBuf), sBadgeDisappear(badgeDisappearanceBuf);
 
-	enemy_move.setBuffer(enemy_1Buf);			enemy_move.setLoop(true);
+	sEnemy_move.setLoop(true);
 	sTakingIcon.setBuffer(takingIconBuf);		sTakingIcon.setLoop(false);
 	sPreferment.setBuffer(prefermentBuf);		sPreferment.setLoop(false);		sPreferment.setVolume(32.f);
 	sAirStrikeConfirm.setBuffer(airstrikeConfirmBuf); sAirStrikeConfirm.setLoop(false); sAirStrikeConfirm.setVolume(50.f);
@@ -345,11 +323,12 @@ int main()
 
 	IconAnim iconList[] = { {iconCamera, 'C'}, {iconPreferment, 'U'}, {iconRepair, 'R'}, {iconAirStrike, 'A'} };
 
-	Animation aBurgTank(bTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation aYellowTank(yTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation aPurpTank(pTank, pTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation aCyanTank(cTank, yTankBuf, 0, 0, 64, 64, 0.016, 2);
-	Animation aHemoTank(hTank, bTankBuf, 0, 0, 64, 64, 0.016, 2);
+	Animation aPlayers[5];
+	for (int i = 0; i < 5; i++)
+		aPlayers[i] = Animation(tPlayers[i], i == 0 || i == 4 ? bTankBuf : i == 2 ? pTankBuf : yTankBuf, 0, 0, 64, 64, 0.016, 2);
+
+	Animation aEnemies[8];
+	Animation aEnemyRound;
 
 	Animation aBurgTankRound(tTankRound, burgTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
 	Animation aYelTankRound(tTankRound, yelTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
@@ -371,19 +350,7 @@ int main()
 	Animation aDroppingBomb(tAirBomb, bombWhistleBuf, 0, 0, 200, 200, 0.015, 50);
 	Animation aBombExplosion(tBombExplosion, bombExplosionBuf, 0, 0, 400, 400, 0.012, 19);
 
-	Animation enemy_1(tEnemy_1, 0, 0, 64, 64, 0.016, 2);
-	Animation enemy_2(tEnemy_2, 0, 0, 64, 64, 0.016, 2);
-	Animation enemy_3(tEnemy_3, 0, 0, 64, 64, 0.016, 2);
-	Animation enemy_4(tEnemy_4, 0, 0, 64, 64, 0.016, 2);
-	Animation enemy_5(tEnemy_5, 0, 0, 64, 64, 0.016, 2);
-	Animation enemy_6(tEnemy_6, 0, 0, 64, 64, 0.016, 2);
-	Animation enemy_7(tEnemy_7, 0, 0, 64, 64, 0.016, 2);
-	Animation enemy_8(tEnemy_8, 0, 0, 64, 64, 0.016, 2);
-	Animation aEnemy1Round(tTankRound, enemy_1RoundBuf, 0, 0, 40, 36, 0.015, 8);
-
 	Animation communication_truck(tCommunication_truck, 0, 0, 64, 64, 0.0087, 1);
-
-	Animation enemyAnim_1[] = { enemy_1, enemy_2, enemy_3, enemy_4, enemy_5, enemy_6, enemy_7, enemy_8 };
 
 	Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
 	Animation aSpeedUp(tSpeedUpAchiev, speedUpBuf, 0, 0, 128, 128, 0.009, 24);
@@ -536,7 +503,8 @@ int main()
 
 #pragma region Functions
 	
-	void createEnemies(vector<Entity*>&, vector<Enemy*>&, Animation[], SoundBuffer&, string*);
+	void createEnemiesAnimationArray(Image*, Texture*, Animation*, int);
+	void createEnemies(vector<Entity*>&, vector<Enemy*>&, Animation*, SoundBuffer&, string*, int);
 	void createEnemyCommunicationTrucks(vector<CommunicationTruck*>&, Animation&, SoundBuffer&, int, Animation&);
 	void createSmoke(GroundVehicle*, Animation&);
 	void createShot(Tank*, Animation&, Animation&, Animation&);
@@ -548,6 +516,7 @@ int main()
 	void getCoordinatesForNewIcon(double&, double&, string*);
 	void deletePreviousEntities();
 	PlayersPositions DeterminePlayerPosition(int);
+	void createEnemyMoveSound(SoundBuffer&, Sound&, int);
 
 #pragma endregion
 
@@ -601,14 +570,7 @@ int main()
 								for (int i = 0; i < numberOfPlayers; i++)
 								{
 									Player *player;
-									switch (i)
-									{
-									case 0: player = new Player(aBurgTank, 0.0, 0.0, 0, true, tankExpBuf, 12, 1); break;
-									case 1: player = new Player(aYellowTank, 0.0, 0.0, 0, true, tankExpBuf, 12, 1); break;
-									case 2: player = new Player(aPurpTank, 0.0, 0.0, 0, true, tankExpBuf, 12, 1); break;
-									case 3: player = new Player(aCyanTank, 0.0, 0.0, 0, true, tankExpBuf, 12, 1); break;
-									case 4: player = new Player(aHemoTank, 0.0, 0.0, 0, true, tankExpBuf, 12, 1); break;
-									}
+									player = new Player(aPlayers[i], 0.0, 0.0, 0, true, tankExpBuf, 12, 1);
 
 									team.push_back(player);
 									entities.push_back(player);
@@ -702,7 +664,12 @@ int main()
 							team[4]->setStartPosition(pos.fifth.x, pos.fifth.y);
 						}
 
-						createEnemies(entities, squad, enemyAnim_1, tankExpBuf, maps[index]);
+						enemyRoundBuf.loadFromFile("source/sounds/tank/round/enemy_round_" + to_string(index + 1) + ".flac");
+						aEnemyRound = Animation(tTankRound, enemyRoundBuf, 0, 0, 40, 36, 0.015, 8);
+
+						createEnemyMoveSound(enemy_moveBuf, sEnemy_move, index);
+						createEnemiesAnimationArray(iEnemies, tEnemies, aEnemies, index);
+						createEnemies(entities, squad, aEnemies, tankExpBuf, maps[index], index);
 						createEnemyCommunicationTrucks(specialTransport, communication_truck, autoExpBuf, gameTime, aRadioAntenna);
 						Icon::spawnTimer = gameTime + 7;
 						transition = false;
@@ -721,10 +688,10 @@ int main()
 
 				if (mode == GAME)
 				{
-					if (enemy_move.getStatus() == SoundStream::Stopped && transition)
-						enemy_move.play();
-					else if (enemy_move.getStatus() == SoundStream::Playing && !transition)
-						enemy_move.stop();
+					if (sEnemy_move.getStatus() == SoundStream::Stopped && transition)
+						sEnemy_move.play();
+					else if (sEnemy_move.getStatus() == SoundStream::Playing && !transition)
+						sEnemy_move.stop();
 
 					//.:: temporary code :::
 					if (Keyboard::isKeyPressed(Keyboard::N) && (Tank::camera == Camera::StartGameSet || Tank::camera == Camera::Commander))
@@ -737,7 +704,7 @@ int main()
 								view.setCenter(float(sizeX / 2), float(sizeY / 2));
 								mode = SCORING;
 								++index;
-								enemy_move.stop();
+								sEnemy_move.stop();
 							}
 						}
 					}
@@ -1289,7 +1256,7 @@ int main()
 									e->destroyPlayerTanks(p);
 
 							if (e->round && e->isShot)
-								createShot(e, aEnemy1Round, aShell, aShellExp);
+								createShot(e, aEnemyRound, aShell, aShellExp);
 						}
 
 #pragma region First Stage Boss
@@ -1810,7 +1777,19 @@ Image getImage(string path)
 	return image;
 }
 
-void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation anim[], SoundBuffer &sExplosion, string *map)
+void createEnemiesAnimationArray(Image *iEnemies, Texture *tEnemies, Animation *aEnemies, int index)
+{
+	string enemySourcePath = "source/images/sprites/models/tanks/enemies/enemy_";
+	for (int i = 0; i < 8; i++)
+	{
+		string path = enemySourcePath + to_string(index * 8 + (i + 1)) + ".png";
+		iEnemies[i] = getImage(path);
+		tEnemies[i].loadFromImage(iEnemies[i]);
+		aEnemies[i] = Animation(tEnemies[i], 0, 0, 64, 64, 0.016, 2);
+	}
+}
+
+void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation *anim, SoundBuffer &sExplosion, string *map, int index)
 {
 	const int eTanks = 72;
 	double enemyPositionX = 70;
@@ -1824,24 +1803,25 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation a
 		mY = (int)(ceil(enemyPositionY / 32));
 
 		addValue = getEnemyPositionYOffset(mX, mY, map);
+		int k = index * 8;
 
 		Enemy *enemy;
 		if (i <= 9)
-			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 8);
+			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 8);
 		else if (i > 9 && i <= 18)
-			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 7);
+			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 7);
 		else if (i > 18 && i <= 27)
-			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 6);
+			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 6);
 		else if (i > 27 && i <= 36)
-			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 5);
+			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 5);
 		else if (i > 36 && i <= 45)
-			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 4);
+			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 4);
 		else if (i > 45 && i <= 54)
-			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 3);
+			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 3);
 		else if (i > 54 && i <= 63)
-			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 2);
+			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 2);
 		else
-			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", 1);
+			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 1);
 
 		entities.push_back(enemy);
 		squad.push_back(enemy);
@@ -2104,6 +2084,15 @@ PlayersPositions DeterminePlayerPosition(int numberOfPlayers)
 	}
 
 	return positions;
+}
+
+void createEnemyMoveSound(SoundBuffer& buffer, Sound& sound, int index)
+{
+	string path = "source/sounds/tank/movement/enemy_move_";
+
+	buffer.loadFromFile(path + to_string(index + 1) + ".flac");
+	sound.setBuffer(buffer);
+	sound.setVolume(index == 1 ? 25.f : 80.f);
 }
 
 #pragma endregion
