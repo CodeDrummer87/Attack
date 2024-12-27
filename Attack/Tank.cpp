@@ -81,3 +81,10 @@ void Tank::shoveOffTankCarcass(GroundVehicle *d)
 		break;
 	}
 }
+
+void Tank::prepareVehicle()
+{
+	isShot = true;
+	hitPoints = level + 1;
+	isSmoking = false;
+}
