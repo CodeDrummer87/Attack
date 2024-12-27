@@ -50,5 +50,6 @@ public:
 	void setCoordY(double);
 	int getCounterDirection(int);
 	void resetDegrees(int&);
+	bool isUndeletable();
 
 };

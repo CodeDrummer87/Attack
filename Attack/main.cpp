@@ -2023,11 +2023,11 @@ void deletePreviousEntities()
 	for (auto i = entities.begin(); i != entities.end();)
 	{
 		Entity* e = *i;
-		if ((e->name == "tank" || e->name == "destroyed") && e->army == "player")
+		if (e->isUndeletable())
 		{
 			i++;
 			if (e->name == "tank")
-				static_cast<Tank*>(e)->isShot = true;
+				static_cast<Tank*>(e)->prepareVehicle();
 		}
 		else
 		{
