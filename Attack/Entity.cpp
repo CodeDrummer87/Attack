@@ -86,5 +86,6 @@ void Entity::resetDegrees(int &d)
 bool Entity::isUndeletable()
 {
 	return	name == "rank" ? true :
-			(name == "tank" || name == "destroyed") && army == "player" ? true : false;
+			(name == "tank" || name == "destroyed") && army == "player" ? true :
+			(name == "smoke" || army == "player") ? true : false;
 }
