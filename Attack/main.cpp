@@ -672,6 +672,11 @@ int main()
 						createEnemies(entities, squad, aEnemies, tankExpBuf, maps[index], index);
 						createEnemyCommunicationTrucks(specialTransport, communication_truck, autoExpBuf, gameTime, aRadioAntenna);
 						Icon::spawnTimer = gameTime + 7;
+
+						isBossCreated = false;
+						Tank::camera = Camera::StartGame;
+						Icon::isFirstIcon = true;
+
 						transition = false;
 					}
 					if (!transition && !isStartGame)
