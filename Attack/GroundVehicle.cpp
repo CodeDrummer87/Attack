@@ -18,7 +18,7 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 	sExplosion = sExplosion_;
 	explosionFrameCount = expFrameCount;
 
-	speedBonus = 0.0f;
+	destinationDist = speedBonus = 0.0f;
 	isDestroyed = isTransition = drowning = isSmoking = false;
 	isDrowned = isShowRepair = isPlayerControl = isSkidding = false;
 	hitPoints = level + 1;
@@ -36,6 +36,8 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 
 	reachDist = 0.0;
 	vehicleSpeed = level % 2 == 0 ? 0.1f : 0.08f;
+
+	nextRequestTime = 0;
 }
 
 GroundVehicle::~GroundVehicle()
@@ -169,11 +171,6 @@ void GroundVehicle::accelerate(int dir_, double acc)
 		dy += toUp + toDown;
 
 	toUp = toRight = toDown = toLeft = 0;
-}
-
-bool GroundVehicle::makeSureDestroyed()
-{
-	return isDestroyed;
 }
 
 void GroundVehicle::checkVehiclesCollision(GroundVehicle *t)
@@ -569,3 +566,14 @@ void GroundVehicle::checkBossCollision(GroundVehicle *boss_, Sound &sBossLaugh)
 		}
 	}
 }
+
+bool GroundVehicle::isActionTime(int currentGameTime)
+{
+	return (status != Status::DEAD && nextRequestTime == currentGameTime) ? true : false;
+}
+
+bool GroundVehicle::mustSmoke()
+{
+	return ((status == Status::WOUNDED || (status == Status::DEAD && isDestroyed)) && !isSmoking) ? true : false;
+}
+

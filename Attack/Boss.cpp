@@ -8,7 +8,7 @@ Boss::Boss()
 Boss::Boss(BossArgs &args)
 	: Enemy(args.anim, args.x, args.y, "boss", args.dir, args.isPlayAnimation, args.sExplosion, args.expFrameCount, "enemy", args.level)
 {
-	z_index = 3;
+	z_index = (short)4;
 
 	dir = 180;
 	hitPoints = 100 + args.numberOfPlayers * 75;

@@ -47,10 +47,13 @@ public:
 	bool drowning;
 	bool isSmoking;
 	bool isDrowned;
+
 	GroundVehicle *pusher;	//.:: Only tanks
 	Traffic traffic;
 
 	bool isShowRepair;
+
+	int nextRequestTime;
 
 	//.:: Constructor :::::::::::::::::::::::
 	GroundVehicle();
@@ -64,7 +67,6 @@ public:
 	
 	void update(double);
 	void accelerate(int, double);
-	bool makeSureDestroyed();
 	void checkVehiclesCollision(GroundVehicle*);
 	bool makeSureVehicleCollision(GroundVehicle*);
 	void getAreaDamage(Area*, string*, int);
@@ -75,5 +77,7 @@ public:
 	void sinkTankCarcass(string*);
 	void checkPuddlesCollision(Entity*);
 	void checkBossCollision(GroundVehicle*, Sound&);
+	bool isActionTime(int);
+	bool mustSmoke();
 
 };

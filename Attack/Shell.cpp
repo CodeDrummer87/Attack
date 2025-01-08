@@ -13,7 +13,7 @@ Shell::Shell()
 
 Shell::Shell(Animation &a, Animation &b, Tank *tank)
 {
-	z_index = 1;
+	z_index = (short)2;
 
 	dist = 0.0f;
 	name = "shell";
@@ -178,7 +178,7 @@ void Shell::damageVehicle(GroundVehicle *t, Sound &armorSound)
 		if (shell.intersects(vehicle))
 		{
 			armorSound.play();
-			if (this->name == "shell" && (t->name == "tank" || t->name == "truck" || t->name == "boss"))
+			if (this->name == "shell" && (t->name == "tank" || t->name == "truck" || t->name == "boss" || t->name == "miner"))
 			{
 				if (level >= t->hitPoints && t->hitPoints > 1)
 					t->hitPoints = 1;

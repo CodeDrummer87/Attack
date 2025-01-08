@@ -44,7 +44,7 @@
     <ClCompile Include="DrowningModel.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="AchievementModel.cpp">
+    <ClCompile Include="Effect.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="RadioAntenna.cpp">
@@ -108,6 +108,12 @@
       <Filter>Исходные файлы\BasicClasses\Shells</Filter>
     </ClCompile>
     <ClCompile Include="Icon.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Miner.cpp">
+      <Filter>Исходные файлы\Transport\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="Mine.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -217,7 +223,7 @@
     <ClInclude Include="DrowningModel.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="AchievementModel.h">
+    <ClInclude Include="Effect.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Area.h">
@@ -254,6 +260,12 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Icon.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Miner.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Mine.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

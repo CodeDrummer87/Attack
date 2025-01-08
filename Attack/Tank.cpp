@@ -9,7 +9,7 @@ Tank::Tank(Animation &anim, double x_, double y_, string name_, int dir_, bool i
 	SoundBuffer &sExplosion, int expFrameCount, string army_, int level_)
 	: GroundVehicle(anim, x_, y_, name_, dir_, isPlayAnimation_, sExplosion, expFrameCount, army_, level_)
 {
-	z_index = 1;
+	z_index = (short)2;
 
 	isSpeedBonusUp = isShowSpeedBonusAchiev = false;
 	isShowSniperAchiev = false;

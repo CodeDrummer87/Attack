@@ -7,7 +7,7 @@ Icon::Icon()
 
 Icon::Icon(IconAnim icons[], double X, double Y, int currentGameTime)
 {
-	z_index = 4;
+	z_index = (short)5;
 
 	srand(std::time(NULL));
 	removalTime = currentGameTime + 40;

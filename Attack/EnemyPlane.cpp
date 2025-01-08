@@ -7,7 +7,7 @@ EnemyPlane::EnemyPlane()
 
 EnemyPlane::EnemyPlane(Animation &a, Animation &b, Animation &c, double X, double Y, string name_, double dropPoint_, int mapHeight_)
 {
-	z_index = (short)6;
+	z_index = (short)7;
 
 	name = name_;
 	mapHeight = mapHeight_ * 32;

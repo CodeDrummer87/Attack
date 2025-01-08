@@ -22,7 +22,7 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_)
 
 		if (name == "dustClap")
 		{
-			z_index = 3;
+			z_index = (short)4;
 			anim.sprite.setScale(1.4f, 1.4f);
 		}
 
@@ -33,8 +33,8 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_)
 
 	if (name == "smoke")
 	{
-		z_index = vehicle->z_index == (short)3 ? (short)4 : (short)2;
-		if (z_index == (short)4)
+		z_index = vehicle->z_index == (short)4 ? (short)5 : (short)3;
+		if (z_index == (short)5)
 			anim.sprite.setScale(1.7f, 1.7f);
 
 		dir = 0;
@@ -85,7 +85,7 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_, short numberOfC
 
 Smoke::Smoke(Animation &a, double X, double Y, string name_)
 {
-	z_index = 4;
+	z_index = 5;
 
 	anim = a;
 	x = X;

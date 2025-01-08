@@ -5,7 +5,6 @@
 class CommunicationTruck : public GroundVehicle
 {
 public:
-	int nextRequestTime;
 	bool isAirstrikeRequest;
 
 	//.:: Constructor :::::::::::::::::::::::

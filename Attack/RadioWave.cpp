@@ -7,7 +7,7 @@ RadioWave::RadioWave()
 
 RadioWave::RadioWave(Animation &a, GroundVehicle *vehicle, string name_)
 {
-	z_index = 5;
+	z_index = (short)6;
 
 	anim = a;
 	anim.sprite.setColor(Color::Cyan);

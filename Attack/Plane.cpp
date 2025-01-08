@@ -7,7 +7,7 @@ Plane::Plane()
 
 Plane::Plane(Animation &a, Animation &b, Animation &c, double X, double Y, string name_, Entity *attachedObject_)
 {
-	z_index = (short)6;
+	z_index = (short)7;
 
 	name = name_;
 	attachedObject = attachedObject_;

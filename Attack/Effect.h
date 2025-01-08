@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Entity.h"
-#include "Tank.h"
+#include "GroundVehicle.h"
 
-class AchievementModel : public Entity
+class Effect : public Entity
 {
 private:
-	Tank *own;
+	GroundVehicle *own;
 	int constDir;
 
 	void setCoordinates();
@@ -14,11 +14,11 @@ private:
 public:
 
 	//.:: Constructor :::::::::::::::::::::::
-	AchievementModel();
-	AchievementModel(Animation&, Tank*, string);
+	Effect();
+	Effect(Animation&, GroundVehicle*, string);
 
 	//.:: Destructor ::::::::::::::::::::::::
-	virtual ~AchievementModel();
+	virtual ~Effect();
 
 	//.:: Public_methods_of_class :::::::::::
 	void update(double);

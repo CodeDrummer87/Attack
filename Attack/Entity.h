@@ -12,13 +12,14 @@ protected:
 public:
 	/*
 	  z_index:
-	  0 - puddle, zone
-	  1 - enemy's tank, player's tank
-	  2 - smoke
-	  3 - boss tank
-	  4 - smoke for the boss
-	  5 - air objects below the aircraft (for example a bomb), target
-	  6 - aircraft
+	  0 - map default
+	  1 - puddle, zone, mines
+	  2 - all land vehicles
+	  3 - smoke
+	  4 - boss tank
+	  5 - smoke for the boss
+	  6 - air objects under the aircraft (for example a bomb), target
+	  7 - aircraft
 	*/
 	short z_index;
 
@@ -51,5 +52,7 @@ public:
 	int getCounterDirection(int);
 	void resetDegrees(int&);
 	bool isUndeletable();
+	bool isAnyGroundVehicle();
+	bool isGroundVehicle();
 
 };
