@@ -103,11 +103,29 @@ Smoke::Smoke(Animation &a, double X, double Y, string name_)
 Smoke::~Smoke()
 {}
 
+Smoke::Smoke(Animation &a, Entity *mine, string name_)
+{
+	z_index = 1;
+	dir = 0;
+	x = mine->getCoordX(false);
+	y = mine->getCoordY(false);
+
+	anim = a;
+	name = name_;
+	level = 0;
+	army = "enemy";
+
+	isPlayAnimation = true;
+	anim.sprite.setPosition(x, y);
+	isExist = true;
+	status = ALIVE;
+}
+
 void Smoke::update(double time)
 {
 	if (isExist)
 	{
-		if (name == "explosion" || name == "dustClap")
+		if (name == "explosion" || name == "dustClap" || name == "defectiveMineSmoke")
 			if (anim.isEnd(time))
 				isExist = false;
 

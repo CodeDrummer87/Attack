@@ -54,5 +54,6 @@ public:
 	bool isUndeletable();
 	bool isAnyGroundVehicle();
 	bool isGroundVehicle();
+	bool isPlayer();
 
 };

@@ -111,3 +111,8 @@ bool Entity::isGroundVehicle()
 			name == "truck" ||
 			name == "miner") ? true : false;
 }
+
+bool Entity::isPlayer()
+{
+	return (name == "tank" && army == "player") ? true : false;
+}
