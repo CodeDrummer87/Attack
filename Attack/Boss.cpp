@@ -8,7 +8,7 @@ Boss::Boss()
 Boss::Boss(BossArgs &args)
 	: Enemy(args.anim, args.x, args.y, "boss", args.dir, args.isPlayAnimation, args.sExplosion, args.expFrameCount, "enemy", args.level)
 {
-	z_index = 3;
+	z_index = (short)4;
 
 	dir = 180;
 	hitPoints = 100 + args.numberOfPlayers * 75;
@@ -105,7 +105,7 @@ void Boss::checkMapCollision(string *map)
 					traffic.up.dir = false;
 
 				if (map[i][j] == 'F')
-					map[i][j] = ' ';
+					map[i][j] = this->level == 20 ? 'S' : ' ';
 
 				if (!traffic.down.dir)
 					traffic.down.dir = true;
@@ -119,7 +119,7 @@ void Boss::checkMapCollision(string *map)
 					traffic.down.dir = false;
 
 				if (map[i][j] == 'F')
-					map[i][j] = ' ';
+					map[i][j] = this->level == 20 ? 'S' : ' ';
 
 				if (!traffic.up.dir)
 					traffic.up.dir = true;
@@ -133,7 +133,7 @@ void Boss::checkMapCollision(string *map)
 					traffic.left.dir = false;
 
 				if (map[i][j] == 'F')
-					map[i][j] = ' ';
+					map[i][j] = this->level == 20 ? 'S' : ' ';
 
 				if (!traffic.right.dir)
 					traffic.right.dir = true;
@@ -147,7 +147,7 @@ void Boss::checkMapCollision(string *map)
 					traffic.right.dir = false;
 
 				if (map[i][j] == 'F')
-					map[i][j] = ' ';
+					map[i][j] = this->level == 20 ? 'S' : ' ';
 
 				if (!traffic.left.dir)
 					traffic.left.dir = true;

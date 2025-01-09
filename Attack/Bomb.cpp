@@ -7,7 +7,7 @@ Bomb::Bomb()
 
 Bomb::Bomb(Animation &a, Animation &b, double X, double Y, string name_)
 {
-	z_index = (short)5;
+	z_index = (short)6;
 
 	name = name_;
 	anim = a;

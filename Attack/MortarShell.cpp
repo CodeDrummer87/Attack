@@ -9,7 +9,7 @@ MortarShell::MortarShell()
 
 MortarShell::MortarShell(Animation &a, Animation &b, Tank *tower, double X, double Y, Tank *target, Animation &c) : Shell(a, b, tower)
 {
-	z_index = 5;
+	z_index = (short)6;
 
 	x = X;
 	y = Y;

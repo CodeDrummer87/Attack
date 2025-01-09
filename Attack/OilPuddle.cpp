@@ -7,7 +7,7 @@ OilPuddle::OilPuddle()
 
 OilPuddle::OilPuddle(Animation &anim_, double X, double Y, int ownDir, bool isPlayAnimation_, int currentTime)
 {
-	z_index = 0;
+	z_index = (short)1;
 
 	anim = anim_;
 	isExist = true;

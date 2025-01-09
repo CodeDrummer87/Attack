@@ -5,7 +5,7 @@ DrowningModel::DrowningModel()
 
 DrowningModel::DrowningModel(Animation &a, GroundVehicle *own_, string name_)
 {
-	z_index = 3;
+	z_index = (short)4;
 
 	anim = a;
 	level = 0;

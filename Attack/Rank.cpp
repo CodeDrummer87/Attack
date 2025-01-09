@@ -5,7 +5,7 @@ Rank::Rank()
 
 Rank::Rank(Animation &a, Tank *tank, string name_)
 {
-	z_index = 2;
+	z_index = (short)3;
 
 	anim = a;
 	level = 0;

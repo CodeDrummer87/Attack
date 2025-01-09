@@ -5,6 +5,7 @@ Area::Area()
 
 Area::Area(double X, double Y, float radius, Entity *own_, string name_, string army_)
 {
+	z_index = (short)1;
 	isTerrainDestroyed = false;
 
 	name = name_;

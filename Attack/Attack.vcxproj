@@ -139,7 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AchievementModel.cpp" />
+    <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Air.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Area.cpp" />
@@ -154,6 +154,8 @@
     <ClCompile Include="GroundVehicle.cpp" />
     <ClCompile Include="Icon.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mine.cpp" />
+    <ClCompile Include="Miner.cpp" />
     <ClCompile Include="MortarShell.cpp" />
     <ClCompile Include="OilPuddle.cpp" />
     <ClCompile Include="Plane.cpp" />
@@ -167,7 +169,7 @@
     <ClCompile Include="TankTower.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AchievementModel.h" />
+    <ClInclude Include="Effect.h" />
     <ClInclude Include="Air.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Area.h" />
@@ -183,6 +185,8 @@
     <ClInclude Include="Icon.h" />
     <ClInclude Include="libraries.h" />
     <ClInclude Include="maps.h" />
+    <ClInclude Include="Mine.h" />
+    <ClInclude Include="Miner.h" />
     <ClInclude Include="MortarShell.h" />
     <ClInclude Include="OilPuddle.h" />
     <ClInclude Include="Plane.h" />

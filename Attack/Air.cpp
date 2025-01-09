@@ -7,7 +7,7 @@ Air::Air()
 
 Air::Air(Animation &a, Animation &b, Entity *airSpotter, string name_)
 {
-	z_index = (short)6;
+	z_index = (short)7;
 
 	isExist = true;
 	status = ALIVE;
@@ -37,7 +37,7 @@ void Air::update(double time)
 			Player::airSpotter.currentPlayer = NULL;
 
 			name = "zone";
-			z_index = 0;
+			z_index = 1;
 			anim = animSpare;
 			anim.sprite.setPosition(x, y);
 			anim.sprite.setScale(1.5f, 1.5f);

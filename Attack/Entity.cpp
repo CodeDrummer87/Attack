@@ -7,6 +7,8 @@ Entity::Entity()
 
 Entity::Entity(Animation &a, double x_, double y_, string name_, int dir_, bool isPlayAnimation_)
 {
+	dx = dy = 0.0;
+
 	anim = a;
 	x = x_;
 	y = y_;
@@ -15,7 +17,11 @@ Entity::Entity(Animation &a, double x_, double y_, string name_, int dir_, bool 
 	isPlayAnimation = isPlayAnimation_;
 
 	isExist = true;
-	z_index = 4;
+	z_index = (short)1;
+
+	number = 0;
+	level = 1;
+	status = Status::ALIVE;
 }
 
 Entity::~Entity()
@@ -88,4 +94,25 @@ bool Entity::isUndeletable()
 	return	name == "rank" ? true :
 			(name == "tank" || name == "destroyed") && army == "player" ? true :
 			(name == "smoke" && army == "player") ? true : false;
+}
+
+bool Entity::isAnyGroundVehicle()
+{
+	return (name == "tank" || 
+			name == "truck" || 
+			name == "miner" || 
+			name == "boss" || 
+			name == "destroyed") ? true : false;
+}
+
+bool Entity::isGroundVehicle()
+{
+	return (name == "tank" ||
+			name == "truck" ||
+			name == "miner") ? true : false;
+}
+
+bool Entity::isPlayer()
+{
+	return (name == "tank" && army == "player") ? true : false;
 }

@@ -9,7 +9,7 @@ TankTower::TankTower()
 TankTower::TankTower(Animation &a, double x_, double y_, int dir_, SoundBuffer &turn, SoundBuffer &sExplosion_, int expFrameCount, GroundVehicle *own_)
 	: Enemy(a, x_, y_, "turret", dir_, false, sExplosion_, expFrameCount, "enemy", own_->level)
 {
-	z_index = 3;
+	z_index = (short)4;
 	own = own_;
 
 	currentTarget = NULL;

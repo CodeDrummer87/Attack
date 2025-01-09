@@ -19,7 +19,7 @@
 #include "Enemy.h"
 
 #include "DrowningModel.h"
-#include "AchievementModel.h"
+#include "Effect.h"
 
 #include "CommunicationTruck.h"
 #include "RadioAntenna.h"
@@ -35,6 +35,9 @@
 
 #include "MortarShell.h"
 #include "Icon.h"
+
+#include "Miner.h"
+#include "Mine.h"
 
 //.:: Structures :::
 struct Tuple
@@ -67,7 +70,7 @@ int lastSecondsOfChapter = 0;
 vector<Entity*> entities;
 vector<Player*> team;
 vector<Enemy*> squad;
-vector<CommunicationTruck*> specialTransport;
+vector<GroundVehicle*> specialTransport;
 
 int getEnemyPositionYOffset(int, int, string*);
 
@@ -135,8 +138,9 @@ int main()
 #pragma region Images
 
 	Image iMap, iIcon, iFighter, iEnemyFighter, iAirBomb, iBombExplosion, iCommunication_truck, iRadioAntenna, iRadioWaves,
-		iDrowning, iSpeedUpAchiev, iRepair, iSniper, iFirstStage_boss_tankBody, iFirstStage_boss_tankTower,iOilPuddle,
-		iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect, iEnemies[8];
+		iDrowning, iSpeedUpAchiev, iRepair, iSniper, iFirstStage_boss_tankBody, iFirstStage_boss_tankTower, iOilPuddle,
+		iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect, iEnemies[8], iMiner, iMining, iMine, 
+		iLandmineExplosion;
 
 	iMap = getImage("source/images/map.png");
 	iIcon = getImage("source/images/sprites/attributes/icons/icons.png");
@@ -167,6 +171,10 @@ int main()
 	iMineExplosion = getImage("source/images/sprites/explosions/mine_explosion.png");
 	iDustClap = getImage("source/images/sprites/other/dust_clap.png");
 	iTowEffect = getImage("source/images/sprites/other/tow_effect.png");
+	iMiner = getImage("source/images/sprites/models/special_transport/miner_1.png");
+	iMining = getImage("source/images/sprites/other/mining.png");
+	iMine = getImage("source/images/sprites/models/other/mine.png");
+	iLandmineExplosion = getImage("source/images/sprites/explosions/landmine_explosion.png");
 
 	//.:: Bosses
 	iFirstStage_boss_tankBody = getImage("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_body.png");
@@ -179,7 +187,7 @@ int main()
 	Texture tMap, tIcon, tTankRound, tShell, tShellExp, tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter,
 		tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion, tCommunication_truck, tRadioAntenna, tRadioWaves, tDrowning,
 		tSpeedUpAchiev, tRepair, tSniper, tFirstStageBossBody, tFirstStageBossTower, tOilPuddle, tMortarShell, tMortarClap,
-		tTrail, tMineExplosion, tDustClap, tTowEffect, tEnemies[8];
+		tTrail, tMineExplosion, tDustClap, tTowEffect, tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -219,6 +227,10 @@ int main()
 	tMineExplosion.loadFromImage(iMineExplosion);
 	tDustClap.loadFromImage(iDustClap);
 	tTowEffect.loadFromImage(iTowEffect);
+	tMiner.loadFromImage(iMiner);
+	tMining.loadFromImage(iMining);
+	tMine.loadFromImage(iMine);
+	tLandmineExplosion.loadFromImage(iLandmineExplosion);
 
 	tFirstStageBossBody.loadFromImage(iFirstStage_boss_tankBody);
 	tFirstStageBossTower.loadFromImage(iFirstStage_boss_tankTower);
@@ -249,7 +261,8 @@ int main()
 		enemy_moveBuf, enemyRoundBuf, armorBuf, armorResistBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
 		firstStageBossMoveBuf, firstStageBossExpBuf, firstStageBossRoundBuf, firstStageBossMortarBuf, firstStageBossTowerBuf,
 		firstStageBossTowerCrashBuf, oilPuddleBuf, badgeAppearanceBuf, badgeDisappearanceBuf, firstStBossLaugh, firstStBossRoundBuf,
-		bossMortarShootBuf, stopMortarShootBuf, mineExplosionBuf, dustClapBuf, hookEngagementBuf;
+		bossMortarShootBuf, stopMortarShootBuf, mineExplosionBuf, dustClapBuf, hookEngagementBuf, miningBuf, landmineExpBuf,
+		defectiveMineBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -292,6 +305,9 @@ int main()
 	mineExplosionBuf.loadFromFile("source/sounds/explosion/mine_explosion.flac");
 	dustClapBuf.loadFromFile("source/sounds/effects/dust_clap.flac");
 	hookEngagementBuf.loadFromFile("source/sounds/effects/hook_engagement.flac");
+	miningBuf.loadFromFile("source/sounds/effects/mining.flac");
+	landmineExpBuf.loadFromFile("source/sounds/explosion/landmine_explosion.flac");
+	defectiveMineBuf.loadFromFile("source/sounds/effects/defective_mine.flac");
 
 	Sound sEnemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sArmorResist,
 		sLaugh(laughBuf), sAirStrikeAlarm, sFighterFlight, sFirstStageBossLaugh, sBossMortarShoot(bossMortarShootBuf),
@@ -350,7 +366,8 @@ int main()
 	Animation aDroppingBomb(tAirBomb, bombWhistleBuf, 0, 0, 200, 200, 0.015, 50);
 	Animation aBombExplosion(tBombExplosion, bombExplosionBuf, 0, 0, 400, 400, 0.012, 19);
 
-	Animation communication_truck(tCommunication_truck, 0, 0, 64, 64, 0.0087, 1);
+	Animation aCommunication_truck(tCommunication_truck, 0, 0, 64, 64, 0.0087, 1);
+	Animation aMiner(tMiner, 0, 0, 64, 64, 0.0087, 2);
 
 	Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
 	Animation aSpeedUp(tSpeedUpAchiev, speedUpBuf, 0, 0, 128, 128, 0.009, 24);
@@ -364,6 +381,10 @@ int main()
 	Animation aDustClap(tDustClap, 0, 0, 128, 128, 0.01, 8);
 	Animation aTowEffect(tTowEffect, hookEngagementBuf, 0, 0, 128, 128, 0.015, 19);
 	Animation aBadgeAppearance(tMortarClap, badgeAppearanceBuf, 0, 0, 32, 32, 0.01, 8);
+	Animation aMining(tMining, miningBuf, 0, 0, 128, 128, 0.022, 21);
+	Animation aMine(tMine, 0, 0, 8, 8, 0.03, 24);
+	Animation aLandmineExplosion(tLandmineExplosion, landmineExpBuf, 0, 0, 64, 64, 0.012, 12);
+	Animation aDefectiveMine(tMortarClap, defectiveMineBuf, 0, 0, 32, 32, 0.01, 8);
 
 	//.:: Bosses :::
 #pragma region First stage boss
@@ -505,8 +526,10 @@ int main()
 	
 	void createEnemiesAnimationArray(Image*, Texture*, Animation*, int);
 	void createEnemies(vector<Entity*>&, vector<Enemy*>&, Animation*, SoundBuffer&, string*, int);
-	void createEnemyCommunicationTrucks(vector<CommunicationTruck*>&, Animation&, SoundBuffer&, int, Animation&);
+	void createEnemyCommunicationTrucks(Animation&, SoundBuffer&, int, Animation&, Tuple);
+	void createMiner(Animation&, SoundBuffer&, int, int, Tuple);
 	void createSmoke(GroundVehicle*, Animation&);
+	void setEnemyMine(GroundVehicle*, int, Animation&, Animation&, int);
 	void createShot(Tank*, Animation&, Animation&, Animation&);
 	void createBomberLink(Player*, Sound&, Sound&, int, Animation&, Animation&, Animation&);
 	void dropBombs(Animation&, Animation&, Sound&);
@@ -517,6 +540,9 @@ int main()
 	void deletePreviousEntities();
 	PlayersPositions DeterminePlayerPosition(int);
 	void createEnemyMoveSound(SoundBuffer&, Sound&, int);
+	void createLandmineExplosion(Animation&, GroundVehicle*);
+	void createDefectiveMineSmoke(Animation&, Entity*);
+	Tuple determinePlaceToAppear(string*, bool);
 
 #pragma endregion
 
@@ -670,7 +696,16 @@ int main()
 						createEnemyMoveSound(enemy_moveBuf, sEnemy_move, index);
 						createEnemiesAnimationArray(iEnemies, tEnemies, aEnemies, index);
 						createEnemies(entities, squad, aEnemies, tankExpBuf, maps[index], index);
-						createEnemyCommunicationTrucks(specialTransport, communication_truck, autoExpBuf, gameTime, aRadioAntenna);
+
+						Tuple truckPlace = determinePlaceToAppear(maps[index], true);
+						createEnemyCommunicationTrucks(aCommunication_truck, autoExpBuf, gameTime, aRadioAntenna, truckPlace);
+
+						if (index > 0)
+						{
+							Tuple place = determinePlaceToAppear(maps[index], true);
+							createMiner(aMiner, autoExpBuf, gameTime, index, place);
+						}
+
 						Icon::spawnTimer = gameTime + 7;
 
 						isBossCreated = false;
@@ -1266,7 +1301,6 @@ int main()
 
 #pragma region First Stage Boss
 
-						//.:: Boss coding :::
 						if (e->name == "boss")
 						{
 							if (e->status == WOUNDED && !static_cast<Boss*>(e)->wasDustClap)
@@ -1343,35 +1377,47 @@ int main()
 				{
 					t->checkMapCollision(maps[index]);
 
-					if (t->status != DEAD && t->nextRequestTime == gameTime)
+					if (t->isActionTime(gameTime))
 					{
-						t->isAirstrikeRequest = true;
-						t->nextRequestTime = gameTime + 90;
+						if (t->name == "truck")
+						{
+							static_cast<CommunicationTruck*>(t)->isAirstrikeRequest = true;
+							t->nextRequestTime = gameTime + 90;
 
-						for (auto p : team)
-							if (p->status != DEAD && p != EnemyPlane::target)
+							for (auto p : team)
+								if (p->status != DEAD && p != EnemyPlane::target)
+								{
+									EnemyPlane::target = p;
+									break;
+								}
+
+							int x = 0, y = 0;
+							for (int i = 0; i < 3; i++)
 							{
-								EnemyPlane::target = p;
-								break;
+								x = i == 0 ? EnemyPlane::target->getCoordX(false) : i == 1 ?
+									EnemyPlane::target->getCoordX(false) - 150 : EnemyPlane::target->getCoordX(false) + 150;
+								y = i == 0 ? -300 : -400;
+
+								EnemyPlane* fighter = new EnemyPlane(aEnemyFighter, aFighterTrace, aAirJetsFlame, x, y, "enemyFighter",
+									EnemyPlane::target->getCoordY(false) - 100, mapsHeight[index]);
+								entities.push_back(fighter);
 							}
 
-						int x = 0, y = 0;
-						for (int i = 0; i < 3; i++)
-						{
-							x = i == 0 ? EnemyPlane::target->getCoordX(false) : i == 1 ?
-								EnemyPlane::target->getCoordX(false) - 150 : EnemyPlane::target->getCoordX(false) + 150;
-							y = i == 0 ? -300 : -400;
+							sAirStrikeAlarm.play();
 
-							EnemyPlane *fighter = new EnemyPlane(aEnemyFighter, aFighterTrace, aAirJetsFlame, x, y, "enemyFighter",
-								EnemyPlane::target->getCoordY(false) - 100, mapsHeight[index]);
-							entities.push_back(fighter);
+							//.:: Create radiowaves :::
+							RadioWave* radioWave = new RadioWave(aRadioWaves, t, "radioWave");
+							entities.push_back(radioWave);
 						}
 
-						sAirStrikeAlarm.play();
-
-						//.:: Create radiowaves :::
-						RadioWave *radioWave = new RadioWave(aRadioWaves, t, "radioWave");
-						entities.push_back(radioWave);
+						if (t->name == "miner")
+						{
+							if (static_cast<Miner*>(t)->isInOpenArea(maps[index]))
+								setEnemyMine(t, gameTime, aMining, aMine, index + 1);
+							else
+								static_cast<Miner*>(t)->rescheduleMining(gameTime);
+						}
+							
 					}
 				}
 
@@ -1382,11 +1428,8 @@ int main()
 				for (auto a : entities)
 				{
 					//.:: Smoking :::::::::::::::::::::
-					if (a->name == "tank" || a->name == "truck" || a->name == "boss" || a->name == "destroyed")
-						if (static_cast<GroundVehicle*>(a)->status == WOUNDED 
-							|| (static_cast<GroundVehicle*>(a)->status == DEAD && static_cast<GroundVehicle*>(a)->makeSureDestroyed()))
-							if (!static_cast<GroundVehicle*>(a)->isSmoking)
-								createSmoke((GroundVehicle*)a, aSmoke);
+					if (a->isAnyGroundVehicle() && static_cast<GroundVehicle*>(a)->mustSmoke())
+						createSmoke((GroundVehicle*)a, aSmoke);
 
 					//.:: Map collision :::::::::::::::
 					if (a->name == "shell")
@@ -1405,7 +1448,7 @@ int main()
 					//.:: Collide entities ::::::::::::
 					for (auto b : entities)
 					{
-						if (a->name == "shell" && (b->name == "tank" || b->name == "truck"))
+						if (a->name == "shell" && b->isGroundVehicle())
 							if (static_cast<Shell*>(a)->number != static_cast<GroundVehicle*>(b)->number)
 								static_cast<Shell*>(a)->damageVehicle((GroundVehicle*)(b), sArmor);
 
@@ -1413,8 +1456,8 @@ int main()
 							if (static_cast<Shell*>(a)->number != static_cast<GroundVehicle*>(b)->number)
 								static_cast<Shell*>(a)->damageBoss((GroundVehicle*)(b), sArmor, sArmorResist);
 						
-						if (((a->name == "tank" || a->name == "truck") && (b->name == "tank" || b->name == "truck"))
-							|| (a->name == "truck" && b->name == "destroyed")
+						if ((a->isGroundVehicle() && b->isGroundVehicle()) ||
+							((a->name == "truck" || a->name == "miner") && b->name == "destroyed")
 							&& static_cast<GroundVehicle*>(a)->number != static_cast<GroundVehicle*>(b)->number)
 							static_cast<GroundVehicle*>(a)->checkVehiclesCollision((GroundVehicle*)b);
 
@@ -1422,21 +1465,27 @@ int main()
 							&& static_cast<GroundVehicle*>(a)->makeSureVehicleCollision((GroundVehicle*)b))
 							static_cast<Tank*>(a)->shoveOffTankCarcass((GroundVehicle*)b);
 
-						if ((a->name == "tank" || a->name == "truck") && b->name == "destructionZone")
+						if (a->isGroundVehicle() && b->name == "destructionZone")
 							static_cast<GroundVehicle*>(a)->getAreaDamage((Area*)b, maps[index], index);
 						 
-						if ((a->name == "tank" || a->name == "truck") && b->name == "puddle")
+						if (a->isGroundVehicle() && b->name == "puddle")
 							static_cast<GroundVehicle*>(a)->checkPuddlesCollision(b);
 
-						if (a->name == "tank" && a->army == "player" && b->name == "boss")
+						if (a->isPlayer() && b->name == "boss")
 							static_cast<GroundVehicle*>(a)->checkBossCollision((GroundVehicle*)b, sFirstStageBossLaugh);
 
 						if (a->name == "mortarMineExplosion" && !static_cast<MortarShell*>(a)->isAreaExplosionDamaged && b->name == "tank")
 							static_cast<MortarShell*>(a)->destroyTarget((Tank*)b);
 
-						if (a->name == "tank" && a->army == "player" && b->name == "icon")
+						if (a->isPlayer() && b->name == "icon")
 							if (Tank::camera == Camera::StartGameSet || Tank::camera == Camera::Commander)
 								static_cast<Player*>(a)->checkIconCollision(b, sTakingIcon);
+
+						if (a->isPlayer() && b->name == "mine")
+							if (static_cast<Mine*>(b)->isActivatedMine((GroundVehicle*)a))
+								(static_cast<Mine*>(b)->exploseMine((GroundVehicle*)a)) ?
+								createLandmineExplosion(aLandmineExplosion, (GroundVehicle*)a) : 
+								createDefectiveMineSmoke(aDefectiveMine, b);
 
 //////////////////////////////////////////////// - K E Y B O A R D   S H O R T C U T S - /////////////////////////////////////////
 #pragma region Towings back keyboard shortcuts
@@ -1447,7 +1496,7 @@ int main()
 								&& (b->getCoordX(false) - 20 < a->getCoordX(false) && b->getCoordX(false) + 60 > a->getCoordX(false) + 40)))
 						{
 							static_cast<Player*>(a)->setTow((GroundVehicle*)b, "311");
-							AchievementModel *effect = new AchievementModel(aTowEffect, (Tank*)a, "effect");
+							Effect *effect = new Effect(aTowEffect, (Tank*)a, "effect");
 							entities.push_back(effect);
 						}
 
@@ -1458,7 +1507,7 @@ int main()
 								&& (b->getCoordX(false) - 20 < a->getCoordX(false) && b->getCoordX(false) + 60 > a->getCoordX(false) + 40)))
 						{
 							static_cast<Player*>(a)->setTow((GroundVehicle*)b, "133");
-							AchievementModel *effect = new AchievementModel(aTowEffect, (Tank*)a, "effect");
+							Effect *effect = new Effect(aTowEffect, (Tank*)a, "effect");
 							entities.push_back(effect);
 						}
 
@@ -1469,7 +1518,7 @@ int main()
 								&& (b->getCoordY(false) - 20 < a->getCoordY(false) && b->getCoordY(false) + 60 > a->getCoordY(false) + 40)))
 						{
 							static_cast<Player*>(a)->setTow((GroundVehicle*)b, "422");
-							AchievementModel *effect = new AchievementModel(aTowEffect, (Tank*)a, "effect");
+							Effect *effect = new Effect(aTowEffect, (Tank*)a, "effect");
 							entities.push_back(effect);
 						}
 
@@ -1480,7 +1529,7 @@ int main()
 								&& (b->getCoordY(false) - 20 < a->getCoordY(false) && b->getCoordY(false) + 60 > a->getCoordY(false) + 40)))
 						{
 							static_cast<Player*>(a)->setTow((GroundVehicle*)b, "244");
-							AchievementModel *effect = new AchievementModel(aTowEffect, (Tank*)a, "effect");
+							Effect *effect = new Effect(aTowEffect, (Tank*)a, "effect");
 							entities.push_back(effect);
 						}
 #pragma endregion
@@ -1507,21 +1556,21 @@ int main()
 					if (a->name == "tank" && static_cast<Tank*>(a)->isShowSpeedBonusAchiev)
 					{
 						static_cast<Tank*>(a)->isShowSpeedBonusAchiev = false;
-						AchievementModel *achievement = new AchievementModel(aSpeedUp, (Tank*)a, "achievement");
+						Effect *achievement = new Effect(aSpeedUp, (Tank*)a, "achievement");
 						entities.push_back(achievement);
 					}
 
 					if (a->name == "tank" && static_cast<Tank*>(a)->isShowRepair)
 					{
 						static_cast<Tank*>(a)->isShowRepair = false;
-						AchievementModel *repairEffect = new AchievementModel(aRepair, (Tank*)a, "effect");
+						Effect *repairEffect = new Effect(aRepair, (Tank*)a, "effect");
 						entities.push_back(repairEffect);
 					}
 
 					if (a->name == "tank" && static_cast<Tank*>(a)->isShowSniperAchiev)
 					{
 						static_cast<Tank*>(a)->isShowSniperAchiev = false;
-						AchievementModel *achievement = new AchievementModel(aSniper, (Tank*)a, "achievement");
+						Effect *achievement = new Effect(aSniper, (Tank*)a, "achievement");
 						entities.push_back(achievement);
 					}
 
@@ -1666,6 +1715,7 @@ int main()
 					isBossCreated = true;
 
 					firstStageBossArgs.numberOfPlayers = numberOfPlayers;
+					firstStageBossArgs.level = (index + 1) * 10;	//.:: temporary code
 					Boss *firstStBoss = new Boss(firstStageBossArgs);
 					squad.push_back(firstStBoss);
 					entities.push_back(firstStBoss);
@@ -1715,15 +1765,16 @@ int main()
 			{
 #pragma region Objects drawing
 
-				for (int i = 0; i < 7; i++)
+				for (int i = 0; i < 8; i++)
 				{
 					for (auto e : entities)
 						if (e->z_index == (short)i)
 							e->draw(app);
+
 					if (i == 0)
-						renderMap(maps[index], app, map, time, index);
+						renderMap(maps[index], app, map, time, index);							
 						
-					if (i == 1)
+					if (i == 2)
 						drawForest(maps[index], app, map, index);
 				}
 
@@ -1840,16 +1891,24 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation *
 	}
 }
 
-void createEnemyCommunicationTrucks(vector<CommunicationTruck*> &specialTransport, Animation &truck, SoundBuffer &sExplosion, int currentGameTime,
-	Animation &antenna_)
+void createEnemyCommunicationTrucks(Animation &truck, SoundBuffer &sExplosion, int currentGameTime,
+	Animation &antenna_, Tuple place)
 {
-	CommunicationTruck *enemyTruck = new CommunicationTruck(truck, 1000, 300, "truck", 270, false, sExplosion, 14, "enemy", 1, currentGameTime);
+	CommunicationTruck *enemyTruck = new CommunicationTruck(truck, place.x, place.y, "truck", 270, false, sExplosion, 14, "enemy", 1, currentGameTime);
 	RadioAntenna *antenna = new RadioAntenna(antenna_, "antenna", false, enemyTruck, 1.8f);
 
 	entities.push_back(enemyTruck);
 	entities.push_back(antenna);
 
 	specialTransport.push_back(enemyTruck);
+}
+
+void createMiner(Animation &aMiner, SoundBuffer &sExplosion, int currentGameTime, int mapIndex, Tuple place)
+{
+	Miner *miner = new Miner(aMiner, place.x, place.y, "miner", 270, true, sExplosion, 12, "enemy", 1, currentGameTime);
+
+	entities.push_back(miner);
+	specialTransport.push_back(miner);
 }
 
 int getEnemyPositionYOffset(int x, int y, string *map)
@@ -1935,6 +1994,18 @@ void createSmoke(GroundVehicle *p, Animation &a)
 	p->isSmoking = true;
 	Smoke *smoke = new Smoke(a, p, "smoke");
 	entities.push_back((Air*)smoke);
+}
+
+void setEnemyMine(GroundVehicle* own, int gameTime, Animation& aMining, Animation& aMine, int mineLevel)
+{
+	static_cast<Miner*>(own)->isStopped = true;
+	static_cast<Miner*>(own)->rescheduleMining(gameTime);
+
+	Effect* effect = new Effect(aMining, own, "mining");
+	entities.push_back(effect);
+
+	Mine* mine = new Mine(aMine, own, mineLevel);
+	entities.push_back(mine);
 }
 
 void dropEnemyBombs(Animation &a, Animation &b, EnemyPlane *e, Sound &sound)
@@ -2098,6 +2169,40 @@ void createEnemyMoveSound(SoundBuffer& buffer, Sound& sound, int index)
 	buffer.loadFromFile(path + to_string(index + 1) + ".flac");
 	sound.setBuffer(buffer);
 	sound.setVolume(index == 1 ? 25.f : 80.f);
+}
+
+void createLandmineExplosion(Animation &animation, GroundVehicle *player)
+{
+	Smoke* landmineExplosion = new Smoke(animation, player, "explosion");
+	entities.push_back(landmineExplosion);
+}
+
+void createDefectiveMineSmoke(Animation &animation, Entity *mine)
+{
+	Smoke* defectiveMine = new Smoke(animation, mine, "defectiveMineSmoke");
+	entities.push_back(defectiveMine);
+}
+
+Tuple determinePlaceToAppear(string *map, bool exceptBossArea)
+{
+	int bound = exceptBossArea ? 35 : 0;
+	vector<Tuple> selected;
+
+	for (int i = bound; i < firstHeight / 2 + bound; i++)
+	{
+		for (int j = 1; j < 60; j++)
+		{
+			if (map[i][j] == ' ' || map[i][j] == 'S')
+				selected.push_back({ double(j * 32), (double)(i * 32) });
+		}
+	}
+
+	srand(std::time(NULL));
+	int index = rand() % selected.size();
+
+	Tuple place = { selected[index].x, selected[index].y };
+
+	return place;
 }
 
 #pragma endregion
