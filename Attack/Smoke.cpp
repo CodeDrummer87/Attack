@@ -105,7 +105,7 @@ Smoke::~Smoke()
 
 Smoke::Smoke(Animation &a, Entity *mine, string name_)
 {
-	z_index = 1;
+	z_index = 2;
 	dir = 0;
 	x = mine->getCoordX(false);
 	y = mine->getCoordY(false);

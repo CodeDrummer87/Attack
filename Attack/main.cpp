@@ -39,6 +39,9 @@
 #include "Miner.h"
 #include "Mine.h"
 
+#include "Radar.h"
+#include "RadarSweep.h"
+
 //.:: Structures :::
 struct Tuple
 {
@@ -140,7 +143,7 @@ int main()
 	Image iMap, iIcon, iFighter, iEnemyFighter, iAirBomb, iBombExplosion, iCommunication_truck, iRadioAntenna, iRadioWaves,
 		iDrowning, iSpeedUpAchiev, iRepair, iSniper, iFirstStage_boss_tankBody, iFirstStage_boss_tankTower, iOilPuddle,
 		iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect, iEnemies[8], iMiner, iMining, iMine, 
-		iLandmineExplosion;
+		iLandmineExplosion, iRadar, iRadarSweep;
 
 	iMap = getImage("source/images/map.png");
 	iIcon = getImage("source/images/sprites/attributes/icons/icons.png");
@@ -175,6 +178,8 @@ int main()
 	iMining = getImage("source/images/sprites/other/mining.png");
 	iMine = getImage("source/images/sprites/models/other/mine.png");
 	iLandmineExplosion = getImage("source/images/sprites/explosions/landmine_explosion.png");
+	iRadar = getImage("source/images/sprites/other/radar.png");
+	iRadarSweep = getImage("source/images/sprites/other/radar_sweep.png");
 
 	//.:: Bosses
 	iFirstStage_boss_tankBody = getImage("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_body.png");
@@ -187,7 +192,7 @@ int main()
 	Texture tMap, tIcon, tTankRound, tShell, tShellExp, tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter,
 		tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion, tCommunication_truck, tRadioAntenna, tRadioWaves, tDrowning,
 		tSpeedUpAchiev, tRepair, tSniper, tFirstStageBossBody, tFirstStageBossTower, tOilPuddle, tMortarShell, tMortarClap,
-		tTrail, tMineExplosion, tDustClap, tTowEffect, tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion;
+		tTrail, tMineExplosion, tDustClap, tTowEffect, tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -231,6 +236,8 @@ int main()
 	tMining.loadFromImage(iMining);
 	tMine.loadFromImage(iMine);
 	tLandmineExplosion.loadFromImage(iLandmineExplosion);
+	tRadar.loadFromImage(iRadar);
+	tRadarSweep.loadFromImage(iRadarSweep);
 
 	tFirstStageBossBody.loadFromImage(iFirstStage_boss_tankBody);
 	tFirstStageBossTower.loadFromImage(iFirstStage_boss_tankTower);
@@ -385,6 +392,8 @@ int main()
 	Animation aMine(tMine, 0, 0, 8, 8, 0.03, 24);
 	Animation aLandmineExplosion(tLandmineExplosion, landmineExpBuf, 0, 0, 64, 64, 0.012, 12);
 	Animation aDefectiveMine(tMortarClap, defectiveMineBuf, 0, 0, 32, 32, 0.01, 8);
+	Animation aRadar(tRadar, 0, 0, 128, 128, 1, 1);
+	Animation aRadarSweep(tRadarSweep, 0, 0, 128, 128, 1, 1);
 
 	//.:: Bosses :::
 #pragma region First stage boss
@@ -747,6 +756,16 @@ int main()
 								sEnemy_move.stop();
 							}
 						}
+					}
+
+					//.:: Testing the Partisan achievement
+					if (Keyboard::isKeyPressed(Keyboard::Z))
+					{
+						Radar *radar = new Radar(aRadar, team[1]);
+						RadarSweep* radarSweep = new RadarSweep(aRadarSweep, radar);
+
+						entities.push_back(radar);
+						entities.push_back(radarSweep);
 					}
 
 #pragma region Tank rounds
