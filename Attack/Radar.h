@@ -2,12 +2,12 @@
 
 #include "Entity.h"
 #include "GroundVehicle.h"
+#include "RadarSweep.h"
 
 class Radar : public Entity
 {
 private:
-	GroundVehicle* own;
-	int constDir;
+	RadarSweep* radarSweep;
 
 	void setCoordinates();
 
@@ -15,7 +15,7 @@ public:
 
 	//.:: Constructor :::::::::::::::::::::::
 	Radar();
-	Radar(Animation&, GroundVehicle*);
+	Radar(Animation&, RadarSweep*);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Radar();

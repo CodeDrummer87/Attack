@@ -269,7 +269,7 @@ int main()
 		firstStageBossMoveBuf, firstStageBossExpBuf, firstStageBossRoundBuf, firstStageBossMortarBuf, firstStageBossTowerBuf,
 		firstStageBossTowerCrashBuf, oilPuddleBuf, badgeAppearanceBuf, badgeDisappearanceBuf, firstStBossLaugh, firstStBossRoundBuf,
 		bossMortarShootBuf, stopMortarShootBuf, mineExplosionBuf, dustClapBuf, hookEngagementBuf, miningBuf, landmineExpBuf,
-		defectiveMineBuf;
+		defectiveMineBuf, partisanBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -315,6 +315,7 @@ int main()
 	miningBuf.loadFromFile("source/sounds/effects/mining.flac");
 	landmineExpBuf.loadFromFile("source/sounds/explosion/landmine_explosion.flac");
 	defectiveMineBuf.loadFromFile("source/sounds/effects/defective_mine.flac");
+	partisanBuf.loadFromFile("source/sounds/effects/partisan.flac");
 
 	Sound sEnemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sArmorResist,
 		sLaugh(laughBuf), sAirStrikeAlarm, sFighterFlight, sFirstStageBossLaugh, sBossMortarShoot(bossMortarShootBuf),
@@ -392,7 +393,7 @@ int main()
 	Animation aMine(tMine, 0, 0, 8, 8, 0.03, 24);
 	Animation aLandmineExplosion(tLandmineExplosion, landmineExpBuf, 0, 0, 64, 64, 0.012, 12);
 	Animation aDefectiveMine(tMortarClap, defectiveMineBuf, 0, 0, 32, 32, 0.01, 8);
-	Animation aRadar(tRadar, 0, 0, 128, 128, 1, 1);
+	Animation aRadar(tRadar, partisanBuf, 0, 0, 128, 128, 0.015, 33);
 	Animation aRadarSweep(tRadarSweep, 0, 0, 128, 128, 1, 1);
 
 	//.:: Bosses :::
@@ -761,11 +762,11 @@ int main()
 					//.:: Testing the Partisan achievement
 					if (Keyboard::isKeyPressed(Keyboard::Z))
 					{
-						Radar *radar = new Radar(aRadar, team[1]);
-						RadarSweep* radarSweep = new RadarSweep(aRadarSweep, radar);
+						RadarSweep* radarSweep = new RadarSweep(aRadarSweep, team[1]);
+						Radar *radar = new Radar(aRadar, radarSweep);
 
-						entities.push_back(radar);
 						entities.push_back(radarSweep);
+						entities.push_back(radar);	
 					}
 
 #pragma region Tank rounds

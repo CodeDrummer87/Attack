@@ -2,18 +2,17 @@
 
 #include "Entity.h" 
 #include "GroundVehicle.h"
-#include "Radar.h"
 
 class RadarSweep : public Entity
 {
 private:
-	Radar* radar;
+	GroundVehicle* own;
 
 public:
 
 	//.:: Constructor :::::::::::::::::::::::
 	RadarSweep();
-	RadarSweep(Animation&, Radar*);
+	RadarSweep(Animation&, GroundVehicle*);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~RadarSweep();

@@ -4,15 +4,15 @@
 Radar::Radar()
 {}
 
-Radar::Radar(Animation &aRadar_, GroundVehicle *own_)
+Radar::Radar(Animation &aRadar_, RadarSweep *radarSweep_)
 {
 	z_index = (short)7;
 
 	anim = aRadar_;
-	own = own_;
+	radarSweep = radarSweep_;
 	level = 0;
 	dir = 0;
-	isPlayAnimation = false;
+	isPlayAnimation = true;
 	isExist = true;
 	name = "radar";
 	status = Status::ALIVE;
@@ -25,14 +25,19 @@ Radar::~Radar()
 
 void Radar::update(double time)
 {
-	if (status == Status::ALIVE)
+	if (isExist)
 	{
+		if (anim.isEnd(time))
+		{
+			isExist = radarSweep->isExist = false;
+		}
+
 		setCoordinates();
 	}
 }
 
 void Radar::setCoordinates()
 {
-	x = own->getCoordX(false);
-	y = own->getCoordY(false);
+	x = radarSweep->getCoordX(false);
+	y = radarSweep->getCoordY(false);
 }
