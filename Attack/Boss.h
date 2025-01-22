@@ -7,13 +7,9 @@ struct BossArgs
 	Animation &anim;
 	double x;
 	double y;
-	int dir;
-	bool isPlayAnimation;
 	int level;
 	int numberOfPlayers;
-
 	SoundBuffer &sExplosion;
-	int expFrameCount;
 };
 
 class Boss : public Enemy

@@ -12,6 +12,9 @@ struct EvilTank
 
 class Enemy : public Tank
 {
+private:
+	Animation aVehicleOutline;
+
 public:
 	bool round;
 
@@ -19,7 +22,7 @@ public:
 
 	//.:: Constructor :::::::::::::::::::::::
 	Enemy();
-	Enemy(Animation&, double, double, string, int, bool, SoundBuffer&, int, string, int);
+	Enemy(Animation&, Animation&, double, double, SoundBuffer&, int);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Enemy();

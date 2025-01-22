@@ -409,8 +409,8 @@ int main()
 
 	BossArgs firstStageBossArgs = 
 	{
-		//.:: moveAnim, x, y, dir, isPlayAnim, level, numberOfPlayers, explosionSound, explosionFrameCount
-		aFirstStageBossBody, 960, 192, 270, true, 10, 1, firstStageBossExpBuf, 16
+		//.:: moveAnim, x, y, level, numberOfPlayers, explosionSound
+		aFirstStageBossBody, 960, 192, 10, 1, firstStageBossExpBuf
 	};
 
 #pragma endregion
@@ -539,7 +539,7 @@ int main()
 #pragma region Functions
 	
 	void createEnemiesAnimationArray(Image*, Texture*, Animation*, int);
-	void createEnemies(vector<Entity*>&, vector<Enemy*>&, Animation*, SoundBuffer&, string*, int);
+	void createEnemies(Animation*, Animation&, SoundBuffer&, string*, int);
 	void createEnemyCommunicationTrucks(Animation&, SoundBuffer&, int, Animation&, Tuple);
 	void createMiner(Animation&, SoundBuffer&, int, int, Tuple);
 	void createSmoke(GroundVehicle*, Animation&);
@@ -709,7 +709,7 @@ int main()
 
 						createEnemyMoveSound(enemy_moveBuf, sEnemy_move, index);
 						createEnemiesAnimationArray(iEnemies, tEnemies, aEnemies, index);
-						createEnemies(entities, squad, aEnemies, tankExpBuf, maps[index], index);
+						createEnemies(aEnemies, aVehicleOutline, tankExpBuf, maps[index], index);
 
 						Tuple truckPlace = determinePlaceToAppear(maps[index], true);
 						createEnemyCommunicationTrucks(aCommunication_truck, autoExpBuf, gameTime, aRadioAntenna, truckPlace);
@@ -1752,7 +1752,7 @@ int main()
 					entities.push_back(firstStBoss);
 
 					TankTower *turret = new TankTower(aFirstStageBossTower, firstStBoss->getCoordX(false), firstStBoss->getCoordY(false),
-						firstStBoss->dir, firstStageBossTowerBuf, firstStageBossTowerCrashBuf, 11, firstStBoss);
+						 firstStageBossTowerBuf, firstStageBossTowerCrashBuf, firstStBoss);
 					squad.push_back(turret);
 					entities.push_back(turret);
 
@@ -1876,7 +1876,7 @@ void createEnemiesAnimationArray(Image *iEnemies, Texture *tEnemies, Animation *
 	}
 }
 
-void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation *anim, SoundBuffer &sExplosion, string *map, int index)
+void createEnemies(Animation *anim, Animation &aVehicleShadow, SoundBuffer &sExplosion, string *map, int index)
 {
 	const int eTanks = 72;
 	double enemyPositionX = 70;
@@ -1894,21 +1894,21 @@ void createEnemies(vector<Entity*> &entities, vector<Enemy*> &squad, Animation *
 
 		Enemy *enemy;
 		if (i <= 9)
-			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 8);
+			enemy = new Enemy(anim[7], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 8);
 		else if (i > 9 && i <= 18)
-			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 7);
+			enemy = new Enemy(anim[6], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 7);
 		else if (i > 18 && i <= 27)
-			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 6);
+			enemy = new Enemy(anim[5], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 6);
 		else if (i > 27 && i <= 36)
-			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 5);
+			enemy = new Enemy(anim[4], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 5);
 		else if (i > 36 && i <= 45)
-			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 4);
+			enemy = new Enemy(anim[3], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 4);
 		else if (i > 45 && i <= 54)
-			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 3);
+			enemy = new Enemy(anim[2], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 3);
 		else if (i > 54 && i <= 63)
-			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 2);
+			enemy = new Enemy(anim[1], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 2);
 		else
-			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, "tank", 180, true, sExplosion, 12, "enemy", k + 1);
+			enemy = new Enemy(anim[0], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 1);
 
 		entities.push_back(enemy);
 		squad.push_back(enemy);

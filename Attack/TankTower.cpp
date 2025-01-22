@@ -6,17 +6,20 @@
 TankTower::TankTower()
 {}
 
-TankTower::TankTower(Animation &a, double x_, double y_, int dir_, SoundBuffer &turn, SoundBuffer &sExplosion_, int expFrameCount, GroundVehicle *own_)
-	: Enemy(a, x_, y_, "turret", dir_, false, sExplosion_, expFrameCount, "enemy", own_->level)
+TankTower::TankTower(Animation &a, double x_, double y_, SoundBuffer &turn, SoundBuffer &sExplosion_, GroundVehicle *own_)
+	: Enemy(a, a, x_, y_, sExplosion_, own_->level)
 {
 	z_index = (short)4;
-	own = own_;
 
+	name = "turret";
+	army = "enemy";
+	own = own_;
 	currentTarget = NULL;
 	isTargetSearch = true;
+	explosionFrameCount = 11;
 
 	isFirstShot = isSecondShot = true;
-	roundFirst = roundSecond = isMortarShootTime = false;
+	isPlayAnimation = roundFirst = roundSecond = isMortarShootTime = false;
 	mortarShootTime = 0;
 
 	dir = 180;
