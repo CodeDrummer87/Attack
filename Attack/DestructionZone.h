@@ -13,7 +13,7 @@ public:
 
 	//.:: Constructor ::::::::::::::::::::::
 	DestructionZone();
-	DestructionZone(double, double, float, Entity*);
+	DestructionZone(Entity*, float);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~DestructionZone();

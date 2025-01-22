@@ -3,14 +3,11 @@
 DestructionZone::DestructionZone()
 {}
 
-DestructionZone::DestructionZone(double X, double Y, float radius, Entity *own_)
+DestructionZone::DestructionZone(Entity *own_, float radius)
 	: Area(own_, radius)
 {
 	name = "destructionZone";
 	isTerrainDestroyed = false;
-
-	x = X;
-	y = Y;
 }
 
 short DestructionZone::victims = 0;

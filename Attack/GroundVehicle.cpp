@@ -279,7 +279,7 @@ bool GroundVehicle::makeSureVehicleCollision(GroundVehicle *t)
 	return false;
 }
 
-void GroundVehicle::getAreaDamage(Area *area, string *map, int index)
+void GroundVehicle::getAreaDamage(DestructionZone *area, string *map, int index)
 {
 	FloatRect a = this->anim.sprite.getGlobalBounds();
 	FloatRect b = area->area.getGlobalBounds();

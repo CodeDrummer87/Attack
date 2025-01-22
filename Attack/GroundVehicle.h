@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Entity.h"
-#include "Area.h"
+#include "DestructionZone.h"
 
 struct Ban
 {
@@ -70,7 +70,7 @@ public:
 	void accelerate(int, double);
 	void checkVehiclesCollision(GroundVehicle*);
 	bool makeSureVehicleCollision(GroundVehicle*);
-	void getAreaDamage(Area*, string*, int);
+	void getAreaDamage(DestructionZone*, string*, int);
 	void checkIconCollision(string[], Sound&);
 	void updateDestinationDistance();
 	void controlEnemyVehicle(double);

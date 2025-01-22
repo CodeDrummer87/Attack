@@ -139,10 +139,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Area.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Air.cpp" />
     <ClCompile Include="Animation.cpp" />
-    <ClCompile Include="Area.cpp" />
+    <ClCompile Include="DestructionZone.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="CommunicationTruck.cpp" />
@@ -171,10 +172,11 @@
     <ClCompile Include="TankTower.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Area.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Air.h" />
     <ClInclude Include="Animation.h" />
-    <ClInclude Include="Area.h" />
+    <ClInclude Include="DestructionZone.h" />
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="CommunicationTruck.h" />

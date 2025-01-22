@@ -1284,9 +1284,11 @@ int main()
 						{
 							int scannedAreaRadius = p->activateGuerillaMode();
 
-							RadarSweep* radarSweep = new RadarSweep(aRadarSweep, team[1]);
+							Area* scannedArea = new Area(p, (float)scannedAreaRadius);
+							RadarSweep* radarSweep = new RadarSweep(aRadarSweep, p);
 							Radar* radar = new Radar(aRadar, radarSweep);
 
+							entities.push_back(scannedArea);
 							entities.push_back(radarSweep);
 							entities.push_back(radar);
 						}
@@ -1491,7 +1493,7 @@ int main()
 							static_cast<Tank*>(a)->shoveOffTankCarcass((GroundVehicle*)b);
 
 						if (a->isGroundVehicle() && b->name == "destructionZone")
-							static_cast<GroundVehicle*>(a)->getAreaDamage((Area*)b, maps[index], index);
+							static_cast<GroundVehicle*>(a)->getAreaDamage((DestructionZone*)b, maps[index], index);
 						 
 						if (a->isGroundVehicle() && b->name == "puddle")
 							static_cast<GroundVehicle*>(a)->checkPuddlesCollision(b);
@@ -1512,7 +1514,7 @@ int main()
 								createLandmineExplosion(aLandmineExplosion, (GroundVehicle*)a) : 
 								createDefectiveMineSmoke(aDefectiveMine, b);
 
-//////////////////////////////////////////////// - K E Y B O A R D   S H O R T C U T S - /////////////////////////////////////////
+//////////////////////////////////////////////// - K E Y B O A R D   S H O R T C U T S - ///////////////////////////////////////////
 #pragma region Towings back keyboard shortcuts
 						if (a->name == "tank" && a->army == "player" && strcmp(static_cast<Player*>(a)->combo, "311") == 0
 							&& !static_cast<Player*>(a)->isTowingBack && b->name == "destroyed" && !static_cast<GroundVehicle*>(b)->isDrowned
@@ -1566,11 +1568,8 @@ int main()
 					{
 						static_cast<Bomb*>(a)->coordsTransmitted = true;
 
-						double x = a->getCoordX(false);
-						double y = a->getCoordY(false);
-
-						Area *area = new Area(x, y, (float)180, a, "destructionZone", a->army);
-						entities.push_back(area);
+						DestructionZone *destructionZone = new DestructionZone(a, 180.f);
+						entities.push_back(destructionZone);
 					}
 
 					//.:: Enemy bomb dropping :::::::::
@@ -1602,20 +1601,20 @@ int main()
 					//.:: Report about air strike victims :::::::::::::::::::::
 					if (a->name == "destructionZone" && a->army == "player" && a->status == WOUNDED)
 					{
-						string message_ = (Area::victims == 0) ? "No destroyed enemy tanks"
-							: (Area::victims == 1) ? "1 enemy tank was destroyed"
-							: to_string(Area::victims) + " enemy tanks were destroyed";
+						string message_ = (DestructionZone::victims == 0) ? "No destroyed enemy tanks"
+							: (DestructionZone::victims == 1) ? "1 enemy tank was destroyed"
+							: to_string(DestructionZone::victims) + " enemy tanks were destroyed";
 
 						report = Text(message_, font_1, 50);
 						report.setFillColor(reportColor);
 
 						endDisplayMessage = gameTime + 5;
 						
-						if (reportColor == Color::Red) team[0]->nickDown(Area::totalExperience);
-						else if (reportColor == Color::Yellow) team[1]->nickDown(Area::totalExperience);
-						else if (reportColor == Color::Magenta) team[2]->nickDown(Area::totalExperience);
-						else if (reportColor == Color::Cyan) team[3]->nickDown(Area::totalExperience);
-						else if (reportColor == Color::Green) team[4]->nickDown(Area::totalExperience);
+						if (reportColor == Color::Red) team[0]->nickDown(DestructionZone::totalExperience);
+						else if (reportColor == Color::Yellow) team[1]->nickDown(DestructionZone::totalExperience);
+						else if (reportColor == Color::Magenta) team[2]->nickDown(DestructionZone::totalExperience);
+						else if (reportColor == Color::Cyan) team[3]->nickDown(DestructionZone::totalExperience);
+						else if (reportColor == Color::Green) team[4]->nickDown(DestructionZone::totalExperience);
 					}
 
 					//.:: Puddle absorption time starts ::::::::::::::::::::::::
