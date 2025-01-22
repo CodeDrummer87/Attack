@@ -112,14 +112,14 @@ void GroundVehicle::update(double time)
 		//.:: Vehicle control :::
 		if (!isPlayerControl)
 			controlEnemyVehicle(time);
+	}
 
-		//.:: temporary code
-		if (((!isInForest && status != Status::DEAD) || (isInForest && status == Status::DEAD))
-			&& anim.sprite.getColor() == Color::Red)
-		{
-			z_index = 2;
-			anim.sprite.setColor(Color::White);
-		}
+	//.:: temporary code
+	if (((!isInForest && status != Status::DEAD) || (isInForest && status == Status::DEAD))
+		&& anim.sprite.getColor() == Color::Red)
+	{
+		z_index = 2;
+		isDrowned ? anim.sprite.setColor(Color::Transparent) : anim.sprite.setColor(Color::White);
 	}
 }
 

@@ -98,8 +98,11 @@ void Player::update(double time)
 			towBack(time);
 		}
 
-		(isPartisan && isInForest) ? anim.sprite.setColor(Color::Black) : anim.sprite.setColor(Color::White);
-		z_index = (isPartisan && isInForest) ? 3 : 2;
+		if (status != Status::DEAD)
+		{
+			(isPartisan && isInForest) ? anim.sprite.setColor(Color::Black) : anim.sprite.setColor(Color::White);
+			z_index = (isPartisan && isInForest) ? 3 : 2;
+		}
 
 		Tank::update(time);
 	}
