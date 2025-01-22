@@ -1514,10 +1514,8 @@ int main()
 								createLandmineExplosion(aLandmineExplosion, (GroundVehicle*)a) : 
 								createDefectiveMineSmoke(aDefectiveMine, b);
 
-						if (a->isEnemyGroundVehicle() && b->name == "area")
-						{
-
-						}
+						if ((a->isEnemyGroundVehicle() && static_cast<GroundVehicle*>(a)->isInForest) && b->name == "area")
+							static_cast<GroundVehicle*>(a)->checkScannedAreaCollision(static_cast<Area*>(b));
 
 //////////////////////////////////////////////// - K E Y B O A R D   S H O R T C U T S - ///////////////////////////////////////////
 #pragma region Towings back keyboard shortcuts

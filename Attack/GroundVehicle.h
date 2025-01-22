@@ -81,5 +81,6 @@ public:
 	bool isActionTime(int);
 	bool mustSmoke();
 	void checkLocationInForest(string*);
+	void checkScannedAreaCollision(Area *);
 
 };

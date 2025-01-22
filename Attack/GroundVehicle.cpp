@@ -112,6 +112,11 @@ void GroundVehicle::update(double time)
 		//.:: Vehicle control :::
 		if (!isPlayerControl)
 			controlEnemyVehicle(time);
+
+		//.:: temporary code
+		if (((!isInForest && status != Status::DEAD) || (isInForest && status == Status::DEAD))
+			&& anim.sprite.getColor() == Color::Red)
+			anim.sprite.setColor(Color::White);
 	}
 }
 
@@ -585,3 +590,19 @@ void GroundVehicle::checkLocationInForest(string* map)
 	isInForest = map[i][j] == 'F' ? true : false;
 }
 
+void GroundVehicle::checkScannedAreaCollision(Area *scannedArea)
+{
+	FloatRect vehicle = this->anim.sprite.getGlobalBounds();
+	FloatRect area = scannedArea->area.getGlobalBounds();
+
+	if (vehicle.intersects(area))
+	{
+		z_index = 3;
+		anim.sprite.setColor(Color::Red);
+	}
+	else
+	{
+		z_index = 2;
+		anim.sprite.setColor(Color::White);
+	}
+}

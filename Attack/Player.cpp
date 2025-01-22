@@ -29,7 +29,7 @@ Player::Player(Animation &anim, double x_, double y_, int dir_, bool isPlayAnima
 	isPartisan = false;
 	isDisplayPartisanAchievement = false;
 	partisanAchievLevel = 0;
-	killsInForest = 0;
+	killsInForest = 4;
 }
 
 Player::~Player()
