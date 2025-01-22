@@ -8,6 +8,7 @@ private:
 	float dist;
 	Tank *own;
 	short numberOfCannon;
+	bool isInForest;
 
 	//.:: Private_methods_of_class ::::::::::
 	void conveyExperience(int);

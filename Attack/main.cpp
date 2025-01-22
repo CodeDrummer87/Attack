@@ -759,16 +759,6 @@ int main()
 						}
 					}
 
-					//.:: Testing the Partisan achievement
-					if (Keyboard::isKeyPressed(Keyboard::Z))
-					{
-						RadarSweep* radarSweep = new RadarSweep(aRadarSweep, team[1]);
-						Radar *radar = new Radar(aRadar, radarSweep);
-
-						entities.push_back(radarSweep);
-						entities.push_back(radar);	
-					}
-
 #pragma region Tank rounds
 		
 					if (event.type == Event::KeyPressed)
@@ -1230,7 +1220,7 @@ int main()
 						else
 							p->checkMapCollision(maps[index]);
 
-						//.:: Get Rank :::::::::::::::
+						//.:: Get a Rank :::::::::::::::
 						if (p->isPreferment)
 						{
 							p->isPreferment = false;
@@ -1243,7 +1233,7 @@ int main()
 							}
 						}
 
-						//.:: Appoint a Commander :::
+						//.:: Appoint the Commander :::
 						if (p->isCommander && Tank::camera == Camera::Commander)
 							setViewCoordinates(sizeX, sizeY, p->getCoordX(false), p->getCoordY(false), index);
 
@@ -1287,6 +1277,18 @@ int main()
 									}
 								}
 							}
+						}
+
+						//.:: Partisan achievement :::
+						if (p->isDisplayPartisanAchievement)
+						{
+							int scannedAreaRadius = p->activateGuerillaMode();
+
+							RadarSweep* radarSweep = new RadarSweep(aRadarSweep, team[1]);
+							Radar* radar = new Radar(aRadar, radarSweep);
+
+							entities.push_back(radarSweep);
+							entities.push_back(radar);
 						}
 					}
 					else
@@ -1454,6 +1456,9 @@ int main()
 					//.:: Map collision :::::::::::::::
 					if (a->name == "shell")
 						static_cast<Shell*>(a)->checkMapCollision(maps[index]);
+
+					if (a->isGroundVehicle())
+						static_cast<GroundVehicle*>(a)->checkLocationInForest(maps[index]);
 
 					//.:: Drowning ::::::::::::::::::::
 					if (a->name == "destroyed" && !static_cast<GroundVehicle*>(a)->isDrowned)

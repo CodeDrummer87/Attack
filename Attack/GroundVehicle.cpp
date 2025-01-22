@@ -20,7 +20,7 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 
 	destinationDist = speedBonus = 0.0f;
 	isDestroyed = isTransition = drowning = isSmoking = false;
-	isDrowned = isShowRepair = isPlayerControl = isSkidding = false;
+	isDrowned = isShowRepair = isPlayerControl = isSkidding = isInForest = false;
 	hitPoints = level + 1;
 	toUp = toDown = toRight = toLeft = 0;
 
@@ -575,5 +575,13 @@ bool GroundVehicle::isActionTime(int currentGameTime)
 bool GroundVehicle::mustSmoke()
 {
 	return ((status == Status::WOUNDED || (status == Status::DEAD && isDestroyed)) && !isSmoking) ? true : false;
+}
+
+void GroundVehicle::checkLocationInForest(string* map)
+{
+	int i = y / 32;
+	int j = x / 32;
+
+	isInForest = map[i][j] == 'F' ? true : false;
 }
 

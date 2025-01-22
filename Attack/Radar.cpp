@@ -9,6 +9,7 @@ Radar::Radar(Animation &aRadar_, RadarSweep *radarSweep_)
 	z_index = (short)7;
 
 	anim = aRadar_;
+	anim.sound.setVolume(100.f);
 	radarSweep = radarSweep_;
 	level = 0;
 	dir = 0;

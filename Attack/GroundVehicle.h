@@ -47,6 +47,7 @@ public:
 	bool drowning;
 	bool isSmoking;
 	bool isDrowned;
+	bool isInForest;
 
 	GroundVehicle *pusher;	//.:: Only tanks
 	Traffic traffic;
@@ -79,5 +80,6 @@ public:
 	void checkBossCollision(GroundVehicle*, Sound&);
 	bool isActionTime(int);
 	bool mustSmoke();
+	void checkLocationInForest(string*);
 
 };
