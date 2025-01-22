@@ -98,11 +98,15 @@ bool Entity::isUndeletable()
 
 bool Entity::isAnyGroundVehicle()
 {
-	return (name == "tank" || 
-			name == "truck" || 
-			name == "miner" || 
-			name == "boss" || 
-			name == "destroyed") ? true : false;
+	return (name == "tank" ||
+		name == "truck" ||
+		name == "miner" ||
+		name == "boss") ? true : false;
+}
+
+bool Entity::isAnyGroundObject()
+{
+	return (isAnyGroundVehicle() || name == "destroyed") ? true : false;
 }
 
 bool Entity::isGroundVehicle()
@@ -110,6 +114,11 @@ bool Entity::isGroundVehicle()
 	return (name == "tank" ||
 			name == "truck" ||
 			name == "miner") ? true : false;
+}
+
+bool Entity::isEnemyGroundVehicle()
+{
+	return (army == "enemy" && isGroundVehicle()) ? true : false;
 }
 
 bool Entity::isPlayer()

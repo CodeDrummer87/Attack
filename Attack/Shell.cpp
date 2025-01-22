@@ -179,7 +179,7 @@ void Shell::damageVehicle(GroundVehicle *t, Sound &armorSound)
 		if (shell.intersects(vehicle))
 		{
 			armorSound.play();
-			if (this->name == "shell" && (t->name == "tank" || t->name == "truck" || t->name == "boss" || t->name == "miner"))
+			if (this->name == "shell" && t->isAnyGroundVehicle())
 			{
 				if (level >= t->hitPoints && t->hitPoints > 1)
 					t->hitPoints = 1;

@@ -1452,7 +1452,7 @@ int main()
 				for (auto a : entities)
 				{
 					//.:: Smoking :::::::::::::::::::::
-					if (a->isAnyGroundVehicle() && static_cast<GroundVehicle*>(a)->mustSmoke())
+					if (a->isAnyGroundObject() && static_cast<GroundVehicle*>(a)->mustSmoke())
 						createSmoke((GroundVehicle*)a, aSmoke);
 
 					//.:: Map collision :::::::::::::::
@@ -1513,6 +1513,11 @@ int main()
 								(static_cast<Mine*>(b)->exploseMine((GroundVehicle*)a)) ?
 								createLandmineExplosion(aLandmineExplosion, (GroundVehicle*)a) : 
 								createDefectiveMineSmoke(aDefectiveMine, b);
+
+						if (a->isEnemyGroundVehicle() && b->name == "area")
+						{
+
+						}
 
 //////////////////////////////////////////////// - K E Y B O A R D   S H O R T C U T S - ///////////////////////////////////////////
 #pragma region Towings back keyboard shortcuts
