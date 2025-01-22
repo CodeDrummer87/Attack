@@ -143,7 +143,7 @@ int main()
 	Image iMap, iIcon, iFighter, iEnemyFighter, iAirBomb, iBombExplosion, iCommunication_truck, iRadioAntenna, iRadioWaves,
 		iDrowning, iSpeedUpAchiev, iRepair, iSniper, iFirstStage_boss_tankBody, iFirstStage_boss_tankTower, iOilPuddle,
 		iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect, iEnemies[8], iMiner, iMining, iMine, 
-		iLandmineExplosion, iRadar, iRadarSweep;
+		iLandmineExplosion, iRadar, iRadarSweep, iVehicleOutline;
 
 	iMap = getImage("source/images/map.png");
 	iIcon = getImage("source/images/sprites/attributes/icons/icons.png");
@@ -180,6 +180,7 @@ int main()
 	iLandmineExplosion = getImage("source/images/sprites/explosions/landmine_explosion.png");
 	iRadar = getImage("source/images/sprites/other/radar.png");
 	iRadarSweep = getImage("source/images/sprites/other/radar_sweep.png");
+	iVehicleOutline = getImage("source/images/sprites/models/other/vehicle_shadow.png");
 
 	//.:: Bosses
 	iFirstStage_boss_tankBody = getImage("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_body.png");
@@ -192,7 +193,8 @@ int main()
 	Texture tMap, tIcon, tTankRound, tShell, tShellExp, tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter,
 		tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion, tCommunication_truck, tRadioAntenna, tRadioWaves, tDrowning,
 		tSpeedUpAchiev, tRepair, tSniper, tFirstStageBossBody, tFirstStageBossTower, tOilPuddle, tMortarShell, tMortarClap,
-		tTrail, tMineExplosion, tDustClap, tTowEffect, tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep;
+		tTrail, tMineExplosion, tDustClap, tTowEffect, tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep,
+		tVehicleOutline;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -238,6 +240,7 @@ int main()
 	tLandmineExplosion.loadFromImage(iLandmineExplosion);
 	tRadar.loadFromImage(iRadar);
 	tRadarSweep.loadFromImage(iRadarSweep);
+	tVehicleOutline.loadFromImage(iVehicleOutline);
 
 	tFirstStageBossBody.loadFromImage(iFirstStage_boss_tankBody);
 	tFirstStageBossTower.loadFromImage(iFirstStage_boss_tankTower);
@@ -395,6 +398,7 @@ int main()
 	Animation aDefectiveMine(tMortarClap, defectiveMineBuf, 0, 0, 32, 32, 0.01, 8);
 	Animation aRadar(tRadar, partisanBuf, 0, 0, 128, 128, 0.015, 33);
 	Animation aRadarSweep(tRadarSweep, 0, 0, 128, 128, 1, 1);
+	Animation aVehicleOutline(tVehicleOutline, 0, 0, 64, 64, 0.015, 6);
 
 	//.:: Bosses :::
 #pragma region First stage boss

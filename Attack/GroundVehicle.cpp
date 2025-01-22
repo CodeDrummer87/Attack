@@ -116,7 +116,10 @@ void GroundVehicle::update(double time)
 		//.:: temporary code
 		if (((!isInForest && status != Status::DEAD) || (isInForest && status == Status::DEAD))
 			&& anim.sprite.getColor() == Color::Red)
+		{
+			z_index = 2;
 			anim.sprite.setColor(Color::White);
+		}
 	}
 }
 
