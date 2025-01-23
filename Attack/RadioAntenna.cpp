@@ -8,18 +8,18 @@ RadioAntenna::RadioAntenna()
 RadioAntenna::~RadioAntenna()
 {}
 
-RadioAntenna::RadioAntenna(Animation &a, string name_, bool isPlayAnimation_, GroundVehicle *truck, float size_)
+RadioAntenna::RadioAntenna(Animation &a, GroundVehicle *truck)
 {
 	z_index = (short)2;
 
 	anim = a;
 	own = truck;
-	name = name_;
+	name = "antenna";
 	
-	isPlayAnimation = isPlayAnimation_;
+	isPlayAnimation = false;
 	isExist = true;
 
-	anim.sprite.setScale(size_, size_);
+	anim.sprite.setScale(1.8f, 1.8f);
 
 	dir = own->dir;
 	x = own->getCoordX(false);

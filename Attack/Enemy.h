@@ -12,17 +12,15 @@ struct EvilTank
 
 class Enemy : public Tank
 {
-private:
-	Animation aVehicleOutline;
-
 public:
 	bool round;
+	bool isInRadarCoverageArea;
 
 	static EvilTank evilTank;
 
 	//.:: Constructor :::::::::::::::::::::::
 	Enemy();
-	Enemy(Animation&, Animation&, double, double, SoundBuffer&, int);
+	Enemy(Animation&, double, double, SoundBuffer&, int);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Enemy();
@@ -30,5 +28,6 @@ public:
 	//.:: Public_method_of_class ::::::::::::
 	void destroyBrickWalls(string*);
 	void destroyPlayerTanks(Tank*);
+	void update(double);
 
 };

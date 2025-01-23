@@ -3,14 +3,14 @@
 Miner::Miner()
 {}
 
-Miner::Miner(Animation& a, double x_, double y_, string name_, int dir_, bool isPlayAnimation_,
-	SoundBuffer& sExplosion_, int expFrameCount, string army_, int lvl, int currentGameTime)
-	: GroundVehicle(a, x_, y_, name_, dir, isPlayAnimation, sExplosion_, expFrameCount, army_, lvl)
+Miner::Miner(Animation& a, double x_, double y_, SoundBuffer& sExplosion_, int currentGameTime)
+	: GroundVehicle(a, x_, y_, "miner", 270, true, sExplosion_, 12, "enemy", 1)
 {
 	z_index = (short)2;
 	rescheduleMining(currentGameTime);
 
 	isStopped = false;
+	isInRadarCoverageArea = false;
 }
 
 Miner::~Miner()
@@ -82,6 +82,12 @@ void Miner::update(double time)
 			controlEnemyVehicle(time);
 		}
 		else isPlayAnimation = false;
+	}
+
+	if (status != Status::DEAD)
+	{
+		z_index = isInRadarCoverageArea ? 3 : 2;
+		anim.sprite.setColor(isInRadarCoverageArea ? Color(0, 255, 0, 210) : Color::White);
 	}
 }
 

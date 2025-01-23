@@ -10,6 +10,7 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_)
 	z_index = (short)3;
 
 	anim = a;
+	anim.sprite.setColor(Color(255, 255, 255, 210));
 	name = name_;
 	level = 0;
 	army = vehicle->army;

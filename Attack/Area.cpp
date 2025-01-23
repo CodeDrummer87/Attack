@@ -37,7 +37,7 @@ void Area::update(double time)
 	{
 		setPosition();
 
-		if (static_cast<Player*>(own)->isDisplayPartisanAchievement)
+		if (static_cast<Player*>(own)->isDisplayPartisanAchievement || own->status == Status::DEAD)
 			isExist = false;
 	}
 }

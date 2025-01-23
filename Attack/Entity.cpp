@@ -93,7 +93,8 @@ bool Entity::isUndeletable()
 {
 	return	name == "rank" ? true :
 			(name == "tank" || name == "destroyed") && army == "player" ? true :
-			(name == "smoke" && army == "player") ? true : false;
+			(name == "smoke" && army == "player") ? true :
+			(name == "area" && army == "player") ? true : false;
 }
 
 bool Entity::isAnyGroundVehicle()

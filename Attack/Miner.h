@@ -6,10 +6,11 @@ class Miner : public GroundVehicle
 {
 public:
 	bool isStopped;
+	bool isInRadarCoverageArea;
 
 	//.:: Constructor :::::::::::::::::::::::
 	Miner();
-	Miner(Animation&, double, double, string, int, bool, SoundBuffer&, int, string, int, int);
+	Miner(Animation&, double, double, SoundBuffer&, int);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Miner();

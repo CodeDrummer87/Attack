@@ -42,7 +42,7 @@ public:
 
 	//.:: Constructor ::::::::::::::::::::::
 	Player();
-	Player(Animation&, double, double, int, bool, SoundBuffer&, int, int);
+	Player(Animation&, double, double, SoundBuffer&, int);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Player();

@@ -8,7 +8,7 @@ RadarSweep::RadarSweep(Animation &aRadarSweep, GroundVehicle *own_)
 	z_index = (short)7;
 
 	anim = aRadarSweep;
-	anim.sprite.setColor(Color(14, 153, 20));
+	anim.sprite.setColor(Color(14, 153, 20, 230));
 
 	own = own_;
 	level = 0;

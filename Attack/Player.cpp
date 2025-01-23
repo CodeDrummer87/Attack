@@ -6,9 +6,8 @@
 Player::Player()
 {}
 
-Player::Player(Animation &anim, double x_, double y_, int dir_, bool isPlayAnimation_, SoundBuffer &sExplosion_,
-	int expFrameCount, int level_)
-	: Tank(anim, x_, y_, "tank", dir_, isPlayAnimation_, sExplosion_, expFrameCount, "player", level_)
+Player::Player(Animation &anim, double x_, double y_, SoundBuffer &sExplosion_, int level_)
+	: Tank(anim, x_, y_, "tank", 0, true, sExplosion_, 12, "player", level_)
 {
 	isPlayerControl = true;
 
@@ -29,7 +28,7 @@ Player::Player(Animation &anim, double x_, double y_, int dir_, bool isPlayAnima
 	isPartisan = false;
 	isDisplayPartisanAchievement = false;
 	partisanAchievLevel = 0;
-	killsInForest = 4;
+	killsInForest = 0;
 }
 
 Player::~Player()

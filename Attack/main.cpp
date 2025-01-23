@@ -142,8 +142,8 @@ int main()
 
 	Image iMap, iIcon, iFighter, iEnemyFighter, iAirBomb, iBombExplosion, iCommunication_truck, iRadioAntenna, iRadioWaves,
 		iDrowning, iSpeedUpAchiev, iRepair, iSniper, iFirstStage_boss_tankBody, iFirstStage_boss_tankTower, iOilPuddle,
-		iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect, iEnemies[8], iMiner, iMining, iMine, 
-		iLandmineExplosion, iRadar, iRadarSweep, iVehicleOutline;
+		iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect, iEnemies[8], iMiner, iMining, iMine,
+		iLandmineExplosion, iRadar, iRadarSweep;
 
 	iMap = getImage("source/images/map.png");
 	iIcon = getImage("source/images/sprites/attributes/icons/icons.png");
@@ -180,7 +180,6 @@ int main()
 	iLandmineExplosion = getImage("source/images/sprites/explosions/landmine_explosion.png");
 	iRadar = getImage("source/images/sprites/other/radar.png");
 	iRadarSweep = getImage("source/images/sprites/other/radar_sweep.png");
-	iVehicleOutline = getImage("source/images/sprites/models/other/vehicle_shadow.png");
 
 	//.:: Bosses
 	iFirstStage_boss_tankBody = getImage("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_body.png");
@@ -193,8 +192,7 @@ int main()
 	Texture tMap, tIcon, tTankRound, tShell, tShellExp, tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter,
 		tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion, tCommunication_truck, tRadioAntenna, tRadioWaves, tDrowning,
 		tSpeedUpAchiev, tRepair, tSniper, tFirstStageBossBody, tFirstStageBossTower, tOilPuddle, tMortarShell, tMortarClap,
-		tTrail, tMineExplosion, tDustClap, tTowEffect, tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep,
-		tVehicleOutline;
+		tTrail, tMineExplosion, tDustClap, tTowEffect, tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -240,7 +238,6 @@ int main()
 	tLandmineExplosion.loadFromImage(iLandmineExplosion);
 	tRadar.loadFromImage(iRadar);
 	tRadarSweep.loadFromImage(iRadarSweep);
-	tVehicleOutline.loadFromImage(iVehicleOutline);
 
 	tFirstStageBossBody.loadFromImage(iFirstStage_boss_tankBody);
 	tFirstStageBossTower.loadFromImage(iFirstStage_boss_tankTower);
@@ -398,7 +395,6 @@ int main()
 	Animation aDefectiveMine(tMortarClap, defectiveMineBuf, 0, 0, 32, 32, 0.01, 8);
 	Animation aRadar(tRadar, partisanBuf, 0, 0, 128, 128, 0.015, 33);
 	Animation aRadarSweep(tRadarSweep, 0, 0, 128, 128, 1, 1);
-	Animation aVehicleOutline(tVehicleOutline, 0, 0, 64, 64, 0.015, 6);
 
 	//.:: Bosses :::
 #pragma region First stage boss
@@ -539,7 +535,7 @@ int main()
 #pragma region Functions
 	
 	void createEnemiesAnimationArray(Image*, Texture*, Animation*, int);
-	void createEnemies(Animation*, Animation&, SoundBuffer&, string*, int);
+	void createEnemies(Animation*, SoundBuffer&, string*, int);
 	void createEnemyCommunicationTrucks(Animation&, SoundBuffer&, int, Animation&, Tuple);
 	void createMiner(Animation&, SoundBuffer&, int, int, Tuple);
 	void createSmoke(GroundVehicle*, Animation&);
@@ -610,7 +606,7 @@ int main()
 								for (int i = 0; i < numberOfPlayers; i++)
 								{
 									Player *player;
-									player = new Player(aPlayers[i], 0.0, 0.0, 0, true, tankExpBuf, 12, 1);
+									player = new Player(aPlayers[i], 0.0, 0.0, tankExpBuf, 1);
 
 									team.push_back(player);
 									entities.push_back(player);
@@ -709,7 +705,7 @@ int main()
 
 						createEnemyMoveSound(enemy_moveBuf, sEnemy_move, index);
 						createEnemiesAnimationArray(iEnemies, tEnemies, aEnemies, index);
-						createEnemies(aEnemies, aVehicleOutline, tankExpBuf, maps[index], index);
+						createEnemies(aEnemies, tankExpBuf, maps[index], index);
 
 						Tuple truckPlace = determinePlaceToAppear(maps[index], true);
 						createEnemyCommunicationTrucks(aCommunication_truck, autoExpBuf, gameTime, aRadioAntenna, truckPlace);
@@ -1518,7 +1514,7 @@ int main()
 								createLandmineExplosion(aLandmineExplosion, (GroundVehicle*)a) : 
 								createDefectiveMineSmoke(aDefectiveMine, b);
 
-						if ((a->isEnemyGroundVehicle() && static_cast<GroundVehicle*>(a)->isInForest) && b->name == "area")
+						if (a->isEnemyGroundVehicle() && b->name == "area")
 							static_cast<GroundVehicle*>(a)->checkScannedAreaCollision(static_cast<Area*>(b));
 
 //////////////////////////////////////////////// - K E Y B O A R D   S H O R T C U T S - ///////////////////////////////////////////
@@ -1876,7 +1872,7 @@ void createEnemiesAnimationArray(Image *iEnemies, Texture *tEnemies, Animation *
 	}
 }
 
-void createEnemies(Animation *anim, Animation &aVehicleShadow, SoundBuffer &sExplosion, string *map, int index)
+void createEnemies(Animation *anim, SoundBuffer &sExplosion, string *map, int index)
 {
 	const int eTanks = 72;
 	double enemyPositionX = 70;
@@ -1894,21 +1890,21 @@ void createEnemies(Animation *anim, Animation &aVehicleShadow, SoundBuffer &sExp
 
 		Enemy *enemy;
 		if (i <= 9)
-			enemy = new Enemy(anim[7], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 8);
+			enemy = new Enemy(anim[7], enemyPositionX, enemyPositionY + addValue, sExplosion, k + 8);
 		else if (i > 9 && i <= 18)
-			enemy = new Enemy(anim[6], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 7);
+			enemy = new Enemy(anim[6], enemyPositionX, enemyPositionY + addValue, sExplosion, k + 7);
 		else if (i > 18 && i <= 27)
-			enemy = new Enemy(anim[5], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 6);
+			enemy = new Enemy(anim[5], enemyPositionX, enemyPositionY + addValue, sExplosion, k + 6);
 		else if (i > 27 && i <= 36)
-			enemy = new Enemy(anim[4], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 5);
+			enemy = new Enemy(anim[4], enemyPositionX, enemyPositionY + addValue, sExplosion, k + 5);
 		else if (i > 36 && i <= 45)
-			enemy = new Enemy(anim[3], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 4);
+			enemy = new Enemy(anim[3], enemyPositionX, enemyPositionY + addValue, sExplosion, k + 4);
 		else if (i > 45 && i <= 54)
-			enemy = new Enemy(anim[2], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 3);
+			enemy = new Enemy(anim[2], enemyPositionX, enemyPositionY + addValue, sExplosion, k + 3);
 		else if (i > 54 && i <= 63)
-			enemy = new Enemy(anim[1], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 2);
+			enemy = new Enemy(anim[1], enemyPositionX, enemyPositionY + addValue, sExplosion, k + 2);
 		else
-			enemy = new Enemy(anim[0], aVehicleShadow, enemyPositionX, enemyPositionY + addValue, sExplosion, k + 1);
+			enemy = new Enemy(anim[0], enemyPositionX, enemyPositionY + addValue, sExplosion, k + 1);
 
 		entities.push_back(enemy);
 		squad.push_back(enemy);
@@ -1922,11 +1918,11 @@ void createEnemies(Animation *anim, Animation &aVehicleShadow, SoundBuffer &sExp
 	}
 }
 
-void createEnemyCommunicationTrucks(Animation &truck, SoundBuffer &sExplosion, int currentGameTime,
+void createEnemyCommunicationTrucks(Animation &aTruck, SoundBuffer &sExplosion, int currentGameTime,
 	Animation &antenna_, Tuple place)
 {
-	CommunicationTruck *enemyTruck = new CommunicationTruck(truck, place.x, place.y, "truck", 270, false, sExplosion, 14, "enemy", 1, currentGameTime);
-	RadioAntenna *antenna = new RadioAntenna(antenna_, "antenna", false, enemyTruck, 1.8f);
+	CommunicationTruck *enemyTruck = new CommunicationTruck(aTruck, place.x, place.y, sExplosion, 1, currentGameTime);
+	RadioAntenna *antenna = new RadioAntenna(antenna_, enemyTruck);
 
 	entities.push_back(enemyTruck);
 	entities.push_back(antenna);
@@ -1936,7 +1932,7 @@ void createEnemyCommunicationTrucks(Animation &truck, SoundBuffer &sExplosion, i
 
 void createMiner(Animation &aMiner, SoundBuffer &sExplosion, int currentGameTime, int mapIndex, Tuple place)
 {
-	Miner *miner = new Miner(aMiner, place.x, place.y, "miner", 270, true, sExplosion, 12, "enemy", 1, currentGameTime);
+	Miner *miner = new Miner(aMiner, place.x, place.y, sExplosion, currentGameTime);
 
 	entities.push_back(miner);
 	specialTransport.push_back(miner);

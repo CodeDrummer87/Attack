@@ -6,10 +6,11 @@ class CommunicationTruck : public GroundVehicle
 {
 public:
 	bool isAirstrikeRequest;
+	bool isInRadarCoverageArea;
 
 	//.:: Constructor :::::::::::::::::::::::
 	CommunicationTruck();
-	CommunicationTruck(Animation&, double, double, string, int, bool, SoundBuffer&, int, string, int, int);
+	CommunicationTruck(Animation&, double, double, SoundBuffer&, int, int);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~CommunicationTruck();

@@ -13,7 +13,7 @@ public:
 
 	//.:: Constructor :::::::::::::::::::::::
 	RadioAntenna();
-	RadioAntenna(Animation&, string, bool, GroundVehicle*, float);
+	RadioAntenna(Animation&, GroundVehicle*);
 	
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~RadioAntenna();

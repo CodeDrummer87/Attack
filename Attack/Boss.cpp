@@ -6,7 +6,7 @@ Boss::Boss()
 {}
 
 Boss::Boss(BossArgs &args)
-	: Enemy(args.anim, args.anim, args.x, args.y, args.sExplosion, args.level)
+	: Enemy(args.anim, args.x, args.y, args.sExplosion, args.level)
 {
 	z_index = (short)4;
 

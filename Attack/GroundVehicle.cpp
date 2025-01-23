@@ -2,6 +2,9 @@
 
 #include "GroundVehicle.h"
 #include "Tank.h"
+#include "Enemy.h"
+#include "CommunicationTruck.h"
+#include "Miner.h"
 
 extern View view;
 
@@ -107,19 +110,17 @@ void GroundVehicle::update(double time)
 				anim.sound.setBuffer(sExplosion);
 				isTransition = true;
 				isSmoking = false;
+
+				if (anim.sprite.getColor() == Color(0, 255, 0, 210))
+				{
+					anim.sprite.setColor(Color::White);
+					z_index = 2;
+				}
 			}
 		}
 		//.:: Vehicle control :::
 		if (!isPlayerControl)
 			controlEnemyVehicle(time);
-	}
-
-	//.:: temporary code
-	if (((!isInForest && status != Status::DEAD) || (isInForest && status == Status::DEAD))
-		&& anim.sprite.getColor() == Color::Red)
-	{
-		z_index = 2;
-		isDrowned ? anim.sprite.setColor(Color::Transparent) : anim.sprite.setColor(Color::White);
 	}
 }
 
@@ -598,14 +599,9 @@ void GroundVehicle::checkScannedAreaCollision(Area *scannedArea)
 	FloatRect vehicle = this->anim.sprite.getGlobalBounds();
 	FloatRect area = scannedArea->area.getGlobalBounds();
 
-	if (vehicle.intersects(area))
-	{
-		z_index = 3;
-		anim.sprite.setColor(Color::Red);
-	}
-	else
-	{
-		z_index = 2;
-		anim.sprite.setColor(Color::White);
-	}
+	name == "tank" ?
+	static_cast<Enemy*>(this)->isInRadarCoverageArea = (vehicle.intersects(area) && isInForest) :
+	name == "truck" ?
+	static_cast<CommunicationTruck*>(this)->isInRadarCoverageArea = (vehicle.intersects(area) && isInForest) :
+	static_cast<Miner*>(this)->isInRadarCoverageArea = (vehicle.intersects(area) && isInForest);
 }

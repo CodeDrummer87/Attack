@@ -3,15 +3,15 @@
 CommunicationTruck::CommunicationTruck()
 {}
 
-CommunicationTruck::CommunicationTruck(Animation &a, double x_, double y_, string name_, int dir_, bool isPlayAnimation_,
-	SoundBuffer &sExplosion_, int expFrameCount, string army_, int lvl, int currentGameTime) 
-	: GroundVehicle(a, x_, y_, name_, dir, isPlayAnimation, sExplosion_, expFrameCount, army_, lvl)
+CommunicationTruck::CommunicationTruck(Animation &a, double x_, double y_, SoundBuffer &sExplosion_, int lvl, int currentGameTime) 
+	: GroundVehicle(a, x_, y_, "truck", 270, false, sExplosion_, 14, "enemy", lvl)
 {
 	z_index = (short)2;
 
 	isPlayerControl = isAirstrikeRequest =  false;
 	nextRequestTime = currentGameTime + 120;
 	speedBonus = 0.4f;
+	isInRadarCoverageArea = false;
 }
 
 CommunicationTruck::~CommunicationTruck()
@@ -21,6 +21,12 @@ void CommunicationTruck::update(double time)
 {
 	if (isAirstrikeRequest)
 		isAirstrikeRequest = false;
+
+	if (status != Status::DEAD)
+	{
+		z_index = isInRadarCoverageArea ? 3 : 2;
+		anim.sprite.setColor(isInRadarCoverageArea ? Color(0, 255, 0, 210) : Color::White);
+	}
 
 	GroundVehicle::update(time);
 }
