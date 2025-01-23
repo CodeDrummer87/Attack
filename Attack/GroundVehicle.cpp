@@ -2,6 +2,9 @@
 
 #include "GroundVehicle.h"
 #include "Tank.h"
+#include "Enemy.h"
+#include "CommunicationTruck.h"
+#include "Miner.h"
 
 extern View view;
 
@@ -20,7 +23,7 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 
 	destinationDist = speedBonus = 0.0f;
 	isDestroyed = isTransition = drowning = isSmoking = false;
-	isDrowned = isShowRepair = isPlayerControl = isSkidding = false;
+	isDrowned = isShowRepair = isPlayerControl = isSkidding = isInForest = false;
 	hitPoints = level + 1;
 	toUp = toDown = toRight = toLeft = 0;
 
@@ -107,6 +110,12 @@ void GroundVehicle::update(double time)
 				anim.sound.setBuffer(sExplosion);
 				isTransition = true;
 				isSmoking = false;
+
+				if (anim.sprite.getColor() == Color(0, 255, 0, 210))
+				{
+					anim.sprite.setColor(Color::White);
+					z_index = 2;
+				}
 			}
 		}
 		//.:: Vehicle control :::
@@ -279,7 +288,7 @@ bool GroundVehicle::makeSureVehicleCollision(GroundVehicle *t)
 	return false;
 }
 
-void GroundVehicle::getAreaDamage(Area *area, string *map, int index)
+void GroundVehicle::getAreaDamage(DestructionZone *area, string *map, int index)
 {
 	FloatRect a = this->anim.sprite.getGlobalBounds();
 	FloatRect b = area->area.getGlobalBounds();
@@ -577,3 +586,22 @@ bool GroundVehicle::mustSmoke()
 	return ((status == Status::WOUNDED || (status == Status::DEAD && isDestroyed)) && !isSmoking) ? true : false;
 }
 
+void GroundVehicle::checkLocationInForest(string* map)
+{
+	int i = y / 32;
+	int j = x / 32;
+
+	isInForest = map[i][j] == 'F' ? true : false;
+}
+
+void GroundVehicle::checkScannedAreaCollision(Area *scannedArea)
+{
+	FloatRect vehicle = this->anim.sprite.getGlobalBounds();
+	FloatRect area = scannedArea->area.getGlobalBounds();
+
+	name == "tank" ?
+	static_cast<Enemy*>(this)->isInRadarCoverageArea = (vehicle.intersects(area) && isInForest) :
+	name == "truck" ?
+	static_cast<CommunicationTruck*>(this)->isInRadarCoverageArea = (vehicle.intersects(area) && isInForest) :
+	static_cast<Miner*>(this)->isInRadarCoverageArea = (vehicle.intersects(area) && isInForest);
+}

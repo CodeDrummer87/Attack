@@ -10,6 +10,7 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_)
 	z_index = (short)3;
 
 	anim = a;
+	anim.sprite.setColor(Color(255, 255, 255, 210));
 	name = name_;
 	level = 0;
 	army = vehicle->army;
@@ -105,7 +106,7 @@ Smoke::~Smoke()
 
 Smoke::Smoke(Animation &a, Entity *mine, string name_)
 {
-	z_index = 1;
+	z_index = 2;
 	dir = 0;
 	x = mine->getCoordX(false);
 	y = mine->getCoordY(false);

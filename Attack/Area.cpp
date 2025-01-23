@@ -1,44 +1,43 @@
 #include "Area.h"
+#include "Player.h"
 
 Area::Area()
 {}
 
-Area::Area(double X, double Y, float radius, Entity *own_, string name_, string army_)
+Area::Area(Entity *own_, float radius)
 {
 	z_index = (short)1;
-	isTerrainDestroyed = false;
 
-	name = name_;
-	army = army_;
-	x = X;
-	y = Y;
-	area = CircleShape(radius);
-	area.setOrigin(area.getGlobalBounds().width / 2, area.getGlobalBounds().height / 2);
-	area.setPosition(x, y);
-
+	name = "area";
 	own = own_;
 	army = own->army;
-	isExist = true;
 
+	area = CircleShape(radius);
+	area.setOrigin(area.getGlobalBounds().width / 2, area.getGlobalBounds().height / 2);
+	setPosition();
+
+	isExist = true;
 	status = ALIVE;
 }
-
-short Area::victims = 0;
-int Area::totalExperience = 0;
 
 Area::~Area()
 {}
 
+void Area::setPosition()
+{
+	x = own->getCoordX(false);
+	y = own->getCoordY(false);
+
+	area.setPosition(x, y);
+}
+
 void Area::update(double time)
 {
-	if (status == WOUNDED)
+	if (isExist)
 	{
-		totalExperience = 0;
-		victims = 0;
+		setPosition();
 
-		isExist = false;
+		if (static_cast<Player*>(own)->isDisplayPartisanAchievement || own->status == Status::DEAD)
+			isExist = false;
 	}
-
-	if (own->status == WOUNDED && !own-isExist)
-		status = WOUNDED;
 }

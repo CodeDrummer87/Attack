@@ -14,12 +14,13 @@ class Enemy : public Tank
 {
 public:
 	bool round;
+	bool isInRadarCoverageArea;
 
 	static EvilTank evilTank;
 
 	//.:: Constructor :::::::::::::::::::::::
 	Enemy();
-	Enemy(Animation&, double, double, string, int, bool, SoundBuffer&, int, string, int);
+	Enemy(Animation&, double, double, SoundBuffer&, int);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Enemy();
@@ -27,5 +28,6 @@ public:
 	//.:: Public_method_of_class ::::::::::::
 	void destroyBrickWalls(string*);
 	void destroyPlayerTanks(Tank*);
+	void update(double);
 
 };

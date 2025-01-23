@@ -6,9 +6,8 @@
 Player::Player()
 {}
 
-Player::Player(Animation &anim, double x_, double y_, int dir_, bool isPlayAnimation_, SoundBuffer &sExplosion_,
-	int expFrameCount, int level_)
-	: Tank(anim, x_, y_, "tank", dir_, isPlayAnimation_, sExplosion_, expFrameCount, "player", level_)
+Player::Player(Animation &anim, double x_, double y_, SoundBuffer &sExplosion_, int level_)
+	: Tank(anim, x_, y_, "tank", 0, true, sExplosion_, 12, "player", level_)
 {
 	isPlayerControl = true;
 
@@ -25,6 +24,11 @@ Player::Player(Animation &anim, double x_, double y_, int dir_, bool isPlayAnima
 	combo[3] = '\0';
 	isKeyPressed = false;
 	destroyedVehicle = NULL;
+
+	isPartisan = false;
+	isDisplayPartisanAchievement = false;
+	partisanAchievLevel = 0;
+	killsInForest = 0;
 }
 
 Player::~Player()
@@ -93,6 +97,12 @@ void Player::update(double time)
 			towBack(time);
 		}
 
+		if (status != Status::DEAD)
+		{
+			(isPartisan && isInForest) ? anim.sprite.setColor(Color::Black) : anim.sprite.setColor(Color::White);
+			z_index = (isPartisan && isInForest) ? 3 : 2;
+		}
+
 		Tank::update(time);
 	}
 }
@@ -101,7 +111,6 @@ void Player::setStartPosition(double x_, double y_)
 {
 	this->x = x_;
 	this->y = y_;
-	this->dir = 0;
 }
 
 void Player::checkIconCollision(Entity *eIcon, Sound &sound)
@@ -345,4 +354,26 @@ bool Player::checkTowingDirectionBan(char dirCh)
 	case '3': return currentCipher == "311" ? false : true;
 	case '4': return currentCipher == "422" ? false : true;
 	}
+}
+
+void Player::countKillsInForest()
+{
+	killsInForest++;
+	isDisplayPartisanAchievement =
+		killsInForest == 5 ? true :
+		killsInForest == 15 ? true :
+		killsInForest == 30 ? true : false;
+}
+
+int Player::activateGuerillaMode()
+{
+	isDisplayPartisanAchievement = false;
+
+	if (!isPartisan)
+		isPartisan = true;
+
+	partisanAchievLevel++;
+	int scannedAreaRadius = partisanAchievLevel * 250;
+
+	return scannedAreaRadius;
 }

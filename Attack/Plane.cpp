@@ -22,7 +22,9 @@ Plane::Plane(Animation &a, Animation &b, Animation &c, double X, double Y, strin
 	aEssential.sprite.setPosition((float)x, (float)y);
 	aTrace.sprite.setScale(1.31f, 1.31f);
 	aTrace.sprite.setPosition((float)x, (float)y + 100);
+	aTrace.sprite.setColor(Color(255, 255, 255, 175));
 	aJetFlame.sprite.setPosition((float)x, (float)y + 150);
+	aJetFlame.sprite.setColor(Color(255, 255, 255, 175));
 
 	isPlayAnimation = isExist = true;
 

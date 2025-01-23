@@ -6,13 +6,17 @@ Boss::Boss()
 {}
 
 Boss::Boss(BossArgs &args)
-	: Enemy(args.anim, args.x, args.y, "boss", args.dir, args.isPlayAnimation, args.sExplosion, args.expFrameCount, "enemy", args.level)
+	: Enemy(args.anim, args.x, args.y, args.sExplosion, args.level)
 {
 	z_index = (short)4;
 
-	dir = 180;
+	name = "boss";
+	army = "enemy";
+	dir = 270;
+	explosionFrameCount = 16;
 	hitPoints = 100 + args.numberOfPlayers * 75;
 	nextOilSpillageTime = 0;
+	isPlayAnimation = true;
 	isOilSpillage = isAiming = wasDustClap = false;
 	aimingTime = -1;
 }

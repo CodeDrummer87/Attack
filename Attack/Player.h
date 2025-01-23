@@ -35,9 +35,14 @@ public:
 	string currentCipher;
 	GroundVehicle * destroyedVehicle;
 
+	bool isPartisan;
+	bool isDisplayPartisanAchievement;
+	int partisanAchievLevel;
+	int killsInForest;
+
 	//.:: Constructor ::::::::::::::::::::::
 	Player();
-	Player(Animation&, double, double, int, bool, SoundBuffer&, int, int);
+	Player(Animation&, double, double, SoundBuffer&, int);
 
 	//.:: Destructor :::::::::::::::::::::::
 	virtual ~Player();
@@ -57,5 +62,7 @@ public:
 	void towBack(double);
 	void checkMapCollisionWhenTow(string *);
 	void controlOfTank(char, double, double);
+	void countKillsInForest();
+	int activateGuerillaMode();
 
 };

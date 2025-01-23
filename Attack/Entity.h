@@ -53,7 +53,9 @@ public:
 	void resetDegrees(int&);
 	bool isUndeletable();
 	bool isAnyGroundVehicle();
+	bool isAnyGroundObject();
 	bool isGroundVehicle();
+	bool isEnemyGroundVehicle();
 	bool isPlayer();
 
 };

@@ -22,6 +22,7 @@ Shell::Shell(Animation &a, Animation &b, Tank *tank)
 	aExplosion = b;
 	dir = tank->dir;
 	own = tank;
+	isInForest = own->isInForest;
 	number = own->number;
 	x = tank->getCoordX(true);
 	y = tank->getCoordY(true);
@@ -178,7 +179,7 @@ void Shell::damageVehicle(GroundVehicle *t, Sound &armorSound)
 		if (shell.intersects(vehicle))
 		{
 			armorSound.play();
-			if (this->name == "shell" && (t->name == "tank" || t->name == "truck" || t->name == "boss" || t->name == "miner"))
+			if (this->name == "shell" && t->isAnyGroundVehicle())
 			{
 				if (level >= t->hitPoints && t->hitPoints > 1)
 					t->hitPoints = 1;
@@ -201,7 +202,12 @@ void Shell::damageVehicle(GroundVehicle *t, Sound &armorSound)
 							: static_cast<Enemy*>(own)->round = false;
 					}
 					else
+					{
 						conveyExperience(t->level);
+
+						if (isInForest && t->isInForest)
+							static_cast<Player*>(own)->countKillsInForest();
+					}
 				}
 
 				if (army == "player" && dir == t->dir)

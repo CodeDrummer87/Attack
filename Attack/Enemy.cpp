@@ -5,11 +5,12 @@
 Enemy::Enemy()
 {}
 
-Enemy::Enemy(Animation &a, double x_, double y_, string name_, int dir_, bool isPlayAnimation_, SoundBuffer &sExplosion_, int expFrameCount,
-	string army_, int lvl) : Tank(a, x_, y_, name_, dir_, isPlayAnimation_, sExplosion_, expFrameCount, army_, lvl)
+Enemy::Enemy(Animation &a, double x_, double y_, SoundBuffer &sExplosion_, int lvl) 
+	: Tank(a, x_, y_, "tank", 180, true, sExplosion_, 12, "enemy", lvl)
 {
 	isPlayerControl = false;
 	round = false;
+	isInRadarCoverageArea = false;
 }
 
 Enemy::~Enemy()
@@ -131,4 +132,15 @@ void Enemy::destroyPlayerTanks(Tank *p)
 			}
 		}
 	}
+}
+
+void Enemy::update(double time)
+{
+	if (status != Status::DEAD)
+	{
+		z_index = isInRadarCoverageArea ? 3 : 2;
+		anim.sprite.setColor(isInRadarCoverageArea ? Color(0, 255, 0, 210) : Color::White);
+	}
+
+	Tank::update(time);
 }

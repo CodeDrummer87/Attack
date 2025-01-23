@@ -139,10 +139,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Area.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Air.cpp" />
     <ClCompile Include="Animation.cpp" />
-    <ClCompile Include="Area.cpp" />
+    <ClCompile Include="DestructionZone.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="CommunicationTruck.cpp" />
@@ -160,6 +161,8 @@
     <ClCompile Include="OilPuddle.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Radar.cpp" />
+    <ClCompile Include="RadarSweep.cpp" />
     <ClCompile Include="RadioAntenna.cpp" />
     <ClCompile Include="RadioWave.cpp" />
     <ClCompile Include="Rank.cpp" />
@@ -169,10 +172,11 @@
     <ClCompile Include="TankTower.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Area.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Air.h" />
     <ClInclude Include="Animation.h" />
-    <ClInclude Include="Area.h" />
+    <ClInclude Include="DestructionZone.h" />
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="CommunicationTruck.h" />
@@ -191,6 +195,8 @@
     <ClInclude Include="OilPuddle.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Radar.h" />
+    <ClInclude Include="RadarSweep.h" />
     <ClInclude Include="RadioAntenna.h" />
     <ClInclude Include="RadioWave.h" />
     <ClInclude Include="Rank.h" />

@@ -5,24 +5,21 @@
 class Area : public Entity
 {
 private:
-	Entity *own;
+	//.:: Methods_of_class ::::::::::::::::::
+	void setPosition();
 
 public:
+	Entity* own; 
 	CircleShape area;
-	bool isTerrainDestroyed;  //.:: for the Destruction Zone
 
-	static short victims;
-	static int totalExperience;
-
-
-	//.:: Constructor ::::::::::::::::::::::
+	//.:: Constructor :::::::::::::::::::::::
 	Area();
-	Area(double, double, float, Entity*, string, string);
+	Area(Entity*, float);
 
-	//.:: Destructor :::::::::::::::::::::::
+	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Area();
 
-	//.:: Methods_of_class :::::::::::::::::
+	//.:: Methods_of_class ::::::::::::::::::
 	void update(double);
 
 };
