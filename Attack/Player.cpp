@@ -131,7 +131,8 @@ void Player::checkIconCollision(Entity *eIcon, Sound &sound)
 		case 'R':
 			if (hitPoints < 1 + level)
 			{
-				++hitPoints;
+				int repairVolume = (rand() % level + 1);
+				hitPoints = ((hitPoints + repairVolume <= level + 1) ? hitPoints + repairVolume : ++hitPoints);
 				isShowRepair = true;
 				isIconTaken = true;
 			}
