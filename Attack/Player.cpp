@@ -361,7 +361,7 @@ void Player::countKillsInForest()
 {
 	killsInForest++;
 	isDisplayPartisanAchievement =
-		killsInForest == 5 ? true :
+		killsInForest == 3 ? true :
 		killsInForest == 15 ? true :
 		killsInForest == 30 ? true : false;
 }
