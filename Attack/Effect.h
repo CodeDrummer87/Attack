@@ -8,6 +8,7 @@ class Effect : public Entity
 private:
 	GroundVehicle *own;
 	int constDir;
+	int transparency;
 
 	void setCoordinates();
 

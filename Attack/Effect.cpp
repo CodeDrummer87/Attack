@@ -26,6 +26,10 @@ Effect::Effect(Animation &a, GroundVehicle* own_, string name_)
 	anim.sound.setVolume(100.f);
 	isExist = true;
 	status = ALIVE;
+
+	transparency = 10;
+	if (name == "ressurection")
+		anim.sound.setPitch(1.f);
 }
 
 Effect::~Effect()
@@ -35,6 +39,12 @@ void Effect::update(double time)
 {
 	if (isExist)
 	{
+		if (name == "ressurection")
+		{
+			transparency = transparency < 70 ? ++transparency : 70;
+			anim.sprite.setColor(Color(255, 255, 255, transparency));
+		}
+
 		setCoordinates();
 
 		//.:: Mining volume depends on the distance to the camera :::::::

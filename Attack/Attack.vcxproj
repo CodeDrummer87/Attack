@@ -158,6 +158,7 @@
     <ClCompile Include="Mine.cpp" />
     <ClCompile Include="Miner.cpp" />
     <ClCompile Include="MortarShell.cpp" />
+    <ClCompile Include="Note.cpp" />
     <ClCompile Include="OilPuddle.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="Mine.h" />
     <ClInclude Include="Miner.h" />
     <ClInclude Include="MortarShell.h" />
+    <ClInclude Include="Note.h" />
     <ClInclude Include="OilPuddle.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Player.h" />

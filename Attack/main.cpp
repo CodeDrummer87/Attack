@@ -143,7 +143,7 @@ int main()
 	Image iMap, iIcon, iFighter, iEnemyFighter, iAirBomb, iBombExplosion, iCommunication_truck, iRadioAntenna, iRadioWaves,
 		iDrowning, iSpeedUpAchiev, iRepair, iSniper, iFirstStage_boss_tankBody, iFirstStage_boss_tankTower, iOilPuddle,
 		iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect, iEnemies[8], iMiner, iMining, iMine,
-		iLandmineExplosion, iRadar, iRadarSweep;
+		iLandmineExplosion, iRadar, iRadarSweep, iRessurection;
 
 	iMap = getImage("source/images/map.png");
 	iIcon = getImage("source/images/sprites/attributes/icons/icons.png");
@@ -180,6 +180,7 @@ int main()
 	iLandmineExplosion = getImage("source/images/sprites/explosions/landmine_explosion.png");
 	iRadar = getImage("source/images/sprites/other/radar.png");
 	iRadarSweep = getImage("source/images/sprites/other/radar_sweep.png");
+	iRessurection = getImage("source/images/sprites/other/ressurection.png");
 
 	//.:: Bosses
 	iFirstStage_boss_tankBody = getImage("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_body.png");
@@ -192,7 +193,8 @@ int main()
 	Texture tMap, tIcon, tTankRound, tShell, tShellExp, tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter,
 		tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion, tCommunication_truck, tRadioAntenna, tRadioWaves, tDrowning,
 		tSpeedUpAchiev, tRepair, tSniper, tFirstStageBossBody, tFirstStageBossTower, tOilPuddle, tMortarShell, tMortarClap,
-		tTrail, tMineExplosion, tDustClap, tTowEffect, tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep;
+		tTrail, tMineExplosion, tDustClap, tTowEffect, tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep,
+		tRessurection;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -238,6 +240,7 @@ int main()
 	tLandmineExplosion.loadFromImage(iLandmineExplosion);
 	tRadar.loadFromImage(iRadar);
 	tRadarSweep.loadFromImage(iRadarSweep);
+	tRessurection.loadFromImage(iRessurection);
 
 	tFirstStageBossBody.loadFromImage(iFirstStage_boss_tankBody);
 	tFirstStageBossTower.loadFromImage(iFirstStage_boss_tankTower);
@@ -269,7 +272,7 @@ int main()
 		firstStageBossMoveBuf, firstStageBossExpBuf, firstStageBossRoundBuf, firstStageBossMortarBuf, firstStageBossTowerBuf,
 		firstStageBossTowerCrashBuf, oilPuddleBuf, badgeAppearanceBuf, badgeDisappearanceBuf, firstStBossLaugh, firstStBossRoundBuf,
 		bossMortarShootBuf, stopMortarShootBuf, mineExplosionBuf, dustClapBuf, hookEngagementBuf, miningBuf, landmineExpBuf,
-		defectiveMineBuf, partisanBuf;
+		defectiveMineBuf, partisanBuf, ressurectionBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -316,6 +319,7 @@ int main()
 	landmineExpBuf.loadFromFile("source/sounds/explosion/landmine_explosion.flac");
 	defectiveMineBuf.loadFromFile("source/sounds/effects/defective_mine.flac");
 	partisanBuf.loadFromFile("source/sounds/effects/partisan.flac");
+	ressurectionBuf.loadFromFile("source/sounds/effects/ressurection.flac");
 
 	Sound sEnemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sArmorResist,
 		sLaugh(laughBuf), sAirStrikeAlarm, sFighterFlight, sFirstStageBossLaugh, sBossMortarShoot(bossMortarShootBuf),
@@ -395,6 +399,7 @@ int main()
 	Animation aDefectiveMine(tMortarClap, defectiveMineBuf, 0, 0, 32, 32, 0.01, 8);
 	Animation aRadar(tRadar, partisanBuf, 0, 0, 128, 128, 0.015, 33);
 	Animation aRadarSweep(tRadarSweep, 0, 0, 128, 128, 1, 1);
+	Animation aRessurection(tRessurection, ressurectionBuf, 0, 0, 128, 128, 0.019, 50);
 
 	//.:: Bosses :::
 #pragma region First stage boss
@@ -757,6 +762,12 @@ int main()
 								sEnemy_move.stop();
 							}
 						}
+					}
+
+					if (Keyboard::isKeyPressed(Keyboard::Q))
+					{
+						Effect* ressurection = new Effect(aRessurection, team[1], "ressurection");
+						entities.push_back(ressurection);
 					}
 
 #pragma region Tank rounds
