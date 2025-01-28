@@ -105,9 +105,14 @@ bool Entity::isAnyGroundVehicle()
 		name == "boss") ? true : false;
 }
 
+bool Entity::isDestroyedVehicle()
+{
+	return (name == "destroyed" || name == "ressurected") ? true : false;
+}
+
 bool Entity::isAnyGroundObject()
 {
-	return (isAnyGroundVehicle() || name == "destroyed") ? true : false;
+	return (isAnyGroundVehicle() || isDestroyedVehicle()) ? true : false;
 }
 
 bool Entity::isGroundVehicle()

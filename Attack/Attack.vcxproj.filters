@@ -125,6 +125,9 @@
     <ClCompile Include="Area.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Note.cpp">
+      <Filter>Исходные файлы\BasicClasses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h">
@@ -284,6 +287,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Area.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Note.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,6 +2,21 @@
 
 #include "Tank.h"
 
+struct Tuple
+{
+	double x;
+	double y;
+};
+
+struct PlayersPositions
+{
+	Tuple first{ 0, 0 };
+	Tuple second{ 0, 0 };
+	Tuple third{ 0, 0 };
+	Tuple fourth{ 0, 0 };
+	Tuple fifth{ 0, 0 };
+};
+
 struct AirSpotter
 {
 	bool isAirSpotter;
@@ -18,6 +33,8 @@ private:
 	int currentExperience;
 	int requiredExperience;
 	bool isIconTaken;
+
+	Animation moveAnim;
 
 	//.:: Methods_of_class :::::::::::::::::
 	bool checkTowingDirectionBan(char);
@@ -40,6 +57,11 @@ public:
 	int partisanAchievLevel;
 	int killsInForest;
 
+	short lives;
+	bool willRessurect;
+	int ressurectionTime;
+	Tuple startPosition;
+
 	//.:: Constructor ::::::::::::::::::::::
 	Player();
 	Player(Animation&, double, double, SoundBuffer&, int);
@@ -56,6 +78,7 @@ public:
 	
 	static void defineNewCommander(vector<Player*>&);
 	static bool checkTeamForCommander(vector<Player*>);
+	static Player* getCommander(vector<Player*>);
 	void insertCodeSymbol(char);
 	bool checkCollisionWithDestroyedTank(GroundVehicle*);
 	void setTow(GroundVehicle*, string);
@@ -64,5 +87,9 @@ public:
 	void controlOfTank(char, double, double);
 	void countKillsInForest();
 	int activateGuerillaMode();
+	void prepareForRessurection();
+	void ressurectPlayer();
+	void ressurectPlayer(double, double);
+	bool willFight();
 
 };

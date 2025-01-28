@@ -29,6 +29,12 @@ Player::Player(Animation &anim, double x_, double y_, SoundBuffer &sExplosion_, 
 	isDisplayPartisanAchievement = false;
 	partisanAchievLevel = 0;
 	killsInForest = 0;
+
+	lives = 2;
+	willRessurect = false;
+	ressurectionTime = 0;
+	startPosition = { 0.0, 0.0 };
+	moveAnim = anim;
 }
 
 Player::~Player()
@@ -102,6 +108,14 @@ void Player::update(double time)
 			(isPartisan && isInForest) ? anim.sprite.setColor(Color::Black) : anim.sprite.setColor(Color::White);
 			z_index = (isPartisan && isInForest) ? 3 : 2;
 		}
+		else
+		{
+			if (isDestroyed && name == "destroyed" && lives > 0)
+			{
+				name = "ressurected";
+				willRessurect = true;
+			}
+		}
 
 		Tank::update(time);
 	}
@@ -109,8 +123,8 @@ void Player::update(double time)
 
 void Player::setStartPosition(double x_, double y_)
 {
-	this->x = x_;
-	this->y = y_;
+	this->x = startPosition.x = x_;
+	this->y = startPosition.y = y_;
 }
 
 void Player::checkIconCollision(Entity *eIcon, Sound &sound)
@@ -209,6 +223,13 @@ bool Player::checkTeamForCommander(vector<Player*> team)
 	}
 
 	return false;
+}
+
+Player* Player::getCommander(vector<Player*> team)
+{
+	for (auto player : team)
+		if (player->isCommander)
+			return player;
 }
 
 void Player::nickDown(int exp)
@@ -377,4 +398,49 @@ int Player::activateGuerillaMode()
 	int scannedAreaRadius = partisanAchievLevel * 250;
 
 	return scannedAreaRadius;
+}
+
+void Player::prepareForRessurection()
+{
+	--lives;
+	ressurectionTime = 0;
+
+	anim = moveAnim;
+	Tank::prepareVehicle();
+	name = "ressurecting";
+	dir = 0;
+	status = Status::ALIVE;
+	isTransition = false;
+	isDestroyed = false;
+	isPlayAnimation = true;
+	drowning = isInForest = false;
+
+	if (isDrowned)
+	{
+		isDrowned = false;
+		anim.sprite.setColor(Color::White);
+	}
+}
+
+void Player::ressurectPlayer()
+{
+	prepareForRessurection();
+
+	x = startPosition.x;
+	y = startPosition.y;
+}
+
+void Player::ressurectPlayer(double X, double Y)
+{
+	prepareForRessurection();
+
+	x = X;
+	y = Y;
+}
+
+bool Player::willFight()
+{
+	return ((status != Status::DEAD) ||
+			(status == Status::DEAD && lives > 0) ||
+			(name == "ressurected")) ? true : false;
 }

@@ -42,23 +42,6 @@
 #include "Radar.h"
 #include "RadarSweep.h"
 
-//.:: Structures :::
-struct Tuple
-{
-	double x;
-	double y;
-};
-
-struct PlayersPositions
-{
-	Tuple first{ 0, 0 };
-	Tuple second{ 0, 0 };
-	Tuple third{ 0, 0 };
-	Tuple fourth{ 0, 0 };
-	Tuple fifth{ 0, 0 };
-};
-//::::::::::::::::::
-
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
 //:::::::::::::::::
@@ -81,10 +64,20 @@ template <typename T>
 bool findAliveFrom(vector<T> team)
 {
 	for (auto t : team)
-		if (t->status != DEAD) return true;
+		if (t->status != DEAD || t->name == "ressurected") return true;
 
 	return false;
 }
+
+bool findAlivePlayer()
+{
+	for (auto p : team)
+		if (p->willFight())
+			return true;
+
+	return false;
+}
+
 template <typename T>
 void clearVectorOf(vector<T> &team_)
 {
@@ -143,7 +136,7 @@ int main()
 	Image iMap, iIcon, iFighter, iEnemyFighter, iAirBomb, iBombExplosion, iCommunication_truck, iRadioAntenna, iRadioWaves,
 		iDrowning, iSpeedUpAchiev, iRepair, iSniper, iFirstStage_boss_tankBody, iFirstStage_boss_tankTower, iOilPuddle,
 		iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect, iEnemies[8], iMiner, iMining, iMine,
-		iLandmineExplosion, iRadar, iRadarSweep;
+		iLandmineExplosion, iRadar, iRadarSweep, iRessurection;
 
 	iMap = getImage("source/images/map.png");
 	iIcon = getImage("source/images/sprites/attributes/icons/icons.png");
@@ -180,6 +173,7 @@ int main()
 	iLandmineExplosion = getImage("source/images/sprites/explosions/landmine_explosion.png");
 	iRadar = getImage("source/images/sprites/other/radar.png");
 	iRadarSweep = getImage("source/images/sprites/other/radar_sweep.png");
+	iRessurection = getImage("source/images/sprites/other/ressurection.png");
 
 	//.:: Bosses
 	iFirstStage_boss_tankBody = getImage("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_body.png");
@@ -192,7 +186,8 @@ int main()
 	Texture tMap, tIcon, tTankRound, tShell, tShellExp, tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter,
 		tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion, tCommunication_truck, tRadioAntenna, tRadioWaves, tDrowning,
 		tSpeedUpAchiev, tRepair, tSniper, tFirstStageBossBody, tFirstStageBossTower, tOilPuddle, tMortarShell, tMortarClap,
-		tTrail, tMineExplosion, tDustClap, tTowEffect, tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep;
+		tTrail, tMineExplosion, tDustClap, tTowEffect, tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep,
+		tRessurection;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -238,6 +233,7 @@ int main()
 	tLandmineExplosion.loadFromImage(iLandmineExplosion);
 	tRadar.loadFromImage(iRadar);
 	tRadarSweep.loadFromImage(iRadarSweep);
+	tRessurection.loadFromImage(iRessurection);
 
 	tFirstStageBossBody.loadFromImage(iFirstStage_boss_tankBody);
 	tFirstStageBossTower.loadFromImage(iFirstStage_boss_tankTower);
@@ -269,7 +265,7 @@ int main()
 		firstStageBossMoveBuf, firstStageBossExpBuf, firstStageBossRoundBuf, firstStageBossMortarBuf, firstStageBossTowerBuf,
 		firstStageBossTowerCrashBuf, oilPuddleBuf, badgeAppearanceBuf, badgeDisappearanceBuf, firstStBossLaugh, firstStBossRoundBuf,
 		bossMortarShootBuf, stopMortarShootBuf, mineExplosionBuf, dustClapBuf, hookEngagementBuf, miningBuf, landmineExpBuf,
-		defectiveMineBuf, partisanBuf;
+		defectiveMineBuf, partisanBuf, ressurectionBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -316,6 +312,7 @@ int main()
 	landmineExpBuf.loadFromFile("source/sounds/explosion/landmine_explosion.flac");
 	defectiveMineBuf.loadFromFile("source/sounds/effects/defective_mine.flac");
 	partisanBuf.loadFromFile("source/sounds/effects/partisan.flac");
+	ressurectionBuf.loadFromFile("source/sounds/effects/ressurection.flac");
 
 	Sound sEnemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sArmorResist,
 		sLaugh(laughBuf), sAirStrikeAlarm, sFighterFlight, sFirstStageBossLaugh, sBossMortarShoot(bossMortarShootBuf),
@@ -395,6 +392,7 @@ int main()
 	Animation aDefectiveMine(tMortarClap, defectiveMineBuf, 0, 0, 32, 32, 0.01, 8);
 	Animation aRadar(tRadar, partisanBuf, 0, 0, 128, 128, 0.015, 33);
 	Animation aRadarSweep(tRadarSweep, 0, 0, 128, 128, 1, 1);
+	Animation aRessurection(tRessurection, ressurectionBuf, 0, 0, 128, 128, 0.019, 50);
 
 	//.:: Bosses :::
 #pragma region First stage boss
@@ -553,6 +551,7 @@ int main()
 	void createLandmineExplosion(Animation&, GroundVehicle*);
 	void createDefectiveMineSmoke(Animation&, Entity*);
 	Tuple determinePlaceToAppear(string*, bool);
+	Tuple determinePlaceForRessurection(string*, double);
 
 #pragma endregion
 
@@ -1300,6 +1299,28 @@ int main()
 							p->isCommander = false;
 							Player::defineNewCommander(team);
 						}
+
+						if (p->name == "ressurected" && p->willRessurect)
+						{
+							p->willRessurect = false;
+							p->ressurectionTime = gameTime + 5;
+						}
+
+						if (p->name == "ressurected" && p->ressurectionTime == gameTime)
+						{
+							if (Player::checkTeamForCommander(team))
+							{
+								Player* commander = Player::getCommander(team);
+								Tuple ressurectionPlace = determinePlaceForRessurection(maps[index], commander->getCoordY(false));
+
+								p->ressurectPlayer(ressurectionPlace.x, ressurectionPlace.y);
+							}
+							else
+								p->ressurectPlayer();
+							
+							Effect* ressurection = new Effect(aRessurection, p, "ressurection");
+							entities.push_back(ressurection);
+						}
 					}
 				}
 
@@ -1463,9 +1484,9 @@ int main()
 						static_cast<GroundVehicle*>(a)->checkLocationInForest(maps[index]);
 
 					//.:: Drowning ::::::::::::::::::::
-					if (a->name == "destroyed" && !static_cast<GroundVehicle*>(a)->isDrowned)
+					if (a->isDestroyedVehicle() && !static_cast<GroundVehicle*>(a)->isDrowned)
 						static_cast<GroundVehicle*>(a)->sinkTankCarcass(maps[index]);
-					if (a->name == "destroyed" && static_cast<GroundVehicle*>(a)->isDrowned && !static_cast<GroundVehicle*>(a)->drowning)
+					if (a->isDestroyedVehicle() && static_cast<GroundVehicle*>(a)->isDrowned && !static_cast<GroundVehicle*>(a)->drowning)
 					{
 						static_cast<GroundVehicle*>(a)->drowning = true;
 						DrowningModel *drowning = new DrowningModel(aDrowning, (GroundVehicle*)a, "drowning");
@@ -1484,11 +1505,11 @@ int main()
 								static_cast<Shell*>(a)->damageBoss((GroundVehicle*)(b), sArmor, sArmorResist);
 						
 						if ((a->isGroundVehicle() && b->isGroundVehicle()) ||
-							((a->name == "truck" || a->name == "miner") && b->name == "destroyed")
+							((a->name == "truck" || a->name == "miner") && b->isDestroyedVehicle())
 							&& static_cast<GroundVehicle*>(a)->number != static_cast<GroundVehicle*>(b)->number)
 							static_cast<GroundVehicle*>(a)->checkVehiclesCollision((GroundVehicle*)b);
 
-						if (a->name == "tank" && b->name == "destroyed" 
+						if (a->name == "tank" && b->isDestroyedVehicle()
 							&& static_cast<GroundVehicle*>(a)->makeSureVehicleCollision((GroundVehicle*)b))
 							static_cast<Tank*>(a)->shoveOffTankCarcass((GroundVehicle*)b);
 
@@ -1755,7 +1776,7 @@ int main()
 					boss_theme.play();
 				}
 
-				if (transition && (!findAliveFrom(team) || (!findAliveFrom(squad) && !findAliveFrom(specialTransport))))
+				if (transition && (!findAlivePlayer()|| (!findAliveFrom(squad) && !findAliveFrom(specialTransport))))
 				{
 					transition = false;
 					boss_theme.stop();
@@ -2228,6 +2249,29 @@ Tuple determinePlaceToAppear(string *map, bool exceptBossArea)
 	int index = rand() % selected.size();
 
 	Tuple place = { selected[index].x, selected[index].y };
+
+	return place;
+}
+
+Tuple determinePlaceForRessurection(string *map, double commanderPositionY)
+{
+	vector<Tuple> selected;
+
+	int Y = commanderPositionY / 32;
+
+	for (int i = Y + 1; i < Y + 10; i++)
+	{
+		for (int j = 1; j < 60; j++)
+		{
+			if (map[i][j] == ' ' || map[i][j] == 'S')
+				selected.push_back({ double(j * 32), (double)(i * 32) });
+		}
+	}
+
+	srand(std::time(NULL));
+	int index = rand() % selected.size();
+
+	Tuple place = { selected[index].x, selected[index].y - 10 };
 
 	return place;
 }

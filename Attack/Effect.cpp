@@ -26,6 +26,10 @@ Effect::Effect(Animation &a, GroundVehicle* own_, string name_)
 	anim.sound.setVolume(100.f);
 	isExist = true;
 	status = ALIVE;
+
+	transparency = 10;
+	if (name == "ressurection")
+		anim.sound.setPitch(1.f);
 }
 
 Effect::~Effect()
@@ -35,6 +39,12 @@ void Effect::update(double time)
 {
 	if (isExist)
 	{
+		if (name == "ressurection")
+		{
+			transparency = transparency < 70 ? ++transparency : 70;
+			anim.sprite.setColor(Color(255, 255, 255, transparency));
+		}
+
 		setCoordinates();
 
 		//.:: Mining volume depends on the distance to the camera :::::::
@@ -56,6 +66,9 @@ void Effect::update(double time)
 
 			if (own->name == "miner")
 				static_cast<Miner*>(own)->isStopped = false;
+
+			if (own->name == "ressurecting")
+				own->name = "tank";
 		}
 	}
 }
@@ -75,6 +88,11 @@ void Effect::setCoordinates()
 
 		x = constDir == 270 ? X - 30 : X + 30;
 		y = constDir == 180 ? Y + 25 : Y - 25;
+	}
+	else if (name == "ressurection")
+	{
+		x = own->getCoordX(false);
+		y = own->getCoordY(false) - 8;
 	}
 	else
 	{

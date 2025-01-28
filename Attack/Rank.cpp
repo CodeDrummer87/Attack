@@ -3,7 +3,7 @@
 Rank::Rank()
 {}
 
-Rank::Rank(Animation &a, Tank *tank, string name_)
+Rank::Rank(Animation &a, Player *tank, string name_)
 {
 	z_index = (short)3;
 
@@ -41,7 +41,17 @@ void Rank::update(double time)
 			anim.frame = 17;
 		x = own->getCoordX(false) + 32;
 		y = own->getCoordY(false) - 32;
+
 		if (own->name == "destroyed")
-			isExist = false;
+		{
+			if (own->lives == 0)
+			{
+				isExist = false;
+			}
+			else anim.sprite.setColor(Color::Transparent);
+		}
+
+		if (own->name == "ressurecting" && anim.sprite.getColor() == Color::Transparent)
+			anim.sprite.setColor(Color::White);
 	}
 }

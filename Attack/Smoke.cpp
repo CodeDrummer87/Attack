@@ -144,7 +144,7 @@ void Smoke::update(double time)
 				}
 			}
 
-			if (own->isDrowned)
+			if (own->isDrowned || own->name == "ressurecting")
 				isExist = false;
 		}
 

@@ -11,6 +11,7 @@ Enemy::Enemy(Animation &a, double x_, double y_, SoundBuffer &sExplosion_, int l
 	isPlayerControl = false;
 	round = false;
 	isInRadarCoverageArea = false;
+	currentColor = Color::White;
 }
 
 Enemy::~Enemy()
@@ -139,8 +140,14 @@ void Enemy::update(double time)
 	if (status != Status::DEAD)
 	{
 		z_index = isInRadarCoverageArea ? 3 : 2;
-		anim.sprite.setColor(isInRadarCoverageArea ? Color(0, 255, 0, 210) : Color::White);
+		anim.sprite.setColor(isInRadarCoverageArea ? Color(0, 255, 0, 210) : currentColor);
 	}
 
 	Tank::update(time);
+}
+
+void Enemy::applyCamouflage()
+{
+	currentColor = Color(250, 128, 114);
+	anim.sprite.setColor(currentColor);
 }

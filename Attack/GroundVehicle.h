@@ -82,5 +82,7 @@ public:
 	bool mustSmoke();
 	void checkLocationInForest(string*);
 	void checkScannedAreaCollision(Area *);
+	void resetSkidding();
+	bool getIsDestroyedValue();
 
 };
