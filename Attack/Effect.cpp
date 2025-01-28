@@ -66,6 +66,9 @@ void Effect::update(double time)
 
 			if (own->name == "miner")
 				static_cast<Miner*>(own)->isStopped = false;
+
+			if (own->name == "ressurecting")
+				own->name = "tank";
 		}
 	}
 }
@@ -85,6 +88,11 @@ void Effect::setCoordinates()
 
 		x = constDir == 270 ? X - 30 : X + 30;
 		y = constDir == 180 ? Y + 25 : Y - 25;
+	}
+	else if (name == "ressurection")
+	{
+		x = own->getCoordX(false);
+		y = own->getCoordY(false) - 8;
 	}
 	else
 	{

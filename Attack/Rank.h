@@ -1,17 +1,17 @@
 #pragma once
 
 #include "Entity.h"
-#include "Tank.h"
+#include "Player.h"
 
 class Rank : public Entity
 {
 private:
-	Tank * own;
+	Player * own;
 
 public:
 	//.:: Constructor :::::::::::::::::::::::
 	Rank();
-	Rank(Animation&, Tank*, string);
+	Rank(Animation&, Player*, string);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~Rank();

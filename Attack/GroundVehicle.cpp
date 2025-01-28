@@ -605,3 +605,15 @@ void GroundVehicle::checkScannedAreaCollision(Area *scannedArea)
 	static_cast<CommunicationTruck*>(this)->isInRadarCoverageArea = (vehicle.intersects(area) && isInForest) :
 	static_cast<Miner*>(this)->isInRadarCoverageArea = (vehicle.intersects(area) && isInForest);
 }
+
+void GroundVehicle::resetSkidding()
+{
+	isSkidding = false;
+	puddleId = 0;
+	anim.sound.setPitch(0.9f);
+}
+
+bool GroundVehicle::getIsDestroyedValue()
+{
+	return isDestroyed;
+}

@@ -12,6 +12,9 @@ struct EvilTank
 
 class Enemy : public Tank
 {
+private:
+	Color currentColor;
+
 public:
 	bool round;
 	bool isInRadarCoverageArea;
@@ -29,5 +32,6 @@ public:
 	void destroyBrickWalls(string*);
 	void destroyPlayerTanks(Tank*);
 	void update(double);
+	void applyCamouflage();
 
 };

@@ -230,7 +230,7 @@ void Shell::conveyExperience(int experience)
 
 void Shell::paintOwn()
 {
-	own->anim.sprite.setColor(Color::Yellow);
+	static_cast<Enemy*>(own)->applyCamouflage();
 	if (own->army == "enemy")
 	{
 		Enemy::evilTank = { true, own, 0 };

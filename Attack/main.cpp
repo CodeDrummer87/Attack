@@ -42,23 +42,6 @@
 #include "Radar.h"
 #include "RadarSweep.h"
 
-//.:: Structures :::
-struct Tuple
-{
-	double x;
-	double y;
-};
-
-struct PlayersPositions
-{
-	Tuple first{ 0, 0 };
-	Tuple second{ 0, 0 };
-	Tuple third{ 0, 0 };
-	Tuple fourth{ 0, 0 };
-	Tuple fifth{ 0, 0 };
-};
-//::::::::::::::::::
-
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
 //:::::::::::::::::
@@ -81,10 +64,20 @@ template <typename T>
 bool findAliveFrom(vector<T> team)
 {
 	for (auto t : team)
-		if (t->status != DEAD) return true;
+		if (t->status != DEAD || t->name == "ressurected") return true;
 
 	return false;
 }
+
+bool findAlivePlayer()
+{
+	for (auto p : team)
+		if (p->willFight())
+			return true;
+
+	return false;
+}
+
 template <typename T>
 void clearVectorOf(vector<T> &team_)
 {
@@ -558,6 +551,7 @@ int main()
 	void createLandmineExplosion(Animation&, GroundVehicle*);
 	void createDefectiveMineSmoke(Animation&, Entity*);
 	Tuple determinePlaceToAppear(string*, bool);
+	Tuple determinePlaceForRessurection(string*, double);
 
 #pragma endregion
 
@@ -762,12 +756,6 @@ int main()
 								sEnemy_move.stop();
 							}
 						}
-					}
-
-					if (Keyboard::isKeyPressed(Keyboard::Q))
-					{
-						Effect* ressurection = new Effect(aRessurection, team[1], "ressurection");
-						entities.push_back(ressurection);
 					}
 
 #pragma region Tank rounds
@@ -1311,6 +1299,28 @@ int main()
 							p->isCommander = false;
 							Player::defineNewCommander(team);
 						}
+
+						if (p->name == "ressurected" && p->willRessurect)
+						{
+							p->willRessurect = false;
+							p->ressurectionTime = gameTime + 5;
+						}
+
+						if (p->name == "ressurected" && p->ressurectionTime == gameTime)
+						{
+							if (Player::checkTeamForCommander(team))
+							{
+								Player* commander = Player::getCommander(team);
+								Tuple ressurectionPlace = determinePlaceForRessurection(maps[index], commander->getCoordY(false));
+
+								p->ressurectPlayer(ressurectionPlace.x, ressurectionPlace.y);
+							}
+							else
+								p->ressurectPlayer();
+							
+							Effect* ressurection = new Effect(aRessurection, p, "ressurection");
+							entities.push_back(ressurection);
+						}
 					}
 				}
 
@@ -1474,9 +1484,9 @@ int main()
 						static_cast<GroundVehicle*>(a)->checkLocationInForest(maps[index]);
 
 					//.:: Drowning ::::::::::::::::::::
-					if (a->name == "destroyed" && !static_cast<GroundVehicle*>(a)->isDrowned)
+					if (a->isDestroyedVehicle() && !static_cast<GroundVehicle*>(a)->isDrowned)
 						static_cast<GroundVehicle*>(a)->sinkTankCarcass(maps[index]);
-					if (a->name == "destroyed" && static_cast<GroundVehicle*>(a)->isDrowned && !static_cast<GroundVehicle*>(a)->drowning)
+					if (a->isDestroyedVehicle() && static_cast<GroundVehicle*>(a)->isDrowned && !static_cast<GroundVehicle*>(a)->drowning)
 					{
 						static_cast<GroundVehicle*>(a)->drowning = true;
 						DrowningModel *drowning = new DrowningModel(aDrowning, (GroundVehicle*)a, "drowning");
@@ -1495,11 +1505,11 @@ int main()
 								static_cast<Shell*>(a)->damageBoss((GroundVehicle*)(b), sArmor, sArmorResist);
 						
 						if ((a->isGroundVehicle() && b->isGroundVehicle()) ||
-							((a->name == "truck" || a->name == "miner") && b->name == "destroyed")
+							((a->name == "truck" || a->name == "miner") && b->isDestroyedVehicle())
 							&& static_cast<GroundVehicle*>(a)->number != static_cast<GroundVehicle*>(b)->number)
 							static_cast<GroundVehicle*>(a)->checkVehiclesCollision((GroundVehicle*)b);
 
-						if (a->name == "tank" && b->name == "destroyed" 
+						if (a->name == "tank" && b->isDestroyedVehicle()
 							&& static_cast<GroundVehicle*>(a)->makeSureVehicleCollision((GroundVehicle*)b))
 							static_cast<Tank*>(a)->shoveOffTankCarcass((GroundVehicle*)b);
 
@@ -1766,7 +1776,7 @@ int main()
 					boss_theme.play();
 				}
 
-				if (transition && (!findAliveFrom(team) || (!findAliveFrom(squad) && !findAliveFrom(specialTransport))))
+				if (transition && (!findAlivePlayer()|| (!findAliveFrom(squad) && !findAliveFrom(specialTransport))))
 				{
 					transition = false;
 					boss_theme.stop();
@@ -2239,6 +2249,29 @@ Tuple determinePlaceToAppear(string *map, bool exceptBossArea)
 	int index = rand() % selected.size();
 
 	Tuple place = { selected[index].x, selected[index].y };
+
+	return place;
+}
+
+Tuple determinePlaceForRessurection(string *map, double commanderPositionY)
+{
+	vector<Tuple> selected;
+
+	int Y = commanderPositionY / 32;
+
+	for (int i = Y + 1; i < Y + 10; i++)
+	{
+		for (int j = 1; j < 60; j++)
+		{
+			if (map[i][j] == ' ' || map[i][j] == 'S')
+				selected.push_back({ double(j * 32), (double)(i * 32) });
+		}
+	}
+
+	srand(std::time(NULL));
+	int index = rand() % selected.size();
+
+	Tuple place = { selected[index].x, selected[index].y - 10 };
 
 	return place;
 }
