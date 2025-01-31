@@ -218,7 +218,7 @@ bool Player::checkTeamForCommander(vector<Player*> team)
 {
 	for (auto p : team)
 	{
-		if (p->isCommander)
+		if (p->isCommander && p->name == "tank")
 			return true;
 	}
 
@@ -383,8 +383,8 @@ void Player::countKillsInForest()
 	killsInForest++;
 	isDisplayPartisanAchievement =
 		killsInForest == 3 ? true :
-		killsInForest == 15 ? true :
-		killsInForest == 30 ? true : false;
+		killsInForest == 10 ? true :
+		killsInForest == 20 ? true : false;
 }
 
 int Player::activateGuerillaMode()

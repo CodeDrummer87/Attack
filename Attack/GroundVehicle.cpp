@@ -600,10 +600,10 @@ void GroundVehicle::checkScannedAreaCollision(Area *scannedArea)
 	FloatRect area = scannedArea->area.getGlobalBounds();
 
 	name == "tank" ?
-	static_cast<Enemy*>(this)->isInRadarCoverageArea = (vehicle.intersects(area) && isInForest) :
+	static_cast<Enemy*>(this)->isInRadarCoverageArea = (area.intersects(vehicle) && isInForest) :
 	name == "truck" ?
-	static_cast<CommunicationTruck*>(this)->isInRadarCoverageArea = (vehicle.intersects(area) && isInForest) :
-	static_cast<Miner*>(this)->isInRadarCoverageArea = (vehicle.intersects(area) && isInForest);
+	static_cast<CommunicationTruck*>(this)->isInRadarCoverageArea = (area.intersects(vehicle) && isInForest) :
+	static_cast<Miner*>(this)->isInRadarCoverageArea = (area.intersects(vehicle) && isInForest);
 }
 
 void GroundVehicle::resetSkidding()

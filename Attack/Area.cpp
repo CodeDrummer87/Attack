@@ -14,6 +14,7 @@ Area::Area(Entity *own_, float radius)
 
 	area = CircleShape(radius);
 	area.setOrigin(area.getGlobalBounds().width / 2, area.getGlobalBounds().height / 2);
+
 	setPosition();
 
 	isExist = true;

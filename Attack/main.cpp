@@ -78,6 +78,17 @@ bool findAlivePlayer()
 	return false;
 }
 
+bool isLastHero()
+{
+	int players = 0;
+
+	for (auto p : team)
+		if (p->willFight())
+			players++;
+
+	return players == 1 ? true : false;
+}
+
 template <typename T>
 void clearVectorOf(vector<T> &team_)
 {
@@ -551,7 +562,6 @@ int main()
 	void createLandmineExplosion(Animation&, GroundVehicle*);
 	void createDefectiveMineSmoke(Animation&, Entity*);
 	Tuple determinePlaceToAppear(string*, bool);
-	Tuple determinePlaceForRessurection(string*, double);
 
 #pragma endregion
 
@@ -1311,12 +1321,14 @@ int main()
 							if (Player::checkTeamForCommander(team))
 							{
 								Player* commander = Player::getCommander(team);
-								Tuple ressurectionPlace = determinePlaceForRessurection(maps[index], commander->getCoordY(false));
-
-								p->ressurectPlayer(ressurectionPlace.x, ressurectionPlace.y);
+								p->ressurectPlayer(commander->getCoordX(false), commander->getCoordY(false));
 							}
 							else
+							{
 								p->ressurectPlayer();
+								if (isLastHero())
+									Tank::camera = Camera::Commander;
+							}
 							
 							Effect* ressurection = new Effect(aRessurection, p, "ressurection");
 							entities.push_back(ressurection);
@@ -2249,29 +2261,6 @@ Tuple determinePlaceToAppear(string *map, bool exceptBossArea)
 	int index = rand() % selected.size();
 
 	Tuple place = { selected[index].x, selected[index].y };
-
-	return place;
-}
-
-Tuple determinePlaceForRessurection(string *map, double commanderPositionY)
-{
-	vector<Tuple> selected;
-
-	int Y = commanderPositionY / 32;
-
-	for (int i = Y + 1; i < Y + 10; i++)
-	{
-		for (int j = 1; j < 60; j++)
-		{
-			if (map[i][j] == ' ' || map[i][j] == 'S')
-				selected.push_back({ double(j * 32), (double)(i * 32) });
-		}
-	}
-
-	srand(std::time(NULL));
-	int index = rand() % selected.size();
-
-	Tuple place = { selected[index].x, selected[index].y - 10 };
 
 	return place;
 }
