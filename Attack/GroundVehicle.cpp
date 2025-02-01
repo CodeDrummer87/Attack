@@ -41,6 +41,9 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 	vehicleSpeed = level % 2 == 0 ? 0.1f : 0.08f;
 
 	nextRequestTime = 0;
+
+	for (int i = 0; i < 5; i++)
+		scanZones[i] = { i + 1, false};
 }
 
 GroundVehicle::~GroundVehicle()
@@ -291,7 +294,7 @@ bool GroundVehicle::makeSureVehicleCollision(GroundVehicle *t)
 void GroundVehicle::getAreaDamage(DestructionZone *area, string *map, int index)
 {
 	FloatRect a = this->anim.sprite.getGlobalBounds();
-	FloatRect b = area->area.getGlobalBounds();
+	FloatRect b = area->zone.getGlobalBounds();
 
 	if (a.intersects(b))
 		if (this->hitPoints > 0)
@@ -594,16 +597,26 @@ void GroundVehicle::checkLocationInForest(string* map)
 	isInForest = map[i][j] == 'F' ? true : false;
 }
 
-void GroundVehicle::checkScannedAreaCollision(Area *scannedArea)
+void GroundVehicle::checkScannedZoneCollision(Zone *scannedZone)
 {
 	FloatRect vehicle = this->anim.sprite.getGlobalBounds();
-	FloatRect area = scannedArea->area.getGlobalBounds();
+	FloatRect zone = scannedZone->zone.getGlobalBounds();
+	int zNumber = scannedZone->number;
+
+	if (vehicle.intersects(zone))
+	{
+		if (!scanZones[zNumber - 1].isActive)
+			scanZones[zNumber - 1].isActive = true;
+	}
+	else
+		if (scanZones[zNumber - 1].isActive)
+			scanZones[zNumber - 1].isActive = false;
 
 	name == "tank" ?
-	static_cast<Enemy*>(this)->isInRadarCoverageArea = (area.intersects(vehicle) && isInForest) :
-	name == "truck" ?
-	static_cast<CommunicationTruck*>(this)->isInRadarCoverageArea = (area.intersects(vehicle) && isInForest) :
-	static_cast<Miner*>(this)->isInRadarCoverageArea = (area.intersects(vehicle) && isInForest);
+		static_cast<Enemy*>(this)->isInRadarCoverageArea = (isUnderSurveillance() && isInForest) :
+		name == "truck" ?
+		static_cast<CommunicationTruck*>(this)->isInRadarCoverageArea = (isUnderSurveillance() && isInForest) :
+		static_cast<Miner*>(this)->isInRadarCoverageArea = (isUnderSurveillance() && isInForest);
 }
 
 void GroundVehicle::resetSkidding()
@@ -616,4 +629,13 @@ void GroundVehicle::resetSkidding()
 bool GroundVehicle::getIsDestroyedValue()
 {
 	return isDestroyed;
+}
+
+bool GroundVehicle::isUnderSurveillance()
+{
+	for (int i = 0; i < 5; i++)
+		if (scanZones[i].isActive)
+			return true;
+
+	return false;
 }

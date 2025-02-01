@@ -17,6 +17,12 @@ struct Traffic
 	Ban left;
 };
 
+struct ScannedZones
+{
+	int number;
+	bool isActive;
+};
+
 class GroundVehicle : public Entity
 {
 private:
@@ -26,6 +32,8 @@ private:
 
 	bool isSkidding;
 	int puddleId;
+
+	ScannedZones scanZones[5];
 	
 	//.:: Methods_of_class ::::::::::::::::::
 	void resetSkidding(bool, int);
@@ -81,8 +89,9 @@ public:
 	bool isActionTime(int);
 	bool mustSmoke();
 	void checkLocationInForest(string*);
-	void checkScannedAreaCollision(Area *);
+	void checkScannedZoneCollision(Zone *);
 	void resetSkidding();
 	bool getIsDestroyedValue();
+	bool isUnderSurveillance();
 
 };

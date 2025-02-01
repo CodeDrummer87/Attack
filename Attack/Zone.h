@@ -2,7 +2,7 @@
 
 #include "Entity.h"
 
-class Area : public Entity
+class Zone : public Entity
 {
 private:
 	//.:: Methods_of_class ::::::::::::::::::
@@ -10,14 +10,14 @@ private:
 
 public:
 	Entity* own; 
-	CircleShape area;
+	CircleShape zone;
 
 	//.:: Constructor :::::::::::::::::::::::
-	Area();
-	Area(Entity*, float);
+	Zone();
+	Zone(Entity*, float);
 
 	//.:: Destructor ::::::::::::::::::::::::
-	virtual ~Area();
+	virtual ~Zone();
 
 	//.:: Methods_of_class ::::::::::::::::::
 	void update(double);

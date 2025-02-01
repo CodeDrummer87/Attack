@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Area.h"
+#include "Zone.h"
 
-class DestructionZone : public Area
+class DestructionZone : public Zone
 {
 public:
 	bool isTerrainDestroyed;

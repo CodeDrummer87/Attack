@@ -122,7 +122,7 @@
     <ClCompile Include="RadarSweep.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Area.cpp">
+    <ClCompile Include="Zone.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Note.cpp">
@@ -286,7 +286,7 @@
     <ClInclude Include="RadarSweep.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Area.h">
+    <ClInclude Include="Zone.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Note.h">

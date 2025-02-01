@@ -1,19 +1,20 @@
-#include "Area.h"
+#include "Zone.h"
 #include "Player.h"
 
-Area::Area()
+Zone::Zone()
 {}
 
-Area::Area(Entity *own_, float radius)
+Zone::Zone(Entity *own_, float radius)
 {
 	z_index = (short)1;
 
-	name = "area";
+	name = "scannedZone";
 	own = own_;
 	army = own->army;
+	number = own->number;
 
-	area = CircleShape(radius);
-	area.setOrigin(area.getGlobalBounds().width / 2, area.getGlobalBounds().height / 2);
+	zone = CircleShape(radius);
+	zone.setOrigin(zone.getGlobalBounds().width / 2, zone.getGlobalBounds().height / 2);
 
 	setPosition();
 
@@ -21,18 +22,18 @@ Area::Area(Entity *own_, float radius)
 	status = ALIVE;
 }
 
-Area::~Area()
+Zone::~Zone()
 {}
 
-void Area::setPosition()
+void Zone::setPosition()
 {
 	x = own->getCoordX(false);
 	y = own->getCoordY(false);
 
-	area.setPosition(x, y);
+	zone.setPosition(x, y);
 }
 
-void Area::update(double time)
+void Zone::update(double time)
 {
 	if (isExist)
 	{
