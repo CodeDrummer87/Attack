@@ -43,7 +43,7 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 	nextRequestTime = 0;
 
 	for (int i = 0; i < 5; i++)
-		scanZones[i] = { i + 1, false};
+		playersZonesImpact[i] = false;
 }
 
 GroundVehicle::~GroundVehicle()
@@ -315,7 +315,7 @@ void GroundVehicle::getAreaDamage(DestructionZone *area, string *map, int index)
 			{
 				if (i > 0 && j > 0)
 					if (map[i][j] == 'b' || map[i][j] == 'F')
-						map[i][j] = index == 0 ? ' ' : 'S';
+						map[i][j] = index == 1 ? 'S' : ' ';
 			}
 	}
 }
@@ -605,12 +605,12 @@ void GroundVehicle::checkScannedZoneCollision(Zone *scannedZone)
 
 	if (vehicle.intersects(zone))
 	{
-		if (!scanZones[zNumber - 1].isActive)
-			scanZones[zNumber - 1].isActive = true;
+		if (!playersZonesImpact[zNumber - 1])
+			playersZonesImpact[zNumber - 1] = true;
 	}
 	else
-		if (scanZones[zNumber - 1].isActive)
-			scanZones[zNumber - 1].isActive = false;
+		if (playersZonesImpact[zNumber - 1])
+			playersZonesImpact[zNumber - 1] = false;
 
 	name == "tank" ?
 		static_cast<Enemy*>(this)->isInRadarCoverageArea = (isUnderSurveillance() && isInForest) :
@@ -634,7 +634,7 @@ bool GroundVehicle::getIsDestroyedValue()
 bool GroundVehicle::isUnderSurveillance()
 {
 	for (int i = 0; i < 5; i++)
-		if (scanZones[i].isActive)
+		if (playersZonesImpact[i])
 			return true;
 
 	return false;

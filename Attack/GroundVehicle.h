@@ -17,12 +17,6 @@ struct Traffic
 	Ban left;
 };
 
-struct ScannedZones
-{
-	int number;
-	bool isActive;
-};
-
 class GroundVehicle : public Entity
 {
 private:
@@ -33,7 +27,7 @@ private:
 	bool isSkidding;
 	int puddleId;
 
-	ScannedZones scanZones[5];
+	bool playersZonesImpact[5];
 	
 	//.:: Methods_of_class ::::::::::::::::::
 	void resetSkidding(bool, int);
@@ -57,7 +51,7 @@ public:
 	bool isDrowned;
 	bool isInForest;
 
-	GroundVehicle *pusher;	//.:: Only tanks
+	GroundVehicle *pusher;
 	Traffic traffic;
 
 	bool isShowRepair;

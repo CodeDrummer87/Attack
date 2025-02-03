@@ -35,6 +35,7 @@ Player::Player(Animation &anim, double x_, double y_, SoundBuffer &sExplosion_, 
 	ressurectionTime = 0;
 	startPosition = { 0.0, 0.0 };
 	moveAnim = anim;
+	level = 200;
 }
 
 Player::~Player()
@@ -413,7 +414,7 @@ void Player::prepareForRessurection()
 	isTransition = false;
 	isDestroyed = false;
 	isPlayAnimation = true;
-	drowning = isInForest = false;
+	isTowingBack = drowning = isInForest = false;
 
 	if (isDrowned)
 	{
