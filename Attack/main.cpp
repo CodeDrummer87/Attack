@@ -187,8 +187,8 @@ int main()
 	iRessurection = getImage("source/images/sprites/other/ressurection.png");
 
 	//.:: Bosses
-	iFirstStage_boss_tankBody = getImage("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_body.png");
-	iFirstStage_boss_tankTower = getImage("source/images/sprites/models/tanks/bosses/first_stage_boss/boss_tank_tower.png");
+	iFirstStage_boss_tankBody = getImage("source/images/sprites/models/tanks/bosses/boss_body_1.png");
+	iFirstStage_boss_tankTower = getImage("source/images/sprites/models/tanks/bosses/boss_tower_1.png");
 
 #pragma endregion
 

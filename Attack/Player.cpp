@@ -35,7 +35,6 @@ Player::Player(Animation &anim, double x_, double y_, SoundBuffer &sExplosion_, 
 	ressurectionTime = 0;
 	startPosition = { 0.0, 0.0 };
 	moveAnim = anim;
-	level = 200;
 }
 
 Player::~Player()
