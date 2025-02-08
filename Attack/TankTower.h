@@ -21,7 +21,7 @@ public:
 
 	//.:: Constructor :::::::::::::::::::::::
 	TankTower();
-	TankTower(Animation&, double, double, SoundBuffer&, SoundBuffer&, GroundVehicle*);
+	TankTower(Animation&, SoundBuffer&, SoundBuffer&, GroundVehicle*);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~TankTower();

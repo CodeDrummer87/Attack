@@ -145,17 +145,16 @@ int main()
 #pragma region Images
 
 	Image iMap, iIcon, iFighter, iEnemyFighter, iAirBomb, iBombExplosion, iCommunication_truck, iRadioAntenna, iRadioWaves,
-		iDrowning, iSpeedUpAchiev, iRepair, iSniper, iFirstStage_boss_tankBody, iFirstStage_boss_tankTower, iOilPuddle,
-		iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect, iEnemies[8], iMiner, iMining, iMine,
-		iLandmineExplosion, iRadar, iRadarSweep, iRessurection;
+		iDrowning, iSpeedUpAchiev, iRepair, iSniper, iOilPuddle, iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap,
+		iTowEffect, iEnemies[8], iMiner, iMining, iMine, iLandmineExplosion, iRadar, iRadarSweep, iRessurection;
 
 	iMap = getImage("source/images/map.png");
 	iIcon = getImage("source/images/sprites/attributes/icons/icons.png");
 
 	Image iPlayers[5];
-	string playerSourthPath = "source/images/sprites/models/tanks/players/player_";
+	string playerImagePath = "source/images/sprites/models/tanks/players/player_";
 	for (int i = 0; i < 5; i++)
-		iPlayers[i] = getImage(playerSourthPath + to_string(i + 1) + ".png");
+		iPlayers[i] = getImage(playerImagePath + to_string(i + 1) + ".png");
 
 	iFighter = getImage("source/images/sprites/models/planes/fighter.png");
 	iEnemyFighter = getImage("source/images/sprites/models/planes/enemy_fighter.png");
@@ -186,9 +185,18 @@ int main()
 	iRadarSweep = getImage("source/images/sprites/other/radar_sweep.png");
 	iRessurection = getImage("source/images/sprites/other/ressurection.png");
 
-	//.:: Bosses
-	iFirstStage_boss_tankBody = getImage("source/images/sprites/models/tanks/bosses/boss_body_1.png");
-	iFirstStage_boss_tankTower = getImage("source/images/sprites/models/tanks/bosses/boss_tower_1.png");
+	//.:: the Bosses :::
+	const int numberOfBosses = 10;
+	Image iBossesBody[numberOfBosses];
+	Image iBossesTower[numberOfBosses];
+
+	string bossImagePath = "source/images/sprites/models/tanks/bosses/";
+	for (int i = 0; i < numberOfBosses; i++)
+	{
+		iBossesBody[i] = getImage(bossImagePath + "boss_body_" + to_string(i + 1) + ".png");
+		iBossesTower[i] = getImage(bossImagePath + "boss_tower_" + to_string(i + 1) + ".png");
+	}
+
 
 #pragma endregion
 
@@ -196,9 +204,8 @@ int main()
 
 	Texture tMap, tIcon, tTankRound, tShell, tShellExp, tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter,
 		tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion, tCommunication_truck, tRadioAntenna, tRadioWaves, tDrowning,
-		tSpeedUpAchiev, tRepair, tSniper, tFirstStageBossBody, tFirstStageBossTower, tOilPuddle, tMortarShell, tMortarClap,
-		tTrail, tMineExplosion, tDustClap, tTowEffect, tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep,
-		tRessurection;
+		tSpeedUpAchiev, tRepair, tSniper, tOilPuddle, tMortarShell, tMortarClap, tTrail, tMineExplosion, tDustClap, tTowEffect,
+		tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep, tRessurection;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -246,8 +253,15 @@ int main()
 	tRadarSweep.loadFromImage(iRadarSweep);
 	tRessurection.loadFromImage(iRessurection);
 
-	tFirstStageBossBody.loadFromImage(iFirstStage_boss_tankBody);
-	tFirstStageBossTower.loadFromImage(iFirstStage_boss_tankTower);
+	//.:: the Bosses :::
+	Texture tBossesBody[numberOfBosses];
+	Texture tBossesTower[numberOfBosses];
+
+	for (int i = 0; i < numberOfBosses; i++)
+	{
+		tBossesBody[i].loadFromImage(iBossesBody[i]);
+		tBossesTower[i].loadFromImage(iBossesTower[i]);
+	}
 
 #pragma endregion
 
@@ -273,10 +287,9 @@ int main()
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, autoExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf,
 		shellExpBuf, takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
 		enemy_moveBuf, enemyRoundBuf, armorBuf, armorResistBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
-		firstStageBossMoveBuf, firstStageBossExpBuf, firstStageBossRoundBuf, firstStageBossMortarBuf, firstStageBossTowerBuf,
-		firstStageBossTowerCrashBuf, oilPuddleBuf, badgeAppearanceBuf, badgeDisappearanceBuf, firstStBossLaugh, firstStBossRoundBuf,
-		bossMortarShootBuf, stopMortarShootBuf, mineExplosionBuf, dustClapBuf, hookEngagementBuf, miningBuf, landmineExpBuf,
-		defectiveMineBuf, partisanBuf, ressurectionBuf;
+		bossMoveBuf, bossExpBuf, bossShotBuf, bossMortarBuf, bossTowerTurnBuf, bossTowerCrashBuf, oilPuddleBuf, badgeAppearanceBuf, 
+		badgeDisappearanceBuf, bossLaugh, firstStBossRoundBuf, bossMortarShootBuf, stopMortarShootBuf, mineExplosionBuf,
+		dustClapBuf, hookEngagementBuf, miningBuf, landmineExpBuf, defectiveMineBuf, partisanBuf, ressurectionBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
 	yTankBuf.loadFromFile("source/sounds/tank/movement/move_2.flac");
@@ -306,13 +319,13 @@ int main()
 	badgeAppearanceBuf.loadFromFile("source/sounds/effects/icons/badge_appearance.flac");
 	badgeDisappearanceBuf.loadFromFile("source/sounds/effects/icons/badge_disappearance.flac");
 
-	firstStBossLaugh.loadFromFile("source/sounds/effects/first_stage_boss_laugh.flac");
-	firstStageBossMoveBuf.loadFromFile("source/sounds/tank/movement/first_stage_boss_move.flac");
-	firstStageBossExpBuf.loadFromFile("source/sounds/explosion/boss_explosion.flac");
-	firstStageBossRoundBuf.loadFromFile("source/sounds/tank/round/first_stage_boss_round.flac");
-	firstStageBossMortarBuf.loadFromFile("source/sounds/tank/round/first_stage_boss_mortar.flac");
-	firstStageBossTowerBuf.loadFromFile("source/sounds/tank/tanks_tower_turn.flac");
-	firstStageBossTowerCrashBuf.loadFromFile("source/sounds/effects/boss_tank_tower_crash.flac");
+	bossLaugh.loadFromFile("source/sounds/effects/first_stage_boss_laugh.flac");
+	bossMoveBuf.loadFromFile("source/sounds/tank/movement/boss_move.flac");
+	bossExpBuf.loadFromFile("source/sounds/explosion/boss_explosion.flac");
+	bossShotBuf.loadFromFile("source/sounds/tank/round/boss_shot.flac");
+	bossMortarBuf.loadFromFile("source/sounds/tank/round/first_stage_boss_mortar.flac");
+	bossTowerTurnBuf.loadFromFile("source/sounds/tank/tanks_tower_turn.flac");
+	bossTowerCrashBuf.loadFromFile("source/sounds/effects/boss_tank_tower_crash.flac");
 	firstStBossRoundBuf.loadFromFile("source/sounds/tank/round/boss1_round.flac");
 	bossMortarShootBuf.loadFromFile("source/sounds/effects/boss_mortar_shoot.flac");
 	stopMortarShootBuf.loadFromFile("source/sounds/effects/stop_mortar_shoot.flac");
@@ -337,7 +350,7 @@ int main()
 	sArmorResist.setBuffer(armorResistBuf);		sArmorResist.setLoop(false);
 	sAirStrikeAlarm.setBuffer(airStrikeAlarmBuf);				sAirStrikeAlarm.setLoop(false);
 	sFighterFlight.setBuffer(fighterFlightBuf);	sFighterFlight.setLoop(false);	sFighterFlight.setVolume(100.f);
-	sFirstStageBossLaugh.setBuffer(firstStBossLaugh);	sFirstStageBossLaugh.setLoop(false);
+	sFirstStageBossLaugh.setBuffer(bossLaugh);	sFirstStageBossLaugh.setLoop(false);
 
 	Music chapter_finale_theme, boss_theme;
 	chapter_finale_theme.openFromFile("source/sounds/music/chapter_finale_theme.flac");
@@ -405,18 +418,17 @@ int main()
 	Animation aRadarSweep(tRadarSweep, 0, 0, 128, 128, 1, 1);
 	Animation aRessurection(tRessurection, ressurectionBuf, 0, 0, 128, 128, 0.019, 50);
 
-	//.:: Bosses :::
-#pragma region First stage boss
+#pragma region the Bosses
 
-	Animation aFirstStageBossBody(tFirstStageBossBody, firstStageBossMoveBuf, 0, 0, 128, 128, 0.016, 2);
-	Animation aFirstStageBossTower(tFirstStageBossTower, 0, 0, 128, 128, 0.016, 1);
-	Animation aFirstStageBossRound(tTankRound, firstStBossRoundBuf, 0, 0, 40, 36, 0.015, 8);
+	Animation aBossesBody[numberOfBosses];
+	Animation aBossesTower[numberOfBosses];
+	Animation aBossShot(tTankRound, bossShotBuf, 0, 0, 40, 36, 0.015, 8);
 
-	BossArgs firstStageBossArgs = 
+	for (int i = 0; i < numberOfBosses; i++)
 	{
-		//.:: moveAnim, x, y, level, numberOfPlayers, explosionSound
-		aFirstStageBossBody, 960, 192, 10, 1, firstStageBossExpBuf
-	};
+		aBossesBody[i] = Animation(tBossesBody[i], bossMoveBuf, 0, 0, 128, 128, 0.016, 2);
+		aBossesTower[i] = Animation(tBossesTower[i], 0, 0, 128, 128, 0.016, 1);		
+	}
 
 #pragma endregion
 
@@ -553,6 +565,7 @@ int main()
 	void createBomberLink(Player*, Sound&, Sound&, int, Animation&, Animation&, Animation&);
 	void dropBombs(Animation&, Animation&, Sound&);
 	void dropEnemyBombs(Animation&, Animation&, EnemyPlane*, Sound&);
+	void createBoss(BossArgs, Animation&, SoundBuffer&, SoundBuffer&);
 	void createBossShots(TankTower*, bool, int, Animation&, Animation&, Animation&);
 	void createBossMortarShot(TankTower*, int, Animation&, Animation&, Animation&, Animation&, Sound&, Sound&);
 	void getCoordinatesForNewIcon(double&, double&, string*);
@@ -1412,9 +1425,9 @@ int main()
 							}
 
 							if (static_cast<TankTower*>(e)->roundFirst && static_cast<TankTower*>(e)->isFirstShot)
-								createBossShots((TankTower*)e, true, gameTime, aFirstStageBossRound, aShell, aShellExp);
+								createBossShots((TankTower*)e, true, gameTime, aBossShot, aShell, aShellExp);
 							if (static_cast<TankTower*>(e)->roundSecond && static_cast<TankTower*>(e)->isSecondShot)
-								createBossShots((TankTower*)e, false, gameTime, aFirstStageBossRound, aShell, aShellExp);
+								createBossShots((TankTower*)e, false, gameTime, aBossShot, aShell, aShellExp);
 						}
 
 #pragma endregion
@@ -1774,17 +1787,16 @@ int main()
 				{
 					isBossCreated = true;
 
-					firstStageBossArgs.numberOfPlayers = numberOfPlayers;
-					firstStageBossArgs.level = (index + 1) * 10;	//.:: temporary code
-					Boss *firstStBoss = new Boss(firstStageBossArgs);
-					squad.push_back(firstStBoss);
-					entities.push_back(firstStBoss);
+					BossArgs bossArgs =
+					{
+						aBossesBody[index],
+						960, 192,			//.:: x, y
+						(index + 1) * 10,	//.:: level
+						numberOfPlayers,
+						bossExpBuf
+					};
 
-					TankTower *turret = new TankTower(aFirstStageBossTower, firstStBoss->getCoordX(false), firstStBoss->getCoordY(false),
-						 firstStageBossTowerBuf, firstStageBossTowerCrashBuf, firstStBoss);
-					squad.push_back(turret);
-					entities.push_back(turret);
-
+					createBoss(bossArgs, aBossesTower[index], bossTowerTurnBuf, bossTowerCrashBuf);
 					boss_theme.play();
 				}
 
@@ -2075,6 +2087,17 @@ void dropEnemyBombs(Animation &a, Animation &b, EnemyPlane *e, Sound &sound)
 
 	EnemyBomb *bomb = new EnemyBomb(a, b, e->getCoordX(false), e->getCoordY(false), "bomb");
 	entities.push_back(bomb);
+}
+
+void createBoss(BossArgs bossArgs, Animation &aTower, SoundBuffer &towerTurnBuf, SoundBuffer &towerCrashBuf)
+{
+	Boss* boss = new Boss(bossArgs);
+	squad.push_back(boss);
+	entities.push_back(boss);
+
+	TankTower* turret = new TankTower(aTower, towerTurnBuf, towerCrashBuf, boss);
+	squad.push_back(turret);
+	entities.push_back(turret);
 }
 
 void createBossShots(TankTower *boss, bool isFirstGun, int gameTime, Animation &a, Animation &b, Animation &c)
