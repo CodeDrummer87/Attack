@@ -23,6 +23,10 @@ TankTower::TankTower(Animation &a, SoundBuffer &turn, SoundBuffer &sExplosion_, 
 	mortarShootTime = 0;
 
 	dir = 180;
+
+	scannedZone = CircleShape(550.f);
+	scannedZone.setOrigin(scannedZone.getGlobalBounds().width / 2, scannedZone.getGlobalBounds().height / 2);
+	scannedZone.setPosition(x, y);
 }
 
 TankTower::~TankTower()
@@ -41,6 +45,8 @@ void TankTower::update(double time)
 		{
 			x = own->getCoordX(false);
 			y = own->getCoordY(false);
+
+			scannedZone.setPosition(x, y);
 
 			if (!isTargetSearch && (currentTarget != NULL || currentTarget->status != DEAD))
 			{
@@ -102,11 +108,8 @@ void TankTower::update(double time)
 }
 
 void TankTower::detectTarget(vector<Player*> &players, int currentTime)
-{
-	CircleShape aura = CircleShape(550.f);
-	aura.setOrigin(aura.getGlobalBounds().width / 2, aura.getGlobalBounds().height / 2);
-	aura.setPosition(x, y);
-	FloatRect bossAura = aura.getGlobalBounds();
+{	
+	FloatRect bossZone = scannedZone.getGlobalBounds();
 
 	for (int i = 0; i < players.size(); i++)
 	{
@@ -118,7 +121,7 @@ void TankTower::detectTarget(vector<Player*> &players, int currentTime)
 			FloatRect player = players[i]->dir == 0 || players[i]->dir == 180 ?
 				FloatRect(tX, tY, 37, 49) : FloatRect(tX, tY, 49, 37);
 
-			if (bossAura.intersects(player))
+			if (bossZone.intersects(player))
 			{
 				currentTarget = players[i];
 				isTargetSearch = false;

@@ -5,15 +5,16 @@
 struct BossArgs
 {
 	Animation &anim;
-	double x;
-	double y;
-	int level;
-	int numberOfPlayers;
-	SoundBuffer &sExplosion;
+	SoundBuffer& sExplosion;
+	int mapIndex;
+	int numberOfPlayers;	
 };
 
 class Boss : public Enemy
 {
+private:
+	int mapIndex;
+
 public:
 	bool isOilSpillage;
 	int nextOilSpillageTime;

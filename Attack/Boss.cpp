@@ -6,15 +6,16 @@ Boss::Boss()
 {}
 
 Boss::Boss(BossArgs &args)
-	: Enemy(args.anim, args.x, args.y, args.sExplosion, args.level)
+	: Enemy(args.anim, 960.0, 120.0, args.sExplosion, (args.mapIndex + 1) * 10)
 {
 	z_index = (short)4;
 
+	mapIndex = args.mapIndex;
 	name = "boss";
 	army = "enemy";
 	dir = 270;
 	explosionFrameCount = 16;
-	hitPoints = 100 + args.numberOfPlayers * 75;
+	hitPoints = (args.mapIndex + 1 ) * 100 + args.numberOfPlayers * 75;
 	nextOilSpillageTime = 0;
 	isPlayAnimation = true;
 	isOilSpillage = isAiming = wasDustClap = false;
@@ -77,7 +78,7 @@ void Boss::update(double time)
 			{
 				if (anim.isEnd(time))
 				{
-					anim.frames[0] = IntRect(0, 384, 128, 128);	//.:: Tank skeleton texture coordinates
+					anim.frames[0] = IntRect(0, 384, 128, 128);
 					anim.sound.stop();
 					isDestroyed = true;
 				}

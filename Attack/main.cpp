@@ -1790,17 +1790,16 @@ int main()
 					BossArgs bossArgs =
 					{
 						aBossesBody[index],
-						960, 192,			//.:: x, y
-						(index + 1) * 10,	//.:: level
-						numberOfPlayers,
-						bossExpBuf
+						bossExpBuf,
+						index,
+						numberOfPlayers
 					};
 
 					createBoss(bossArgs, aBossesTower[index], bossTowerTurnBuf, bossTowerCrashBuf);
 					boss_theme.play();
 				}
 
-				if (transition && (!findAlivePlayer()|| (!findAliveFrom(squad) && !findAliveFrom(specialTransport))))
+				if (transition && (!findAlivePlayer() || (!findAliveFrom(squad) && !findAliveFrom(specialTransport))))
 				{
 					transition = false;
 					boss_theme.stop();
@@ -1907,10 +1906,10 @@ Image getImage(string path)
 
 void createEnemiesAnimationArray(Image *iEnemies, Texture *tEnemies, Animation *aEnemies, int index)
 {
-	string enemySourcePath = "source/images/sprites/models/tanks/enemies/enemy_";
+	string enemyImagePath = "source/images/sprites/models/tanks/enemies/enemy_";
 	for (int i = 0; i < 8; i++)
 	{
-		string path = enemySourcePath + to_string(index * 8 + (i + 1)) + ".png";
+		string path = enemyImagePath + to_string(index * 8 + (i + 1)) + ".png";
 		iEnemies[i] = getImage(path);
 		tEnemies[i].loadFromImage(iEnemies[i]);
 		aEnemies[i] = Animation(tEnemies[i], 0, 0, 64, 64, 0.016, 2);

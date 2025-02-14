@@ -6,6 +6,7 @@ class TankTower : public Enemy
 {
 private:
 	GroundVehicle *own;
+	CircleShape scannedZone;
 
 public:
 	GroundVehicle *currentTarget;
