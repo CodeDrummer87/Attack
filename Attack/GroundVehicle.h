@@ -43,6 +43,7 @@ protected:
 	double toUp, toRight, toDown, toLeft;
 
 	static int counter;
+	bool isIconTaken;
 
 public:
 	int hitPoints;
@@ -73,7 +74,7 @@ public:
 	void checkVehiclesCollision(GroundVehicle*);
 	bool makeSureVehicleCollision(GroundVehicle*);
 	void getAreaDamage(DestructionZone*, string*, int);
-	void checkIconCollision(string[], Sound&);
+	void checkIconCollision(Entity*, Sound&);
 	void updateDestinationDistance();
 	void controlEnemyVehicle(double);
 	void changeDir();

@@ -10,7 +10,6 @@ Boss::Boss(BossArgs &args)
 {
 	z_index = (short)4;
 
-	mapIndex = args.mapIndex;
 	name = "boss";
 	army = "enemy";
 	dir = 270;

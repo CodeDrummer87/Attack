@@ -32,7 +32,6 @@ private:
 	int totalKills;
 	int currentExperience;
 	int requiredExperience;
-	bool isIconTaken;
 
 	Animation moveAnim;
 

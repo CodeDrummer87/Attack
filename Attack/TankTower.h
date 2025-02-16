@@ -2,6 +2,14 @@
 
 #include "Enemy.h"
 
+struct TankTowerArgs
+{
+	Animation& anim;
+	SoundBuffer& sTurn;
+	SoundBuffer& sExplosion;
+	GroundVehicle* own;
+};
+
 class TankTower : public Enemy
 {
 private:
@@ -22,7 +30,7 @@ public:
 
 	//.:: Constructor :::::::::::::::::::::::
 	TankTower();
-	TankTower(Animation&, SoundBuffer&, SoundBuffer&, GroundVehicle*);
+	TankTower(TankTowerArgs&);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~TankTower();

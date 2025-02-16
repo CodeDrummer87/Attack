@@ -565,7 +565,7 @@ int main()
 	void createBomberLink(Player*, Sound&, Sound&, int, Animation&, Animation&, Animation&);
 	void dropBombs(Animation&, Animation&, Sound&);
 	void dropEnemyBombs(Animation&, Animation&, EnemyPlane*, Sound&);
-	void createBoss(BossArgs, Animation&, SoundBuffer&, SoundBuffer&);
+	void createBoss(BossArgs, TankTowerArgs);
 	void createBossShots(TankTower*, bool, int, Animation&, Animation&, Animation&);
 	void createBossMortarShot(TankTower*, int, Animation&, Animation&, Animation&, Animation&, Sound&, Sound&);
 	void getCoordinatesForNewIcon(double&, double&, string*);
@@ -1353,12 +1353,10 @@ int main()
 				{
 					if (e->status != DEAD)
 					{
-						static_cast<GroundVehicle*>(e)->checkMapCollision(maps[index]);
+						e->checkMapCollision(maps[index]);
 
 						if (e->name != "boss" && e->name != "turret")
 						{
-							static_cast<GroundVehicle*>(e)->checkIconCollision(maps[index], sTakingIcon);
-
 							if (!e->round && e->isShot)
 								e->destroyBrickWalls(maps[index]);
 							if (!e->round && e->isShot)
@@ -1369,7 +1367,7 @@ int main()
 								createShot(e, aEnemyRound, aShell, aShellExp);
 						}
 
-#pragma region First Stage Boss
+#pragma region the Boss in Action
 
 						if (e->name == "boss")
 						{
@@ -1553,6 +1551,9 @@ int main()
 						if (a->isPlayer() && b->name == "icon")
 							if (Tank::camera == Camera::StartGameSet || Tank::camera == Camera::Commander)
 								static_cast<Player*>(a)->checkIconCollision(b, sTakingIcon);
+
+						if (a->isEnemyGroundVehicle() && b->name == "icon")
+							static_cast<GroundVehicle*>(a)->checkIconCollision(b, sTakingIcon);
 
 						if (a->isPlayer() && b->name == "mine")
 							if (static_cast<Mine*>(b)->isActivatedMine((GroundVehicle*)a))
@@ -1795,7 +1796,15 @@ int main()
 						numberOfPlayers
 					};
 
-					createBoss(bossArgs, aBossesTower[index], bossTowerTurnBuf, bossTowerCrashBuf);
+					TankTowerArgs tankTowerArgs =
+					{
+						aBossesTower[index],
+						bossTowerTurnBuf,
+						bossTowerCrashBuf,
+						NULL
+					};
+
+					createBoss(bossArgs, tankTowerArgs);
 					boss_theme.play();
 				}
 
@@ -2088,13 +2097,14 @@ void dropEnemyBombs(Animation &a, Animation &b, EnemyPlane *e, Sound &sound)
 	entities.push_back(bomb);
 }
 
-void createBoss(BossArgs bossArgs, Animation &aTower, SoundBuffer &towerTurnBuf, SoundBuffer &towerCrashBuf)
+void createBoss(BossArgs bossArgs, TankTowerArgs tankTowerArgs)
 {
 	Boss* boss = new Boss(bossArgs);
 	squad.push_back(boss);
 	entities.push_back(boss);
 
-	TankTower* turret = new TankTower(aTower, towerTurnBuf, towerCrashBuf, boss);
+	tankTowerArgs.own = boss;
+	TankTower* turret = new TankTower(tankTowerArgs);
 	squad.push_back(turret);
 	entities.push_back(turret);
 }
@@ -2165,7 +2175,7 @@ void getCoordinatesForNewIcon(double &X, double &Y, string *map)
 	{
 		for (int j = 1; j < 60; j++)
 		{
-			if (map[i][j] == ' ' || map[i][j] == 'S')
+			if (map[i][j] == 'F' || map[i][j] == ' ' || map[i][j] == 'S')
 				selected.push_back({double(j * 32), (double)(i * 32)});
 		}
 	}

@@ -6,14 +6,14 @@
 TankTower::TankTower()
 {}
 
-TankTower::TankTower(Animation &a, SoundBuffer &turn, SoundBuffer &sExplosion_, GroundVehicle *own_)
-	: Enemy(a, own_->getCoordX(false), own_->getCoordY(false), sExplosion_, own_->level)
+TankTower::TankTower(TankTowerArgs& args)
+	: Enemy(args.anim, args.own->getCoordX(false), args.own->getCoordY(false), args.sExplosion, 1)
 {
 	z_index = (short)4;
 
 	name = "turret";
 	army = "enemy";
-	own = own_;
+	own = args.own;
 	currentTarget = NULL;
 	isTargetSearch = true;
 	explosionFrameCount = 11;

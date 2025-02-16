@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include "CommunicationTruck.h"
 #include "Miner.h"
+#include "Icon.h"
 
 extern View view;
 
@@ -22,7 +23,7 @@ GroundVehicle::GroundVehicle(Animation &anim, double x_, double y_, string name_
 	explosionFrameCount = expFrameCount;
 
 	destinationDist = speedBonus = 0.0f;
-	isDestroyed = isTransition = drowning = isSmoking = false;
+	isDestroyed = isTransition = drowning = isSmoking = isIconTaken = false;
 	isDrowned = isShowRepair = isPlayerControl = isSkidding = isInForest = false;
 	hitPoints = level + 1;
 	toUp = toDown = toRight = toLeft = 0;
@@ -396,19 +397,34 @@ void GroundVehicle::checkMapCollision(string *map)
 	}
 }
 
-void GroundVehicle::checkIconCollision(string map[], Sound &sound)
+void GroundVehicle::checkIconCollision(Entity* eIcon, Sound &sound)
 {
-	for (int i = (anim.getRect(dir).top + 15) / 32; i < (y + anim.getRect(dir).height) / 32; i++)
-		for (int j = (anim.getRect(dir).left + 14) / 32; j < (x + anim.getRect(dir).width) / 32; j++)
+	FloatRect vehicle = this->anim.sprite.getGlobalBounds();
+	FloatRect icon = eIcon->anim.sprite.getGlobalBounds();
+
+	if (vehicle.intersects(icon))
+	{
+		char iconType = static_cast<Icon*>(eIcon)->iconType;
+		switch (iconType)
 		{
-			if (map[i][j] == 'R' && (hitPoints < 1 + level))
+		case 'R':
+			if (hitPoints < 1 + level)
 			{
-				sound.play();
-				++hitPoints;
+				int repairVolume = (rand() % level + 1);
+				hitPoints = ((hitPoints + repairVolume <= level + 1) ? hitPoints + repairVolume : ++hitPoints);
 				isShowRepair = true;
-				map[i][j] = ' ';
+				isIconTaken = true;
 			}
+			break;
 		}
+
+		if (isIconTaken)
+		{
+			isIconTaken = false;
+			eIcon->status = Status::DEAD;
+			sound.play();
+		}
+	}
 }
 
 void GroundVehicle::updateDestinationDistance()
@@ -601,16 +617,16 @@ void GroundVehicle::checkScannedZoneCollision(Zone *scannedZone)
 {
 	FloatRect vehicle = this->anim.sprite.getGlobalBounds();
 	FloatRect zone = scannedZone->zone.getGlobalBounds();
-	int zNumber = scannedZone->number;
+	int zoneNumber = scannedZone->number;
 
 	if (vehicle.intersects(zone))
 	{
-		if (!playersZonesImpact[zNumber - 1])
-			playersZonesImpact[zNumber - 1] = true;
+		if (!playersZonesImpact[zoneNumber - 1])
+			playersZonesImpact[zoneNumber - 1] = true;
 	}
 	else
-		if (playersZonesImpact[zNumber - 1])
-			playersZonesImpact[zNumber - 1] = false;
+		if (playersZonesImpact[zoneNumber - 1])
+			playersZonesImpact[zoneNumber - 1] = false;
 
 	name == "tank" ?
 		static_cast<Enemy*>(this)->isInRadarCoverageArea = (isUnderSurveillance() && isInForest) :
