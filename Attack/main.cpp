@@ -1340,7 +1340,10 @@ int main()
 							{
 								p->ressurectPlayer();
 								if (isLastHero())
-									Tank::camera = Camera::Commander;
+								{
+									p->isCommander = true;
+									Tank::camera = Camera::Commander;									
+								}									
 							}
 							
 							Effect* ressurection = new Effect(aRessurection, p, "ressurection");
@@ -1474,7 +1477,7 @@ int main()
 							sAirStrikeAlarm.play();
 
 							//.:: Create radiowaves :::
-							RadioWave* radioWave = new RadioWave(aRadioWaves, t, "radioWave");
+							RadioWave* radioWave = new RadioWave(aRadioWaves, static_cast<CommunicationTruck*>(t)->antenna, "radioWave");
 							entities.push_back(radioWave);
 						}
 
@@ -1974,8 +1977,9 @@ void createEnemies(Animation *anim, SoundBuffer &sExplosion, string *map, int in
 void createEnemyCommunicationTrucks(Animation &aTruck, SoundBuffer &sExplosion, int currentGameTime,
 	Animation &antenna_, Tuple place)
 {
-	CommunicationTruck *enemyTruck = new CommunicationTruck(aTruck, place.x, place.y, sExplosion, 1, currentGameTime);
+	CommunicationTruck *enemyTruck = new CommunicationTruck(aTruck, place.x, place.y, sExplosion, currentGameTime);
 	RadioAntenna *antenna = new RadioAntenna(antenna_, enemyTruck);
+	enemyTruck->antenna = antenna;
 
 	entities.push_back(enemyTruck);
 	entities.push_back(antenna);

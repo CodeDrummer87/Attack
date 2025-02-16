@@ -11,6 +11,7 @@ Miner::Miner(Animation& a, double x_, double y_, SoundBuffer& sExplosion_, int c
 
 	isStopped = false;
 	isInRadarCoverageArea = false;
+	speedBonus = 0.2f;
 }
 
 Miner::~Miner()

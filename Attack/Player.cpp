@@ -216,7 +216,7 @@ void Player::defineNewCommander(vector<Player*> &team)
 
 bool Player::checkTeamForCommander(vector<Player*> team)
 {
-	for (auto p : team)
+	for (auto p: team)
 	{
 		if (p->isCommander && p->name == "tank")
 			return true;

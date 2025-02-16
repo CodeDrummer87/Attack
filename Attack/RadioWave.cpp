@@ -5,18 +5,18 @@
 RadioWave::RadioWave()
 {}
 
-RadioWave::RadioWave(Animation &a, GroundVehicle *vehicle, string name_)
+RadioWave::RadioWave(Animation& a, RadioAntenna* antenna_, string name_)
 {
 	z_index = (short)6;
 
 	anim = a;
 	anim.sprite.setColor(Color::Cyan);
-	own = vehicle;
+	antenna = antenna_;
 	name = name_;
 
-	dir = own->dir;
-	x = own->getCoordX(false);
-	y = own->getCoordY(false);
+	dir = antenna->dir;
+	x = antenna->getCoordX(false);
+	y = antenna->getCoordY(false);
 	isExist = isPlayAnimation = true;
 }
 
@@ -27,8 +27,8 @@ void RadioWave::update(double time)
 {
 	if (isExist)
 	{
-		x = own->getCoordX(false);
-		y = own->getCoordY(false);
+		x = antenna->getCoordX(false);
+		y = antenna->getCoordY(false);
 
 		if (anim.isEnd(time))
 			isExist = false;
