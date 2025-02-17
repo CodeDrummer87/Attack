@@ -9,6 +9,7 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_)
 {
 	z_index = (short)3;
 
+	own = vehicle;
 	anim = a;
 	anim.sprite.setColor(Color(255, 255, 255, 210));
 	name = name_;
@@ -28,7 +29,7 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_)
 		}
 
 		//.:: Explosion volume depends on the distance to the camera :::::::
-		if (army == "enemy")
+		if (army == "enemy" && own->name != "turret")
 			setExplosionVolume();
 	}
 
@@ -45,7 +46,6 @@ Smoke::Smoke(Animation &a, GroundVehicle *vehicle, string name_)
 	}
 
 	isPlayAnimation = true;	
-	own = vehicle;
 	anim.sprite.setPosition(x, y);
 	isExist = true;
 	status = ALIVE;

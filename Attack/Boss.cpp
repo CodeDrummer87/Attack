@@ -6,7 +6,7 @@ Boss::Boss()
 {}
 
 Boss::Boss(BossArgs &args)
-	: Enemy(args.anim, 960.0, 120.0, args.sExplosion, (args.mapIndex + 1) * 10)
+	: Enemy(args.anim, 960.0, 220.0, args.sExplosion, (args.mapIndex + 1) * 10)
 {
 	z_index = (short)4;
 
@@ -156,4 +156,10 @@ void Boss::checkMapCollision(string *map)
 				if (!traffic.left.dir)
 					traffic.left.dir = true;
 			}
+}
+
+void Boss::slowDownSpeed()
+{
+	if (speedBonus > 0.f)
+		speedBonus -= 0.017f;
 }

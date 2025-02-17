@@ -1,19 +1,20 @@
 #pragma once
 
 #include "Enemy.h"
+#include "Boss.h"
 
 struct TankTowerArgs
 {
 	Animation& anim;
 	SoundBuffer& sTurn;
 	SoundBuffer& sExplosion;
-	GroundVehicle* own;
+	Boss* own;
 };
 
 class TankTower : public Enemy
 {
 private:
-	GroundVehicle *own;
+	Boss *own;
 	CircleShape scannedZone;
 
 public:
@@ -25,8 +26,10 @@ public:
 	bool isFirstShot;
 	bool isSecondShot;
 
-	bool isMortarShootTime;
-	int mortarShootTime;
+	bool isMortarShotTime;
+	bool isRampageAccumulating;
+
+	int actionTime;
 
 	//.:: Constructor :::::::::::::::::::::::
 	TankTower();
@@ -37,11 +40,15 @@ public:
 
 	//.:: Methods_of_class ::::::::::::::::::
 	void update(double);
-	void detectTarget(vector<Player*>&, int);
+	void detectTarget(Player*,int,  int);
 	void getRotationDirection(int&, int&);
-	void destroyPlayerWithCannons();
+	void destroyPlayerByCannon();
+	void destroyPlayerByCannons();
 	void setNextAimingTime(int);
 	Tank* getTargetForMortar(vector<Player*>);
 	int takeAim(GroundVehicle*);
+	void checkMortarShotTime(int);
+	void checkRampageAccumulation(int);
+	void chooseBehavior(int, int);
 
 };

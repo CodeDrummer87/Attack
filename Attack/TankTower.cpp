@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable:6011)
 
 #include "TankTower.h"
 #include "Boss.h"
@@ -7,7 +8,7 @@ TankTower::TankTower()
 {}
 
 TankTower::TankTower(TankTowerArgs& args)
-	: Enemy(args.anim, args.own->getCoordX(false), args.own->getCoordY(false), args.sExplosion, 1)
+	: Enemy(args.anim, args.own->getCoordX(false), args.own->getCoordY(false), args.sExplosion, args.own->level)
 {
 	z_index = (short)4;
 
@@ -19,8 +20,8 @@ TankTower::TankTower(TankTowerArgs& args)
 	explosionFrameCount = 11;
 
 	isFirstShot = isSecondShot = true;
-	isPlayAnimation = roundFirst = roundSecond = isMortarShootTime = false;
-	mortarShootTime = 0;
+	isPlayAnimation = roundFirst = roundSecond = isMortarShotTime = isRampageAccumulating = false;
+	actionTime = 0;
 
 	dir = 180;
 
@@ -41,7 +42,7 @@ void TankTower::update(double time)
 	}
 	else
 	{
-		if (status != DEAD && !static_cast<Boss*>(own)->isAiming)
+		if (status != DEAD && !own->isAiming)
 		{
 			x = own->getCoordX(false);
 			y = own->getCoordY(false);
@@ -61,8 +62,8 @@ void TankTower::update(double time)
 			{
 				currentTarget = NULL;
 				isTargetSearch = true;
-				static_cast<Boss*>(own)->isAiming = false;
-				static_cast<Boss*>(own)->aimingTime = 0;
+				own->isAiming = false;
+				own->aimingTime = 0;
 			}
 		}
 
@@ -107,31 +108,33 @@ void TankTower::update(double time)
 	}
 }
 
-void TankTower::detectTarget(vector<Player*> &players, int currentTime)
-{	
+void TankTower::detectTarget(Player* player, int mapIndex, int currentTime)
+{
 	FloatRect bossZone = scannedZone.getGlobalBounds();
+	FloatRect target = player->anim.sprite.getGlobalBounds();
 
-	for (int i = 0; i < players.size(); i++)
+	if (bossZone.intersects(target))
 	{
-		if (players[i]->status != DEAD)
+		currentTarget = player;
+		isTargetSearch = false;
+
+		switch (mapIndex)
 		{
-			double tX = (players[i]->dir == 0 || players[i]->dir == 180) ? players[i]->getCoordX(false) - 19 : players[i]->getCoordX(false) - 25;
-			double tY = (players[i]->dir == 0 || players[i]->dir == 180) ? players[i]->getCoordY(false) - 25 : players[i]->getCoordY(false) - 19;
+		case 1: 
+			own->aimingTime = currentTime + 10;
+			actionTime = currentTime + 14;
+			break;
 
-			FloatRect player = players[i]->dir == 0 || players[i]->dir == 180 ?
-				FloatRect(tX, tY, 37, 49) : FloatRect(tX, tY, 49, 37);
+		case 2: break;
+		case 3: break;
+		case 4: break;
+		case 5: break;
 
-			if (bossZone.intersects(player))
-			{
-				currentTarget = players[i];
-				isTargetSearch = false;
-
-				static_cast<Boss*>(own)->aimingTime = currentTime + 12;
-				mortarShootTime = currentTime + 16;
-				break;
-			}
+		default:
+			own->aimingTime = currentTime + 12;
+			actionTime = currentTime + 16;
 		}
-	}
+	}	
 }
 
 int TankTower::takeAim(GroundVehicle *player)
@@ -157,22 +160,28 @@ void TankTower::getRotationDirection(int &d, int &a) //.:: d - dir, a - angle
 	resetDegrees(d);
 }
 
-void TankTower::destroyPlayerWithCannons()
+void TankTower::destroyPlayerByCannon()
+{
+	if (isShot && (dir == 0 || dir == 90 || dir == 180 || dir == 270))
+		round = true;
+}
+
+void TankTower::destroyPlayerByCannons()
 {
 	if (dir == 0 || dir == 90 || dir == 180 || dir == 270)
 	{
-		isFirstShot ? roundFirst = true : roundFirst = false;
-		isSecondShot ? roundSecond = true : roundSecond = false;
+		roundFirst = isFirstShot;
+		roundSecond = isSecondShot;
 	}
 }
 
 void TankTower::setNextAimingTime(int currentTime)
 {
-	static_cast<Boss*>(own)->isAiming = false;
-	static_cast<Boss*>(own)->aimingTime = currentTime + 12;
+	own->isAiming = false;
+	own->aimingTime = currentTime + 12;
 	
-	isMortarShootTime = false;
-	mortarShootTime = currentTime + 16;
+	isMortarShotTime = false;
+	actionTime = currentTime + 16;
 }
 
 Tank* TankTower::getTargetForMortar(vector<Player*> players)
@@ -187,5 +196,46 @@ Tank* TankTower::getTargetForMortar(vector<Player*> players)
 		index = rand() % players.size();
 		if (players[index]->status != Status::DEAD)
 			return players[index];
+	}
+}
+
+void TankTower::checkMortarShotTime(int currentTime)
+{
+	if (!isTargetSearch && actionTime == currentTime && (currentTarget != NULL || currentTarget->status != DEAD))
+		isMortarShotTime = true;
+}
+
+void TankTower::checkRampageAccumulation(int currentTime)
+{
+	if (!isTargetSearch && actionTime == currentTime && (currentTarget != NULL || currentTarget->status != DEAD))
+		isRampageAccumulating = true;
+}
+
+void TankTower::chooseBehavior(int mapIndex, int gameTime)
+{
+	switch (mapIndex)
+	{
+	case 1:
+		destroyPlayerByCannon();
+		checkRampageAccumulation(gameTime);
+
+		if (isRampageAccumulating)
+		{
+			isRampageAccumulating = false;
+			
+			own->isAiming = false;
+			own->aimingTime = gameTime + 20;
+			actionTime = gameTime + 24;
+
+			own->speedBonus = 10.f;
+		}
+
+		own->slowDownSpeed();
+
+		break;
+
+	default:
+		destroyPlayerByCannons();
+		checkMortarShotTime(gameTime);
 	}
 }

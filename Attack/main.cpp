@@ -186,7 +186,7 @@ int main()
 	iRessurection = getImage("source/images/sprites/other/ressurection.png");
 
 	//.:: the Bosses :::
-	const int numberOfBosses = 10;
+	const int numberOfBosses = 9;
 	Image iBossesBody[numberOfBosses];
 	Image iBossesTower[numberOfBosses];
 
@@ -288,7 +288,7 @@ int main()
 		shellExpBuf, takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
 		enemy_moveBuf, enemyRoundBuf, armorBuf, armorResistBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
 		bossMoveBuf, bossExpBuf, bossShotBuf, bossMortarBuf, bossTowerTurnBuf, bossTowerCrashBuf, oilPuddleBuf, badgeAppearanceBuf, 
-		badgeDisappearanceBuf, bossLaugh, firstStBossRoundBuf, bossMortarShootBuf, stopMortarShootBuf, mineExplosionBuf,
+		badgeDisappearanceBuf, bossLaugh, firstStBossRoundBuf, stopMortarShootBuf, mineExplosionBuf,
 		dustClapBuf, hookEngagementBuf, miningBuf, landmineExpBuf, defectiveMineBuf, partisanBuf, ressurectionBuf;
 
 	bTankBuf.loadFromFile("source/sounds/tank/movement/move_1.flac");
@@ -327,7 +327,6 @@ int main()
 	bossTowerTurnBuf.loadFromFile("source/sounds/tank/tanks_tower_turn.flac");
 	bossTowerCrashBuf.loadFromFile("source/sounds/effects/boss_tank_tower_crash.flac");
 	firstStBossRoundBuf.loadFromFile("source/sounds/tank/round/boss1_round.flac");
-	bossMortarShootBuf.loadFromFile("source/sounds/effects/boss_mortar_shoot.flac");
 	stopMortarShootBuf.loadFromFile("source/sounds/effects/stop_mortar_shoot.flac");
 	mineExplosionBuf.loadFromFile("source/sounds/explosion/mine_explosion.flac");
 	dustClapBuf.loadFromFile("source/sounds/effects/dust_clap.flac");
@@ -338,8 +337,18 @@ int main()
 	partisanBuf.loadFromFile("source/sounds/effects/partisan.flac");
 	ressurectionBuf.loadFromFile("source/sounds/effects/ressurection.flac");
 
+	SoundBuffer bossActivityBuffers[numberOfBosses];
+	Sound bossActivitySounds[numberOfBosses];
+
+	string bossSoundPath = "source/sounds/effects/boss_activity_";
+	for (int i = 0; i < numberOfBosses; i++)
+	{
+		bossActivityBuffers[i].loadFromFile(bossSoundPath + to_string(i + 1) + ".flac");
+		bossActivitySounds[i].setBuffer(bossActivityBuffers[i]);
+	}
+
 	Sound sEnemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sArmorResist,
-		sLaugh(laughBuf), sAirStrikeAlarm, sFighterFlight, sFirstStageBossLaugh, sBossMortarShoot(bossMortarShootBuf),
+		sLaugh(laughBuf), sAirStrikeAlarm, sFighterFlight, sFirstStageBossLaugh,
 		sStopMortarShoot(stopMortarShootBuf), sDustClap(dustClapBuf), sBadgeDisappear(badgeDisappearanceBuf);
 
 	sEnemy_move.setLoop(true);
@@ -751,6 +760,7 @@ int main()
 						//.:: some briefing...
 						mode = GAME;
 						transition = true;
+						sEnemy_move.play();
 					}
 				}
 
@@ -760,11 +770,6 @@ int main()
 
 				if (mode == GAME)
 				{
-					if (sEnemy_move.getStatus() == SoundStream::Stopped && transition)
-						sEnemy_move.play();
-					else if (sEnemy_move.getStatus() == SoundStream::Playing && !transition)
-						sEnemy_move.stop();
-
 					//.:: temporary code :::
 					if (Keyboard::isKeyPressed(Keyboard::N) && (Tank::camera == Camera::StartGameSet || Tank::camera == Camera::Commander))
 					{
@@ -779,6 +784,21 @@ int main()
 								sEnemy_move.stop();
 							}
 						}
+					}
+
+					if (Keyboard::isKeyPressed(Keyboard::X))
+					{
+						for (auto e : squad)
+							e->hitPoints = 0;
+
+						for (auto v : specialTransport)
+							v->hitPoints = 0;
+						team[2]->setCoordX(760.0);
+						team[2]->setCoordY(1000.0);
+						team[2]->isCommander = true;
+						team[2]->level = 20;
+						Tank::camera = Camera::Commander;
+						sEnemy_move.stop();
 					}
 
 #pragma region Tank rounds
@@ -1385,7 +1405,7 @@ int main()
 							if (!static_cast<Boss*>(e)->isAiming && static_cast<Boss*>(e)->aimingTime == gameTime)
 							{
 								static_cast<Boss*>(e)->isAiming = true;
-								sBossMortarShoot.play();
+								bossActivitySounds[index].play();
 							}
 
 							if (e->status == WOUNDED && static_cast<Boss*>(e)->isOilSpillage)
@@ -1407,28 +1427,26 @@ int main()
 
 						if (e->name == "turret")
 						{
-							if (static_cast<TankTower*>(e)->isTargetSearch)
+							if(!static_cast<TankTower*>(e)->isTargetSearch)
 							{
-								static_cast<TankTower*>(e)->detectTarget(team, gameTime);
-							}
-							else
-							{
-								static_cast<TankTower*>(e)->destroyPlayerWithCannons();
+								static_cast<TankTower*>(e)->chooseBehavior(index, gameTime);
 
-								if (!static_cast<TankTower*>(e)->isTargetSearch && static_cast<TankTower*>(e)->mortarShootTime == gameTime
-									&& (static_cast<TankTower*>(e)->currentTarget != NULL
-										|| static_cast<TankTower*>(e)->currentTarget->status != DEAD))
-									static_cast<TankTower*>(e)->isMortarShootTime = true;
+#pragma region Activating the boss abilities
 
-								if (static_cast<TankTower*>(e)->isMortarShootTime)
-									createBossMortarShot(static_cast<TankTower*>(e), gameTime, aMortarClap, aMortarShell, aMineExplosion,
-										aTrail, sBossMortarShoot, sStopMortarShoot);
-							}
+								if (static_cast<TankTower*>(e)->isMortarShotTime)
+									createBossMortarShot((TankTower*)e, gameTime, aMortarClap, aMortarShell, aMineExplosion,
+										aTrail, bossActivitySounds[index], sStopMortarShoot);
 
-							if (static_cast<TankTower*>(e)->roundFirst && static_cast<TankTower*>(e)->isFirstShot)
-								createBossShots((TankTower*)e, true, gameTime, aBossShot, aShell, aShellExp);
-							if (static_cast<TankTower*>(e)->roundSecond && static_cast<TankTower*>(e)->isSecondShot)
-								createBossShots((TankTower*)e, false, gameTime, aBossShot, aShell, aShellExp);
+								if (static_cast<TankTower*>(e)->roundFirst && static_cast<TankTower*>(e)->isFirstShot)
+									createBossShots((TankTower*)e, true, gameTime, aBossShot, aShell, aShellExp);
+								if (static_cast<TankTower*>(e)->roundSecond && static_cast<TankTower*>(e)->isSecondShot)
+									createBossShots((TankTower*)e, false, gameTime, aBossShot, aShell, aShellExp);
+
+								if (index == 1 && (e->round && e->isShot))
+									createShot(e, aBossShot, aShell, aShellExp);
+
+#pragma endregion
+							}	
 						}
 
 #pragma endregion
@@ -1563,6 +1581,9 @@ int main()
 								(static_cast<Mine*>(b)->exploseMine((GroundVehicle*)a)) ?
 								createLandmineExplosion(aLandmineExplosion, (GroundVehicle*)a) : 
 								createDefectiveMineSmoke(aDefectiveMine, b);
+
+						if ((a->name == "turret" && static_cast<TankTower*>(a)->isTargetSearch) && b->isPlayer())
+							static_cast<TankTower*>(a)->detectTarget((Player*)b, index, gameTime);
 
 						if (a->isEnemyGroundVehicle() && b->name == "scannedZone")
 							static_cast<GroundVehicle*>(a)->checkScannedZoneCollision(static_cast<Zone*>(b));
@@ -1789,6 +1810,7 @@ int main()
 
 				if (transition && !findAliveFrom(specialTransport) && !findAliveFrom(squad) && !isBossCreated)
 				{
+					sEnemy_move.stop();
 					isBossCreated = true;
 
 					BossArgs bossArgs =
@@ -1813,6 +1835,7 @@ int main()
 
 				if (transition && (!findAlivePlayer() || (!findAliveFrom(squad) && !findAliveFrom(specialTransport))))
 				{
+					sEnemy_move.stop();
 					transition = false;
 					boss_theme.stop();
 					chapter_finale_theme.play();
@@ -1906,6 +1929,7 @@ int main()
 }
 
 #pragma region Functions definition
+#pragma warning(disable:6011)
 
 Image getImage(string path)
 {

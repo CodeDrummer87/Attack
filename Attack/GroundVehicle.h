@@ -33,7 +33,6 @@ private:
 	void resetSkidding(bool, int);
 
 protected:
-	float speedBonus;
 	bool isPlayerControl;
 	bool isDestroyed;
 	SoundBuffer sExplosion;
@@ -46,6 +45,7 @@ protected:
 	bool isIconTaken;
 
 public:
+	float speedBonus;
 	int hitPoints;
 	bool drowning;
 	bool isSmoking;
