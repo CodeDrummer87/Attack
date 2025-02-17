@@ -175,13 +175,13 @@ void TankTower::destroyPlayerByCannons()
 	}
 }
 
-void TankTower::setNextAimingTime(int currentTime)
+void TankTower::setNextAimingTime(int nextTime, bool& flag)
 {
 	own->isAiming = false;
-	own->aimingTime = currentTime + 12;
-	
-	isMortarShotTime = false;
-	actionTime = currentTime + 16;
+	flag = false;
+
+	own->aimingTime = nextTime;
+	actionTime = nextTime + 4;
 }
 
 Tank* TankTower::getTargetForMortar(vector<Player*> players)
@@ -211,31 +211,28 @@ void TankTower::checkRampageAccumulation(int currentTime)
 		isRampageAccumulating = true;
 }
 
-void TankTower::chooseBehavior(int mapIndex, int gameTime)
+void TankTower::chooseBehavior(int mapIndex, int currentTime)
 {
 	switch (mapIndex)
 	{
 	case 1:
 		destroyPlayerByCannon();
-		checkRampageAccumulation(gameTime);
+		checkRampageAccumulation(currentTime);
 
 		if (isRampageAccumulating)
 		{
-			isRampageAccumulating = false;
-			
-			own->isAiming = false;
-			own->aimingTime = gameTime + 20;
-			actionTime = gameTime + 24;
-
+			setNextAimingTime(currentTime + 20, isRampageAccumulating);
 			own->speedBonus = 10.f;
 		}
 
 		own->slowDownSpeed();
+		if (own->isAiming && own->isPrepareToAction)
+			own->getAngry();
 
 		break;
 
 	default:
 		destroyPlayerByCannons();
-		checkMortarShotTime(gameTime);
+		checkMortarShotTime(currentTime);
 	}
 }

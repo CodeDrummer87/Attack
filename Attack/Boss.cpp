@@ -17,8 +17,12 @@ Boss::Boss(BossArgs &args)
 	hitPoints = (args.mapIndex + 1 ) * 100 + args.numberOfPlayers * 75;
 	nextOilSpillageTime = 0;
 	isPlayAnimation = true;
-	isOilSpillage = isAiming = wasDustClap = false;
+	isOilSpillage = isAiming = wasDustClap = isPrepareToAction = false;
 	aimingTime = -1;
+
+	red = greenAndBlue = 255;
+	activitySound = args.activitySound;
+	anim.sprite.setColor(Color(red, greenAndBlue, greenAndBlue));
 }
 
 Boss::~Boss()
@@ -84,6 +88,7 @@ void Boss::update(double time)
 			}
 			else
 			{
+				activitySound->stop();
 				name = "destroyed";
 				isPlayAnimation = true;
 				anim.setFrames(0, 256, 128, 128, explosionFrameCount, 0.01);
@@ -161,5 +166,31 @@ void Boss::checkMapCollision(string *map)
 void Boss::slowDownSpeed()
 {
 	if (speedBonus > 0.f)
+	{
 		speedBonus -= 0.017f;
+		coolDown();
+	}
+}
+
+void Boss::getAngry()
+{
+	red = greenAndBlue > 0.f ? greenAndBlue -= 0.5f : red > 150.f ? red -= 0.25f : 180.f;
+	setSpriteColor(red, greenAndBlue,  greenAndBlue);
+
+	if (!isPrepareToAction && (red <= 180.f && greenAndBlue <= 150.f))
+		isPrepareToAction = false;
+}
+
+void Boss::coolDown()
+{
+	if (red != 255.f && greenAndBlue != 255.f)
+	{
+		greenAndBlue = red < 255.f ? red += 0.25f : greenAndBlue < 255.f ? greenAndBlue += 0.5f : 255.f;
+		setSpriteColor(red, greenAndBlue, greenAndBlue);
+	}
+}
+
+void Boss::setSpriteColor(float r, float g, float b)
+{
+	anim.sprite.setColor(Color(r, g, b));
 }

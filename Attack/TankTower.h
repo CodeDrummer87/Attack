@@ -44,7 +44,7 @@ public:
 	void getRotationDirection(int&, int&);
 	void destroyPlayerByCannon();
 	void destroyPlayerByCannons();
-	void setNextAimingTime(int);
+	void setNextAimingTime(int, bool&);
 	Tank* getTargetForMortar(vector<Player*>);
 	int takeAim(GroundVehicle*);
 	void checkMortarShotTime(int);

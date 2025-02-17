@@ -277,9 +277,9 @@ int main()
 	choiceBuf.loadFromFile("source/sounds/effects/start_game/choose_number_of_players.flac");
 	screamBuf.loadFromFile("source/sounds/effects/start_game/scream.flac");
 
-	Sound *choice = new Sound(choiceBuf), *scream = new Sound(screamBuf);
+	Sound* choice = new Sound(choiceBuf), * scream = new Sound(screamBuf);
 
-	Music *main_theme = new Music();
+	Music* main_theme = new Music();
 	main_theme->openFromFile("source/sounds/music/main_theme.flac");
 
 #pragma endregion
@@ -287,7 +287,7 @@ int main()
 	SoundBuffer bTankBuf, yTankBuf, pTankBuf, tankExpBuf, autoExpBuf, burgTankRoundBuf, yelTankRoundBuf, purpTankRoundBuf,
 		shellExpBuf, takingIconBuf, prefermentBuf, airstrikeQueryBuf, airstrikeConfirmBuf, fighterFlightBuf, bombWhistleBuf, bombExplosionBuf,
 		enemy_moveBuf, enemyRoundBuf, armorBuf, armorResistBuf, laughBuf, drowningBuf, speedUpBuf, repairBuf, sniperBuf, airStrikeAlarmBuf,
-		bossMoveBuf, bossExpBuf, bossShotBuf, bossMortarBuf, bossTowerTurnBuf, bossTowerCrashBuf, oilPuddleBuf, badgeAppearanceBuf, 
+		bossMoveBuf, bossExpBuf, bossShotBuf, bossMortarBuf, bossTowerTurnBuf, bossTowerCrashBuf, oilPuddleBuf, badgeAppearanceBuf,
 		badgeDisappearanceBuf, bossLaugh, firstStBossRoundBuf, stopMortarShootBuf, mineExplosionBuf,
 		dustClapBuf, hookEngagementBuf, miningBuf, landmineExpBuf, defectiveMineBuf, partisanBuf, ressurectionBuf;
 
@@ -338,13 +338,13 @@ int main()
 	ressurectionBuf.loadFromFile("source/sounds/effects/ressurection.flac");
 
 	SoundBuffer bossActivityBuffers[numberOfBosses];
-	Sound bossActivitySounds[numberOfBosses];
+	Sound* bossActivitySounds[numberOfBosses];
 
 	string bossSoundPath = "source/sounds/effects/boss_activity_";
 	for (int i = 0; i < numberOfBosses; i++)
 	{
 		bossActivityBuffers[i].loadFromFile(bossSoundPath + to_string(i + 1) + ".flac");
-		bossActivitySounds[i].setBuffer(bossActivityBuffers[i]);
+		bossActivitySounds[i] = new Sound(bossActivityBuffers[i]);
 	}
 
 	Sound sEnemy_move, sTakingIcon, sPreferment, sAirStrikeQuery(airstrikeQueryBuf), sAirStrikeConfirm, sArmor, sArmorResist,
@@ -361,9 +361,16 @@ int main()
 	sFighterFlight.setBuffer(fighterFlightBuf);	sFighterFlight.setLoop(false);	sFighterFlight.setVolume(100.f);
 	sFirstStageBossLaugh.setBuffer(bossLaugh);	sFirstStageBossLaugh.setLoop(false);
 
-	Music chapter_finale_theme, boss_theme;
+	Music chapter_finale_theme, boss_theme[numberOfBosses];
 	chapter_finale_theme.openFromFile("source/sounds/music/chapter_finale_theme.flac");
-	boss_theme.openFromFile("source/sounds/music/boss_theme.flac");	boss_theme.setVolume(40.f); boss_theme.setLoop(true);
+
+	string bossMusicPath = "source/sounds/music/boss_theme_";
+	for (int i = 0; i < numberOfBosses; i++)
+	{
+		boss_theme[i].openFromFile(bossMusicPath + to_string(i + 1) + ".flac");
+		boss_theme[i].setVolume(40.f);
+		boss_theme[i].setLoop(true);
+	}
 
 #pragma endregion
 
@@ -576,7 +583,7 @@ int main()
 	void dropEnemyBombs(Animation&, Animation&, EnemyPlane*, Sound&);
 	void createBoss(BossArgs, TankTowerArgs);
 	void createBossShots(TankTower*, bool, int, Animation&, Animation&, Animation&);
-	void createBossMortarShot(TankTower*, int, Animation&, Animation&, Animation&, Animation&, Sound&, Sound&);
+	void createBossMortarShot(TankTower*, int, Animation&, Animation&, Animation&, Animation&, Sound*, Sound&);
 	void getCoordinatesForNewIcon(double&, double&, string*);
 	void deletePreviousEntities();
 	PlayersPositions DeterminePlayerPosition(int);
@@ -1405,7 +1412,8 @@ int main()
 							if (!static_cast<Boss*>(e)->isAiming && static_cast<Boss*>(e)->aimingTime == gameTime)
 							{
 								static_cast<Boss*>(e)->isAiming = true;
-								bossActivitySounds[index].play();
+								static_cast<Boss*>(e)->isPrepareToAction = true;
+								bossActivitySounds[index]->play();
 							}
 
 							if (e->status == WOUNDED && static_cast<Boss*>(e)->isOilSpillage)
@@ -1818,7 +1826,8 @@ int main()
 						aBossesBody[index],
 						bossExpBuf,
 						index,
-						numberOfPlayers
+						numberOfPlayers,
+						bossActivitySounds[index]
 					};
 
 					TankTowerArgs tankTowerArgs =
@@ -1830,14 +1839,14 @@ int main()
 					};
 
 					createBoss(bossArgs, tankTowerArgs);
-					boss_theme.play();
+					boss_theme[index].play();
 				}
 
 				if (transition && (!findAlivePlayer() || (!findAliveFrom(squad) && !findAliveFrom(specialTransport))))
 				{
 					sEnemy_move.stop();
 					transition = false;
-					boss_theme.stop();
+					boss_theme[index].stop();
 					chapter_finale_theme.play();
 					lastSecondsOfChapter = gameTime + 7;
 				}
@@ -2157,11 +2166,11 @@ void createBossShots(TankTower *boss, bool isFirstGun, int gameTime, Animation &
 }
 
 void createBossMortarShot(TankTower *t, int gameTime, Animation &aMortarClap, Animation &aMortarShell, Animation &aShellExp,
-	Animation &aTrail, Sound &sMortarShoot, Sound &sStopMortarShoot)
+	Animation &aTrail, Sound *sMortarShot, Sound &sStopMortarShoot)
 {
 	if (t->currentTarget != NULL || t->currentTarget->status != DEAD)
 	{
-		t->setNextAimingTime(gameTime);
+		t->setNextAimingTime(gameTime + 12, t->isMortarShotTime);
 
 		Tank *tank = t->getTargetForMortar(team);
 		if (tank != NULL)
@@ -2188,7 +2197,7 @@ void createBossMortarShot(TankTower *t, int gameTime, Animation &aMortarClap, An
 		}
 		else
 		{
-			sMortarShoot.stop();
+			sMortarShot->stop();
 			sStopMortarShoot.play();
 		}
 	}

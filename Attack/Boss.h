@@ -4,14 +4,23 @@
 
 struct BossArgs
 {
-	Animation &anim;
-	SoundBuffer &sExplosion;
+	Animation& anim;
+	SoundBuffer& sExplosion;
 	int mapIndex;
-	int numberOfPlayers;	
+	int numberOfPlayers;
+	Sound* activitySound;
 };
 
 class Boss : public Enemy
 {
+private:
+	float red;
+	float greenAndBlue;
+	Sound* activitySound;
+
+	//.:: Methods_of_class ::::::::::::::::::
+	void setSpriteColor(float, float, float);
+
 public:
 	bool isOilSpillage;
 	int nextOilSpillageTime;
@@ -20,6 +29,7 @@ public:
 	int aimingTime;
 
 	bool wasDustClap;
+	bool isPrepareToAction;
 
 	//.:: Constructor :::::::::::::::::::::::
 	Boss();
@@ -32,5 +42,7 @@ public:
 	void update(double);
 	void checkMapCollision(string*);
 	void slowDownSpeed();
+	void getAngry();
+	void coolDown();
 
 };

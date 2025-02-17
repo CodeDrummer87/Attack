@@ -36,15 +36,16 @@ void Entity::draw(RenderWindow &app)
 double Entity::getCoordX(bool isShell)
 {
 	double xCoordinate = x;
+	int offset = name == "turret" ? 77 : 42;
 
 	if (isShell)
 	{
 		switch (dir)
 		{
 		case 0: xCoordinate; break;
-		case 90: xCoordinate += 42; break;
+		case 90: xCoordinate += offset; break;
 		case 180: xCoordinate; break;
-		case 270: xCoordinate -= 42; break;
+		case 270: xCoordinate -= offset; break;
 		}
 	}
 
@@ -54,14 +55,15 @@ double Entity::getCoordX(bool isShell)
 double Entity::getCoordY(bool isShell)
 {
 	double yCoordinate = y;
+	int offset = name == "turret" ? 77 : 42;
 
 	if (isShell)
 	{
 		switch (dir)
 		{
-		case 0: yCoordinate -= 42; break;
+		case 0: yCoordinate -= offset; break;
 		case 90: yCoordinate; break;
-		case 180: yCoordinate += 42; break;
+		case 180: yCoordinate += offset; break;
 		case 270: yCoordinate; break;
 		}
 	}
