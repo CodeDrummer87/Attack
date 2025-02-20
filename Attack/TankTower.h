@@ -26,11 +26,6 @@ public:
 	bool isFirstShot;
 	bool isSecondShot;
 
-	bool isMortarShotTime;
-	bool isRampageAccumulating;
-
-	int actionTime;
-
 	//.:: Constructor :::::::::::::::::::::::
 	TankTower();
 	TankTower(TankTowerArgs&);
@@ -40,7 +35,7 @@ public:
 
 	//.:: Methods_of_class ::::::::::::::::::
 	void update(double);
-	void detectTarget(Player*,int,  int);
+	void detectTarget(Player*, int);
 	void getRotationDirection(int&, int&);
 	void destroyPlayerByCannon();
 	void destroyPlayerByCannons();
@@ -48,7 +43,7 @@ public:
 	Tank* getTargetForMortar(vector<Player*>);
 	int takeAim(GroundVehicle*);
 	void checkMortarShotTime(int);
-	void checkRampageAccumulation(int);
+	void checkReadinessToAttack(int);
 	void chooseBehavior(int, int);
 
 };

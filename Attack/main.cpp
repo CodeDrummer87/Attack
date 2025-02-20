@@ -437,7 +437,7 @@ int main()
 	Animation aRadar(tRadar, partisanBuf, 0, 0, 128, 128, 0.015, 33);
 	Animation aRadarSweep(tRadarSweep, 0, 0, 128, 128, 1, 1);
 	Animation aRessurection(tRessurection, ressurectionBuf, 0, 0, 128, 128, 0.019, 50);
-	Animation aNozzleFlame(tNozzleFlame, 0, 0, 128, 200, 0.02, 20);
+	Animation aNozzleFlame(tNozzleFlame, 0, 0, 128, 200, 0.023, 20);
 
 #pragma region the Bosses
 
@@ -798,6 +798,7 @@ int main()
 						}
 					}
 
+					//.:: the Boss testing code
 					if (Keyboard::isKeyPressed(Keyboard::X))
 					{
 						for (auto e : squad)
@@ -814,20 +815,6 @@ int main()
 						team[2]->speedBonus = 2;
 						Tank::camera = Camera::Commander;
 						sEnemy_move.stop();
-					}
-					Boss* boss = NULL;
-					if (Keyboard::isKeyPressed(Keyboard::Q))
-					{
-						
-						for (auto b : squad)
-							if (b->name == "boss")
-							{
-								boss = static_cast<Boss*>(b);
-								break;
-							}
-
-						NozzlesFlame* flame = new NozzlesFlame(aNozzleFlame, boss);
-						entities.push_back(flame);
 					}
 
 #pragma region Tank rounds
@@ -1423,18 +1410,17 @@ int main()
 
 						if (e->name == "boss")
 						{
-							if (e->status == WOUNDED && !static_cast<Boss*>(e)->wasDustClap)
+							if (e->status == WOUNDED && !static_cast<Boss*>(e)->wasHalfDestroyed)
 							{
 								sDustClap.play();
-								static_cast<Boss*>(e)->wasDustClap = true;
+								static_cast<Boss*>(e)->wasHalfDestroyed = true;
 								Smoke *clap = new Smoke(aDustClap, e, "dustClap");
 								entities.push_back(clap);
 							}
 
-							if (!static_cast<Boss*>(e)->isAiming && static_cast<Boss*>(e)->aimingTime == gameTime)
+							if (static_cast<Boss*>(e)->isReadyToUseAbility())
 							{
-								static_cast<Boss*>(e)->isAiming = true;
-								static_cast<Boss*>(e)->isPrepareToAction = true;
+								static_cast<Boss*>(e)->isAnimationRun = true;
 								bossActivitySounds[index]->play();
 							}
 
@@ -1456,7 +1442,9 @@ int main()
 
 							if (index == 1 && static_cast<Boss*>(e)->isGetAngry())
 							{
-								static_cast<Boss*>(e)->isHeatUp = false;
+								static_cast<Boss*>(e)->isAnimationRun = false;
+								static_cast<Boss*>(e)->timeToAct = -1;
+
 								NozzlesFlame* flame = new NozzlesFlame(aNozzleFlame, (Boss*)e);
 								entities.push_back(flame);
 							}
@@ -1470,7 +1458,7 @@ int main()
 
 #pragma region Activating the boss abilities
 
-								if (static_cast<TankTower*>(e)->isMortarShotTime)
+								if (index == 0 && static_cast<TankTower*>(e)->own->isActing && static_cast<TankTower*>(e)->own->timeToAct == gameTime)
 									createBossMortarShot((TankTower*)e, gameTime, aMortarClap, aMortarShell, aMineExplosion,
 										aTrail, bossActivitySounds[index], sStopMortarShoot);
 
@@ -1620,7 +1608,7 @@ int main()
 								createDefectiveMineSmoke(aDefectiveMine, b);
 
 						if ((a->name == "turret" && static_cast<TankTower*>(a)->isTargetSearch) && b->isPlayer())
-							static_cast<TankTower*>(a)->detectTarget((Player*)b, index, gameTime);
+							static_cast<TankTower*>(a)->detectTarget((Player*)b, gameTime);
 
 						if (a->isEnemyGroundVehicle() && b->name == "scannedZone")
 							static_cast<GroundVehicle*>(a)->checkScannedZoneCollision(static_cast<Zone*>(b));
@@ -2199,8 +2187,8 @@ void createBossMortarShot(TankTower *t, int gameTime, Animation &aMortarClap, An
 {
 	if (t->currentTarget != NULL || t->currentTarget->status != DEAD)
 	{
-		t->setNextAimingTime(gameTime + 12, t->isMortarShotTime);
-		t->own->isAiming = false;
+		t->setNextAimingTime(gameTime + 12, t->own->isAnimationRun);
+		t->own->isActing = false;
 
 		Tank *tank = t->getTargetForMortar(team);
 		if (tank != NULL)

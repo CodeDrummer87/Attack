@@ -58,7 +58,7 @@ void NozzlesFlame::update(double time)
 
 		if (thirdRight.isEnd(time) || !boss->isExist)
 		{
-			boss->isAiming = false;
+			boss->isActing = false;
 			isExist = false;
 		}
 	}
@@ -87,41 +87,25 @@ void NozzlesFlame::setSpritesPosition()
 	x = boss->getCoordX(false);
 	y = boss->getCoordY(false);
 
-	//.:: boss-dir = 270
-	firstLeft.sprite.setPosition(x + 37, y + 63);
-	secondLeft.sprite.setPosition(x + 49, y + 63);
-	thirdLeft.sprite.setPosition(x + 61, y + 63);
+	int d = boss->dir;
 
-	firstRight.sprite.setPosition(x + 37, y - 63);
-	secondRight.sprite.setPosition(x + 49, y - 63);
-	thirdRight.sprite.setPosition(x + 61, y - 63);
+	firstLeft.sprite.setPosition(	d == 0 ? x - 63 : d == 90 ? x - 37 : d == 180 ? x + 63 : x + 37,
+									d == 0 ? y + 37 : d == 90 ? y - 63 : d == 180 ? y - 37 : y + 63);
 
-	//.:: boss-dir = 0
-	/*firstLeft.sprite.setPosition(x - 63, y + 37);
-	secondLeft.sprite.setPosition(x - 63, y + 49);
-	thirdLeft.sprite.setPosition(x - 63, y + 61);
+	secondLeft.sprite.setPosition(	d == 0 ? x - 63 : d == 90 ? x - 49 : d == 180 ? x + 63 : x + 49,
+									d == 0 ? y + 49 : d == 90 ? y - 63 : d == 180 ? y - 49 : y + 63);
 
-	firstRight.sprite.setPosition(x + 63, y + 37);
-	secondRight.sprite.setPosition(x + 63, y + 49);
-	thirdRight.sprite.setPosition(x + 63, y + 61);*/
+	thirdLeft.sprite.setPosition(	d == 0 ? x - 63 : d == 90 ? x - 61 : d == 180 ? x + 63 : x + 61,
+									d == 0 ? y + 61 : d == 90 ? y - 63 : d == 180 ? y - 61 : y + 63);
 
-	//.:: boss-dir = 90
-	/*firstLeft.sprite.setPosition(x - 37, y - 63);
-	secondLeft.sprite.setPosition(x - 49, y - 63);
-	thirdLeft.sprite.setPosition(x - 61, y - 63);
+	firstRight.sprite.setPosition(	d == 0 ? x + 63 : d == 90 ? x - 37 : d == 180 ? x - 63 : x + 37,
+									d == 0 ? y + 37 : d == 90 ? y + 63 : d == 180 ? y - 37 : y - 63);
 
-	firstRight.sprite.setPosition(x - 37, y + 63);
-	secondRight.sprite.setPosition(x - 49, y + 63);
-	thirdRight.sprite.setPosition(x - 61, y + 63);*/
+	secondRight.sprite.setPosition(	d == 0 ? x + 63 : d == 90 ? x - 49 : d == 180 ? x - 63 : x + 49,
+									d == 0 ? y + 49 : d == 90 ? y + 63 : d == 180 ? y - 49 : y - 63);
 
-	//.:: boss-dir = 180
-	/*firstLeft.sprite.setPosition(x + 63, y - 37);
-	secondLeft.sprite.setPosition(x + 63, y - 49);
-	thirdLeft.sprite.setPosition(x + 63, y - 61);
-
-	firstRight.sprite.setPosition(x - 63, y - 37);
-	secondRight.sprite.setPosition(x - 63, y - 49);
-	thirdRight.sprite.setPosition(x - 63, y - 61);*/
+	thirdRight.sprite.setPosition(	d == 0 ? x + 63 : d == 90 ? x - 61 : d == 180 ? x - 63 : x + 61,
+									d == 0 ? y + 61 : d == 90 ? y + 63 : d == 180 ? y -61 : y -63);
 }
 
 float NozzlesFlame::calculateAngle(string side)

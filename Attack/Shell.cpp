@@ -273,7 +273,7 @@ void Shell::damageBoss(GroundVehicle *boss_, Sound &armorSound, Sound &armorResi
 					conveyExperience(boss_->level);
 				}
 
-				if (army == "player" && dir == boss_->dir && !static_cast<Boss*>(boss_)->isAiming)
+				if (army == "player" && dir == boss_->dir && !static_cast<Boss*>(boss_)->isActing)
 					boss_->dir = getCounterDirection(boss_->dir);
 			}
 			isExist = false;

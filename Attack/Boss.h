@@ -24,13 +24,11 @@ private:
 public:
 	bool isOilSpillage;
 	int nextOilSpillageTime;
+	bool wasHalfDestroyed;
 
-	bool isAiming;
-	int aimingTime;
-
-	bool wasDustClap;
-	bool isPrepareToAction;
-	bool isHeatUp;
+	int timeToAct;
+	bool isActing;
+	bool isAnimationRun;
 
 	//.:: Constructor :::::::::::::::::::::::
 	Boss();
@@ -46,5 +44,6 @@ public:
 	void getAngry();
 	void coolDown();
 	bool isGetAngry();
+	bool isReadyToUseAbility();
 
 };

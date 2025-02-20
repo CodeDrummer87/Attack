@@ -20,8 +20,7 @@ TankTower::TankTower(TankTowerArgs& args)
 	explosionFrameCount = 11;
 
 	isFirstShot = isSecondShot = true;
-	isPlayAnimation = roundFirst = roundSecond = isMortarShotTime = isRampageAccumulating = false;
-	actionTime = 0;
+	isPlayAnimation = roundFirst = roundSecond  = false;
 
 	dir = 180;
 
@@ -42,7 +41,7 @@ void TankTower::update(double time)
 	}
 	else
 	{
-		if (status != DEAD && !own->isAiming)
+		if (status != DEAD && !own->isActing)
 		{
 			x = own->getCoordX(false);
 			y = own->getCoordY(false);
@@ -62,8 +61,8 @@ void TankTower::update(double time)
 			{
 				currentTarget = NULL;
 				isTargetSearch = true;
-				own->isAiming = false;
-				own->aimingTime = 0;
+				own->isActing = false;
+				own->timeToAct = 0;
 			}
 		}
 
@@ -108,7 +107,7 @@ void TankTower::update(double time)
 	}
 }
 
-void TankTower::detectTarget(Player* player, int mapIndex, int currentTime)
+void TankTower::detectTarget(Player* player, int currentTime)
 {
 	FloatRect bossZone = scannedZone.getGlobalBounds();
 	FloatRect target = player->anim.sprite.getGlobalBounds();
@@ -118,22 +117,7 @@ void TankTower::detectTarget(Player* player, int mapIndex, int currentTime)
 		currentTarget = player;
 		isTargetSearch = false;
 
-		switch (mapIndex)
-		{
-		case 1: 
-			own->aimingTime = currentTime + 10;
-			actionTime = currentTime + 14;
-			break;
-
-		case 2: break;
-		case 3: break;
-		case 4: break;
-		case 5: break;
-
-		default:
-			own->aimingTime = currentTime + 12;
-			actionTime = currentTime + 16;
-		}
+		own->timeToAct = currentTime + 12;
 	}	
 }
 
@@ -178,8 +162,7 @@ void TankTower::destroyPlayerByCannons()
 void TankTower::setNextAimingTime(int nextTime, bool& flag)
 {
 	flag = false;
-	own->aimingTime = nextTime;
-	actionTime = nextTime + 4;
+	own->timeToAct = currentTarget != NULL ? nextTime : -1;
 }
 
 Tank* TankTower::getTargetForMortar(vector<Player*> players)
@@ -189,7 +172,7 @@ Tank* TankTower::getTargetForMortar(vector<Player*> players)
 	while (true)
 	{
 		++counter;
-		if (counter == 50) return NULL;
+		if (counter == 10) return NULL;
 
 		index = rand() % players.size();
 		if (players[index]->status != Status::DEAD)
@@ -199,14 +182,23 @@ Tank* TankTower::getTargetForMortar(vector<Player*> players)
 
 void TankTower::checkMortarShotTime(int currentTime)
 {
-	if (!isTargetSearch && actionTime == currentTime && (currentTarget != NULL || currentTarget->status != DEAD))
-		isMortarShotTime = true;
+	if (!isTargetSearch && !own->isActing && own->timeToAct == currentTime && (currentTarget != NULL || currentTarget->status != DEAD))
+	{
+		own->isActing = true;
+		own->timeToAct = currentTime + 4;
+	}
 }
 
-void TankTower::checkRampageAccumulation(int currentTime)
+void TankTower::checkReadinessToAttack(int currentTime)
 {
-	if (!isTargetSearch && actionTime == currentTime && (currentTarget != NULL || currentTarget->status != DEAD))
-		isRampageAccumulating = true;
+	if (!isTargetSearch && !own->isActing && own->timeToAct == currentTime && (currentTarget != NULL || currentTarget->status != DEAD))
+	{
+		own->isActing = true;
+		own->speedBonus = 10.f;
+	}
+
+	if (!isTargetSearch && !own->isActing && own->timeToAct == -1)
+		own->timeToAct = currentTime + 12;
 }
 
 void TankTower::chooseBehavior(int mapIndex, int currentTime)
@@ -215,17 +207,12 @@ void TankTower::chooseBehavior(int mapIndex, int currentTime)
 	{
 	case 1:
 		destroyPlayerByCannon();
-		checkRampageAccumulation(currentTime);
+		checkReadinessToAttack(currentTime);
 
-		if (isRampageAccumulating)
-		{
-			setNextAimingTime(currentTime + 20, isRampageAccumulating);
-			own->speedBonus = 10.f;
-		}
-
-		own->slowDownSpeed();
-		if (own->isAiming && own->isPrepareToAction)
+		if (own->isActing)
 			own->getAngry();
+		else
+			own->slowDownSpeed();
 
 		break;
 

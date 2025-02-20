@@ -17,8 +17,8 @@ Boss::Boss(BossArgs &args)
 	hitPoints = (args.mapIndex + 1 ) * 100 + args.numberOfPlayers * 75;
 	nextOilSpillageTime = 0;
 	isPlayAnimation = true;
-	isOilSpillage = isAiming = wasDustClap = isPrepareToAction = isHeatUp = false;
-	aimingTime = -1;
+	isOilSpillage = isActing = wasHalfDestroyed = isAnimationRun = false;
+	timeToAct = -1;
 
 	red = greenAndBlue = 255;
 	activitySound = args.activitySound;
@@ -58,7 +58,7 @@ void Boss::update(double time)
 		else
 			status = DEAD;
 
-		anim.speed = status != DEAD && isAiming ? 0.000 : 0.016;
+		anim.speed = status != DEAD && isActing ? 0.000 : 0.016;
 
 		//::::::::::::::::::::::::
 		if (status == ALIVE)
@@ -99,8 +99,8 @@ void Boss::update(double time)
 			}
 		}
 
-		//if (!isPlayerControl && !isAiming)
-			//controlEnemyVehicle(time);
+		if (!isPlayerControl && !isActing)
+			controlEnemyVehicle(time);
 	}
 }
 
@@ -174,14 +174,8 @@ void Boss::slowDownSpeed()
 
 void Boss::getAngry()
 {
-	if (red >= 255.f && greenAndBlue >= 255.f)
-		isHeatUp = true;
-
 	red = greenAndBlue > 0.f ? greenAndBlue -= 0.5f : red > 150.f ? red -= 0.25f : 180.f;
 	setSpriteColor(red, greenAndBlue,  greenAndBlue);
-
-	if (!isPrepareToAction && (red <= 180.f && greenAndBlue <= 150.f))
-		isPrepareToAction = false;
 }
 
 void Boss::coolDown()
@@ -200,5 +194,10 @@ void Boss::setSpriteColor(float r, float g, float b)
 
 bool Boss::isGetAngry()
 {
-	return (isAiming && isPrepareToAction && isHeatUp) ? true : false;
+	return (isActing && isAnimationRun) ? true : false;
+}
+
+bool Boss::isReadyToUseAbility()
+{
+	return isActing && !isAnimationRun && timeToAct != -1 ? true : false;
 }

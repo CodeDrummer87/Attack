@@ -1,4 +1,4 @@
-#include "Smoke.h"
+ #include "Smoke.h"
 
 extern View view;
 
