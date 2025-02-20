@@ -33,7 +33,6 @@ private:
 	void resetSkidding(bool, int);
 
 protected:
-	float speedBonus;
 	bool isPlayerControl;
 	bool isDestroyed;
 	SoundBuffer sExplosion;
@@ -43,8 +42,10 @@ protected:
 	double toUp, toRight, toDown, toLeft;
 
 	static int counter;
+	bool isIconTaken;
 
 public:
+	float speedBonus;
 	int hitPoints;
 	bool drowning;
 	bool isSmoking;
@@ -73,7 +74,7 @@ public:
 	void checkVehiclesCollision(GroundVehicle*);
 	bool makeSureVehicleCollision(GroundVehicle*);
 	void getAreaDamage(DestructionZone*, string*, int);
-	void checkIconCollision(string[], Sound&);
+	void checkIconCollision(Entity*, Sound&);
 	void updateDestinationDistance();
 	void controlEnemyVehicle(double);
 	void changeDir();

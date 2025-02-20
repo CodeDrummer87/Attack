@@ -47,7 +47,7 @@ bool Mine::exploseMine(GroundVehicle* player)
 {
 	int explosionProbability = rand() % 10 + 1;
 
-	if (explosionProbability > 5)
+	if (explosionProbability > 7)
 		return false;
 
 	player->hitPoints -= damage;

@@ -19,7 +19,7 @@ Player::Player(Animation &anim, double x_, double y_, SoundBuffer &sExplosion_, 
 	else
 		requiredExperience = 2;
 
-	hasRank = isPreferment = isCommander = isTowingBack = isIconTaken = false;
+	hasRank = isPreferment = isCommander = isTowingBack = false;
 
 	combo[3] = '\0';
 	isKeyPressed = false;
@@ -216,7 +216,7 @@ void Player::defineNewCommander(vector<Player*> &team)
 
 bool Player::checkTeamForCommander(vector<Player*> team)
 {
-	for (auto p : team)
+	for (auto p: team)
 	{
 		if (p->isCommander && p->name == "tank")
 			return true;

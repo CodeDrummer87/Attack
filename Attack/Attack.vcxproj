@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="NozzlesFlame.cpp" />
     <ClCompile Include="Zone.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Air.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="TankTower.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="NozzlesFlame.h" />
     <ClInclude Include="Zone.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Air.h" />

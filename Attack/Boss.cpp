@@ -6,7 +6,7 @@ Boss::Boss()
 {}
 
 Boss::Boss(BossArgs &args)
-	: Enemy(args.anim, args.x, args.y, args.sExplosion, args.level)
+	: Enemy(args.anim, 960.0, 220.0, args.sExplosion, (args.mapIndex + 1) * 10)
 {
 	z_index = (short)4;
 
@@ -14,11 +14,15 @@ Boss::Boss(BossArgs &args)
 	army = "enemy";
 	dir = 270;
 	explosionFrameCount = 16;
-	hitPoints = 100 + args.numberOfPlayers * 75;
+	hitPoints = (args.mapIndex + 1 ) * 100 + args.numberOfPlayers * 75;
 	nextOilSpillageTime = 0;
 	isPlayAnimation = true;
-	isOilSpillage = isAiming = wasDustClap = false;
-	aimingTime = -1;
+	isOilSpillage = isActing = wasHalfDestroyed = isAnimationRun = false;
+	timeToAct = -1;
+
+	red = greenAndBlue = 255;
+	activitySound = args.activitySound;
+	anim.sprite.setColor(Color(red, greenAndBlue, greenAndBlue));
 }
 
 Boss::~Boss()
@@ -54,7 +58,7 @@ void Boss::update(double time)
 		else
 			status = DEAD;
 
-		anim.speed = status != DEAD && isAiming ? 0.000 : 0.016;
+		anim.speed = status != DEAD && isActing ? 0.000 : 0.016;
 
 		//::::::::::::::::::::::::
 		if (status == ALIVE)
@@ -77,13 +81,14 @@ void Boss::update(double time)
 			{
 				if (anim.isEnd(time))
 				{
-					anim.frames[0] = IntRect(0, 384, 128, 128);	//.:: Tank skeleton texture coordinates
+					anim.frames[0] = IntRect(0, 384, 128, 128);
 					anim.sound.stop();
 					isDestroyed = true;
 				}
 			}
 			else
 			{
+				activitySound->stop();
 				name = "destroyed";
 				isPlayAnimation = true;
 				anim.setFrames(0, 256, 128, 128, explosionFrameCount, 0.01);
@@ -94,7 +99,7 @@ void Boss::update(double time)
 			}
 		}
 
-		if (!isPlayerControl && !isAiming)
+		if (!isPlayerControl && !isActing)
 			controlEnemyVehicle(time);
 	}
 }
@@ -156,4 +161,43 @@ void Boss::checkMapCollision(string *map)
 				if (!traffic.left.dir)
 					traffic.left.dir = true;
 			}
+}
+
+void Boss::slowDownSpeed()
+{
+	if (speedBonus > 0.f)
+	{
+		speedBonus -= 0.017f;
+		coolDown();
+	}
+}
+
+void Boss::getAngry()
+{
+	red = greenAndBlue > 0.f ? greenAndBlue -= 0.5f : red > 150.f ? red -= 0.25f : 180.f;
+	setSpriteColor(red, greenAndBlue,  greenAndBlue);
+}
+
+void Boss::coolDown()
+{
+	if (red < 255.f && greenAndBlue < 255.f)
+	{
+		greenAndBlue = red < 255.f ? red += 0.25f : greenAndBlue < 255.f ? greenAndBlue += 0.5f : 255.f;
+		setSpriteColor(red, greenAndBlue, greenAndBlue);
+	}
+}
+
+void Boss::setSpriteColor(float r, float g, float b)
+{
+	anim.sprite.setColor(Color(r, g, b));
+}
+
+bool Boss::isGetAngry()
+{
+	return (isActing && isAnimationRun) ? true : false;
+}
+
+bool Boss::isReadyToUseAbility()
+{
+	return isActing && !isAnimationRun && timeToAct != -1 ? true : false;
 }

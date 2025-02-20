@@ -1,18 +1,18 @@
 #pragma once
 
 #include "Air.h"
-#include "GroundVehicle.h"
+#include "RadioAntenna.h"
 
 class RadioWave : public Air
 {
 private:
-	GroundVehicle *own;
+	RadioAntenna *antenna;
 
 public:
 
 	//.:: Constructor :::::::::::::::::::::::
 	RadioWave();
-	RadioWave(Animation&, GroundVehicle*, string);
+	RadioWave(Animation&, RadioAntenna*, string);
 
 	//.:: Destructor ::::::::::::::::::::::::
 	virtual ~RadioWave();

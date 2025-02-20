@@ -19,7 +19,7 @@ public:
 	Smoke(Animation&, Entity*, string);
 
 	//.:: Destructor ::::::::::::::::::::::::
-	virtual ~Smoke();
+	~Smoke();
 
 	//.:: Methods_of_class ::::::::::::::::::
 	void update(double);
