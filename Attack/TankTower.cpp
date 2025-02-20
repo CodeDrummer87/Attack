@@ -177,9 +177,7 @@ void TankTower::destroyPlayerByCannons()
 
 void TankTower::setNextAimingTime(int nextTime, bool& flag)
 {
-	own->isAiming = false;
 	flag = false;
-
 	own->aimingTime = nextTime;
 	actionTime = nextTime + 4;
 }

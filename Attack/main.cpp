@@ -42,6 +42,8 @@
 #include "Radar.h"
 #include "RadarSweep.h"
 
+#include "NozzlesFlame.h"
+
 //.:: temp code :::
 bool isUpd = false;	//.:: for double click protection
 //:::::::::::::::::
@@ -146,7 +148,7 @@ int main()
 
 	Image iMap, iIcon, iFighter, iEnemyFighter, iAirBomb, iBombExplosion, iCommunication_truck, iRadioAntenna, iRadioWaves,
 		iDrowning, iSpeedUpAchiev, iRepair, iSniper, iOilPuddle, iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap,
-		iTowEffect, iEnemies[8], iMiner, iMining, iMine, iLandmineExplosion, iRadar, iRadarSweep, iRessurection;
+		iTowEffect, iEnemies[8], iMiner, iMining, iMine, iLandmineExplosion, iRadar, iRadarSweep, iRessurection, iNozzleFlame;
 
 	iMap = getImage("source/images/map.png");
 	iIcon = getImage("source/images/sprites/attributes/icons/icons.png");
@@ -184,6 +186,7 @@ int main()
 	iRadar = getImage("source/images/sprites/other/radar.png");
 	iRadarSweep = getImage("source/images/sprites/other/radar_sweep.png");
 	iRessurection = getImage("source/images/sprites/other/ressurection.png");
+	iNozzleFlame = getImage("source/images/sprites/other/nozzle_flame.png");
 
 	//.:: the Bosses :::
 	const int numberOfBosses = 9;
@@ -205,7 +208,7 @@ int main()
 	Texture tMap, tIcon, tTankRound, tShell, tShellExp, tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter,
 		tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion, tCommunication_truck, tRadioAntenna, tRadioWaves, tDrowning,
 		tSpeedUpAchiev, tRepair, tSniper, tOilPuddle, tMortarShell, tMortarClap, tTrail, tMineExplosion, tDustClap, tTowEffect,
-		tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep, tRessurection;
+		tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep, tRessurection, tNozzleFlame;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -252,6 +255,7 @@ int main()
 	tRadar.loadFromImage(iRadar);
 	tRadarSweep.loadFromImage(iRadarSweep);
 	tRessurection.loadFromImage(iRessurection);
+	tNozzleFlame.loadFromImage(iNozzleFlame);
 
 	//.:: the Bosses :::
 	Texture tBossesBody[numberOfBosses];
@@ -433,6 +437,7 @@ int main()
 	Animation aRadar(tRadar, partisanBuf, 0, 0, 128, 128, 0.015, 33);
 	Animation aRadarSweep(tRadarSweep, 0, 0, 128, 128, 1, 1);
 	Animation aRessurection(tRessurection, ressurectionBuf, 0, 0, 128, 128, 0.019, 50);
+	Animation aNozzleFlame(tNozzleFlame, 0, 0, 128, 200, 0.02, 20);
 
 #pragma region the Bosses
 
@@ -800,12 +805,29 @@ int main()
 
 						for (auto v : specialTransport)
 							v->hitPoints = 0;
+						//index = 1;
 						team[2]->setCoordX(760.0);
 						team[2]->setCoordY(1000.0);
 						team[2]->isCommander = true;
 						team[2]->level = 20;
+						team[2]->hitPoints += 100;
+						team[2]->speedBonus = 2;
 						Tank::camera = Camera::Commander;
 						sEnemy_move.stop();
+					}
+					Boss* boss = NULL;
+					if (Keyboard::isKeyPressed(Keyboard::Q))
+					{
+						
+						for (auto b : squad)
+							if (b->name == "boss")
+							{
+								boss = static_cast<Boss*>(b);
+								break;
+							}
+
+						NozzlesFlame* flame = new NozzlesFlame(aNozzleFlame, boss);
+						entities.push_back(flame);
 					}
 
 #pragma region Tank rounds
@@ -1431,6 +1453,13 @@ int main()
 
 							if (e->status == WOUNDED && (static_cast<Boss*>(e)->nextOilSpillageTime == gameTime || static_cast<Boss*>(e)->nextOilSpillageTime == 0))
 								static_cast<Boss*>(e)->isOilSpillage = true;
+
+							if (index == 1 && static_cast<Boss*>(e)->isGetAngry())
+							{
+								static_cast<Boss*>(e)->isHeatUp = false;
+								NozzlesFlame* flame = new NozzlesFlame(aNozzleFlame, (Boss*)e);
+								entities.push_back(flame);
+							}
 						}
 
 						if (e->name == "turret")
@@ -2171,6 +2200,7 @@ void createBossMortarShot(TankTower *t, int gameTime, Animation &aMortarClap, An
 	if (t->currentTarget != NULL || t->currentTarget->status != DEAD)
 	{
 		t->setNextAimingTime(gameTime + 12, t->isMortarShotTime);
+		t->own->isAiming = false;
 
 		Tank *tank = t->getTargetForMortar(team);
 		if (tank != NULL)

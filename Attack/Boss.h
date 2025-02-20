@@ -30,6 +30,7 @@ public:
 
 	bool wasDustClap;
 	bool isPrepareToAction;
+	bool isHeatUp;
 
 	//.:: Constructor :::::::::::::::::::::::
 	Boss();
@@ -44,5 +45,6 @@ public:
 	void slowDownSpeed();
 	void getAngry();
 	void coolDown();
+	bool isGetAngry();
 
 };

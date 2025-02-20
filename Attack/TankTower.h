@@ -14,10 +14,10 @@ struct TankTowerArgs
 class TankTower : public Enemy
 {
 private:
-	Boss *own;
 	CircleShape scannedZone;
 
 public:
+	Boss* own;
 	GroundVehicle *currentTarget;
 	bool isTargetSearch;
 

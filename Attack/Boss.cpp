@@ -17,7 +17,7 @@ Boss::Boss(BossArgs &args)
 	hitPoints = (args.mapIndex + 1 ) * 100 + args.numberOfPlayers * 75;
 	nextOilSpillageTime = 0;
 	isPlayAnimation = true;
-	isOilSpillage = isAiming = wasDustClap = isPrepareToAction = false;
+	isOilSpillage = isAiming = wasDustClap = isPrepareToAction = isHeatUp = false;
 	aimingTime = -1;
 
 	red = greenAndBlue = 255;
@@ -99,8 +99,8 @@ void Boss::update(double time)
 			}
 		}
 
-		if (!isPlayerControl && !isAiming)
-			controlEnemyVehicle(time);
+		//if (!isPlayerControl && !isAiming)
+			//controlEnemyVehicle(time);
 	}
 }
 
@@ -174,6 +174,9 @@ void Boss::slowDownSpeed()
 
 void Boss::getAngry()
 {
+	if (red >= 255.f && greenAndBlue >= 255.f)
+		isHeatUp = true;
+
 	red = greenAndBlue > 0.f ? greenAndBlue -= 0.5f : red > 150.f ? red -= 0.25f : 180.f;
 	setSpriteColor(red, greenAndBlue,  greenAndBlue);
 
@@ -183,7 +186,7 @@ void Boss::getAngry()
 
 void Boss::coolDown()
 {
-	if (red != 255.f && greenAndBlue != 255.f)
+	if (red < 255.f && greenAndBlue < 255.f)
 	{
 		greenAndBlue = red < 255.f ? red += 0.25f : greenAndBlue < 255.f ? greenAndBlue += 0.5f : 255.f;
 		setSpriteColor(red, greenAndBlue, greenAndBlue);
@@ -193,4 +196,9 @@ void Boss::coolDown()
 void Boss::setSpriteColor(float r, float g, float b)
 {
 	anim.sprite.setColor(Color(r, g, b));
+}
+
+bool Boss::isGetAngry()
+{
+	return (isAiming && isPrepareToAction && isHeatUp) ? true : false;
 }

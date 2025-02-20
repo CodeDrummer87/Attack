@@ -128,6 +128,9 @@
     <ClCompile Include="Note.cpp">
       <Filter>Исходные файлы\BasicClasses</Filter>
     </ClCompile>
+    <ClCompile Include="NozzlesFlame.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h">
@@ -290,6 +293,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Note.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="NozzlesFlame.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
