@@ -144,11 +144,13 @@ int main()
 
 #pragma region Texts | Images | Textures | Sounds | Animations
 
+	const int LVL = 10;
+
 #pragma region Images
 
-	Image iMap, iIcon, iFighter, iEnemyFighter, iAirBomb, iBombExplosion, iCommunication_truck, iRadioAntenna, iRadioWaves,
+	Image iMap, iIcon, iFighter, iAirBomb, iBombExplosion, iCommunication_truck, iRadioAntenna, iRadioWaves,
 		iDrowning, iSpeedUpAchiev, iRepair, iSniper, iOilPuddle, iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap,
-		iTowEffect, iEnemies[8], iMiner, iMining, iMine, iLandmineExplosion, iRadar, iRadarSweep, iRessurection, iNozzleFlame;
+		iTowEffect, iEnemies[LVL], iMiner, iMining, iMine, iLandmineExplosion, iRadar, iRadarSweep, iRessurection, iNozzleFlame;
 
 	iMap = getImage("source/images/map.png");
 	iIcon = getImage("source/images/sprites/attributes/icons/icons.png");
@@ -158,8 +160,12 @@ int main()
 	for (int i = 0; i < 5; i++)
 		iPlayers[i] = getImage(playerImagePath + to_string(i + 1) + ".png");
 
+	Image iEnemyFighterJet[LVL];
+	string enemyFighterJetImagePath = "source/images/sprites/models/planes/enemy_fighter_jet_";
+	for (int i = 0; i < LVL; i++)
+		iEnemyFighterJet[i] = getImage(enemyFighterJetImagePath + to_string(i + 1) + ".png");
+
 	iFighter = getImage("source/images/sprites/models/planes/fighter.png");
-	iEnemyFighter = getImage("source/images/sprites/models/planes/enemy_fighter.png");
 	iAirBomb = getImage("source/images/sprites/models/other/air_bomb.png");
 	iBombExplosion = getImage("source/images/sprites/explosions/bomb_explosion.png");
 
@@ -205,10 +211,10 @@ int main()
 
 #pragma region Textures
 
-	Texture tMap, tIcon, tTankRound, tShell, tShellExp, tSmoke, tRank, tTarget, tAirStrikeZone, tFighter, tEnemyFighter,
+	Texture tMap, tIcon, tTankRound, tShell, tShellExp, tSmoke, tRank, tTarget, tAirStrikeZone, tFighter,
 		tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion, tCommunication_truck, tRadioAntenna, tRadioWaves, tDrowning,
 		tSpeedUpAchiev, tRepair, tSniper, tOilPuddle, tMortarShell, tMortarClap, tTrail, tMineExplosion, tDustClap, tTowEffect,
-		tEnemies[8], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep, tRessurection, tNozzleFlame;
+		tEnemies[LVL], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep, tRessurection, tNozzleFlame;
 
 	tMap.loadFromImage(iMap);
 	tIcon.loadFromImage(iIcon);
@@ -226,11 +232,14 @@ int main()
 	tTarget.loadFromFile("source/images/sprites/attributes/target.png");
 	tAirStrikeZone.loadFromFile("source/images/sprites/attributes/airstrike_zone.png");
 	tFighter.loadFromImage(iFighter);
-	tEnemyFighter.loadFromImage(iEnemyFighter);
 	tFighterTrace.loadFromFile("source/images/sprites/models/planes/fighterTrace.png");
 	tAirJetsFlame.loadFromFile("source/images/sprites/models/planes/air_jets_flame.png");
 	tAirBomb.loadFromImage(iAirBomb);
 	tBombExplosion.loadFromImage(iBombExplosion);
+
+	Texture tEnemyFighterJet[LVL];
+	for (int i = 0; i < LVL; i++)
+		tEnemyFighterJet[i].loadFromImage(iEnemyFighterJet[i]);
 
 	tCommunication_truck.loadFromImage(iCommunication_truck);
 
@@ -409,7 +418,6 @@ int main()
 	Animation aTarget(tTarget, 0, 0, 400, 400, 0.007, 6);
 	Animation aAirStrikeZone(tAirStrikeZone, 0, 0, 400, 400, 0.005, 4);
 	Animation aFighter(tFighter, 0, 0, 120, 165, 1, 1);
-	Animation aEnemyFighter(tEnemyFighter, 0, 0, 120, 161, 1, 1);
 	Animation aFighterTrace(tFighterTrace, 0, 0, 120, 165, 0.1, 21);
 	Animation aAirJetsFlame(tAirJetsFlame, 0, 0, 120, 165, 0.1, 21);
 	Animation aDroppingBomb(tAirBomb, bombWhistleBuf, 0, 0, 200, 200, 0.015, 50);
@@ -438,6 +446,10 @@ int main()
 	Animation aRadarSweep(tRadarSweep, 0, 0, 128, 128, 1, 1);
 	Animation aRessurection(tRessurection, ressurectionBuf, 0, 0, 128, 128, 0.019, 50);
 	Animation aNozzleFlame(tNozzleFlame, 0, 0, 128, 200, 0.023, 20);
+
+	Animation aEnemyFighterJet[LVL];
+	for (int i = 0; i < LVL; i++)
+		aEnemyFighterJet[i] = Animation(tEnemyFighterJet[i], 0, 0, 128, 163, 1, 1);
 
 #pragma region the Bosses
 
@@ -1512,7 +1524,7 @@ int main()
 									EnemyPlane::target->getCoordX(false) - 150 : EnemyPlane::target->getCoordX(false) + 150;
 								y = i == 0 ? -300 : -400;
 
-								EnemyPlane* fighter = new EnemyPlane(aEnemyFighter, aFighterTrace, aAirJetsFlame, x, y, "enemyFighter",
+								EnemyPlane* fighter = new EnemyPlane(aEnemyFighterJet[index], aFighterTrace, aAirJetsFlame, x, y, "enemyFighter",
 									EnemyPlane::target->getCoordY(false) - 100, mapsHeight[index]);
 								entities.push_back(fighter);
 							}
