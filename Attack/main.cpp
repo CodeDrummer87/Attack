@@ -148,9 +148,9 @@ int main()
 
 #pragma region Images
 
-	Image iMap, iIcon, iFighter, iAirBomb, iBombExplosion, iCommunication_truck, iRadioAntenna, iRadioWaves,
-		iDrowning, iSpeedUpAchiev, iRepair, iSniper, iOilPuddle, iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap,
-		iTowEffect, iEnemies[LVL], iMiner, iMining, iMine, iLandmineExplosion, iRadar, iRadarSweep, iRessurection, iNozzleFlame;
+	Image iMap, iIcon, iFighter, iAirBomb, iBombExplosion, iRadioAntenna, iRadioWaves, iDrowning, iSpeedUpAchiev, iRepair,
+		iSniper, iOilPuddle, iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect, iEnemies[LVL], iMiner,
+		iMining, iMine, iLandmineExplosion, iRadar, iRadarSweep, iRessurection, iNozzleFlame;
 
 	iMap = getImage("source/images/map.png");
 	iIcon = getImage("source/images/sprites/attributes/icons/icons.png");
@@ -169,7 +169,10 @@ int main()
 	iAirBomb = getImage("source/images/sprites/models/other/air_bomb.png");
 	iBombExplosion = getImage("source/images/sprites/explosions/bomb_explosion.png");
 
-	iCommunication_truck = getImage("source/images/sprites/models/special_transport/communication_truck.png");
+	Image iCommunicationTrucks[LVL];
+	string communicationTruckImagePath = "source/images/sprites/models/special_transport/communication_truck_";
+	for (int i = 0; i < LVL; i++)
+		iCommunicationTrucks[i] = getImage(communicationTruckImagePath + to_string(i + 1) + ".png");
 
 	iRadioAntenna = getImage("source/images/sprites/models/other/radio_antenna.png");
 	iRadioWaves = getImage("source/images/sprites/other/radiowaves.png");
@@ -212,8 +215,8 @@ int main()
 #pragma region Textures
 
 	Texture tMap, tIcon, tTankRound, tShell, tShellExp, tSmoke, tRank, tTarget, tAirStrikeZone, tFighter,
-		tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion, tCommunication_truck, tRadioAntenna, tRadioWaves, tDrowning,
-		tSpeedUpAchiev, tRepair, tSniper, tOilPuddle, tMortarShell, tMortarClap, tTrail, tMineExplosion, tDustClap, tTowEffect,
+		tFighterTrace, tAirJetsFlame, tAirBomb, tBombExplosion, tRadioAntenna, tRadioWaves, tDrowning, tSpeedUpAchiev, tRepair,
+		tSniper, tOilPuddle, tMortarShell, tMortarClap, tTrail, tMineExplosion, tDustClap, tTowEffect,
 		tEnemies[LVL], tMiner, tMining, tMine, tLandmineExplosion, tRadar, tRadarSweep, tRessurection, tNozzleFlame;
 
 	tMap.loadFromImage(iMap);
@@ -241,7 +244,9 @@ int main()
 	for (int i = 0; i < LVL; i++)
 		tEnemyFighterJet[i].loadFromImage(iEnemyFighterJet[i]);
 
-	tCommunication_truck.loadFromImage(iCommunication_truck);
+	Texture tCommunicationTrucks[LVL];
+	for (int i = 0; i < LVL; i++)
+		tCommunicationTrucks[i].loadFromImage(iCommunicationTrucks[i]);
 
 	tRadioAntenna.loadFromImage(iRadioAntenna);
 	tRadioWaves.loadFromImage(iRadioWaves);
@@ -423,7 +428,10 @@ int main()
 	Animation aDroppingBomb(tAirBomb, bombWhistleBuf, 0, 0, 200, 200, 0.015, 50);
 	Animation aBombExplosion(tBombExplosion, bombExplosionBuf, 0, 0, 400, 400, 0.012, 19);
 
-	Animation aCommunication_truck(tCommunication_truck, 0, 0, 64, 64, 0.0087, 1);
+	Animation aCommunicationTrucks[LVL];
+	for (int i = 0; i < LVL; i++)
+		aCommunicationTrucks[i] = Animation(tCommunicationTrucks[i], 0, 0, 64, 64, 0.0087, 1);
+
 	Animation aMiner(tMiner, 0, 0, 64, 64, 0.0087, 2);
 
 	Animation aDrowning(tDrowning, drowningBuf, 0, 0, 64, 64, 0.02, 14);
@@ -763,7 +771,7 @@ int main()
 						createEnemies(aEnemies, tankExpBuf, maps[index], index);
 
 						Tuple truckPlace = determinePlaceToAppear(maps[index], true);
-						createEnemyCommunicationTrucks(aCommunication_truck, autoExpBuf, gameTime, aRadioAntenna, truckPlace);
+						createEnemyCommunicationTrucks(aCommunicationTrucks[index], autoExpBuf, gameTime, aRadioAntenna, truckPlace);
 
 						if (index > 0)
 						{
