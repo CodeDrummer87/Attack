@@ -149,8 +149,8 @@ int main()
 #pragma region Images
 
 	Image iMap, iIcon, iFighter, iAirBomb, iBombExplosion, iRadioAntenna, iRadioWaves, iDrowning, iSpeedUpAchiev, iRepair,
-		iSniper, iOilPuddle, iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect, iEnemies[LVL], iMiner,
-		iMining, iMine, iLandmineExplosion, iRadar, iRadarSweep, iRessurection, iNozzleFlame, iTruck;
+		iSniper, iOilPuddle, iMortarShell, iMortarClap, iTrail, iMineExplosion, iDustClap, iTowEffect, iEnemies[LVL],
+		iMining, iMine, iLandmineExplosion, iRadar, iRadarSweep, iRessurection, iNozzleFlame, iTruck, iMiner;
 
 	iMap = getImage("source/images/map.png");
 	iIcon = getImage("source/images/sprites/attributes/icons/icons.png");
@@ -183,7 +183,6 @@ int main()
 	iMineExplosion = getImage("source/images/sprites/explosions/mine_explosion.png");
 	iDustClap = getImage("source/images/sprites/other/dust_clap.png");
 	iTowEffect = getImage("source/images/sprites/other/tow_effect.png");
-	iMiner = getImage("source/images/sprites/models/special_transport/miner_1.png");
 	iMining = getImage("source/images/sprites/other/mining.png");
 	iMine = getImage("source/images/sprites/models/other/mine.png");
 	iLandmineExplosion = getImage("source/images/sprites/explosions/landmine_explosion.png");
@@ -253,7 +252,6 @@ int main()
 	tMineExplosion.loadFromImage(iMineExplosion);
 	tDustClap.loadFromImage(iDustClap);
 	tTowEffect.loadFromImage(iTowEffect);
-	tMiner.loadFromImage(iMiner);
 	tMining.loadFromImage(iMining);
 	tMine.loadFromImage(iMine);
 	tLandmineExplosion.loadFromImage(iLandmineExplosion);
@@ -400,7 +398,7 @@ int main()
 	Animation aEnemies[8];
 	Animation aEnemyRound;
 	Animation aTruck;
-	Animation aMiner(tMiner, 0, 0, 64, 64, 0.0087, 2);
+	Animation aMiner;
 
 	Animation aBurgTankRound(tTankRound, burgTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
 	Animation aYelTankRound(tTankRound, yelTankRoundBuf, 0, 0, 40, 36, 0.015, 8);
@@ -587,6 +585,7 @@ int main()
 	void createEnemies(Animation*, SoundBuffer&, string*, int);
 	void createTruckAnimation(Image&, Texture&, Animation&, int);
 	void createEnemyCommunicationTrucks(Animation&, SoundBuffer&, int, Animation&, Tuple);
+	void createMinerAnimation(Image&, Texture&, Animation&, int);
 	void createMiner(Animation&, SoundBuffer&, int, int, Tuple);
 	void createSmoke(GroundVehicle*, Animation&);
 	void setEnemyMine(GroundVehicle*, int, Animation&, Animation&, int);
@@ -764,6 +763,7 @@ int main()
 
 						if (index > 0)
 						{
+							createMinerAnimation(iMiner, tMiner, aMiner, index);
 							Tuple place = determinePlaceToAppear(maps[index], true);
 							createMiner(aMiner, autoExpBuf, gameTime, index, place);
 						}
@@ -2054,6 +2054,16 @@ void createEnemyCommunicationTrucks(Animation &aTruck, SoundBuffer &sExplosion, 
 	entities.push_back(antenna);
 
 	specialTransport.push_back(enemyTruck);
+}
+
+void createMinerAnimation(Image &iMiner, Texture &tMiner, Animation &aMiner, int index)
+{
+	string minerImagePath = "source/images/sprites/models/special_transport/miner_";
+	string path = minerImagePath + to_string(index + 1) + ".png";
+
+	iMiner = getImage(path);
+	tMiner.loadFromImage(iMiner);
+	aMiner = Animation(tMiner, 0, 0, 64, 64, 0.0087, 2);
 }
 
 void createMiner(Animation &aMiner, SoundBuffer &sExplosion, int currentGameTime, int mapIndex, Tuple place)
